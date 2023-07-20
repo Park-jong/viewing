@@ -1,4 +1,4 @@
-package com.ssafy.interviewstudy.domain;
+package com.ssafy.interviewstudy.domain.member;
 
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

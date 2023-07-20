@@ -1,4 +1,4 @@
-package com.ssafy.interviewstudy.domain;
+package com.ssafy.interviewstudy.domain.member;
 
 public enum MemberStatus {
     ACTIVE,

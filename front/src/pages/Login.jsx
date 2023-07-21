@@ -3,6 +3,7 @@ import GoogleButton from "../components/Button/GoogleButton";
 import KakaoButton from "../components/Button/KakaoButton";
 import MainButton from "../components/Button/MainButton";
 import Calendar from "../components/Common/Calendar";
+import CalenderTemplate from "../components/Common/Organisms/CalenderTemplate";
 import TimeBar from "../components/Common/TimeBar";
 import SubButton from "./../components/Button/SubButton";
 import ReactCalendar from "react-calendar";
@@ -23,9 +24,10 @@ export default function Login() {
       <br />
       <SubButton content="정보보기"></SubButton>
       <br /> */}
-      <Calendar></Calendar>
+      {/* <Calendar></Calendar> */}
       {/* <ReactCalendar></ReactCalendar> */}
-      <TimeBar></TimeBar>
+      {/* <TimeBar></TimeBar> */}
+      <CalenderTemplate></CalenderTemplate>
     </>
   );
 }

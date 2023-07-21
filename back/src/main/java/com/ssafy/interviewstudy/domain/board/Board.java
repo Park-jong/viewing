@@ -26,4 +26,12 @@ public abstract class Board {
     @OneToMany(mappedBy = "article")
     private List<ArticleComment> comments;
 
+    @OneToMany(mappedBy = "article")
+    private List<ArticleLike> likes;
+
+    @OneToMany(mappedBy = "article")
+    private List<ArticleFile> files;
+
+    @OneToMany(mappedBy = "article")
+    private List<ReportArticle> reports;
 }

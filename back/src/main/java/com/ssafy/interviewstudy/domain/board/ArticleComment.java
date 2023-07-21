@@ -31,6 +31,9 @@ public class ArticleComment {
     @JoinColumn(name = "reply_comment_id")
     private ArticleComment comment;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "comment")
     private List<ArticleComment> replies;
+
+    @OneToMany(mappedBy = "comment")
+    private List<CommentLike> likes;
 }

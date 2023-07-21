@@ -1,8 +1,13 @@
 package com.ssafy.interviewstudy.domain.board;
 
+import com.ssafy.interviewstudy.domain.member.Member;
+import lombok.Getter;
+
 import javax.persistence.*;
 
+@Getter
 @Entity
+@Table(name = "comment_like")
 public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

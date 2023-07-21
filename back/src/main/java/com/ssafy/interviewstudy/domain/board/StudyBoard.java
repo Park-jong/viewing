@@ -1,15 +1,14 @@
 package com.ssafy.interviewstudy.domain.board;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.Getter;
 
+import javax.persistence.*;
+
+@Getter
 @Entity
-public class StudyBoard {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    private int id;
-
-    private int articleId;
+@DiscriminatorValue("study_board")
+@PrimaryKeyJoinColumn(name = "article_id")
+public class StudyBoard extends Board{
+    @Column(name = "study_id", nullable = false)
+    private int studyId;
 }

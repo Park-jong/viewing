@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.time.LocalDateTime;
 
@@ -105,7 +104,7 @@ public class MemberController {
             responseHttpHeaders.setBearerAuth(
                     jwtProvider.provideToken(JWTMemberInfo.
                             builder().
-                            memberId(currentMember.getMemberId()).
+                            memberId(currentMember.getId()).
                             email(currentMember.getEmail()).
                             build()
                     )

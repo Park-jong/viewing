@@ -41,7 +41,7 @@ public class MemberService {
     //디버깅용
     @Transactional
     public Member findMemberByMemberId(Integer memberId){
-        return memberRepository.findMemberByMemberId(memberId);
+        return memberRepository.findMemberById(memberId);
     }
 
     @Transactional

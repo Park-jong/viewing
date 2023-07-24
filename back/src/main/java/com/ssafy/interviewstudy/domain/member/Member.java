@@ -1,6 +1,8 @@
 package com.ssafy.interviewstudy.domain.member;
 
-import com.ssafy.interviewstudy.domain.board.ArticleComment;
+import com.ssafy.interviewstudy.domain.board.*;
+import com.ssafy.interviewstudy.domain.message.Message;
+import com.ssafy.interviewstudy.domain.study.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -20,7 +22,7 @@ import java.util.List;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer memberId;
+    private Integer id;
 
     //회원가입에 필요한 이메일 (향후 소셜로그인 회원가입시 중복체크)
     @Column(name = "email", nullable = false)
@@ -34,6 +36,7 @@ public class Member {
             모자
             배경
             캐릭터
+       프론트와 협의 필요
      */
 
     //소셜로그인 OAuth2.0 관련 토큰 필드
@@ -62,10 +65,57 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private RegistrationStatus registrationStatus;
 
+    //게시판 댓글 작성자
     @OneToMany(mappedBy = "author")
     List<ArticleComment> articleCommentList = new ArrayList<>();
+    
+    //게시글 좋아요 누른사람
+    @OneToMany(mappedBy = "member")
+    List<ArticleLike> articleLikeList = new ArrayList<>();
+    
+    //게시글 작성자
+    @OneToMany(mappedBy = "author")
+    List<Board> boardList = new ArrayList<>();
+    
+    //게시글 댓글 좋아요 누른 사람
+    @OneToMany(mappedBy = "member")
+    List<CommentLike> commentLikeList = new ArrayList<>();
 
+    //게시글 신고 누른사람
+    @OneToMany(mappedBy = "member")
+    List<ReportArticle> reportArticleList = new ArrayList<>();
 
+    //스터디 리더
+    @OneToMany(mappedBy = "leader")
+    List<Study> studyList = new ArrayList<>();
+    
+    //스터디에 북마크 누른 살마
+    @OneToMany(mappedBy = "member")
+    List<StudyBookmark> studyBookmarkList = new ArrayList<>();
+
+    //스터디 일정 등록한 사람
+    @OneToMany(mappedBy = "author")
+    List<StudyCalendar> studyCalendarList = new ArrayList<>();
+
+    //스터디 채팅 입력한 사람
+    @OneToMany(mappedBy = "author")
+    List<StudyChat> studyChatList = new ArrayList<>();
+
+    //스터디에 속해있는 사람
+    @OneToMany(mappedBy = "member")
+    List<StudyMember> studyMemberList = new ArrayList<>();
+
+    //스터디에 가입 신청을 한 사람
+    @OneToMany(mappedBy = "applicant")
+    List<StudyRequest> studyRequestList = new ArrayList<>();
+
+    //메세지 보낸 사람
+    @OneToMany(mappedBy = "author")
+    List<Message> sentMeesageList = new ArrayList<>();
+
+    //메세지 받은 사람
+    @OneToMany(mappedBy="receiver")
+    List<Message> receivedMessageList = new ArrayList<>();
 
     public void nextRegistrationStatus(){
         if(this.registrationStatus==RegistrationStatus.SELECT_NICKNAME){
@@ -82,7 +132,7 @@ public class Member {
 
     @Builder
     public Member(Integer memberId, String email, String nickname, String accessToken, LocalDateTime created_at, LocalDateTime last_login, MemberStatus status, LocalDateTime inactiveAt, RegistrationStatus registrationStatus) {
-        this.memberId = memberId;
+        this.id = memberId;
         this.email = email;
         this.nickname = nickname;
         this.accessToken = accessToken;

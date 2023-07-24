@@ -6,14 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MemberRepository extends JpaRepository<Member,Integer> {
+public interface MemberStudyRepository extends JpaRepository<StudyMember,Integer> {
 
-    Member findUserByEmail(String email);
-
-
-    Member findMemberByNickname(String nickname);
-
-    //디버깅용
-    Member findMemberById(Integer memberId);
+    List<StudyMember> findStudyMembersByMemberId(Integer memberId);
 
 }

@@ -11,7 +11,7 @@ const LayoutContainer = styled.div`
 
 const LayoutBody = styled.div`
   width: 1200px;
-  background-color: red;
+  background-color: #ffffff;
   height: 100vh;
   margin: 0 auto;
 `;

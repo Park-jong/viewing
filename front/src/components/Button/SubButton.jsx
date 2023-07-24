@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -12,9 +13,11 @@ const Container = styled.div`
   border-radius: 8px;
   padding: 0 12px;
   font-size: 11px;
-  
+  cursor: pointer;
 `;
 
 export default function SubButton(props) {
-  return <Container>{props.content}</Container>
+  const { content, onClick } = props;
+
+  return <Container onClick={onClick}>{content}</Container>;
 }

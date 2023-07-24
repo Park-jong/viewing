@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public interface StudyRepository extends JpaRepository<Study, Integer>, StudyRepositoryCustom {
 
-    @Query("select distinct s from Study s left join fetch s.studyTags st left join fetch st.tag t where s.isRecruit = true and s.isDelete = false")
-    //스터디 탭을 클릭했을 시 모집중인 전체 스터디 조회
-    public List<Study> findStudiesByRecruit();
+    @Query("select distinct s from Study s join fetch s.appliedCompany left join fetch s.studyTags st left join fetch st.tag t where s.id = :id and s.isDelete = false")
+    //스터디 하나 조회
+    public Study findStudyById(@Param("id") Integer id);
 
     @Query("select s from Study s join s.studyMembers sm where sm.member = :member")
     public List<Study> findStudiesByMember(@Param("member") Member member);

@@ -10,6 +10,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Integer> {
 
+    //멤버 수 카운팅
+    public int countStudyMemberByStudy(Study study);
+
     //스터디 탈퇴
     @Modifying(clearAutomatically = true)
     @Query("delete from StudyMember sm where sm.study.id = :study_id and sm.member.id = :member_id")

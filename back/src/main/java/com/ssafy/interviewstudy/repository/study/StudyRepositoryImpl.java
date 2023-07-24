@@ -6,6 +6,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.interviewstudy.domain.study.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -13,6 +16,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
+import static com.ssafy.interviewstudy.domain.study.QCompany.company;
 import static com.ssafy.interviewstudy.domain.study.QStudy.study;
 import static com.ssafy.interviewstudy.domain.study.QStudyTag.*;
 import static com.ssafy.interviewstudy.domain.study.QStudyTagType.*;
@@ -33,46 +37,54 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
 
     @Override
     //임시로 제작 수정 예정
-    public List<Study> findStudiesBySearch(Company appliedCompany, String appliedJob, CareerLevel careerLevel) {
+    public Page<Study> findStudiesBySearch(Boolean isRecruit, Integer appliedCompany, String appliedJob, CareerLevel careerLevel, Pageable pageable) {
         List<Study> result = queryFactory.select(study).distinct()
                 .from(study)
-                .leftJoin(studyTag.study).fetchJoin()
+                .join(study.appliedCompany, company).fetchJoin()
+                .leftJoin(study.studyTags, studyTag).fetchJoin()
                 .leftJoin(studyTag.tag, studyTagType).fetchJoin()
-                .where(study.isRecruit.isTrue(),
-                        study.isDelete.isFalse(),
+                .where(isRecruitTrue(isRecruit),
+                        study.isDelete.eq(false),
                         appliedCompanyEq(appliedCompany),
                         appliedJobLike(appliedJob),
                         careerLevelEq(careerLevel))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
-//        StringBuffer queryString = new StringBuffer("select distinct s from Study s left join fetch s.studyTags st left join fetch st.tag t where s.isRecruit = true and s.isDelete = false");
-//        if(appliedCompany != null) queryString.append(" and s.appliedCompany = :appliedCompany");
-//        if(appliedJob != null && !appliedJob.equals("")) queryString.append(" and s.appliedJob like :appliedJob");
-//        if(careerLevel != null && careerLevel != CareerLevel.ALL) queryString.append(" and s.careerLevel = :careerLevel");
-//
-//        TypedQuery<Study> query = em.createQuery(queryString.toString(), Study.class);
-//
-//        if(appliedCompany != null) query.setParameter("appliedCompany", appliedCompany);
-//        if(appliedJob != null && !appliedJob.equals("")) query.setParameter("appliedJob", appliedJob);
-//        if(careerLevel != null && careerLevel != CareerLevel.ALL) query.setParameter("careerLevel", careerLevel);
-//
-        return result;
+
+        Long count = queryFactory
+                .select(study.count())
+                .from(study)
+                .where(isRecruitTrue(isRecruit),
+                        study.isDelete.eq(false),
+                        appliedCompanyEq(appliedCompany),
+                        appliedJobLike(appliedJob),
+                        careerLevelEq(careerLevel))
+                .fetchOne();
+        return new PageImpl<>(result, pageable, count);
     }
 
-    private BooleanExpression appliedCompanyEq(Company appliedCompany){
+    private BooleanExpression appliedCompanyEq(Integer appliedCompany){
         if(appliedCompany != null)
-            return study.appliedCompany.eq(appliedCompany);
+            return study.appliedCompany.id.eq(appliedCompany);
         return null;
     }
 
     private BooleanExpression appliedJobLike(String appliedJob){
         if(appliedJob != null && !appliedJob.isBlank())
-            return study.appliedJob.like(appliedJob);
+            return study.appliedJob.like("%"+appliedJob+"%");
         return null;
     }
 
     private BooleanExpression careerLevelEq(CareerLevel careerLevel){
-        if(careerLevel != null)
+        if(careerLevel != null && careerLevel != CareerLevel.ALL)
             return study.careerLevel.eq(careerLevel);
+        return null;
+    }
+
+    private BooleanExpression isRecruitTrue(Boolean isRecruit){
+        if(isRecruit != null)
+            return study.isRecruit.eq(true);
         return null;
     }
 }

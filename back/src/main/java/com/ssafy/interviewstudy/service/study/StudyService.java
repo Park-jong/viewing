@@ -1,12 +1,21 @@
 package com.ssafy.interviewstudy.service.study;
 
+import com.ssafy.interviewstudy.domain.study.CareerLevel;
 import com.ssafy.interviewstudy.domain.study.Study;
+import com.ssafy.interviewstudy.domain.study.StudyMember;
+import com.ssafy.interviewstudy.dto.study.StudyResponse;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
+import com.ssafy.interviewstudy.repository.study.StudyMemberRepository;
 import com.ssafy.interviewstudy.repository.study.StudyRepository;
+import com.ssafy.interviewstudy.repository.study.StudyRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,7 +24,14 @@ public class StudyService {
 
     private StudyRepository studyRepository;
     private MemberRepository memberRepository;
+    private StudyMemberRepository studyMemberRepository;
 
+    @Autowired
+    public StudyService(StudyRepository studyRepository, MemberRepository memberRepository, StudyMemberRepository studyMemberRepository) {
+        this.studyRepository = studyRepository;
+        this.memberRepository = memberRepository;
+        this.studyMemberRepository = studyMemberRepository;
+    }
 
     //내 스터디 조회
     public List<Study> findMyStudies(Integer id){
@@ -28,10 +44,31 @@ public class StudyService {
     }
 
     //스터디 정보 조회
+    public StudyResponse findStudyById(Integer id){
+        Study study = studyRepository.findStudyById(id);
+        return studyToResponse(study);
+    }
 
-    //스터디 (모집중) 조회
+
+    //스터디 조회
+    public Page<StudyResponse> findStudies(Boolean option, Pageable pageable){
+        Page<Study> studies = studyRepository.findStudiesBySearch(option, null, null, null, pageable);
+        List<StudyResponse> result = new ArrayList<>();
+        for (Study study : studies) {
+            result.add(studyToResponse(study));
+        }
+        return new PageImpl<>(result, pageable, studies.getTotalElements());
+    }
 
     //스터디 검색 결과 조회
+    public Page<StudyResponse> findStudiesBySearch(Boolean option, Integer appliedCompanyId, String appliedJob, CareerLevel careerLevel, Pageable pageable){
+        Page<Study> studies = studyRepository.findStudiesBySearch(option, appliedCompanyId, appliedJob, careerLevel, pageable);
+        List<StudyResponse> result = new ArrayList<>();
+        for (Study study : studies) {
+            result.add(studyToResponse(study));
+        }
+        return new PageImpl<>(result, pageable, studies.getTotalElements());
+    }
 
     //스터디 생성
 
@@ -68,4 +105,11 @@ public class StudyService {
     //스터디 일정 수정
 
     //스터디 일정 삭제
+
+
+    private StudyResponse studyToResponse(Study study){
+        StudyResponse studyResponse = new StudyResponse(study);
+        studyResponse.headCounting(studyMemberRepository.countStudyMemberByStudy(study));
+        return studyResponse;
+    }
 }

@@ -1,16 +1,15 @@
 package com.ssafy.interviewstudy.domain.study;
 
 import com.ssafy.interviewstudy.domain.member.Member;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@Builder
 public class StudyBookmark {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_bookmark_id")

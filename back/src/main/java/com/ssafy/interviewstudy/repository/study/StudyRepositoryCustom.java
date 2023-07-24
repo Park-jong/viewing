@@ -3,9 +3,9 @@ package com.ssafy.interviewstudy.repository.study;
 import com.ssafy.interviewstudy.domain.study.CareerLevel;
 import com.ssafy.interviewstudy.domain.study.Company;
 import com.ssafy.interviewstudy.domain.study.Study;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
 
 public interface StudyRepositoryCustom {
     //조건으로 조회

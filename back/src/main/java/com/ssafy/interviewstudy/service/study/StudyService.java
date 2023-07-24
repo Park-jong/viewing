@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class StudyService {
 
     private StudyRepository studyRepository;
@@ -17,13 +18,11 @@ public class StudyService {
 
 
     //내 스터디 조회
-    @Transactional
     public List<Study> findMyStudies(Integer id){
         return studyRepository.findStudiesByMember(memberRepository.findById(id).get());
     }
 
     //내가 찜한 스터디 조회
-    @Transactional
     public List<Study> findBookmarkStudies(Integer id){
         return studyRepository.findBookmarksByMember(memberRepository.findById(id).get());
     }

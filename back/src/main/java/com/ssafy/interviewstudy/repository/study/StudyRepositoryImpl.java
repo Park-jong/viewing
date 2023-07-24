@@ -4,7 +4,6 @@ import com.ssafy.interviewstudy.domain.study.CareerLevel;
 import com.ssafy.interviewstudy.domain.study.Company;
 import com.ssafy.interviewstudy.domain.study.Study;
 import lombok.RequiredArgsConstructor;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

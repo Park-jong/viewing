@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class StudyMember {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_member_id")
@@ -20,7 +23,7 @@ public class StudyMember {
 
     private Boolean isLeader;
 
-    @CreatedBy
+    @CreatedDate
     @Column(updatable = false)
     private LocalDateTime joinedAt;
 

@@ -68,7 +68,7 @@ public class Member {
     //게시판 댓글 작성자
     @OneToMany(mappedBy = "author")
     List<ArticleComment> articleCommentList = new ArrayList<>();
-    
+
     //게시글 좋아요 누른사람
     @OneToMany(mappedBy = "member")
     List<ArticleLike> articleLikeList = new ArrayList<>();
@@ -111,7 +111,7 @@ public class Member {
 
     //메세지 보낸 사람
     @OneToMany(mappedBy = "author")
-    List<Message> sentMeesageList = new ArrayList<>();
+    List<Message> sentMessageList = new ArrayList<>();
 
     //메세지 받은 사람
     @OneToMany(mappedBy="receiver")

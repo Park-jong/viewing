@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 const Container = styled.div`
-  width: 120px;
-  height: 50px;
+  width: ${(props) => `${props.width}px`};
+  height: ${(props) => `${props.height}px`};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,9 +10,23 @@ const Container = styled.div`
   color: var(--gray-50);
   font-weight: 500;
   border-radius: 15px;
-
+  font-size: ${(props) => `${props.fontSize}px`};
+  margin-right: ${(props) => `${props.marginRight}px`};
 `;
 
-export default function MainButton(props) {
-  return <Container>{props.content}</Container>
+export default function MainButton({
+  marginRight,
+  width,
+  height,
+  fontSize,
+  content,
+  onClick,
+}) {
+  return <Container 
+  onClick={onClick}
+  marginRight={marginRight}
+  width={width}
+  height={height}
+  fontSize={fontSize}
+  >{content}</Container>;
 }

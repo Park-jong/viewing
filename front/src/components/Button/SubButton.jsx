@@ -16,8 +16,6 @@ const Container = styled.div`
   cursor: pointer;
 `;
 
-export default function SubButton(props) {
-  const { content, onClick } = props;
-
-  return <Container onClick={onClick}>{content}</Container>;
+export default function SubButton({content, onClick}) {
+  return <Container onClick={onClick}>{content}</Container>
 }

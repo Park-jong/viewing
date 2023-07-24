@@ -1,16 +1,21 @@
 package com.ssafy.interviewstudy.domain.member;
 
+import com.ssafy.interviewstudy.domain.board.ArticleComment;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 //회원 정보 엔티티(소셜로그인으로 들어오는 사용자 모두)
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Member {
     @Id
@@ -56,6 +61,10 @@ public class Member {
     @Column(name = "registration_status")
     @Enumerated(EnumType.STRING)
     private RegistrationStatus registrationStatus;
+
+    @OneToMany(mappedBy = "author")
+    List<ArticleComment> articleCommentList = new ArrayList<>();
+
 
 
     public void nextRegistrationStatus(){

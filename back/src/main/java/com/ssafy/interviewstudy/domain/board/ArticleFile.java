@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.domain.board;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,13 @@ public class ArticleFile {
     private byte[] fileData;
     @Column(name = "file_type", nullable = false)
     private String fileType;
+
+    @Builder
+    public ArticleFile(Integer id, Board article, String originalFileName, byte[] fileData, String fileType) {
+        this.id = id;
+        this.article = article;
+        this.originalFileName = originalFileName;
+        this.fileData = fileData;
+        this.fileType = fileType;
+    }
 }

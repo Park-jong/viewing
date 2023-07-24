@@ -1,16 +1,19 @@
 package com.ssafy.interviewstudy.domain.board;
 
 import com.ssafy.interviewstudy.domain.member.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Entity
 @NoArgsConstructor
@@ -51,4 +54,14 @@ public abstract class Board {
 
     @OneToMany(mappedBy = "article")
     private List<ReportArticle> reports = new ArrayList<>();
+
+    public Board(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount) {
+        this.id = id;
+        this.author = author;
+        this.title = title;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.viewCount = viewCount;
+    }
 }

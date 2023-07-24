@@ -1,6 +1,7 @@
 package com.ssafy.interviewstudy.domain.board;
 
 import com.ssafy.interviewstudy.domain.member.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,11 @@ public class ArticleLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public ArticleLike(Integer id, Board article, Member member) {
+        this.id = id;
+        this.article = article;
+        this.member = member;
+    }
 }

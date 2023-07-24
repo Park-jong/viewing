@@ -1,17 +1,20 @@
 package com.ssafy.interviewstudy.domain.board;
 
 import com.ssafy.interviewstudy.domain.member.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Getter
 @Setter
@@ -54,4 +57,18 @@ public class ArticleComment {
 
     @OneToMany(mappedBy = "comment")
     private List<CommentLike> likes = new ArrayList<>();
+
+    @Builder
+    public ArticleComment(Integer id, Board article, Member author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isDelete, ArticleComment comment, List<ArticleComment> replies, List<CommentLike> likes) {
+        this.id = id;
+        this.article = article;
+        this.author = author;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.isDelete = isDelete;
+        this.comment = comment;
+        this.replies = replies;
+        this.likes = likes;
+    }
 }

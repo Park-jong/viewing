@@ -1,9 +1,11 @@
 package com.ssafy.interviewstudy.domain.board;
 
 import com.ssafy.interviewstudy.domain.member.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.relational.core.sql.In;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Entity
 @NoArgsConstructor
@@ -37,4 +40,14 @@ public class ReportArticle {
 
     @OneToMany(mappedBy = "reportArticle")
     private List<ReportReason> reasons = new ArrayList<>();
+
+    @Builder
+    public ReportArticle(Integer id, Board article, Member member, String reasonDirect, LocalDateTime reportedAt, List<ReportReason> reasons) {
+        this.id = id;
+        this.article = article;
+        this.member = member;
+        this.reasonDirect = reasonDirect;
+        this.reportedAt = reportedAt;
+        this.reasons = reasons;
+    }
 }

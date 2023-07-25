@@ -25,4 +25,9 @@ public class ConferenceAttendee {
     @JoinColumn(name = "attendee_id", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
     private Member attendee;
+
+    public ConferenceAttendee(ConferenceRoom conferenceRoom, Member attendee) {
+        this.conferenceRoom = conferenceRoom;
+        this.attendee = attendee;
+    }
 }

@@ -36,7 +36,7 @@ const CardContainer = styled(Link)`
   justify-content: center;
   align-items: center;
   background-color: ${(props) =>
-    props.isRead ? "var(--gray-200)" : "var(--gray-50)"};
+    props.$isRead ? "var(--gray-200)" : "var(--gray-50)"};
   border: 1px var(--gray-200) solid;
   text-decoration: none;
 
@@ -50,7 +50,7 @@ const CardContainer = styled(Link)`
 `;
 
 const CardTitle = styled.div`
-  color: ${(props) => (props.isRead ? "var(--gray-400)" : "var(--gray-700)")};
+  color: ${(props) => (props.$isRead ? "var(--gray-400)" : "var(--gray-700)")};
   font-weight: 500;
   font-size: 14px;
   word-wrap: break-word; /* Prevent text truncation and allow word wrapping */
@@ -123,10 +123,10 @@ export default function DropAlert() {
       </AlarmIcon>
       <DropdownMenu open={menuOpen}>
         {sortedAlertList.slice(0, showItems).map((alert, index) => (
-          <CardContainer key={index} isRead={alert.is_read}>
-            <CardTitle isRead={alert.is_read}>{alert.message}</CardTitle>
+          <CardContainer key={index} $isRead={alert.is_read}>
+            <CardTitle $isRead={alert.is_read}>{alert.message}</CardTitle>
             <br />
-            <CardDate isRead={alert.is_read}>{alert.created_at}</CardDate>
+            <CardDate $isRead={alert.is_read}>{alert.created_at}</CardDate>
           </CardContainer>
         ))}
         {sortedAlertList.length > showItems && (

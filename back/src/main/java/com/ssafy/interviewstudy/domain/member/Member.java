@@ -1,6 +1,7 @@
 package com.ssafy.interviewstudy.domain.member;
 
 import com.ssafy.interviewstudy.domain.board.*;
+import com.ssafy.interviewstudy.domain.calendar.Calendar;
 import com.ssafy.interviewstudy.domain.message.Message;
 import com.ssafy.interviewstudy.domain.study.*;
 import lombok.*;
@@ -126,6 +127,9 @@ public class Member {
     //메세지 받은 사람
     @OneToMany(mappedBy="receiver")
     List<Message> receivedMessageList = new ArrayList<>();
+
+    @OneToMany(mappedBy="author")
+    List<Calendar> calendarList = new ArrayList<>();
 
     public void nextRegistrationStatus(){
         if(this.registrationStatus==RegistrationStatus.SELECT_NICKNAME){

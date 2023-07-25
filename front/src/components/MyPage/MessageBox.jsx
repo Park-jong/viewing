@@ -46,12 +46,12 @@ const DateContainer = styled.div`
   font-weight: 100;
 `;
 
-export default function MessageBox({ name, title, date }) {
+export default function MessageBox({ message_id, name, title, date }) {
   return (
     <Container>
       <Checkbox />
       <NameContainer>{name}</NameContainer>
-      <TitleContainer>{title}</TitleContainer>
+      <TitleContainer to={`${message_id}`}>{title}</TitleContainer>
       <DateContainer>{date}</DateContainer>
     </Container>
   );

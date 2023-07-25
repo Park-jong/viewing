@@ -50,12 +50,11 @@ export default function MessageList() {
       {messages.map((message) => (
         <MessageBox
           key={message.message_id}
+         message_id={message.message_id} // Pass the message_id prop here
           name={message.author.nickname}
           title={message.title}
           date={message.created_at}
-        >
-          sdjflk
-        </MessageBox>
+        ></MessageBox>
       ))}
     </>
   );

@@ -45,10 +45,10 @@ public class ConferenceResponse {
         this.token = token;
     }
 
-    public ConferenceResponse(ConferenceRoom conferenceRoom, List<ConferenceAttendee> conferenceAttendeeList) {
+    public ConferenceResponse(ConferenceRoom conferenceRoom) {
         this.conferenceRoomId = conferenceRoom.getId();
         this.conferenceMemberList =
-                conferenceAttendeeList.stream()
+                conferenceRoom.getConferenceAttendeeList().stream()
                         .map((ConferenceAttendee ca) -> new conferenceMember(ca))
                         .collect(Collectors.toList());
     }

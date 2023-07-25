@@ -44,7 +44,7 @@ public class ConferenceService {
         ConferenceAttendee conferenceAttendee = new ConferenceAttendee(conferenceRoom, member);
         conferenceAttendeeRepository.save(conferenceAttendee);
 
-        return new ConferenceResponse(conferenceRoom, conferenceRoom.getConferenceAttendeeList());
+        return new ConferenceResponse(conferenceRoom);
     }
 
     public void exitConference(ConferenceExitRequest conferenceExitRequest) {

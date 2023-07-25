@@ -10,7 +10,6 @@ public interface MemberRepository extends JpaRepository<Member,Integer> {
 
     Member findUserByEmail(String email);
 
-
     Member findMemberByNickname(String nickname);
 
     //디버깅용

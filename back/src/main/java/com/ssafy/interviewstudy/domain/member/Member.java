@@ -33,11 +33,21 @@ public class Member {
     private String nickname;
 
     /* 유저 프로필 배경관련 필드 존재해야함
-            모자
             배경
             캐릭터
        프론트와 협의 필요
      */
+
+
+    //멤버 프로필 배경 색깔 기본값 설정 #9c209c
+    @Column(name="profile_background")
+    @Enumerated(EnumType.STRING)
+    MemberProfileBackground memberProfileBackground = MemberProfileBackground.COLOR_9c209c;
+
+    //멤버 프로필 캐릭터 동물 지정 기본값 해파리
+    @Column(name="profile_image")
+    @Enumerated(EnumType.STRING)
+    MemberProfileImage memberProfileImage = MemberProfileImage.jellyfish;
 
     //소셜로그인 OAuth2.0 관련 토큰 필드
     @Column(name= "access_token")
@@ -130,11 +140,20 @@ public class Member {
         this.nickname = nickname;
     }
 
+    public void changeMemberProfileBackground(MemberProfileBackground memberProfileBackground){
+        this.memberProfileBackground = memberProfileBackground;
+    }
+
+    public void changeMemberProfileImage(MemberProfileImage memberProfileImage){
+        this.memberProfileImage = memberProfileImage;
+    }
     @Builder
-    public Member(Integer memberId, String email, String nickname, String accessToken, LocalDateTime created_at, LocalDateTime last_login, MemberStatus status, LocalDateTime inactiveAt, RegistrationStatus registrationStatus) {
-        this.id = memberId;
+    public Member(Integer id, String email, String nickname, MemberProfileBackground memberProfileBackground, MemberProfileImage memberProfileImage, String accessToken, LocalDateTime created_at, LocalDateTime last_login, MemberStatus status, LocalDateTime inactiveAt, RegistrationStatus registrationStatus) {
+        this.id = id;
         this.email = email;
         this.nickname = nickname;
+        this.memberProfileBackground = memberProfileBackground;
+        this.memberProfileImage = memberProfileImage;
         this.accessToken = accessToken;
         this.created_at = created_at;
         this.last_login = last_login;

@@ -33,4 +33,10 @@ public class StudyChat {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
     private Study study;
+
+    public StudyChat(Study study, Member member, String content){
+        this.study = study;
+        this.author = member;
+        this.content = content;
+    }
 }

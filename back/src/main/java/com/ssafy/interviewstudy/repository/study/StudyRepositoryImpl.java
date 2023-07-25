@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,13 +22,11 @@ import static com.ssafy.interviewstudy.domain.study.QStudy.study;
 import static com.ssafy.interviewstudy.domain.study.QStudyTag.*;
 import static com.ssafy.interviewstudy.domain.study.QStudyTagType.*;
 
-@RequiredArgsConstructor
 @Repository
 public class StudyRepositoryImpl implements StudyRepositoryCustom{
 
-    EntityManager em;
-
-    JPAQueryFactory queryFactory;
+    private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
 
     @Autowired
     public StudyRepositoryImpl(EntityManager em) {
@@ -36,7 +35,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
     }
 
     @Override
-    //임시로 제작 수정 예정
+    //조건에 따라 study 검색 결과
     public Page<Study> findStudiesBySearch(Boolean isRecruit, Integer appliedCompany, String appliedJob, CareerLevel careerLevel, Pageable pageable) {
         List<Study> result = queryFactory.select(study).distinct()
                 .from(study)
@@ -65,26 +64,18 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
     }
 
     private BooleanExpression appliedCompanyEq(Integer appliedCompany){
-        if(appliedCompany != null)
-            return study.appliedCompany.id.eq(appliedCompany);
-        return null;
+        return appliedCompany != null ? study.appliedCompany.id.eq(appliedCompany) : null;
     }
 
     private BooleanExpression appliedJobLike(String appliedJob){
-        if(appliedJob != null && !appliedJob.isBlank())
-            return study.appliedJob.like("%"+appliedJob+"%");
-        return null;
+        return StringUtils.hasText(appliedJob) ? study.appliedJob.like("%"+appliedJob+"%") : null;
     }
 
     private BooleanExpression careerLevelEq(CareerLevel careerLevel){
-        if(careerLevel != null && careerLevel != CareerLevel.ALL)
-            return study.careerLevel.eq(careerLevel);
-        return null;
+        return careerLevel != null && careerLevel != CareerLevel.ALL ? study.careerLevel.eq(careerLevel) : null;
     }
 
     private BooleanExpression isRecruitTrue(Boolean isRecruit){
-        if(isRecruit != null)
-            return study.isRecruit.eq(true);
-        return null;
+        return isRecruit != null ? study.isRecruit.eq(true) : null;
     }
 }

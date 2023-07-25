@@ -33,4 +33,9 @@ public class StudyMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
     private Study study;
+
+    public StudyMember(Study study, Member member){
+        this.study = study;
+        this.member = member;
+    }
 }

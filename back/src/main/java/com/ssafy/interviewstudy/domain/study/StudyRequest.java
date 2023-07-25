@@ -1,6 +1,7 @@
 package com.ssafy.interviewstudy.domain.study;
 
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.dto.study.RequestDto;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -36,4 +37,10 @@ public class StudyRequest {
 
     @OneToMany(mappedBy = "request")
     private List<StudyRequestFile> studyRequestFiles = new ArrayList<>();
+
+    public StudyRequest(Study study, Member member, RequestDto requestDto){
+        this.study = study;
+        this.applicant = member;
+        this.introduction = requestDto.getContent();
+    }
 }

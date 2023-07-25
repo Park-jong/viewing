@@ -1,6 +1,6 @@
 package com.ssafy.interviewstudy.dto.study;
 
-import com.ssafy.interviewstudy.domain.study.Company;
+import com.ssafy.interviewstudy.domain.study.CareerLevel;
 import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.domain.study.StudyTag;
 import lombok.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @Data
-public class StudyResponse {
+public class StudyDtoResponse {
     private Integer studyId;
 
     private String title;
@@ -36,9 +36,11 @@ public class StudyResponse {
 
     private Leader leader;
 
+    private CareerLevel careerLevel;
+
     private List<String> tags = new ArrayList<>();
 
-    public StudyResponse(Study study){
+    public StudyDtoResponse(Study study){
         this.studyId = study.getId();
         this.title = study.getTitle();
         this.description = study.getDescription();
@@ -49,6 +51,7 @@ public class StudyResponse {
         this.deadline = study.getDeadline();
         this.isRecruit = study.getIsRecruit();
         this.leader = new Leader(study.getLeader());
+        this.careerLevel = study.getCareerLevel();
         List<StudyTag> tags = study.getStudyTags();
         for (StudyTag tag : tags) {
             this.tags.add(tag.getTag().getTagName());

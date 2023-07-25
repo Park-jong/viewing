@@ -476,4 +476,63 @@ class StudyTest {
 //        List<StudyCalendar> studyCalendersByStudy = studyCalendarRepository.findStudyCalendersByStudy(study);
 //        System.out.println(studyCalendersByStudy.size());
 //    }
+//    @Test
+//    public void findBySearch(){
+//        Study s1 = new Study();
+//        Study s2 = new Study();
+//        Study s3 = new Study();
+//        Study s4 = new Study();
+//        Study s5 = new Study();
+//        Study s6 = new Study();
+//
+//        s1.setIsRecruit(true);
+//        s2.setIsRecruit(true);
+//        s3.setIsRecruit(true);
+//        s4.setIsRecruit(true);
+//        s5.setIsRecruit(true);
+//        s6.setIsRecruit(true);
+//
+//        s1.setIsDelete(false);
+//        s2.setIsDelete(false);
+//        s3.setIsDelete(false);
+//        s4.setIsDelete(false);
+//        s5.setIsDelete(false);
+//        s6.setIsDelete(false);
+//
+//        StudyTag st1 = new StudyTag();
+//        StudyTagType stt = new StudyTagType();
+//        em.persist(st1);
+//        em.persist(stt);
+//        stt.setTagName("!");
+//        st1.setTag(stt);
+//        st1.setStudy(s1);
+//
+//
+//        em.persist(s1);
+//        em.persist(s2);
+//        em.persist(s3);
+//        em.persist(s4);
+//        em.persist(s5);
+//        em.persist(s6);
+//
+//        Company c1 = new Company();
+//
+//        em.persist(c1);
+//
+//        s1.setAppliedCompany(c1);
+//        s2.setAppliedCompany(c1);
+//        s3.setAppliedCompany(c1);
+//        s4.setAppliedCompany(c1);
+//
+//        em.flush();
+//        em.clear();
+//
+//        List<Study> result = studyRepository.findStudiesBySearch(null,null, null, null);
+//
+//        Assertions.assertThat(result.size()).isEqualTo(6);
+//
+//        result = studyRepository.findStudiesBySearch(true, c1.getId(), null, null);
+//        Assertions.assertThat(result.size()).isEqualTo(4);
+//
+//    }
 }

@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Integer> {
 
     //멤버 수 카운팅
@@ -15,11 +18,31 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Intege
 
     //스터디 탈퇴
     @Modifying(clearAutomatically = true)
-    @Query("delete from StudyMember sm where sm.study.id = :study_id and sm.member.id = :member_id")
-    public void deleteStudyMemberId(@Param("study_id") Integer studyId, @Param("member_id") Integer memberId);
+    public void deleteStudyMemberByStudyIdAndMemberId(Integer studyId, Integer memberId);
 
     //스터디 탈퇴
     @Modifying(clearAutomatically = true)
-    @Query("delete from StudyMember sm where sm.study = :study and sm.member = :member")
-    public void deleteStudyMember(@Param("study") Study study, @Param("member") Member member);
+    public void deleteStudyMemberByStudyAndMember(Study study, Member member);
+
+    //스터디 멤버인지
+    public Optional<StudyMember> findByStudyAndMember(Study study, Member member);
+
+    //스터디 멤버 목록
+    @Query("select sm.member from StudyMember sm join sm.member m where sm.study.id = :studyId")
+    public List<Member> findMembersByStudyId(@Param("studyId") Integer studyId);
+
+    //스터디 멤버 목록
+    @Query("select sm.member from StudyMember sm join sm.member m where sm.study = :study")
+    public List<Member> findMembersByStudy(@Param("study") Study study);
+
+    //스터디 삭제 시
+    @Modifying(clearAutomatically = true)
+    @Query("delete from StudyMember sm where sm.study.id = :id")
+    public void deleteStudyMemberByStudyId(@Param("id") Integer studyId);
+
+    //스터디 삭제 시
+    @Modifying(clearAutomatically = true)
+    @Query("delete from StudyMember sm where sm.study = :study")
+    public void deleteStudyMemberByStudy(@Param("study")Study study);
+
 }

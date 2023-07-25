@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.domain.study;
 
+import com.ssafy.interviewstudy.dto.study.RequestFile;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,4 +24,10 @@ public class StudyRequestFile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_request_id")
     private StudyRequest request;
+
+    public StudyRequestFile(RequestFile requestFile, StudyRequest studyRequest){
+        this.request = studyRequest;
+        this.fileData = requestFile.getFileData();
+        this.originalFileName = requestFile.getName();
+    }
 }

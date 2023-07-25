@@ -2,16 +2,22 @@ package com.ssafy.interviewstudy.service.message;
 
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.message.Message;
+import com.ssafy.interviewstudy.dto.message.MessageCreatedResponse;
 import com.ssafy.interviewstudy.dto.message.MessageListResponse;
 import com.ssafy.interviewstudy.dto.message.MessageSendRequest;
+import com.ssafy.interviewstudy.exception.message.CreationFailException;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.message.MessageRepository;
 import com.ssafy.interviewstudy.dto.message.MessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.util.List;
 
 @Service
@@ -36,6 +42,7 @@ public class MessageService {
     @Transactional
     public MessageDto getMessageDetail(Integer messageId) {
         Message message = messageRepository.findMessageById(messageId);
+        if(message==null) throw new NotFoundException("쪽지");
         message.readMessage();
         return MessageDto.fromEntity(message);
     }
@@ -56,12 +63,17 @@ public class MessageService {
 
     //쪽지 보내기
     @Transactional
-    public Integer sendMessage(MessageSendRequest messageSendRequest){
+    public MessageCreatedResponse sendMessage(MessageSendRequest messageSendRequest){
         Member author = memberRepository.findMemberById(messageSendRequest.getAuthorId());
         Member receiver = memberRepository.findMemberById(messageSendRequest.getReceiverId());
+        if(author==null || receiver==null) throw new CreationFailException("쪽지");
+
         Message message = MessageSendRequest.toEntity(messageSendRequest,author,receiver);
         messageRepository.save(message);
-        return message.getId();
+        System.out.println(message);
+        if(message.getId()==null) throw new CreationFailException("쪽지");
+
+        return new MessageCreatedResponse(message.getId());
     }
 
     //쪽지 삭제

@@ -1,6 +1,7 @@
 package com.ssafy.interviewstudy.dto.message;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.message.Message;
 import lombok.Data;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageDto {
 
     //메세지 PK

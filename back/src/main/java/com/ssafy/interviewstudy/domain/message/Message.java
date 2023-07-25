@@ -4,6 +4,7 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,6 +30,8 @@ public class Message {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @ColumnDefault("false")
+    @Column(name="is_read",insertable = false)
     private Boolean isRead=false;
 
     @ManyToOne(fetch = FetchType.LAZY)

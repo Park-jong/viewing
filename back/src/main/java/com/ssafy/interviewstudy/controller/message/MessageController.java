@@ -1,13 +1,17 @@
 package com.ssafy.interviewstudy.controller.message;
 
+import com.ssafy.interviewstudy.dto.message.MessageCreatedResponse;
 import com.ssafy.interviewstudy.dto.message.MessageDto;
 import com.ssafy.interviewstudy.dto.message.MessageListResponse;
 import com.ssafy.interviewstudy.dto.message.MessageSendRequest;
 import com.ssafy.interviewstudy.service.message.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -53,9 +57,16 @@ public class MessageController {
 
     //쪽지 보내기
     @PostMapping
-    public ResponseEntity<?> sendMessage(@RequestBody MessageSendRequest messageSendRequest){
-        Integer messageId = messageService.sendMessage(messageSendRequest);
-        if(messageId==null) return ResponseEntity.internalServerError().build();
-        return ResponseEntity.created(URI.create("/messages/"+messageId)).build();
+    public ResponseEntity<?> sendMessage(@Valid @RequestBody MessageSendRequest messageSendRequest){
+        MessageCreatedResponse messageCreatedResponse;
+        try{
+            messageCreatedResponse = messageService.sendMessage(messageSendRequest);
+        }
+        catch(ConstraintViolationException ce){
+            //쪽지 생성 실패
+            return ResponseEntity.internalServerError().body("쪽지 보내기 실패");
+        }
+       return ResponseEntity.created(URI.create("/messages/"+messageCreatedResponse.getMessageId()))
+               .body(messageCreatedResponse);
     }
 }

@@ -20,7 +20,7 @@ public interface StudyRequestRepository extends JpaRepository<StudyRequest, Inte
     @Query("select distinct sr from StudyRequest sr join fetch sr.applicant left join fetch sr.studyRequestFiles where sr.id = :id")
     public Optional<StudyRequest> findStudyRequestById(@Param("id") Integer id);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     public void deleteStudyRequestById(Integer id);
 
     @Query("select sr from StudyRequest sr join fetch sr.applicant join fetch sr.study where sr.id = :id")

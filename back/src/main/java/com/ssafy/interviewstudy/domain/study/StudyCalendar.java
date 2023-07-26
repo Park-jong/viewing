@@ -1,6 +1,7 @@
 package com.ssafy.interviewstudy.domain.study;
 
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.dto.study.StudyCalendarDtoRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,4 +30,18 @@ public class StudyCalendar {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
     private Study study;
+
+    public StudyCalendar(Study study, Member member, StudyCalendarDtoRequest studyCalendarDtoRequest){
+        this.study = study;
+        this.author = member;
+        this.startedAt = studyCalendarDtoRequest.getStartedAt();
+        this.endedAt = studyCalendarDtoRequest.getEndedAt();
+        this.description = studyCalendarDtoRequest.getDescription();
+    }
+
+    public void updateCalendar(StudyCalendarDtoRequest studyCalendarDtoRequest) {
+        this.startedAt = studyCalendarDtoRequest.getStartedAt();
+        this.endedAt = studyCalendarDtoRequest.getEndedAt();
+        this.description = studyCalendarDtoRequest.getDescription();
+    }
 }

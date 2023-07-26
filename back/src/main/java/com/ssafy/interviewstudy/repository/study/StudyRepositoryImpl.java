@@ -72,7 +72,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
     }
 
     private BooleanExpression careerLevelEq(CareerLevel careerLevel){
-        return careerLevel != null && careerLevel != CareerLevel.ALL ? study.careerLevel.eq(careerLevel) : null;
+        return (careerLevel != null && careerLevel != CareerLevel.ALL) ? study.careerLevel.eq(careerLevel) : null;
     }
 
     private BooleanExpression isRecruitTrue(Boolean isRecruit){

@@ -1,5 +1,8 @@
 package com.ssafy.interviewstudy.dto.study;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ssafy.interviewstudy.domain.study.CareerLevel;
 import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.domain.study.StudyTag;
@@ -13,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @Data
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class StudyDtoResponse {
     private Integer studyId;
 
@@ -28,8 +32,10 @@ public class StudyDtoResponse {
 
     private int headCount;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdAt;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deadline;
 
     private boolean isRecruit;

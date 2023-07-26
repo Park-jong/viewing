@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.dto.study;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ssafy.interviewstudy.domain.study.StudyRequestFile;
 import lombok.*;
 
@@ -7,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @Data
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class RequestFile {
     private String name;
     private byte[] fileData;

@@ -28,17 +28,30 @@ public class StudyService {
     private final StudyTagTypeRepository studyTagTypeRepository;
     private final StudyRequestRepository studyRequestRepository;
     private final StudyRequestFileRepository studyRequestFileRepository;
+    private final StudyChatRepository studyChatRepository;
+    private final StudyCalendarRepository studyCalendarRepository;
+
 
 
     //내 스터디 조회
-    public List<Study> findMyStudies(Integer id){
-        return studyRepository.findStudiesByMember(memberRepository.findById(id).get());
+    public List<StudyDtoResponse> findMyStudies(Integer id){
+        List<Study> studies = studyRepository.findStudiesByMember(memberRepository.findById(id).get());
+        List<StudyDtoResponse> result = new ArrayList<>();
+        for (Study study : studies) {
+            result.add(new StudyDtoResponse(study));
+        }
+        return result;
     }
 
     //내가 찜한 스터디 조회
-    public List<Study> findBookmarkStudies(Integer id){
-        return studyRepository.findBookmarksByMember(memberRepository.findById(id).get());
-    }
+    public List<StudyDtoResponse> findBookmarkStudies(Integer id){
+        List<Study> studies = studyRepository.findBookmarksByMember(memberRepository.findById(id).get());
+        List<StudyDtoResponse> result = new ArrayList<>();
+        for (Study study : studies) {
+            result.add(new StudyDtoResponse(study));
+        }
+        return result;    }
+
 
     //스터디 정보 조회
     public StudyDtoResponse findStudyById(Integer id){
@@ -83,7 +96,7 @@ public class StudyService {
             studyTagRepository.save(st);
         }
 
-        StudyMember studyMember = new StudyMember(study, leader);
+        com.ssafy.interviewstudy.domain.study.StudyMember studyMember = new com.ssafy.interviewstudy.domain.study.StudyMember(study, leader);
         studyMemberRepository.save(studyMember);
 
         return study.getId();
@@ -139,7 +152,7 @@ public class StudyService {
         List<RequestDtoResponse> result = new ArrayList<>();
 
         for (StudyRequest request : requests) {
-            Author user = new Author(request.getApplicant());
+            StudyMemberDto user = new StudyMemberDto(request.getApplicant());
             RequestDtoResponse response = new RequestDtoResponse(request.getId(), user, request.getIntroduction(), request.getRequestedAt(), null);
             result.add(response);
         }
@@ -154,7 +167,7 @@ public class StudyService {
         for (StudyRequestFile file : files) {
             reponseFiles.add(new RequestFile(file));
         }
-        return new RequestDtoResponse(request.getId(), new Author(request.getApplicant()), request.getIntroduction(), request.getRequestedAt(), reponseFiles);
+        return new RequestDtoResponse(request.getId(), new StudyMemberDto(request.getApplicant()), request.getIntroduction(), request.getRequestedAt(), reponseFiles);
     }
 
     //가입 신청 승인
@@ -162,7 +175,7 @@ public class StudyService {
     public void permitRequest(Integer requestId){
         StudyRequest studyRequest = studyRequestRepository.findStudyAndMemberById(requestId).get();
         deleteRequest(requestId);
-        StudyMember sm = new StudyMember(studyRequest.getStudy(), studyRequest.getApplicant());
+        com.ssafy.interviewstudy.domain.study.StudyMember sm = new com.ssafy.interviewstudy.domain.study.StudyMember(studyRequest.getStudy(), studyRequest.getApplicant());
         studyMemberRepository.save(sm);
     }
 
@@ -193,31 +206,57 @@ public class StudyService {
     }
 
     //스터디원 목록 확인
-    public List<Author> findStudyMembers(Integer studyId){
-        List<Member> members = studyMemberRepository.findMembersByStudyId(studyId);
-        List<Author> result = new ArrayList<>();
-        for (Member member : members) {
-            result.add(new Author(member));
-        }
+    public List<StudyMemberDto> findStudyMembers(Integer studyId){
+        List<StudyMemberDto> result = studyMemberRepository.findMembersByStudyId(studyId);
         return result;
     }
 
     //스터디 실시간 채팅 작성
+    @Transactional
     public void addChat(Integer studyId, ChatRequest chat){
         Member member = memberRepository.findById(chat.getUserId()).get();
         Study study = studyRepository.findById(studyId).get();
         StudyChat studyChat = new StudyChat(study, member, chat.getContent());
+        studyChatRepository.save(studyChat);
     }
 
     //스터디 실시간 채팅 조회
+    public List<ChatResponse> findStudyChats(Integer lastChatId, Integer studyId){
+        return studyChatRepository.findNewStudyChatsById(studyId, lastChatId == null ? 0 : lastChatId);
+    }
+
+    //이전 채팅 보기
 
     //스터디 일정 조회
+    public List<StudyCalendarDtoResponse> findStudyCalenarByStudy(Integer studyId){
+        Study study = studyRepository.findById(studyId).get();
+        return studyCalendarRepository.findStudyCalendersByStudy(study);
+    }
 
     //스터디 일정 추가
+    @Transactional
+    public void addStudyCalendar(Integer studyId, StudyCalendarDtoRequest studyCalendarDtoRequest){
+        Study study = studyRepository.findById(studyId).get();
+        Member member = memberRepository.findById(studyCalendarDtoRequest.getAuthorId()).get();
+        StudyCalendar studyCalendar = new StudyCalendar(study, member, studyCalendarDtoRequest);
+        studyCalendarRepository.save(studyCalendar);
+    }
+
 
     //스터디 일정 수정
+    @Transactional
+    public void modifyStudyCalendar(Integer studyId, Integer studyCalendarId, StudyCalendarDtoRequest studyCalendarDtoRequest){
+        StudyCalendar studyCalendar = studyCalendarRepository.findById(studyCalendarId).get();
+        studyCalendar.updateCalendar(studyCalendarDtoRequest);
+    }
+
 
     //스터디 일정 삭제
+    @Transactional
+    public void removeStudyCalendar(Integer studyId, Integer calendarId){
+        studyCalendarRepository.deleteById(calendarId);
+    }
+
 
 
     private StudyDtoResponse studyToResponse(Study study){

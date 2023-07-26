@@ -51,18 +51,19 @@ class StudyServiceTest {
     @Autowired
     StudyRequestRepository studyRequestRepository;
 
-    @Test
+    @BeforeEach
     public void init(){
         Company c = Company.builder().name("삼성").build();
         em.persist(c);
         Company c2 = Company.builder().name("LG").build();
         em.persist(c2);
 
-        Study study1 = Study.builder().title("test1").appliedCompany(c).isRecruit(true).isDelete(false).appliedJob("개발").build();
+        Study study1 = Study.builder().title("test1").appliedCompany(c).isRecruit(true).appliedJob("개발").build();
         Study study2 = Study.builder().title("test2").appliedCompany(c).isRecruit(true).isDelete(false).appliedJob("it").build();
         Study study3 = Study.builder().title("test3").appliedCompany(c).isRecruit(false).isDelete(false).appliedJob("it").build();
         Study study4 = Study.builder().title("test4").appliedCompany(c2).isRecruit(true).isDelete(false).appliedJob("개발").build();
         Study study5 = Study.builder().title("test5").appliedCompany(c2).isRecruit(false).isDelete(false).appliedJob("개발").build();
+
 //        Study study6 = Study.builder().title("test4").appliedCompany(c2).isRecruit(true).isDelete(false).build();
 //        Study study7 = Study.builder().title("test4").appliedCompany(c2).isRecruit(true).isDelete(false).build();
 //        Study study8 = Study.builder().title("test4").appliedCompany(c2).isRecruit(true).isDelete(false).build();
@@ -79,6 +80,7 @@ class StudyServiceTest {
         studyRepository.save(study3);
         studyRepository.save(study4);
         studyRepository.save(study5);
+
 //        studyRepository.save(study6);
 //        studyRepository.save(study7);
 //        studyRepository.save(study8);
@@ -127,16 +129,16 @@ class StudyServiceTest {
         memberRepository.save(member3);
         memberRepository.save(member4);
 
-        StudyMember sm1 = StudyMember.builder().study(study1).member(member1).build();
-        StudyMember sm2 = StudyMember.builder().study(study1).member(member2).build();
-        StudyMember sm3 = StudyMember.builder().study(study1).member(member3).build();
-        StudyMember sm4 = StudyMember.builder().study(study1).member(member4).build();
-        StudyMember sm5 = StudyMember.builder().study(study2).member(member1).build();
-        StudyMember sm6 = StudyMember.builder().study(study2).member(member2).build();
-        StudyMember sm7 = StudyMember.builder().study(study3).member(member3).build();
-        StudyMember sm8 = StudyMember.builder().study(study3).member(member4).build();
-        StudyMember sm9 = StudyMember.builder().study(study4).member(member2).build();
-        StudyMember sm10 = StudyMember.builder().study(study5).member(member4).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm1 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study1).member(member1).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm2 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study1).member(member2).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm3 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study1).member(member3).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm4 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study1).member(member4).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm5 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study2).member(member1).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm6 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study2).member(member2).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm7 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study3).member(member3).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm8 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study3).member(member4).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm9 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study4).member(member2).build();
+        com.ssafy.interviewstudy.domain.study.StudyMember sm10 = com.ssafy.interviewstudy.domain.study.StudyMember.builder().study(study5).member(member4).build();
 
         studyMemberRepository.save(sm1);
         studyMemberRepository.save(sm2);
@@ -152,6 +154,22 @@ class StudyServiceTest {
 
         em.flush();
         em.clear();
+    }
+
+    @Test
+    public void findMyStudyTest(){
+        List<StudyDtoResponse> myStudies = studyService.findMyStudies(1);
+        for (StudyDtoResponse myStudy : myStudies) {
+            System.out.println(myStudy);
+        }
+    }
+
+    @Test
+    public void findBookmarkTest(){
+        List<StudyDtoResponse> myStudies = studyService.findBookmarkStudies(1);
+        for (StudyDtoResponse myStudy : myStudies) {
+            System.out.println(myStudy);
+        }
     }
 
     @Test
@@ -212,7 +230,7 @@ class StudyServiceTest {
         em.flush();
         em.clear();
 
-        List<Member> result = studyMemberRepository.findMembersByStudyId(id);
+        List<StudyMemberDto> result = studyMemberRepository.findMembersByStudyId(id);
         Assertions.assertEquals(result.get(0).getId(), m.getId());
     }
 
@@ -319,8 +337,58 @@ class StudyServiceTest {
     }
     @Test
     public void memberListTest(){
-        List<Author> result = studyService.findStudyMembers(1);
+        List<StudyMemberDto> result = studyService.findStudyMembers(1);
         System.out.println(result);
+
+    }
+
+    @Test
+    public void studyChatTest(){
+        ChatRequest cr1 = ChatRequest.builder().userId(1).content("내용1").build();
+        ChatRequest cr2 = ChatRequest.builder().userId(2).content("내용2").build();
+        ChatRequest cr3 = ChatRequest.builder().userId(1).content("내용3").build();
+        ChatRequest cr4 = ChatRequest.builder().userId(2).content("내용4").build();
+        studyService.addChat(1, cr1);
+        studyService.addChat(1, cr2);
+        studyService.addChat(1, cr3);
+        studyService.addChat(1, cr4);
+
+        List<ChatResponse> studyChats = studyService.findStudyChats(null, 1);
+
+        Assertions.assertEquals(studyChats.size(), 4);
+
+        ChatRequest cr5 = ChatRequest.builder().userId(1).content("내용1").build();
+        ChatRequest cr6 = ChatRequest.builder().userId(1).content("내용1").build();
+        ChatRequest cr7 = ChatRequest.builder().userId(1).content("내용1").build();
+
+        studyService.addChat(1, cr5);
+        studyService.addChat(1, cr6);
+        studyService.addChat(1, cr7);
+
+        List<ChatResponse> studyChats1 = studyService.findStudyChats(4, 1);
+
+        Assertions.assertEquals(studyChats1.size(), 3);
+
+    }
+
+    @Test
+    public void calendarTest(){
+        studyService.addStudyCalendar(1, StudyCalendarDtoRequest.builder().authorId(1).build());
+        studyService.addStudyCalendar(1, StudyCalendarDtoRequest.builder().authorId(1).build());
+        studyService.addStudyCalendar(1, StudyCalendarDtoRequest.builder().authorId(1).build());
+        studyService.addStudyCalendar(1, StudyCalendarDtoRequest.builder().authorId(1).build());
+
+        List<StudyCalendarDtoResponse> result = studyService.findStudyCalenarByStudy(1);
+
+        studyService.modifyStudyCalendar(1, 1, StudyCalendarDtoRequest.builder().authorId(1).description("12345").build());
+
+        studyService.removeStudyCalendar(1, 2);
+
+        List<StudyCalendarDtoResponse> result2 = studyService.findStudyCalenarByStudy(1);
+
+        for (StudyCalendarDtoResponse studyCalendarDtoResponse : result2) {
+            System.out.println(studyCalendarDtoResponse);
+        }
 
     }
 }

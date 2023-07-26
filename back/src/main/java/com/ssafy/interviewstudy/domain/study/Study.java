@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.domain.study;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.study.StudyDtoRequest;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -39,9 +40,13 @@ public class Study {
 
     private LocalDateTime deadline;
 
-    private Boolean isRecruit;
+    @ColumnDefault("false")
+    @Builder.Default
+    private Boolean isRecruit = false;
 
-    private Boolean isDelete;
+    @ColumnDefault("false")
+    @Builder.Default
+    private Boolean isDelete = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id")
@@ -99,5 +104,9 @@ public class Study {
         this.capacity = studyDtoRequest.getCapacity();
         this.deadline = studyDtoRequest.getDeadline();
         this.isRecruit = studyDtoRequest.isRecruit();
+    }
+
+    public void switchRecruit(boolean isRecruit){
+        this.isRecruit = isRecruit;
     }
 }

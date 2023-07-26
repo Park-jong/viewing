@@ -20,7 +20,7 @@ public class StudyBoard extends Board{
     private Study study;
 
     @Builder
-    public StudyBoard(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount) {
-        super(id, author, title, content, createdAt, updatedAt, viewCount);
+    public StudyBoard(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        super(id, author, title, content, createdAt, updatedAt);
     }
 }

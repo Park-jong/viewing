@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @PrimaryKeyJoinColumn(name = "article_id")
 public class QuestionBoard extends Board{
     @Builder
-    public QuestionBoard(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount) {
-        super(id, author, title, content, createdAt, updatedAt, viewCount);
+    public QuestionBoard(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        super(id, author, title, content, createdAt, updatedAt);
     }
 }

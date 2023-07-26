@@ -4,6 +4,7 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,7 +26,7 @@ public abstract class Board {
     @Column(name = "article_id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Member author;
     @Column(name = "title", nullable = false)
@@ -40,7 +41,8 @@ public abstract class Board {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(name = "view_count", nullable = false)
+    @ColumnDefault("0")
+    @Column(name = "view_count", insertable = false)
     private Integer viewCount;
 
     @OneToMany(mappedBy = "article")
@@ -55,13 +57,12 @@ public abstract class Board {
     @OneToMany(mappedBy = "article")
     private List<ReportArticle> reports = new ArrayList<>();
 
-    public Board(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount) {
+    public Board(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.author = author;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.viewCount = viewCount;
     }
 }

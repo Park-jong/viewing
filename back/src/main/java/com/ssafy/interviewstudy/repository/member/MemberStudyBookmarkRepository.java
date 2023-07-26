@@ -8,8 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface MemberStudyBookmarkRepository extends JpaRepository<Study,Integer> {
+public interface MemberStudyBookmarkRepository extends JpaRepository<StudyBookmark,Integer> {
 
     @Query("select s from Study s inner join s.studyBookmarks sb where sb.member.id = :id")
     public List<Study> getBookmarkedStudyByMemberId(@Param("id") Integer memberId);
+
+    public StudyBookmark findStudyBookmarkByStudyIdAndMemberId(Integer studyID,Integer memberId);
+
+    public Integer deleteStudyBookmarkByStudyIdAndMemberId(Integer studyID,Integer memberId);
 }

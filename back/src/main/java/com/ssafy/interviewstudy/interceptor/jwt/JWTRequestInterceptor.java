@@ -1,6 +1,6 @@
 package com.ssafy.interviewstudy.interceptor.jwt;
 
-import com.ssafy.interviewstudy.dto.member.JWTMemberInfo;
+import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.util.JWTProvider;
 import com.ssafy.interviewstudy.util.JWTProviderImpl;
 import com.ssafy.interviewstudy.util.JWTResponseType;

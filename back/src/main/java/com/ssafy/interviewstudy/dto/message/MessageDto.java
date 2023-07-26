@@ -2,8 +2,8 @@ package com.ssafy.interviewstudy.dto.message;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.message.Message;
+import com.ssafy.interviewstudy.dto.common.memberDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
@@ -30,10 +30,10 @@ public class MessageDto {
     private Boolean isRead;
 
     //메세지 쓴 사람
-    private messageMember author;
+    private memberDto author;
 
     //메세지 받은 사람
-    private messageMember receiver;
+    private memberDto receiver;
 
     //엔티티로 부터 메시지 조회 응답 dto 생성
     public static MessageDto fromEntityWithoutContent(Message message){
@@ -44,14 +44,14 @@ public class MessageDto {
         messageDetailResponse.setCreatedAt(message.getCreatedAt());
         messageDetailResponse.setIsRead(message.getIsRead());
         messageDetailResponse.setAuthor(
-                messageMember.builder()
+                memberDto.builder()
                         .id(message.getAuthor().getId())
                         .background(message.getAuthor().getMemberProfileBackground())
                         .character(message.getAuthor().getMemberProfileImage())
                         .build()
         );
         messageDetailResponse.setReceiver(
-                messageMember.builder()
+                memberDto.builder()
                         .id(message.getReceiver().getId())
                         .background(message.getReceiver().getMemberProfileBackground())
                         .character(message.getReceiver().getMemberProfileImage())

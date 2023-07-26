@@ -34,34 +34,34 @@ public class OauthUriSupport {
     //Oauth 2.0 클라이언트ID
     public static String getClientId(SocialLoginType socialLoginType){
         if(socialLoginType==SocialLoginType.kakao){
-            return "a684cbf16b718d9b4f5ab2006f679570";
+            return "2869d34ce0755e095b7d39e5eb3aeafb";
         }
         if(socialLoginType==SocialLoginType.google){
-            return "305569629426-vuadrf7g4tu5akoin7mu5faahukm2jhe.apps.googleusercontent.com";
+            return "249028033375-3q56vn82p2jku86es16u191kflqp6p1o.apps.googleusercontent.com";
         }
         if(socialLoginType==SocialLoginType.github){
-            return "df9877e05a0df7be700b";
+            return "849f92ca3e7a5a3a76da";
         }
         //기본 카카오
-        return "a684cbf16b718d9b4f5ab2006f679570";
+        return "2869d34ce0755e095b7d39e5eb3aeafb";
     }
 
     public static String getRedirectUri(SocialLoginType socialLoginType){
-        return "http://localhost:8080/oauth/"+socialLoginType.toString();
+        return "http://localhost:3000/login/"+socialLoginType.toString();
     }
 
     public static String getClientSecret(SocialLoginType socialLoginType){
         if(socialLoginType==SocialLoginType.kakao){
-            return "txNZUThxM2ot63rNm0eJwqGVifYqpA8m";
+            return "mGDziiY3mWQqXCxnCR2quFwTBqBO4hTh";
         }
         if(socialLoginType==SocialLoginType.google){
-            return "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";
+            return "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";
         }
         if(socialLoginType==SocialLoginType.github){
-            return "cb66d9ea480ffd1ea7a218c2eb6f7cb5ae335785";
+            return "0afdf2454c32470bfc1360d72daadbf74075b1c8";
         }
         //기본 카카오
-        return "txNZUThxM2ot63rNm0eJwqGVifYqpA8m";
+        return "mGDziiY3mWQqXCxnCR2quFwTBqBO4hTh";
     }
 
     public static String getMemberInfoUri(SocialLoginType socialLoginType){

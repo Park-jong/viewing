@@ -3,7 +3,8 @@ package com.ssafy.interviewstudy.controller.member;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.member.MemberStatus;
 import com.ssafy.interviewstudy.domain.member.RegistrationStatus;
-import com.ssafy.interviewstudy.dto.member.JWTMemberInfo;
+import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
+import com.ssafy.interviewstudy.dto.member.jwt.JWTToken;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.support.member.*;
 import com.ssafy.interviewstudy.util.JWTProvider;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 
 @RestController
+@CrossOrigin(origins="*")
 public class MemberController {
 
     private MemberService memberService;
@@ -91,9 +93,12 @@ public class MemberController {
             responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.home));
             return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
         }
+
+        System.out.println("이메일 : "+memberInfoResult.getEmail());
         //이메일롷 현재 멤버 찾아보기
         Member currentMember = memberService.findByEmail(memberInfoResult.getEmail());
 
+        System.out.println(currentMember);
 
         //이미 가입한 유저일때 이 부분을 인터셉터로 확인해야함
         //그냥 JWT토큰 쥐어주고 리다이렉트 시키자
@@ -101,29 +106,30 @@ public class MemberController {
             HttpHeaders responseHttpHeaders = new HttpHeaders();
             JWTProvider jwtProvider = new JWTProviderImpl();
             //jwt 토큰 세팅
-            responseHttpHeaders.setBearerAuth(
+            JWTToken jwtToken = JWTToken.builder().accessToken(
                     jwtProvider.provideToken(JWTMemberInfo.
                             builder().
                             memberId(currentMember.getId()).
                             email(currentMember.getEmail()).
                             build()
                     )
-            );
-            //이미 가입했으면 거기로 리다이렉트 하면댐
-            if(currentMember.getRegistrationStatus()==RegistrationStatus.FINISHED){
-                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.home));
-                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
-            }
-            //가입된 유저가 닉네임을 입력안했을때
-            else if(currentMember.getRegistrationStatus()==RegistrationStatus.SELECT_NICKNAME){
-                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.selectNickname));
-                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
-            }
-            //가입된 유저가 프로필 안골랐을때
-            else{
-                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.selectProfile));
-                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
-            }
+            ).build();
+            return ResponseEntity.ok().body(jwtToken);
+//            //이미 가입했으면 거기로 리다이렉트 하면댐
+//            if(currentMember.getRegistrationStatus()==RegistrationStatus.FINISHED){
+//                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.home));
+//                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
+//            }
+//            //가입된 유저가 닉네임을 입력안했을때
+//            else if(currentMember.getRegistrationStatus()==RegistrationStatus.SELECT_NICKNAME){
+//                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.selectNickname));
+//                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
+//            }
+//            //가입된 유저가 프로필 안골랐을때
+//            else{
+//                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.selectProfile));
+//                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
+//            }
         }
         //가입한 유저가 아닐때
         Member registeredMember = Member.builder()
@@ -139,9 +145,19 @@ public class MemberController {
 
         //닉네임 고르러 가즈아
         //내가 리다이렉트 시키는게 맞는지 생각
+
         HttpHeaders responseHttpHeaders = new HttpHeaders();
-        responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.selectNickname));
-        return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
+        JWTProvider jwtProvider = new JWTProviderImpl();
+        //jwt 토큰 세팅
+        JWTToken jwtToken = JWTToken.builder().accessToken(
+                jwtProvider.provideToken(JWTMemberInfo.
+                        builder().
+                        memberId(registeredMember.getId()).
+                        email(registeredMember.getEmail()).
+                        build()
+                )
+        ).build();
+        return ResponseEntity.ok().body(jwtToken);
     }
 
     @GetMapping("/login/nickname/check/{nickname}")

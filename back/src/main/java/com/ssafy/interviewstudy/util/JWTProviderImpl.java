@@ -1,6 +1,6 @@
 package com.ssafy.interviewstudy.util;
 
-import com.ssafy.interviewstudy.dto.member.JWTMemberInfo;
+import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.ssafy.interviewstudy.dto.member;
+package com.ssafy.interviewstudy.dto.member.jwt;
 
 import lombok.Builder;
 import lombok.Getter;

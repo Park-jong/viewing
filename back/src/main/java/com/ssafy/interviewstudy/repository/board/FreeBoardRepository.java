@@ -30,4 +30,5 @@ public interface FreeBoardRepository extends JpaRepository<FreeBoard, Integer> {
     // 내가 쓴 글 조회
     @Query("select b from FreeBoard b where b.author.id = :memberId")
     Page<FreeBoard> findByMemberId(Integer memberId, Pageable pageable);
+
 }

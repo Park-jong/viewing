@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface ArticleCommentRepository extends JpaRepository<ArticleComment, Integer> {
     List<ArticleComment> findAllByArticle(Board article);
+
+    // 글마다 댓글 수 count
+    Integer countByArticle(Board article);
 }

@@ -20,6 +20,18 @@ const GlobalVariableStyle = createGlobalStyle`
   --gray-900: #111827;
   --gray-1000: #030712;
 
+  //profile background color
+  --bg1:#ff6767;
+  --bg2:#a5ffa5;
+  --bg3:#a9a9ff;
+  --bg4:#ff76f6;
+  --bg5:#ffff9e;
+  --bg6:#93ffff;
+  --bg7:#9c209c;
+  --bg8:#ffa600;
+  --bg9:#058e00;
+  --bg10:#ff00ee;
+
 }
 #root {
   font-family: "Pretendard";

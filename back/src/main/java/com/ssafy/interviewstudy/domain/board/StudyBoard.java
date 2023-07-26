@@ -18,9 +18,4 @@ public class StudyBoard extends Board{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
     private Study study;
-
-    @Builder
-    public StudyBoard(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        super(id, author, title, content, createdAt, updatedAt);
-    }
 }

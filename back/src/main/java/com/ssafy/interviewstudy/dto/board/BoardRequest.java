@@ -20,11 +20,4 @@ public class BoardRequest {
 
     private List<ArticleFile> files;
 
-    private static Board toEntity(BoardRequest boardRequest, Member author) {
-        return Board.builder()
-                .title(boardRequest.getTitle())
-                .content(boardRequest.getContent())
-                .author(author)
-                .build();
-    }
 }

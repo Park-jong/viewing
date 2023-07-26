@@ -1,9 +1,10 @@
 package com.ssafy.interviewstudy.domain.board;
 
 import com.ssafy.interviewstudy.domain.member.Member;
-import lombok.Builder;
+import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -20,7 +21,8 @@ import java.util.List;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "board_type")
-public abstract class Board {
+@Setter
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "article_id")
@@ -57,12 +59,12 @@ public abstract class Board {
     @OneToMany(mappedBy = "article")
     private List<ReportArticle> reports = new ArrayList<>();
 
-    public Board(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.author = author;
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public void modifyArticle(BoardRequest boardRequest) {
+        this.title = boardRequest.getTitle();
+        this.content = boardRequest.getContent();
     }
+//
+//    public void updateViewCount(){
+//        this.viewCount += 1;
+//    }
 }

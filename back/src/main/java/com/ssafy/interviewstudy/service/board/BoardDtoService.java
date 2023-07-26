@@ -14,14 +14,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BoardDtoService {
-    private BoardRepository boardRepository;
     private ArticleCommentRepository commentRepository;
     private ArticleLikeRepository articleLikeRepository;
     private MemberRepository memberRepository;
 
     @Autowired
-    public BoardDtoService(BoardRepository boardRepository, ArticleCommentRepository commentRepository, ArticleLikeRepository articleLikeRepository, MemberRepository memberRepository) {
-        this.boardRepository = boardRepository;
+    public BoardDtoService(ArticleCommentRepository commentRepository, ArticleLikeRepository articleLikeRepository, MemberRepository memberRepository) {
         this.commentRepository = commentRepository;
         this.articleLikeRepository = articleLikeRepository;
         this.memberRepository = memberRepository;
@@ -30,11 +28,12 @@ public class BoardDtoService {
     public Board toEntity(BoardRequest boardRequest) {
         Member author = memberRepository.findMemberById(boardRequest.getMemberId());
 
-        return Board.builder()
-                .title(boardRequest.getTitle())
-                .content(boardRequest.getContent())
-                .author(author)
-                .build();
+        Board article = new Board();
+        article.setTitle(boardRequest.getTitle());
+        article.setContent(boardRequest.getContent());
+        article.setAuthor(author);
+
+        return article;
     }
 
     public BoardResponse fromEntityWithoutContent(Board article) {

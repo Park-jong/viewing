@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.Map;
 
 @CrossOrigin(origins = "*")
@@ -45,21 +46,23 @@ public class ConferenceController {
         SessionProperties properties = SessionProperties.fromJson(params).build();
         Session session = openvidu.createSession(properties);
 
+        ConferenceRequest conferenceRequest = new ConferenceRequest(studyId, (Integer) params.get("user_id"));
+        conferenceService.createConference(conferenceRequest);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/studies/{study_id}/conferences/members")
-    public ResponseEntity<ConferenceResponse> createConnection(@PathVariable("study_id") String studyId,
+    public ResponseEntity<ConferenceResponse> createConnection(@PathVariable("study_id") int studyId,
                                                    @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
-        Session session = openvidu.getActiveSession(studyId);
+        Session session = openvidu.getActiveSession(String.valueOf(studyId));
         if (session == null) {
-            this.initializeSession(Integer.parseInt(studyId), params);
+            this.initializeSession(Integer.parseInt(String.valueOf(studyId)), params);
         }
         ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
         Connection connection = session.createConnection(properties);
-
-        ConferenceRequest conferenceRequest = new ConferenceRequest((Integer) params.get("conference_room_id"), Integer.parseInt(studyId), (Integer) params.get("user_id"));
+        ConferenceRequest conferenceRequest = new ConferenceRequest((Integer) params.get("conference_room_id"), studyId, (Integer) params.get("user_id"));
         ConferenceResponse conferenceResponse = conferenceService.joinConference(conferenceRequest);
         conferenceResponse.setSessionId(session.getSessionId());
         conferenceResponse.setToken(connection.getToken());

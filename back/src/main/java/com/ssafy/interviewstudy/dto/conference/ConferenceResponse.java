@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.dto.conference;
 
+import com.fasterxml.jackson.databind.ser.std.SerializableSerializer;
 import com.ssafy.interviewstudy.domain.conference.ConferenceAttendee;
 import com.ssafy.interviewstudy.domain.conference.ConferenceRoom;
 import com.ssafy.interviewstudy.domain.member.Member;
@@ -8,6 +9,7 @@ import com.ssafy.interviewstudy.domain.member.MemberProfileImage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ConferenceResponse {
 
-    static class conferenceMember {
+    static class conferenceMember extends SerializableSerializer {
         private Integer id;
         private Integer attendeeId;
         private String nickname;
@@ -41,7 +43,7 @@ public class ConferenceResponse {
         this.sessionId = sessionId;
     }
 
-    public void setToken(String Token) {
+    public void setToken(String token) {
         this.token = token;
     }
 

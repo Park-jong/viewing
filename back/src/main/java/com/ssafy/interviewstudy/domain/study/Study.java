@@ -57,22 +57,22 @@ public class Study {
     @JoinColumn(name = "company_id")
     private Company appliedCompany;
 
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", fetch = FetchType.LAZY)
     List<StudyChat> studyChats = new ArrayList<>();
 
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", fetch = FetchType.LAZY)
     List<StudyMember> studyMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", fetch = FetchType.LAZY)
     List<StudyRequest> studyRequests = new ArrayList<>();
 
-    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "study", fetch = FetchType.LAZY)
     List<StudyTag> studyTags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", fetch = FetchType.LAZY)
     List<StudyCalendar> studyCalendars = new ArrayList<>();
 
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", fetch = FetchType.LAZY)
     List<StudyBookmark> studyBookmarks = new ArrayList<>();
 
     public Study(StudyDtoRequest studyDtoRequest){

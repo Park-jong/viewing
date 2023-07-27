@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.service.study;
 
+import com.querydsl.core.Tuple;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.study.*;
 import com.ssafy.interviewstudy.dto.study.*;
@@ -67,20 +68,20 @@ public class StudyService {
 
     //스터디 조회(사용하지 않음)
     public Page<StudyDtoResponse> findStudies(Boolean option, Pageable pageable){
-        Page<Study> studies = studyRepository.findStudiesBySearch(option, null, null, null, pageable);
+        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, null, null, null, 1, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
-        for (Study study : studies) {
-            result.add(studyToResponse(study));
+        for (Tuple study : studies) {
+            result.add(studyToResponse(study.get(0, Study.class), study.get(1, Boolean.class)));
         }
         return new PageImpl<>(result, pageable, studies.getTotalElements());
     }
 
     //스터디 검색 결과 조회
     public Page<StudyDtoResponse> findStudiesBySearch(Boolean option, Integer appliedCompanyId, String appliedJob, CareerLevel careerLevel, Pageable pageable){
-        Page<Study> studies = studyRepository.findStudiesBySearch(option, appliedCompanyId, appliedJob, careerLevel, pageable);
+        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompanyId, appliedJob, careerLevel, 1, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
-        for (Study study : studies) {
-            result.add(studyToResponse(study));
+        for (Tuple study : studies) {
+            result.add(studyToResponse(study.get(0, Study.class), study.get(1, Boolean.class)));
         }
         return new PageImpl<>(result, pageable, studies.getTotalElements());
     }
@@ -316,6 +317,12 @@ public class StudyService {
 
     private StudyDtoResponse studyToResponse(Study study){
         StudyDtoResponse studyDtoResponse = new StudyDtoResponse(study);
+        studyDtoResponse.headCounting(studyMemberRepository.countStudyMemberByStudy(study));
+        return studyDtoResponse;
+    }
+
+    private StudyDtoResponse studyToResponse(Study study, Boolean bookmark){
+        StudyDtoResponse studyDtoResponse = new StudyDtoResponse(study, bookmark);
         studyDtoResponse.headCounting(studyMemberRepository.countStudyMemberByStudy(study));
         return studyDtoResponse;
     }

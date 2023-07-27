@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.dto.study;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.querydsl.core.annotations.QueryProjection;
 import com.ssafy.interviewstudy.domain.study.CareerLevel;
 import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.domain.study.StudyTag;
@@ -40,6 +41,8 @@ public class StudyDtoResponse {
 
     private Boolean recruitment;
 
+    private Boolean bookmark;
+
     private Leader leader;
 
     private CareerLevel careerLevel;
@@ -62,6 +65,26 @@ public class StudyDtoResponse {
         for (StudyTag tag : tags) {
             this.tags.add(tag.getTag().getTagName());
         }
+    }
+
+    @QueryProjection
+    public StudyDtoResponse(Study study, Boolean bookmark){
+        this.studyId = study.getId();
+        this.title = study.getTitle();
+        this.description = study.getDescription();
+        this.appliedCompany = study.getAppliedCompany().getName();
+        this.appliedJob = study.getAppliedJob();
+        this.capacity = study.getCapacity();
+        this.createdAt = study.getCreatedAt();
+        this.deadline = study.getDeadline();
+        this.recruitment = study.getIsRecruit();
+        this.leader = new Leader(study.getLeader());
+        this.careerLevel = study.getCareerLevel();
+        List<StudyTag> tags = study.getStudyTags();
+        for (StudyTag tag : tags) {
+            this.tags.add(tag.getTag().getTagName());
+        }
+        this.bookmark = bookmark;
     }
 
     public void headCounting(int count){

@@ -1,6 +1,10 @@
 package com.ssafy.interviewstudy.repository.study;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.interviewstudy.domain.study.*;
@@ -19,6 +23,7 @@ import java.util.List;
 
 import static com.ssafy.interviewstudy.domain.study.QCompany.company;
 import static com.ssafy.interviewstudy.domain.study.QStudy.study;
+import static com.ssafy.interviewstudy.domain.study.QStudyBookmark.studyBookmark;
 import static com.ssafy.interviewstudy.domain.study.QStudyTag.*;
 import static com.ssafy.interviewstudy.domain.study.QStudyTagType.*;
 
@@ -36,12 +41,11 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
 
     @Override
     //조건에 따라 study 검색 결과
-    public Page<Study> findStudiesBySearch(Boolean isRecruit, Integer appliedCompany, String appliedJob, CareerLevel careerLevel, Pageable pageable) {
-        List<Study> result = queryFactory.select(study).distinct()
+    public Page<Tuple> findStudiesBySearch(Boolean isRecruit, Integer appliedCompany, String appliedJob, CareerLevel careerLevel, Integer memberId, Pageable pageable) {
+        List<Tuple> result = queryFactory.select(study, new CaseBuilder().when(studyBookmark.member.id.isNotNull()).then(true).otherwise(false)).distinct()
                 .from(study)
                 .join(study.appliedCompany, company).fetchJoin()
-                .leftJoin(study.studyTags, studyTag).fetchJoin()
-                .leftJoin(studyTag.tag, studyTagType).fetchJoin()
+                .leftJoin(studyBookmark).on(study.id.eq(studyBookmark.study.id), isBookmarked(memberId)).fetchJoin()
                 .where(isRecruitTrue(isRecruit),
                         study.isDelete.eq(false),
                         appliedCompanyEq(appliedCompany),
@@ -77,5 +81,9 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
 
     private BooleanExpression isRecruitTrue(Boolean isRecruit){
         return isRecruit != null ? study.isRecruit.eq(true) : null;
+    }
+
+    private BooleanExpression isBookmarked(Integer memberId){
+        return memberId != null ? studyBookmark.member.id.eq(memberId) : null;
     }
 }

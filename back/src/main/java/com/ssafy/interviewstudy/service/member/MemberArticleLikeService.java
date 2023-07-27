@@ -41,7 +41,7 @@ public class MemberArticleLikeService {
             boardList = memberArticleLikeRepository.getArticleByMemberIdAtInterviewReviewBoard(boardRequest.getMemberId());
         }
         for(Board b : boardList){
-            boardResponses.add(boardDtoService.fromEntityWithoutContent(b));
+            boardResponses.add(boardDtoService.fromEntityWithoutContent(boardRequest.getMemberId(), b));
         }
         return boardResponses;
     }

@@ -39,7 +39,7 @@ public class MemberCommentService {
             boardList=memberCommentRepository.getCommentedBoardByMemberIdAtInterviewBoard(boardRequest.getMemberId());
         }
         for(Board b : boardList){
-            boardResponses.add(boardDtoService.fromEntityWithoutContent(b));
+            boardResponses.add(boardDtoService.fromEntityWithoutContent(boardRequest.getMemberId(), b));
         }
         return boardResponses;
     }

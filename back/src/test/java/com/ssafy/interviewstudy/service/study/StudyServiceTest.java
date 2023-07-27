@@ -58,7 +58,7 @@ class StudyServiceTest {
         Company c2 = Company.builder().name("LG").build();
         em.persist(c2);
 
-        Study study1 = Study.builder().title("test1").appliedCompany(c).isRecruit(true).appliedJob("개발").build();
+        Study study1 = Study.builder().title("test1").appliedCompany(c).isRecruit(true).isDelete(false).appliedJob("개발").build();
         Study study2 = Study.builder().title("test2").appliedCompany(c).isRecruit(true).isDelete(false).appliedJob("it").build();
         Study study3 = Study.builder().title("test3").appliedCompany(c).isRecruit(false).isDelete(false).appliedJob("it").build();
         Study study4 = Study.builder().title("test4").appliedCompany(c2).isRecruit(true).isDelete(false).appliedJob("개발").build();
@@ -219,7 +219,7 @@ class StudyServiceTest {
     public void saveTest(){
         Member m = Member.builder().nickname("saveTest").email("@gmail.com").build();
         memberRepository.save(m);
-        StudyDtoRequest s = StudyDtoRequest.builder().appliedCompany("삼성").title("save").leaderId(m.getId()).description("des").build();
+        StudyDtoRequest s = StudyDtoRequest.builder().appliedCompany(1).title("save").leaderId(m.getId()).description("des").build();
         List<Integer> tags = new ArrayList<>();
         tags.add(1);
         tags.add(2);
@@ -244,7 +244,7 @@ class StudyServiceTest {
     public void updateTest(){
         Member m = Member.builder().nickname("saveTest").email("@gmail.com").build();
         memberRepository.save(m);
-        StudyDtoRequest s = StudyDtoRequest.builder().appliedCompany("삼성").title("save").leaderId(m.getId()).description("des").build();
+        StudyDtoRequest s = StudyDtoRequest.builder().appliedCompany(1).title("save").leaderId(m.getId()).description("des").build();
         List<Integer> tags = new ArrayList<>();
         tags.add(1);
         tags.add(2);

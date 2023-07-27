@@ -28,7 +28,7 @@ public class StudyDtoResponse {
 
     private String appliedJob;
 
-    private int capacity;
+    private Integer capacity;
 
     private int headCount;
 
@@ -38,7 +38,7 @@ public class StudyDtoResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deadline;
 
-    private boolean isRecruit;
+    private Boolean recruitment;
 
     private Leader leader;
 
@@ -55,7 +55,7 @@ public class StudyDtoResponse {
         this.capacity = study.getCapacity();
         this.createdAt = study.getCreatedAt();
         this.deadline = study.getDeadline();
-        this.isRecruit = study.getIsRecruit();
+        this.recruitment = study.getIsRecruit();
         this.leader = new Leader(study.getLeader());
         this.careerLevel = study.getCareerLevel();
         List<StudyTag> tags = study.getStudyTags();

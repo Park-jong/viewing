@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.service.study;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.study.*;
 import com.ssafy.interviewstudy.dto.study.*;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.*;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +52,8 @@ public class StudyService {
         for (Study study : studies) {
             result.add(new StudyDtoResponse(study));
         }
-        return result;    }
+        return result;
+    }
 
 
     //스터디 정보 조회
@@ -60,7 +63,7 @@ public class StudyService {
     }
 
 
-    //스터디 조회
+    //스터디 조회(사용하지 않음)
     public Page<StudyDtoResponse> findStudies(Boolean option, Pageable pageable){
         Page<Study> studies = studyRepository.findStudiesBySearch(option, null, null, null, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
@@ -86,7 +89,7 @@ public class StudyService {
         Study study = requestToStudy(studyDtoRequest);
         Member leader = memberRepository.findById(studyDtoRequest.getLeaderId()).get();
         study.updateLeader(leader);
-        study.updateCompany(companyRepository.findCompanyByName(studyDtoRequest.getAppliedCompany()).get());
+        study.updateCompany(companyRepository.findById(studyDtoRequest.getAppliedCompany()).get());
         studyRepository.save(study);
 
         List<Integer> tags = studyDtoRequest.getTags();
@@ -114,6 +117,9 @@ public class StudyService {
     @Transactional
     public void modifyStudy(Integer studyId, StudyDtoRequest studyDtoRequest){
         Study study = studyRepository.findById(studyId).get();
+
+        if(study == null) throw new NotFoundException("스터디를 찾을 수 없습니다.");
+
         study.updateStudy(studyDtoRequest);
 
         studyTagRepository.deleteStudyTagByStudy(study);

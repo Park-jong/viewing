@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface StudyTagRepository extends JpaRepository<StudyTag, Integer> {
     //수정 시 기존 값 제거
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from StudyTag st where st.study = :study")
     public void deleteStudyTagByStudy(@Param("study") Study study);
 }

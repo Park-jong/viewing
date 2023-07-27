@@ -37,12 +37,12 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Intege
     public List<StudyMemberDto> findMembersByStudy(@Param("study") Study study);
 
     //스터디 삭제 시
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from StudyMember sm where sm.study.id = :id")
     public void deleteStudyMemberByStudyId(@Param("id") Integer studyId);
 
     //스터디 삭제 시
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from StudyMember sm where sm.study = :study")
     public void deleteStudyMemberByStudy(@Param("study")Study study);
 

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
@@ -32,7 +32,7 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private CareerLevel careerLevel;
 
-    private int capacity;
+    private Integer capacity;
 
     @CreatedDate
     @Column(updatable = false)
@@ -46,6 +46,7 @@ public class Study {
 
     @ColumnDefault("false")
     @Builder.Default
+    @Column(insertable = false)
     private Boolean isDelete = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -65,7 +66,7 @@ public class Study {
     @OneToMany(mappedBy = "study")
     List<StudyRequest> studyRequests = new ArrayList<>();
 
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     List<StudyTag> studyTags = new ArrayList<>();
 
     @OneToMany(mappedBy = "study")
@@ -81,7 +82,7 @@ public class Study {
         this.careerLevel = studyDtoRequest.getCareerLevel();
         this.capacity = studyDtoRequest.getCapacity();
         this.deadline = studyDtoRequest.getDeadline();
-        this.isRecruit = studyDtoRequest.isRecruit();
+        this.isRecruit = studyDtoRequest.getRecruitment();
     }
 
     public void updateLeader(Member member){
@@ -103,7 +104,7 @@ public class Study {
         this.careerLevel = studyDtoRequest.getCareerLevel();
         this.capacity = studyDtoRequest.getCapacity();
         this.deadline = studyDtoRequest.getDeadline();
-        this.isRecruit = studyDtoRequest.isRecruit();
+        this.isRecruit = studyDtoRequest.getRecruitment();
     }
 
     public void switchRecruit(boolean isRecruit){

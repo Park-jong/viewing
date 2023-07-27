@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface StudyRequestFileRepository extends JpaRepository<StudyRequestFile, Integer> {
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from StudyRequestFile srf where srf.request.id = :id")
     public void deleteByRequestId(@Param("id") Integer id);
 }

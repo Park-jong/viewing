@@ -20,13 +20,13 @@ public class StudyDtoRequest {
 
     private String description;
 
-    private String appliedCompany;
+    private Integer appliedCompany;
 
     private String appliedJob;
 
-    private int capacity;
+    private Integer capacity;
 
-    private boolean isRecruit;
+    private Boolean recruitment = true;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deadline;

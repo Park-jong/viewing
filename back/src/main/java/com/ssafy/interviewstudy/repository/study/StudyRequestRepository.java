@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.repository.study;
 
+import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.domain.study.StudyRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,8 +22,14 @@ public interface StudyRequestRepository extends JpaRepository<StudyRequest, Inte
     public Optional<StudyRequest> findStudyRequestById(@Param("id") Integer id);
 
     @Modifying
+    //삭제(승인, 거절 시)
     public void deleteStudyRequestById(Integer id);
 
+    //가입 승인 시 study와 member 가져오기
     @Query("select sr from StudyRequest sr join fetch sr.applicant join fetch sr.study where sr.id = :id")
     public Optional<StudyRequest> findStudyAndMemberById(@Param("id")Integer id);
+
+    //중복 신청 조회
+    public Optional<StudyRequest> findStudyRequestByStudyAndApplicant(Study study, Member applicant);
+
 }

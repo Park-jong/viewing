@@ -12,4 +12,7 @@ import java.util.List;
 public interface StudyCalendarRepository extends JpaRepository<StudyCalendar, Integer> {
     @Query("select new com.ssafy.interviewstudy.dto.study.StudyCalendarDtoResponse(sc) from StudyCalendar sc join sc.author where sc.study = :study")
     public List<StudyCalendarDtoResponse> findStudyCalendersByStudy(@Param("study") Study study);
+
+    @Query("select new com.ssafy.interviewstudy.dto.study.StudyCalendarDtoResponse(sc) from StudyCalendar sc join sc.author where sc.id = :id")
+    public StudyCalendarDtoResponse findStudyCalenderById(@Param("id") Integer id);
 }

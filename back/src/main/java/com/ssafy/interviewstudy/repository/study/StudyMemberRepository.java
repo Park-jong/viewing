@@ -29,11 +29,11 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Intege
     public Optional<StudyMember> findByStudyAndMember(Study study, Member member);
 
     //스터디 멤버 목록
-    @Query("select new com.ssafy.interviewstudy.dto.study.StudyMemberDto(sm.member) from StudyMember sm join sm.member m where sm.study.id = :studyId")
+    @Query("select new com.ssafy.interviewstudy.dto.study.StudyMemberDto(sm.member, sm.isLeader) from StudyMember sm join sm.member m where sm.study.id = :studyId")
     public List<StudyMemberDto> findMembersByStudyId(@Param("studyId") Integer studyId);
 
     //스터디 멤버 목록
-    @Query("select new com.ssafy.interviewstudy.dto.study.StudyMemberDto(sm.member) from StudyMember sm join sm.member m where sm.study = :study")
+    @Query("select new com.ssafy.interviewstudy.dto.study.StudyMemberDto(sm.member, sm.isLeader) from StudyMember sm join sm.member m where sm.study = :study")
     public List<StudyMemberDto> findMembersByStudy(@Param("study") Study study);
 
     //스터디 삭제 시

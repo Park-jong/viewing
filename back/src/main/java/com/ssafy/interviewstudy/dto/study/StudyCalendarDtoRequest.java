@@ -22,5 +22,5 @@ public class StudyCalendarDtoRequest {
 
     private String description;
 
-    private Integer authorId;
+    private Integer userId;
 }

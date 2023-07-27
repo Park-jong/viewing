@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.service.study;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.study.*;
 import com.ssafy.interviewstudy.dto.study.*;
+import com.ssafy.interviewstudy.exception.calendar.updateFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.*;
@@ -13,9 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -99,7 +101,8 @@ public class StudyService {
             studyTagRepository.save(st);
         }
 
-        com.ssafy.interviewstudy.domain.study.StudyMember studyMember = new com.ssafy.interviewstudy.domain.study.StudyMember(study, leader);
+        StudyMember studyMember = new StudyMember(study, leader);
+        studyMember.updateLeader(true);
         studyMemberRepository.save(studyMember);
 
         return study.getId();
@@ -135,8 +138,24 @@ public class StudyService {
     //스터디 가입 신청
     @Transactional
     public Integer addRequest(Integer studyId, RequestDto requestDto){
-        Study study = studyRepository.findById(studyId).get();
-        Member member = memberRepository.findById(requestDto.getMemberId()).get();
+        Optional<Study> studyOptional = studyRepository.findById(studyId);
+        if(studyOptional.isEmpty() || studyOptional.get().getIsDelete()){//존재하지 않는 스터디
+            return -3;
+        }
+        Study study = studyOptional.get();
+
+        Member member = memberRepository.findById(requestDto.getUserId()).get();
+
+        Optional<StudyMember> isMember = studyMemberRepository.findByStudyAndMember(study, member);
+        if(isMember.isPresent()){//이미 가입 되어 있음
+            return -1;
+        }
+
+        Optional<StudyRequest> exist = studyRequestRepository.findStudyRequestByStudyAndApplicant(study, member);
+        if(exist.isPresent()){//중복 신청 처리 거절(거절? 덮어쓰기?)
+            return -2;
+        }
+
         StudyRequest studyRequest = new StudyRequest(study, member, requestDto);
 
         studyRequestRepository.save(studyRequest);
@@ -178,37 +197,61 @@ public class StudyService {
 
     //가입 신청 승인
     @Transactional
-    public void permitRequest(Integer requestId){
-        StudyRequest studyRequest = studyRequestRepository.findStudyAndMemberById(requestId).get();
+    public void permitRequest(Integer requestId, Integer studyId, Integer memberId){
+        StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
+
         deleteRequest(requestId);
-        com.ssafy.interviewstudy.domain.study.StudyMember sm = new com.ssafy.interviewstudy.domain.study.StudyMember(studyRequest.getStudy(), studyRequest.getApplicant());
+        StudyMember sm = new StudyMember(studyRequest.getStudy(), studyRequest.getApplicant());
+        sm.updateLeader(false);
         studyMemberRepository.save(sm);
     }
 
     //가입 신청 거절
     @Transactional
-    public void rejectRequest(Integer requestId){
+    public void rejectRequest(Integer requestId, Integer studyId, Integer memberId){
+        StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
         deleteRequest(requestId);
     }
 
     //스터디 탈퇴
     @Transactional
-    public void leaveStudy(Integer studyId, Integer memberId){
+    public boolean leaveStudy(Integer studyId, Integer memberId){
+        Study study = studyRepository.findById(studyId).get();
+        if(study.getLeader().getId() == memberId){
+            return false;
+        }
         studyMemberRepository.deleteStudyMemberByStudyIdAndMemberId(studyId, memberId);
+        return true;
     }
 
     //스터디원 추방
     @Transactional
-    public void banMemberStudy(Integer studyId, Integer memberId){
+    public boolean banMemberStudy(Integer studyId, Integer memberId){
+        Study study = studyRepository.findById(studyId).get();
+        if(study.getLeader().getId() == memberId){
+            return false;
+        }
         studyMemberRepository.deleteStudyMemberByStudyIdAndMemberId(studyId, memberId);
+        return true;
     }
 
     //스터디장 위임
     @Transactional
-    public void delegateLeader(Integer studyId, Integer memberId){
-        Study study = studyRepository.findById(studyId).get();
-        Member member = memberRepository.findById(memberId).get();
-        study.updateLeader(member);
+    public void delegateLeader(Integer studyId, Integer leaderId, Integer memberId){
+        try {
+            if (leaderId == null || memberId == null || leaderId == memberId) throw new updateFailException("잘못된 요청");
+            Study study = studyRepository.findById(studyId).get();
+            Member leader = study.getLeader();
+            if (leader.getId() != leaderId) throw new updateFailException("잘못된 요청");
+            Member member = memberRepository.findById(memberId).get();
+            study.updateLeader(member);
+            StudyMember studyLeader = studyMemberRepository.findByStudyAndMember(study, leader).get();
+            studyLeader.updateLeader(false);
+            StudyMember studyMember = studyMemberRepository.findByStudyAndMember(study, member).get();
+            studyMember.updateLeader(true);
+        }catch (NoSuchElementException ne){
+            throw new updateFailException("잘못된 요청");
+        }
     }
 
     //스터디원 목록 확인
@@ -227,7 +270,7 @@ public class StudyService {
     }
 
     //스터디 실시간 채팅 조회
-    public List<ChatResponse> findStudyChats(Integer lastChatId, Integer studyId){
+    public List<ChatResponse> findStudyChats(Integer studyId, Integer lastChatId){
         return studyChatRepository.findNewStudyChatsById(studyId, lastChatId == null ? 0 : lastChatId);
     }
 
@@ -239,11 +282,17 @@ public class StudyService {
         return studyCalendarRepository.findStudyCalendersByStudy(study);
     }
 
+    //일정 개별 조회
+    public StudyCalendarDtoResponse findStudyCalenarByStudy(Integer studyId, Integer calendarId){
+        Study study = studyRepository.findById(studyId).get();
+        return studyCalendarRepository.findStudyCalenderById(calendarId);
+    }
+
     //스터디 일정 추가
     @Transactional
     public void addStudyCalendar(Integer studyId, StudyCalendarDtoRequest studyCalendarDtoRequest){
         Study study = studyRepository.findById(studyId).get();
-        Member member = memberRepository.findById(studyCalendarDtoRequest.getAuthorId()).get();
+        Member member = memberRepository.findById(studyCalendarDtoRequest.getUserId()).get();
         StudyCalendar studyCalendar = new StudyCalendar(study, member, studyCalendarDtoRequest);
         studyCalendarRepository.save(studyCalendar);
     }
@@ -279,5 +328,19 @@ public class StudyService {
     private void deleteRequest(Integer requestId){
         studyRequestFileRepository.deleteByRequestId(requestId);
         studyRequestRepository.deleteStudyRequestById(requestId);
+    }
+
+    private StudyRequest checkRequest(Integer requestId, Integer studyId, Integer memberId){
+        Optional<Study> studyOp = studyRepository.findById(studyId);
+        Optional<Member> memberOp = memberRepository.findById(memberId);
+        if(studyOp.isEmpty() || studyOp.get().getIsDelete() || memberOp.isEmpty()){
+            throw new NotFoundException("요청을 찾을 수 없음");
+        }
+
+        Optional<StudyRequest> studyRequestOp = studyRequestRepository.findStudyAndMemberById(requestId);
+        if(studyRequestOp.isEmpty() || studyRequestOp.get().getApplicant().getId() != memberId || studyRequestOp.get().getStudy().getId() != studyId){
+            throw new NotFoundException("요청을 찾을 수 없음");
+        }
+        return studyRequestOp.get();
     }
 }

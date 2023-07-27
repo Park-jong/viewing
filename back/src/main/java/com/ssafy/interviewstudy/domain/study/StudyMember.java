@@ -38,4 +38,8 @@ public class StudyMember {
         this.study = study;
         this.member = member;
     }
+
+    public void updateLeader(Boolean isLeader){
+        this.isLeader = isLeader;
+    }
 }

@@ -6,5 +6,11 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Integer> {
-    Boolean existsByMemberAndComment(Member member, ArticleComment comment);
+    // 이미 좋아요를 누른 회원인지 체크
+    Boolean existsByMember_IdAndComment_Id(Integer memberId, Integer CommentId);
+
+    // 댓글마다 좋아요 수 체크
+    Integer countByComment(ArticleComment comment);
+
+    Integer removeCommentLikeByCommentAndMember(ArticleComment comment, Member member);
 }

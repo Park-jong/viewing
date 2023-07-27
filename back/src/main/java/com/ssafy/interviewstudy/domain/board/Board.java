@@ -28,7 +28,7 @@ public class Board {
     @Column(name = "article_id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member author;
     @Column(name = "title", nullable = false)

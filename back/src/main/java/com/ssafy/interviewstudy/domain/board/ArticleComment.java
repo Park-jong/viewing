@@ -1,10 +1,13 @@
 package com.ssafy.interviewstudy.domain.board;
 
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.dto.board.BoardRequest;
+import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -44,6 +47,7 @@ public class ArticleComment {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @ColumnDefault("false")
     @Column(name = "is_delete", nullable = false)
     private Boolean isDelete;
 
@@ -70,5 +74,13 @@ public class ArticleComment {
         this.comment = comment;
         this.replies = replies;
         this.likes = likes;
+    }
+
+    public void modifyComment(CommentRequest commentRequest) {
+        this.content = commentRequest.getContent();
+    }
+
+    public void deleteComment(){
+        this.isDelete = true;
     }
 }

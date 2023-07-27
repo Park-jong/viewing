@@ -24,6 +24,7 @@ public class BoardResponse {
     private Integer commentCount;
     private Integer likeCount;
     private String boardType;
+    private Boolean isLike;
 
     private List<ArticleFile> articleFiles;
 }

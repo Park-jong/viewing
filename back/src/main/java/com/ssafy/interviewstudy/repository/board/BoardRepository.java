@@ -1,6 +1,7 @@
 package com.ssafy.interviewstudy.repository.board;
 
 import com.ssafy.interviewstudy.domain.board.Board;
+import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,4 +48,5 @@ public interface BoardRepository<T extends Board> extends JpaRepository<T, Integ
     // 글 리스트 조회
     @Query("select b from Board b where Type(b) = :boardType")
     Page<Board> findByType(String boardType, Pageable pageable);
+
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
+
 @RestControllerAdvice("com.ssafy.interviewstudy.controller")
 public class ExceptionControllerAdvice {
 
@@ -32,5 +34,10 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(updateFailException.class)
     public ResponseEntity<?> handleUpdateFailException(updateFailException e){
         return ResponseEntity.internalServerError().body(e.getTarget()+" 수정 실패");
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> handleIOException(IOException e){
+        return ResponseEntity.internalServerError().body("Sse 오류");
     }
 }

@@ -231,6 +231,13 @@ public class StudyService {
         deleteRequest(requestId);
     }
 
+    //가입 신청 취소
+    @Transactional
+    public void cancelRequest(Integer requestId, Integer studyId, Integer memberId){
+        StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
+        deleteRequest(requestId);
+    }
+
     //스터디 탈퇴
     @Transactional
     public boolean leaveStudy(Integer studyId, Integer memberId){
@@ -339,6 +346,13 @@ public class StudyService {
         return result.isPresent();
     }
 
+    //스터디의 스터디장인지 체크
+    public boolean checkStudyLeader(Integer studyId, Integer memberId){
+        Optional<StudyMember> studyMemberOp = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId);
+        if(studyMemberOp.isEmpty())
+            return false;
+        return studyMemberOp.get().getIsLeader() == true ? true : false;
+    }
 
 
     //****************************내부 사용 함수*******************************//

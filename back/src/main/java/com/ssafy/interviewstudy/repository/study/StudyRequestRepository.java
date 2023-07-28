@@ -32,4 +32,10 @@ public interface StudyRequestRepository extends JpaRepository<StudyRequest, Inte
     //중복 신청 조회
     public Optional<StudyRequest> findStudyRequestByStudyAndApplicant(Study study, Member applicant);
 
+    //내 신청 목록 보기
+    public List<StudyRequest> findStudyRequestsByApplicant(Member applicant);
+
+    //내 신청 목록 보기(id로)
+    public List<StudyRequest> findStudyRequestsByApplicantId(Integer applicantId);
+
 }

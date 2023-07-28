@@ -117,6 +117,14 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{study_id}/requests/{request_id}")
+    public ResponseEntity<?> requestCancel(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
+        Integer userId = null;
+        if(map.containsKey("user_id")) userId = (Integer)map.get("user_id");
+        studyService.cancelRequest(requestId, studyId, userId);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{study_id}/members/{user_id}")
     public ResponseEntity<?> studyMemberBan(@PathVariable("study_id") Integer studyId, @PathVariable("user_id") Integer memberId){
         boolean result = studyService.banMemberStudy(studyId, memberId);

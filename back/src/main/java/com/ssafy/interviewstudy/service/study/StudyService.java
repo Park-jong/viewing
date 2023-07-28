@@ -11,6 +11,7 @@ import com.ssafy.interviewstudy.repository.study.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -291,16 +292,19 @@ public class StudyService {
         return studyChatRepository.findNewStudyChatsById(studyId, lastChatId == null ? 0 : lastChatId);
     }
 
-    //이전 채팅 보기
-
+    //이전 채팅 보기(아직 적용 x)
+    public List<ChatResponse> findOldStudyChats(Integer studyId, Integer startChatId){
+        PageRequest pageRequest = PageRequest.of(0, 100);
+        return startChatId == null ? studyChatRepository.findOldStudyChats(studyId, pageRequest) : studyChatRepository.findOldStudyChatsByStartId(studyId, startChatId, pageRequest);
+    }
     //스터디 일정 조회
-    public List<StudyCalendarDtoResponse> findStudyCalenarByStudy(Integer studyId){
+    public List<StudyCalendarDtoResponse> findStudyCalendarsByStudy(Integer studyId){
         Study study = studyRepository.findById(studyId).get();
         return studyCalendarRepository.findStudyCalendersByStudy(study);
     }
 
     //일정 개별 조회
-    public StudyCalendarDtoResponse findStudyCalenarByStudy(Integer studyId, Integer calendarId){
+    public StudyCalendarDtoResponse findStudyCalendarByStudy(Integer studyId, Integer calendarId){
         Study study = studyRepository.findById(studyId).get();
         return studyCalendarRepository.findStudyCalenderById(calendarId);
     }
@@ -332,9 +336,12 @@ public class StudyService {
     //스터디원인지 체크
     public boolean checkStudyMember(Integer studyId, Integer memberId){
         Optional<StudyMember> result = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId);
-        return result.isPresent() ? true : false;
+        return result.isPresent();
     }
 
+
+
+    //****************************내부 사용 함수*******************************//
 
 
     private Study requestToStudy(StudyDtoRequest studyDtoRequest){

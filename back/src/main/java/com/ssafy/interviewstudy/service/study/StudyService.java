@@ -40,20 +40,24 @@ public class StudyService {
 
     //내 스터디 조회
     public List<StudyDtoResponse> findMyStudies(Integer id){
+        Member member = memberRepository.findById(id).get();
         List<Study> studies = studyRepository.findStudiesByMember(memberRepository.findById(id).get());
+        List<Tuple> counts = studyRepository.findMyStudyMemberCountByMember(member);
         List<StudyDtoResponse> result = new ArrayList<>();
-        for (Study study : studies) {
-            result.add(new StudyDtoResponse(study));
+        for (Tuple tuple : counts) {
+            result.add(new StudyDtoResponse(tuple.get(0, Study.class), true, tuple.get(1, Long.class)));
         }
         return result;
     }
 
     //내가 찜한 스터디 조회
     public List<StudyDtoResponse> findBookmarkStudies(Integer id){
-        List<Study> studies = studyRepository.findBookmarksByMember(memberRepository.findById(id).get());
+        Member member = memberRepository.findById(id).get();
+        List<Study> studies = studyRepository.findBookmarksByMember(member);
+        List<Tuple> counts = studyRepository.findBookmarksMemberCountByMember(member);
         List<StudyDtoResponse> result = new ArrayList<>();
-        for (Study study : studies) {
-            result.add(new StudyDtoResponse(study));
+        for (Tuple tuple : counts) {
+            result.add(new StudyDtoResponse(tuple.get(0, Study.class), true, tuple.get(1, Long.class)));
         }
         return result;
     }
@@ -62,7 +66,8 @@ public class StudyService {
     //스터디 정보 조회
     public StudyDtoResponse findStudyById(Integer id){
         Study study = studyRepository.findStudyById(id);
-        return studyToResponse(study);
+        long headCount = studyMemberRepository.countStudyMemberByStudy(study);
+        return new StudyDtoResponse(study, headCount);
     }
 
 
@@ -70,8 +75,13 @@ public class StudyService {
     public Page<StudyDtoResponse> findStudies(Boolean option, Pageable pageable){
         Page<Tuple> studies = studyRepository.findStudiesBySearch(option, null, null, null, 1, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
+        List<Integer> studyids = new ArrayList<>();
         for (Tuple study : studies) {
-            result.add(studyToResponse(study.get(0, Study.class), study.get(1, Boolean.class)));
+            studyids.add(study.get(0, Integer.class));
+        }
+        List<Study> byIds = studyRepository.findByIds(studyids);
+        for (Tuple study : studies) {
+            result.add(new StudyDtoResponse(study.get(1, Study.class), study.get(2, Boolean.class), study.get(3, Long.class)));
         }
         return new PageImpl<>(result, pageable, studies.getTotalElements());
     }
@@ -80,11 +90,17 @@ public class StudyService {
     public Page<StudyDtoResponse> findStudiesBySearch(Boolean option, Integer appliedCompanyId, String appliedJob, CareerLevel careerLevel, Pageable pageable){
         Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompanyId, appliedJob, careerLevel, 1, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
+        List<Integer> studyids = new ArrayList<>();
         for (Tuple study : studies) {
-            result.add(studyToResponse(study.get(0, Study.class), study.get(1, Boolean.class)));
+            studyids.add(study.get(0, Integer.class));
+        }
+        List<Study> byIds = studyRepository.findByIds(studyids);
+        for (Tuple study : studies) {
+            result.add(new StudyDtoResponse(study.get(1, Study.class), study.get(2, Boolean.class), study.get(3, Long.class)));
         }
         return new PageImpl<>(result, pageable, studies.getTotalElements());
     }
+
 
     @Transactional
     //스터디 생성
@@ -313,19 +329,13 @@ public class StudyService {
         studyCalendarRepository.deleteById(calendarId);
     }
 
-
-
-    private StudyDtoResponse studyToResponse(Study study){
-        StudyDtoResponse studyDtoResponse = new StudyDtoResponse(study);
-        studyDtoResponse.headCounting(studyMemberRepository.countStudyMemberByStudy(study));
-        return studyDtoResponse;
+    //스터디원인지 체크
+    public boolean checkStudyMember(Integer studyId, Integer memberId){
+        Optional<StudyMember> result = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId);
+        return result.isPresent() ? true : false;
     }
 
-    private StudyDtoResponse studyToResponse(Study study, Boolean bookmark){
-        StudyDtoResponse studyDtoResponse = new StudyDtoResponse(study, bookmark);
-        studyDtoResponse.headCounting(studyMemberRepository.countStudyMemberByStudy(study));
-        return studyDtoResponse;
-    }
+
 
     private Study requestToStudy(StudyDtoRequest studyDtoRequest){
         Study study = new Study(studyDtoRequest);

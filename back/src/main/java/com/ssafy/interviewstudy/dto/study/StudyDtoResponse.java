@@ -31,7 +31,7 @@ public class StudyDtoResponse {
 
     private Integer capacity;
 
-    private int headCount;
+    private Long headCount;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdAt;
@@ -67,8 +67,26 @@ public class StudyDtoResponse {
         }
     }
 
-    @QueryProjection
-    public StudyDtoResponse(Study study, Boolean bookmark){
+    public StudyDtoResponse(Study study, Long headCount){
+        this.studyId = study.getId();
+        this.title = study.getTitle();
+        this.description = study.getDescription();
+        this.appliedCompany = study.getAppliedCompany().getName();
+        this.appliedJob = study.getAppliedJob();
+        this.capacity = study.getCapacity();
+        this.createdAt = study.getCreatedAt();
+        this.deadline = study.getDeadline();
+        this.recruitment = study.getIsRecruit();
+        this.leader = new Leader(study.getLeader());
+        this.careerLevel = study.getCareerLevel();
+        List<StudyTag> tags = study.getStudyTags();
+        for (StudyTag tag : tags) {
+            this.tags.add(tag.getTag().getTagName());
+        }
+        this.headCount = headCount;
+    }
+
+    public StudyDtoResponse(Study study, Boolean bookmark, Long headCount){
         this.studyId = study.getId();
         this.title = study.getTitle();
         this.description = study.getDescription();
@@ -85,9 +103,6 @@ public class StudyDtoResponse {
             this.tags.add(tag.getTag().getTagName());
         }
         this.bookmark = bookmark;
-    }
-
-    public void headCounting(int count){
-        this.headCount = count;
+        this.headCount = headCount;
     }
 }

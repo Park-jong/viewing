@@ -5,8 +5,11 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.domain.member.QMember;
 import com.ssafy.interviewstudy.domain.study.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +24,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
+import static com.ssafy.interviewstudy.domain.member.QMember.member;
 import static com.ssafy.interviewstudy.domain.study.QCompany.company;
 import static com.ssafy.interviewstudy.domain.study.QStudy.study;
 import static com.ssafy.interviewstudy.domain.study.QStudyBookmark.studyBookmark;
+import static com.ssafy.interviewstudy.domain.study.QStudyMember.studyMember;
 import static com.ssafy.interviewstudy.domain.study.QStudyTag.*;
 import static com.ssafy.interviewstudy.domain.study.QStudyTagType.*;
 
@@ -42,9 +47,15 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
     @Override
     //조건에 따라 study 검색 결과
     public Page<Tuple> findStudiesBySearch(Boolean isRecruit, Integer appliedCompany, String appliedJob, CareerLevel careerLevel, Integer memberId, Pageable pageable) {
-        List<Tuple> result = queryFactory.select(study, new CaseBuilder().when(studyBookmark.member.id.isNotNull()).then(true).otherwise(false)).distinct()
+        List<Tuple> result = queryFactory.select(
+                        study.id,
+                        study,
+                        new CaseBuilder().when(studyBookmark.member.id.isNotNull()).then(true).otherwise(false),
+                        JPAExpressions.select(studyMember.count()).from(studyMember).where(studyMember.study.id.eq(study.id))
+                ).distinct()
                 .from(study)
                 .join(study.appliedCompany, company).fetchJoin()
+                .join(study.leader, member).fetchJoin()
                 .leftJoin(studyBookmark).on(study.id.eq(studyBookmark.study.id), isBookmarked(memberId)).fetchJoin()
                 .where(isRecruitTrue(isRecruit),
                         study.isDelete.eq(false),
@@ -66,6 +77,29 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                 .fetchOne();
         return new PageImpl<>(result, pageable, count);
     }
+
+    public List<Tuple> findBookmarksMemberCountByMember(Member member){
+        List<Tuple> result = queryFactory.select(study,
+                        JPAExpressions.select(studyMember.count()).from(studyMember).where(studyMember.study.id.eq(study.id))
+                )
+                .from(study)
+                .join(study.studyBookmarks, studyBookmark).fetchJoin()
+                .where(studyBookmark.member.eq(member))
+                .fetch();
+        return result;
+    }
+
+    public List<Tuple> findMyStudyMemberCountByMember(Member member){
+        List<Tuple> result = queryFactory.select(study,
+                        JPAExpressions.select(studyMember.count()).from(studyMember).where(studyMember.study.id.eq(study.id))
+                )
+                .from(study)
+                .join(study.studyMembers, studyMember).fetchJoin()
+                .where(studyMember.member.eq(member))
+                .fetch();
+        return result;
+    }
+
 
     private BooleanExpression appliedCompanyEq(Integer appliedCompany){
         return appliedCompany != null ? study.appliedCompany.id.eq(appliedCompany) : null;

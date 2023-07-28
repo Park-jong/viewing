@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Integer> {
 
     //멤버 수 카운팅
-    public int countStudyMemberByStudy(Study study);
+    public long countStudyMemberByStudy(Study study);
 
     //스터디 탈퇴
     @Modifying
@@ -27,6 +27,9 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Intege
 
     //스터디 멤버인지
     public Optional<StudyMember> findByStudyAndMember(Study study, Member member);
+
+    //스터디 멤버인지
+    public Optional<StudyMember> findByStudyIdAndMemberId(Integer studyId, Integer memberId);
 
     //스터디 멤버 목록
     @Query("select new com.ssafy.interviewstudy.dto.study.StudyMemberDto(sm.member, sm.isLeader) from StudyMember sm join sm.member m where sm.study.id = :studyId")

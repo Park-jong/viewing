@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface StudyTagRepository extends JpaRepository<StudyTag, Integer> {
     //수정 시 기존 값 제거
     @Modifying(clearAutomatically = true, flushAutomatically = true)

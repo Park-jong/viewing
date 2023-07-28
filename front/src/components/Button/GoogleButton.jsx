@@ -13,6 +13,21 @@ const Container = styled.div`
 
 `;
 
+export function LoginGoogle() {
+  const Google_URL = "https://accounts.google.com/o/oauth2/v2/auth";
+  const queries = {
+    response_type : "code",
+    client_id: "249028033375-3q56vn82p2jku86es16u191kflqp6p1o.apps.googleusercontent.com",
+    redirect_uri: "http://localhost:3000/login/google",
+    scope : "email"
+  };
+
+  const params = new URLSearchParams(queries).toString();
+
+
+  window.location.href = `${Google_URL}?${params}`
+}
+
 export default function GoogleButton() {
-  return <Container>Google로 시작하기</Container>
+  return <Container onClick={LoginGoogle}>Google로 시작하기</Container>
 }

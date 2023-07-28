@@ -10,9 +10,21 @@ const Container = styled.div`
   color: var(--gray-50);
   font-weight: 500;
   border-radius: 15px;
-
 `;
 
+export function LoginGithub() {
+  const GITHUB_URL = "https://github.com/login/oauth/authorize";
+  const queries = {
+    client_id: "849f92ca3e7a5a3a76da",
+    redirect_uri: "http://localhost:3000/login/github",
+    scope : "user"
+  };
+
+  const params = new URLSearchParams(queries).toString();
+
+  window.location.href =`${GITHUB_URL}?${params}`;
+}
+
 export default function GithubButton() {
-  return <Container>Github으로 시작하기</Container>;
+  return <Container onClick={LoginGithub}>Github으로 시작하기</Container>;
 }

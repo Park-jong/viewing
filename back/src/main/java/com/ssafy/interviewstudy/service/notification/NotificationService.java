@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +64,7 @@ public class NotificationService {
                 timeIncludeId,
                 0
 
-                );
+        );
         if(lastEventId!=null){
             sendMissingData(lastEventId,memberId,timeIncludeId,sseEmitter);
         }

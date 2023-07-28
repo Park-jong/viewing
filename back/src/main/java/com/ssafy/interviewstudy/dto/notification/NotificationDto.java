@@ -14,21 +14,28 @@ import java.time.LocalDateTime;
 @Getter
 public class NotificationDto {
 
+    //알림 ID (PK)
     private Integer notificationId;
 
+    //알림 수신자
     @NotNull
     private Integer memberId;
 
+    //알림 내용
     @NotNull
     private String content;
 
+    //알림 종류
     @NotNull
     private NotificationType notificationType;
 
+    //이동할 url
     private String url = null;
 
+    //읽음 여부
     private Boolean isRead;
 
+    //알림 생성일
     private LocalDateTime createdAt;
 
     @Builder

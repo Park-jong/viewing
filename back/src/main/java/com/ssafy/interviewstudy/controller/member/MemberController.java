@@ -1,5 +1,9 @@
 package com.ssafy.interviewstudy.controller.member;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
+import com.ssafy.interviewstudy.annotation.JWTRequired;
+import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.member.MemberStatus;
 import com.ssafy.interviewstudy.domain.member.RegistrationStatus;
@@ -7,8 +11,8 @@ import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTToken;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.support.member.*;
-import com.ssafy.interviewstudy.util.JWTProvider;
-import com.ssafy.interviewstudy.util.JWTProviderImpl;
+import com.ssafy.interviewstudy.util.jwt.JWTProvider;
+import com.ssafy.interviewstudy.util.jwt.JWTProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -115,21 +119,6 @@ public class MemberController {
                     )
             ).build();
             return ResponseEntity.ok().body(jwtToken);
-//            //이미 가입했으면 거기로 리다이렉트 하면댐
-//            if(currentMember.getRegistrationStatus()==RegistrationStatus.FINISHED){
-//                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.home));
-//                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
-//            }
-//            //가입된 유저가 닉네임을 입력안했을때
-//            else if(currentMember.getRegistrationStatus()==RegistrationStatus.SELECT_NICKNAME){
-//                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.selectNickname));
-//                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
-//            }
-//            //가입된 유저가 프로필 안골랐을때
-//            else{
-//                responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.selectProfile));
-//                return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
-//            }
         }
         //가입한 유저가 아닐때
         Member registeredMember = Member.builder()
@@ -138,7 +127,9 @@ public class MemberController {
                 .status(MemberStatus.ACTIVE)
                 .registrationStatus(RegistrationStatus.SELECT_NICKNAME)
                 .email(memberInfoResult.getEmail())
+                .nickname("user"+System.currentTimeMillis())
                 .build();
+
 
         //우리쪽에 등록시키기
         memberService.register(registeredMember);
@@ -160,39 +151,41 @@ public class MemberController {
         return ResponseEntity.ok().body(jwtToken);
     }
 
+
     @GetMapping("/login/nickname/check/{nickname}")
-    public ResponseEntity<?> checkDuplicateNickname(@PathVariable(required = true) String nickname){
+    public ResponseEntity<?> checkDuplicateNickname(@ModelAttribute("memberInfo") JWTMemberInfo memberInfo,
+                                                    @PathVariable(required = true) String nickname){
+
+        System.out.println(memberInfo.getMemberId()+" "+memberInfo.getEmail());
+
         Member checkedMember = memberService.checkDuplicateNickname(nickname);
         if(checkedMember==null){
             return ResponseEntity.ok().build();
         }
         else return ResponseEntity.badRequest().build();
     }
-    
-    @PostMapping("/login/nickname")
-    public ResponseEntity<?> selectNickname(@RequestBody(required = true) String nickname){
+
+    @JWTRequired
+    @Authority(authorityType = AuthorityType.Member)
+    @PutMapping("/users/{userId}/nickname")
+    public ResponseEntity<?> selectNickname(@RequestBody(required = true) String nickname,
+                                            @PathVariable("userId") Integer memberId,
+                                            @MemberInfo JWTMemberInfo memberInfo){
+
+        System.out.println(memberInfo.getEmail()+" "+memberInfo.getMemberId());
 
         //닉네임 중복체크
         Member checkedMember = memberService.checkDuplicateNickname(nickname);
-        if(checkedMember!=null){
-            HttpHeaders responseHttpHeaders = new HttpHeaders();
-            /*
-                JWT토큰으로 처리하는 부분 현재 페이지에 들어와있는 멤버가 누군지 알아야함
-             */
-
-            Member nowMember = memberService.findMemberByMemberId(1);
+        if(checkedMember==null){
+            Member nowMember = memberService.findMemberByMemberId(
+                    memberId
+            );
             memberService.nextRegistrationStatus(nowMember);
             memberService.changeMemberNickname(nowMember,nickname);
-
-            responseHttpHeaders.setLocation(URI.create("http://localhost:8080/oauth"));
-            return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
+            return ResponseEntity.ok().build();
         }
         else{
-            memberService.nextRegistrationStatus(checkedMember);
-            HttpHeaders responseHttpHeaders = new HttpHeaders();
-            responseHttpHeaders.setLocation(URI.create("http://localhost:8080/oauth"));
-            return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
-
+            return ResponseEntity.badRequest().body("중복된 닉네임");
         }
     }
 }

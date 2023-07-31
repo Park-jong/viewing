@@ -3,11 +3,10 @@ package com.ssafy.interviewstudy.interceptor.auth;
 
 import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
-import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.service.study.StudyService;
-import com.ssafy.interviewstudy.util.PathVariableExtractor;
+import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;

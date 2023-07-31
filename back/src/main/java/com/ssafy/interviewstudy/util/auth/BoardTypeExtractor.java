@@ -1,4 +1,4 @@
-package com.ssafy.interviewstudy.util;
+package com.ssafy.interviewstudy.util.auth;
 
 import com.ssafy.interviewstudy.domain.board.BoardType;
 

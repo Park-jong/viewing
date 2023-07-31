@@ -4,7 +4,7 @@ import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.message.MessageService;
-import com.ssafy.interviewstudy.util.PathVariableExtractor;
+import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;

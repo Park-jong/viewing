@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class MemberStudyArticleInterceptor implements HandlerInterceptor {
+public class MemberCommentInterceptor implements HandlerInterceptor {
+
 
 }

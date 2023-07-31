@@ -1,4 +1,4 @@
-package com.ssafy.interviewstudy.util;
+package com.ssafy.interviewstudy.util.auth;
 
 import java.util.ArrayList;
 import java.util.List;

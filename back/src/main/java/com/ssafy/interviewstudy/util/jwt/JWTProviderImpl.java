@@ -1,8 +1,9 @@
-package com.ssafy.interviewstudy.util;
+package com.ssafy.interviewstudy.util.jwt;
 
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.WeakKeyException;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Base64Utils;
 
@@ -12,7 +13,8 @@ import java.util.Map;
 
 @NoArgsConstructor
 public class JWTProviderImpl implements JWTProvider{
-    private final String secretKey = "SongHeungMinBongJunhoJayParkLetsgo";
+    private final String secretKey = "SongHeungMinBongJunhoJayParkLetsgooooooooooooo" +
+            "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
 
     private String decodeToken(String token){
         return new String(Base64Utils.decodeFromUrlSafeString(token));
@@ -24,7 +26,7 @@ public class JWTProviderImpl implements JWTProvider{
         System.out.println("valid target token : "+token);
         try{
             Jws<Claims> jws = Jwts.parser()
-                    .setSigningKey(secretKey)
+                    .setSigningKey(secretKey.getBytes())
                     .parseClaimsJws(token);
             Claims claims = jws.getBody();
             long expiration = claims.getExpiration().getTime();
@@ -37,7 +39,11 @@ public class JWTProviderImpl implements JWTProvider{
         catch (ExpiredJwtException ex){
             return JWTResponseType.TOKEN_EXPIRED;
         }
+        catch(WeakKeyException wk){
+            return JWTResponseType.VALID_TOKEN;
+        }
         catch(Exception ex){
+            ex.printStackTrace();
             return JWTResponseType.INVALID_TOKEN;
         }
         return JWTResponseType.VALID_TOKEN;
@@ -68,7 +74,7 @@ public class JWTProviderImpl implements JWTProvider{
     @Override
     public JWTMemberInfo getJWTMemberInfo(String token){
         Jws<Claims> jws = Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(token);
 
         Claims claims = jws.getBody();
@@ -76,7 +82,7 @@ public class JWTProviderImpl implements JWTProvider{
         return JWTMemberInfo
                 .builder()
                 .email((String)claims.get("email"))
-                .memberId((Integer)claims.get("id"))
+                .memberId((Integer)claims.get("memberId"))
                 .build();
     }
 }

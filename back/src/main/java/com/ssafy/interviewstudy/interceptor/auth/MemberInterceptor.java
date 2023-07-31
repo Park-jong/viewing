@@ -5,7 +5,7 @@ import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.member.MemberService;
-import com.ssafy.interviewstudy.util.PathVariableExtractor;
+import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -42,7 +42,7 @@ public class MemberInterceptor implements HandlerInterceptor {
         List<Integer> pathVariables = PathVariableExtractor.extract(requestUri);
 
         //jwt에 담긴 유저 정보 확인
-        Object jwtMemberInfoAttribute = request.getAttribute("JWTMemberInfo");
+        Object jwtMemberInfoAttribute = request.getAttribute("memberInfo");
         JWTMemberInfo jwtMemberInfo;
         
         if(jwtMemberInfoAttribute instanceof JWTMemberInfo){
@@ -52,7 +52,7 @@ public class MemberInterceptor implements HandlerInterceptor {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"잘못된 JWT 정보");
             return false;
         }
-        
+
         //PathVariable 유효성 검사
         if(pathVariables.size()!=1){
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,"잘못된 Path Variable");

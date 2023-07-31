@@ -1,10 +1,12 @@
 package com.ssafy.interviewstudy.interceptor.jwt;
 
+import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.util.JWTProvider;
-import com.ssafy.interviewstudy.util.JWTProviderImpl;
-import com.ssafy.interviewstudy.util.JWTResponseType;
+import com.ssafy.interviewstudy.util.jwt.JWTProvider;
+import com.ssafy.interviewstudy.util.jwt.JWTProviderImpl;
+import com.ssafy.interviewstudy.util.jwt.JWTResponseType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,17 @@ import javax.servlet.http.HttpServletResponse;
 public class JWTRequestInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        //자기가 처리해야 할 부분인지 체크
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            // 컨트롤러 메서드에 붙은 어노테이션 정보 가져오기
+            JWTRequired annotation = handlerMethod.getMethodAnnotation(JWTRequired.class);
+            if (annotation == null) {
+                return true;
+            }
+        }
+
         //JWT관리 클래스 생성
         JWTProvider jwtProvider = new JWTProviderImpl();
 
@@ -46,7 +59,7 @@ public class JWTRequestInterceptor implements HandlerInterceptor {
         JWTMemberInfo jwtMemberInfo = jwtProvider
                 .getJWTMemberInfo(jwtTokenAuthorizationHeader);
 
-        request.setAttribute("JWTMemberInfo",jwtMemberInfo);
+        request.setAttribute("memberInfo",jwtMemberInfo);
         return true;
     }
 }

@@ -12,5 +12,5 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Intege
     // 댓글마다 좋아요 수 체크
     Integer countByComment(ArticleComment comment);
 
-    Integer removeCommentLikeByCommentAndMember(ArticleComment comment, Member member);
+    void removeCommentLikeByCommentAndMember(ArticleComment comment, Member member);
 }

@@ -6,7 +6,10 @@ import com.ssafy.interviewstudy.dto.board.BoardResponse;
 import com.ssafy.interviewstudy.dto.board.StudyBoardRequest;
 import com.ssafy.interviewstudy.repository.board.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -18,12 +21,9 @@ import java.util.Optional;
 @Service
 public class BoardService {
 
-    final int pageSize = 10;
+    final int pageSize = 20;
 
     private BoardRepository boardRepository;
-    private FreeBoardRepository freeBoardRepository;
-    private InterviewReviewBoardRepository interviewReviewBoardRepository;
-    private QuestionBoardRepository questionBoardRepository;
     private StudyBoardRepository studyBoardRepository;
     private BoardDtoService boardDtoService;
 
@@ -31,12 +31,8 @@ public class BoardService {
     private EntityManager em;
 
     @Autowired
-    public BoardService(BoardRepository boardRepository, FreeBoardRepository freeBoardRepository, InterviewReviewBoardRepository interviewReviewBoardRepository
-            , QuestionBoardRepository questionBoardRepository, StudyBoardRepository studyBoardRepository, BoardDtoService boardDtoService) {
+    public BoardService(BoardRepository boardRepository, StudyBoardRepository studyBoardRepository, BoardDtoService boardDtoService) {
         this.boardRepository = boardRepository;
-        this.freeBoardRepository = freeBoardRepository;
-        this.interviewReviewBoardRepository = interviewReviewBoardRepository;
-        this.questionBoardRepository = questionBoardRepository;
         this.studyBoardRepository = studyBoardRepository;
         this.boardDtoService = boardDtoService;
     }
@@ -44,19 +40,19 @@ public class BoardService {
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
 
     //글 목록 조회
-    public List<BoardResponse> findBoardList(Integer memberId, String boardType, int page) {
+    public List<BoardResponse> findBoardList(Integer memberId, BoardType boardType, int page) {
         List<Board> boardList = boardRepository.findByType(boardType, PageRequest.of(page, pageSize)).getContent();
         List<BoardResponse> responseList = new ArrayList<>();
 
         for (Board b : boardList) {
-            responseList.add(boardDtoService.fromEntityWithoutContent(memberId, b));
+            responseList.add(boardDtoService.fromEntityWithoutContent(b));
         }
 
         return responseList;
     }
 
     // 글 detail 조회
-    public BoardResponse findArticle(Integer memberId, Integer articleId, String boardType) {
+    public BoardResponse findArticle(Integer memberId, Integer articleId, BoardType boardType) {
         Optional<Board> article = boardRepository.findById(articleId);
         // 페이지도 나중에 request 받기
 
@@ -69,18 +65,15 @@ public class BoardService {
 
     // 글 수정
     public BoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest){
-        Board article = boardDtoService.toEntity(boardRequest);
-
-        Board originArticle = (Board) boardRepository.findById(articleId).get();
+        Board originArticle = boardRepository.findById(articleId).get();
         originArticle.modifyArticle(boardRequest);
-        em.flush();
+        boardRepository.save(originArticle);
 
         return boardDtoService.fromEntity(boardRequest.getMemberId(), originArticle);
     }
 
     // 글 삭제
     public Integer removeArticle(Integer articleId){
-
         if(boardRepository.findById(articleId) == null){
             return 0;
         }
@@ -89,28 +82,43 @@ public class BoardService {
         return articleId;
     }
 
-    // 자유게시판 글 저장
+    // 글 저장
     public Integer saveFreeBoard(BoardRequest boardRequest){
-        Board article = freeBoardRepository.save((FreeBoard) boardDtoService.toEntity(boardRequest));
+        Board article = boardRepository.save(boardDtoService.toEntity(boardRequest));
         return article.getId();
     }
 
-    // 면접후기게시판 글 저장
-    public Integer saveInterviewReviewBoard(BoardRequest boardRequest){
-        Board article = interviewReviewBoardRepository.save((InterviewReviewBoard) boardDtoService.toEntity(boardRequest));
-        return article.getId();
+    // 글 검색
+    public List<BoardResponse> findByTitle(String searchBy, String keyword, BoardType boardType, Pageable pageable){
+        List<Board> articles;
+        List<BoardResponse> responseList = new ArrayList<>();
+        if(searchBy.equals("title")) articles = boardRepository.findByTitleContaining(keyword, boardType, pageable).getContent();
+        else if(searchBy.equals("content")) articles = boardRepository.findByTitleOrContent(keyword, boardType, pageable).getContent();
+        else articles = boardRepository.findWithAuthor(keyword, boardType, pageable).getContent();
+
+        for (Board b: articles) {
+            responseList.add(boardDtoService.fromEntityWithoutContent(b));
+        }
+
+        return responseList;
     }
 
-    // 질문게시판 글 저장
-    public Integer saveQuestionBoard(BoardRequest boardRequest){
-        Board article = questionBoardRepository.save((QuestionBoard) boardDtoService.toEntity(boardRequest));
-        return article.getId();
+    // 조회수+1
+    public void modifyViewCount(Integer articleId){
+        Board article = boardRepository.findById(articleId).get();
+        article.updateViewCount();
+        boardRepository.save(article);
     }
 
-    // 스터디게시판 글 저장
-    public Integer saveStudyBoard(StudyBoardRequest studyBoardRequest){
-        Board article = studyBoardRepository.save((StudyBoard) boardDtoService.toEntity(studyBoardRequest));
-        return article.getId();
+
+    // 글 작성자가 본인인지 아닌지 체크
+    public Boolean checkAuthor(Integer articleId, Integer memberId){
+        Board article = boardRepository.findById(articleId).get();
+
+        // 본인이면 true, 아니면 false
+        if(article.getAuthor().getId() == memberId) return true;
+        else return false;
     }
+
 
 }

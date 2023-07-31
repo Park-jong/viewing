@@ -1,6 +1,5 @@
 package com.ssafy.interviewstudy.repository.board;
 
-import com.ssafy.interviewstudy.domain.board.InterviewReviewBoard;
 import com.ssafy.interviewstudy.domain.board.StudyBoard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

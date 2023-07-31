@@ -5,35 +5,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-@NoArgsConstructor
 @Data
-public class CommentResponse {
+@NoArgsConstructor
+public class CommentReplyResponse {
     private Integer id;
     private Author author;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private Integer commentCount;
     private Integer likeCount;
     private Boolean isLike;
     private Boolean isDelete;
 
-    private List<CommentReplyResponse> replies;
-
     @Builder
-    public CommentResponse(Integer id, Author author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer commentCount, Integer likeCount, Boolean isLike, Boolean isDelete, List<CommentReplyResponse> replies) {
+    public CommentReplyResponse(Integer id, Author author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer likeCount, Boolean isLike, Boolean isDelete) {
         this.id = id;
         this.author = author;
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.commentCount = commentCount;
         this.likeCount = likeCount;
         this.isLike = isLike;
         this.isDelete = isDelete;
-        this.replies = replies;
     }
 }

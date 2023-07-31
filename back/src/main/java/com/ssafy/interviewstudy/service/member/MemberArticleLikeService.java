@@ -33,7 +33,7 @@ public class MemberArticleLikeService {
         List<Board> boardList = new ArrayList<>();
         boardList = memberArticleLikeRepository.getArticleByMemberId(boardRequest.getMemberId(),boardType.toString());
         for(Board b : boardList){
-            boardResponses.add(boardDtoService.fromEntityWithoutContent(boardRequest.getMemberId(), b));
+            boardResponses.add(boardDtoService.fromEntityWithoutContent(b));
         }
         return boardResponses;
     }

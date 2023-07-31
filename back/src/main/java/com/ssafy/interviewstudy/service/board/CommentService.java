@@ -1,7 +1,6 @@
 package com.ssafy.interviewstudy.service.board;
 
 import com.ssafy.interviewstudy.domain.board.ArticleComment;
-import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.CommentLike;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
@@ -24,51 +23,62 @@ public class CommentService {
     private BoardRepository boardRepository;
     private ArticleCommentRepository articleCommentRepository;
     private CommentLikeRepository commentLikeRepository;
-    private BoardDtoService boardDtoService;
     private MemberRepository memberRepository;
+    private CommentDtoService commentDtoService;
 
     @PersistenceContext
     EntityManager em;
 
     @Autowired
-    public CommentService(BoardRepository boardRepository, ArticleCommentRepository articleCommentRepository, CommentLikeRepository commentLikeRepository, BoardDtoService boardDtoService) {
+    public CommentService(BoardRepository boardRepository, ArticleCommentRepository articleCommentRepository, CommentLikeRepository commentLikeRepository
+            , CommentDtoService commentDtoService, MemberRepository memberRepository) {
         this.boardRepository = boardRepository;
         this.articleCommentRepository = articleCommentRepository;
         this.commentLikeRepository = commentLikeRepository;
-        this.boardDtoService = boardDtoService;
+        this.memberRepository = memberRepository;
+        this.commentDtoService = commentDtoService;
     }
+
+
 
     // 게시글 댓글 저장
     public Integer saveComment(CommentRequest commentRequest){
 
-        ArticleComment comment = articleCommentRepository.save(boardDtoService.toEntity(commentRequest));
+        ArticleComment comment = articleCommentRepository.save(commentDtoService.toEntity(commentRequest));
 
         return comment.getId();
     }
 
     // 게시글 댓글 조회
     public List<CommentResponse> findComments(Integer memberId, Integer articleId){
-        List<ArticleComment> comment = articleCommentRepository.findAllByArticle((Board) boardRepository.findById(articleId).get());
+        List<ArticleComment> comment = articleCommentRepository.findAllByArticle(boardRepository.findById(articleId).get());
+        findReplies(comment);
         List<CommentResponse> commentResponses = new ArrayList<>();
 
         for (ArticleComment c: comment) {
-            commentResponses.add(boardDtoService.fromEntity(memberId, c));
+            commentResponses.add(commentDtoService.fromEntity(memberId, c));
         }
 
         return commentResponses;
     }
 
-    // 대댓글 조회
-    public List<CommentResponse> findCommentReplies(Integer memberId, Integer articleId, Integer commentId){
-        List<ArticleComment> replies = articleCommentRepository.findRepliesByComment(commentId);
-        List<CommentResponse> commentResponses = new ArrayList<>();
-
-        for (ArticleComment c: replies) {
-            commentResponses.add(boardDtoService.fromEntityWithoutCommentCount(memberId, c));
+    public void findReplies(List<ArticleComment> parents){
+        for (ArticleComment comment: parents) {
+            List<ArticleComment> replies = comment.getReplies();
         }
-
-        return commentResponses;
     }
+
+//    // 대댓글 조회
+//    public List<CommentResponse> findCommentReplies(Integer memberId, Integer articleId, Integer commentId){
+//        List<ArticleComment> replies = articleCommentRepository.findRepliesByComment(commentId);
+//        List<CommentResponse> commentResponses = new ArrayList<>();
+//
+//        for (ArticleComment c: replies) {
+//            commentResponses.add(boardDtoService.fromEntityWithoutCommentCount(memberId, c));
+//        }
+//
+//        return commentResponses;
+//    }
 
     // (대)댓글 수정
     public CommentResponse modifyComment(Integer commentId, CommentRequest commentRequest){
@@ -78,7 +88,7 @@ public class CommentService {
         originComment.modifyComment(commentRequest);
         em.flush();
 
-        return boardDtoService.fromEntity(commentRequest.getMemberId(), originComment);
+        return commentDtoService.fromEntity(commentRequest.getMemberId(), originComment);
     }
 
     // (대)댓글 삭제
@@ -108,5 +118,13 @@ public class CommentService {
     public void removeCommentLike(Integer memberId, Integer commentId){
         commentLikeRepository.removeCommentLikeByCommentAndMember(articleCommentRepository.findById(commentId).get()
                 ,memberRepository.findMemberById(memberId));
+    }
+
+    // 댓글 작성자가 본인인지 체크
+    public Boolean checkAuthor(Integer commentId, Integer memberId){
+        ArticleComment comment = articleCommentRepository.findById(commentId).get();
+
+        if(comment.getAuthor().getId() == memberId) return true;
+        else return false;
     }
 }

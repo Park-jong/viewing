@@ -1,6 +1,7 @@
 package com.ssafy.interviewstudy.dto.board;
 
 import com.ssafy.interviewstudy.domain.board.ArticleFile;
+import com.ssafy.interviewstudy.domain.board.BoardType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ public class BoardRequest {
 
     private String title;
     private String content;
+    private BoardType boardType;
 
     private List<ArticleFile> files;
 

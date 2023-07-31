@@ -42,11 +42,13 @@ public class StudyService {
     //내 스터디 조회
     public List<StudyDtoResponse> findMyStudies(Integer id){
         Member member = memberRepository.findById(id).get();
+        //태그들 가져옴
         List<Study> studies = studyRepository.findStudiesByMember(memberRepository.findById(id).get());
+        //멤버수 가져옴(스터디, 멤버수)
         List<Tuple> counts = studyRepository.findMyStudyMemberCountByMember(member);
         List<StudyDtoResponse> result = new ArrayList<>();
         for (Tuple tuple : counts) {
-            result.add(new StudyDtoResponse(tuple.get(0, Study.class), true, tuple.get(1, Long.class)));
+            result.add(new StudyDtoResponse(tuple.get(0, Study.class),  tuple.get(1, Long.class)));
         }
         return result;
     }
@@ -54,7 +56,9 @@ public class StudyService {
     //내가 찜한 스터디 조회
     public List<StudyDtoResponse> findBookmarkStudies(Integer id){
         Member member = memberRepository.findById(id).get();
+        //1차 캐시에 올림(태그들)
         List<Study> studies = studyRepository.findBookmarksByMember(member);
+        //(Study, 멤버수)
         List<Tuple> counts = studyRepository.findBookmarksMemberCountByMember(member);
         List<StudyDtoResponse> result = new ArrayList<>();
         for (Tuple tuple : counts) {
@@ -89,12 +93,14 @@ public class StudyService {
 
     //스터디 검색 결과 조회
     public Page<StudyDtoResponse> findStudiesBySearch(Boolean option, Integer appliedCompanyId, String appliedJob, CareerLevel careerLevel, Pageable pageable){
+        //검색 결과 (study_id, Study, 북마크여부, 인원) 
         Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompanyId, appliedJob, careerLevel, 1, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
         List<Integer> studyids = new ArrayList<>();
         for (Tuple study : studies) {
             studyids.add(study.get(0, Integer.class));
         }
+        //태그들을 가져옴
         List<Study> byIds = studyRepository.findByIds(studyids);
         for (Tuple study : studies) {
             result.add(new StudyDtoResponse(study.get(1, Study.class), study.get(2, Boolean.class), study.get(3, Long.class)));
@@ -111,7 +117,7 @@ public class StudyService {
         study.updateLeader(leader);
         study.updateCompany(companyRepository.findById(studyDtoRequest.getAppliedCompany()).get());
         studyRepository.save(study);
-
+        //태그들 추가
         List<Integer> tags = studyDtoRequest.getTags();
         for (Integer tag : tags) {
             StudyTagType stt = studyTagTypeRepository.findById(tag).get();

@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.controller.study;
 
+import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.study.CareerLevel;
 import com.ssafy.interviewstudy.dto.study.*;
 import com.ssafy.interviewstudy.service.study.StudyService;
@@ -28,8 +29,9 @@ public class StudyController {
     }
 
     //스터디 조회
+    @JWTRequired
     @GetMapping
-    public ResponseEntity<?> studyList(@RequestParam(name = "option", required = false) Boolean option, @RequestParam(name = "appliedCompany", required = false) Integer appliedCompany, @RequestParam(name = "appliedJob", required = false) String appliedJob, @RequestParam(name = "careerLevel", required = false)CareerLevel careerLevel, @PageableDefault(size = 20)Pageable pageable){
+    public ResponseEntity<?> studyList(@RequestParam(name = "option", required = false) Boolean option, @RequestParam(name = "appliedCompany", required = false) Integer appliedCompany, @RequestParam(name = "appliedJob", required = false) String appliedJob, @RequestParam(name = "careerLevel", required = false)CareerLevel careerLevel, @PageableDefault(size = 12)Pageable pageable){
         Page<StudyDtoResponse> page = studyService.findStudiesBySearch(option, appliedCompany, appliedJob, careerLevel, pageable);
         return ResponseEntity.ok().body(page);
     }

@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.service.study;
 import com.querydsl.core.Tuple;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.study.*;
+import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.study.*;
 import com.ssafy.interviewstudy.exception.calendar.updateFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
@@ -36,6 +37,7 @@ public class StudyService {
     private final StudyRequestFileRepository studyRequestFileRepository;
     private final StudyChatRepository studyChatRepository;
     private final StudyCalendarRepository studyCalendarRepository;
+    private  final StudyBookmarkRepository studyBookmarkRepository;
 
 
 
@@ -69,32 +71,19 @@ public class StudyService {
 
 
     //스터디 정보 조회
-    public StudyDtoResponse findStudyById(Integer id){
+    public StudyDtoResponse findStudyById(JWTMemberInfo memberInfo, Integer id){
+        Integer memberId = memberInfo.getMemberId();
         Study study = studyRepository.findStudyById(id);
         long headCount = studyMemberRepository.countStudyMemberByStudy(study);
-        return new StudyDtoResponse(study, headCount);
-    }
-
-
-    //스터디 조회(사용하지 않음)
-    public Page<StudyDtoResponse> findStudies(Boolean option, Pageable pageable){
-        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, null, null, null, 1, pageable);
-        List<StudyDtoResponse> result = new ArrayList<>();
-        List<Integer> studyids = new ArrayList<>();
-        for (Tuple study : studies) {
-            studyids.add(study.get(0, Integer.class));
-        }
-        List<Study> byIds = studyRepository.findByIds(studyids);
-        for (Tuple study : studies) {
-            result.add(new StudyDtoResponse(study.get(1, Study.class), study.get(2, Boolean.class), study.get(3, Long.class)));
-        }
-        return new PageImpl<>(result, pageable, studies.getTotalElements());
+        StudyBookmark sb = studyBookmarkRepository.findStudyBookmarkByStudyIdAndMemberId(id, memberId);
+        return new StudyDtoResponse(study, sb != null, headCount);
     }
 
     //스터디 검색 결과 조회
-    public Page<StudyDtoResponse> findStudiesBySearch(Boolean option, Integer appliedCompanyId, String appliedJob, CareerLevel careerLevel, Pageable pageable){
-        //검색 결과 (study_id, Study, 북마크여부, 인원) 
-        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompanyId, appliedJob, careerLevel, 1, pageable);
+    public Page<StudyDtoResponse> findStudiesBySearch(JWTMemberInfo memberInfo, Boolean option, Integer appliedCompanyId, String appliedJob, CareerLevel careerLevel, Pageable pageable){
+        Integer memberId = memberInfo != null ? memberInfo.getMemberId() : null;
+        //검색 결과 (study_id, Study, 북마크여부, 인원)
+        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompanyId, appliedJob, careerLevel, memberId, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
         List<Integer> studyids = new ArrayList<>();
         for (Tuple study : studies) {

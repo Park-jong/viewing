@@ -118,6 +118,6 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
     }
 
     private BooleanExpression isBookmarked(Integer memberId){
-        return memberId != null ? studyBookmark.member.id.eq(memberId) : null;
+        return memberId != null ? studyBookmark.member.id.eq(memberId) : studyBookmark.member.id.isNull();
     }
 }

@@ -6,10 +6,10 @@ import com.ssafy.interviewstudy.dto.board.BoardResponse;
 import com.ssafy.interviewstudy.service.member.MemberArticleLikeService;
 import com.ssafy.interviewstudy.service.member.MemberCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class MypageController {
     }
 
     @GetMapping(value="/users/{userId}/article",params = "searchType=favor")
-    public ResponseEntity<?> getFavorArticleList(@Param("board")BoardType boardType, @PathVariable("userId") Integer memberId){
+    public ResponseEntity<?> getFavorArticleList(@RequestParam("board")BoardType boardType, @PathVariable("userId") Integer memberId){
         BoardRequest boardRequest = new BoardRequest();
         boardRequest.setMemberId(memberId);
         List<BoardResponse> boardResponseList = memberArticleLikeService.getLikedArticleByMemberId(boardRequest,boardType);
@@ -37,7 +37,7 @@ public class MypageController {
     }
 
     @GetMapping(value="/users/{userId}/article",params = "searchType=comment")
-    public ResponseEntity<?> getCommentedArticleList(@Param("board")BoardType boardType, @PathVariable("userId") Integer memberId){
+    public ResponseEntity<?> getCommentedArticleList(@RequestParam("board")BoardType boardType, @PathVariable("userId") Integer memberId){
         BoardRequest boardRequest = new BoardRequest();
         boardRequest.setMemberId(memberId);
         List<BoardResponse> boardResponseList = memberCommentService.getCommentedArticle(boardRequest,boardType);

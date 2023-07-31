@@ -5,11 +5,14 @@ import com.ssafy.interviewstudy.domain.message.Message;
 import com.ssafy.interviewstudy.dto.message.MessageCreatedResponse;
 import com.ssafy.interviewstudy.dto.message.MessageListResponse;
 import com.ssafy.interviewstudy.dto.message.MessageSendRequest;
+import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.exception.message.CreationFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.message.MessageRepository;
 import com.ssafy.interviewstudy.dto.message.MessageDto;
+import com.ssafy.interviewstudy.service.notification.NotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MessageService {
     private final MessageRepository messageRepository;
 
@@ -28,14 +32,7 @@ public class MessageService {
 
     private final EntityManager em;
 
-
-    @Autowired
-    public MessageService(MessageRepository messageRepository, MemberRepository memberRepository, EntityManager em) {
-        this.messageRepository = messageRepository;
-        this.memberRepository = memberRepository;
-        this.em = em;
-    }
-
+    private final NotificationService notificationService;
 
 
     //쪽지 상세 조회
@@ -72,6 +69,13 @@ public class MessageService {
         messageRepository.save(message);
         System.out.println(message);
         if(message.getId()==null) throw new CreationFailException("쪽지");
+
+        notificationService.sendNotificationToMember(
+                NotificationDto
+                        .builder()
+                        .memberId(messageSendRequest.getReceiverId())
+                        .content(message.getAuthor().getNickname()+"님에게 메세지가 도착했습니다.")
+                        .build());
 
         return new MessageCreatedResponse(message.getId());
     }

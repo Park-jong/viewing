@@ -41,7 +41,7 @@ public class MemberBoardInterceptor implements HandlerInterceptor {
             if (annotation != null) {
                 if(annotation.authorityType()!= AuthorityType.Member_Board) return true;
             }
-            return true;
+            else return true;
         }
 
         //uri에서 Path Variable 추출하기

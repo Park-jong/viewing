@@ -152,12 +152,9 @@ public class MemberController {
     }
 
 
-
     @GetMapping("/login/nickname/check/{nickname}")
-    public ResponseEntity<?> checkDuplicateNickname(@ModelAttribute("memberInfo") JWTMemberInfo memberInfo,
+    public ResponseEntity<?> checkDuplicateNickname(
                                                     @PathVariable(required = true) String nickname){
-
-        System.out.println(memberInfo.getMemberId()+" "+memberInfo.getEmail());
 
         Member checkedMember = memberService.checkDuplicateNickname(nickname);
         if(checkedMember==null){
@@ -167,6 +164,8 @@ public class MemberController {
     }
 
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
     @PutMapping("/users/{userId}/nickname")
     public ResponseEntity<?> selectNickname(@RequestBody(required = true) String nickname,
                                             @PathVariable("userId") Integer memberId){

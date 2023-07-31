@@ -5,6 +5,7 @@ import com.ssafy.interviewstudy.dto.message.MessageDto;
 import com.ssafy.interviewstudy.dto.message.MessageListResponse;
 import com.ssafy.interviewstudy.dto.message.MessageSendRequest;
 import com.ssafy.interviewstudy.service.message.MessageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,13 +19,11 @@ import java.util.List;
 //메세지를 담당하는 컨트롤러
 @RequestMapping(value={"/users/{userId}/messages","/messages"})
 @RestController
+@RequiredArgsConstructor
 public class MessageController {
+
     private final MessageService messageService;
 
-    @Autowired
-    public MessageController(MessageService messageService) {
-        this.messageService = messageService;
-    }
     
     //보낸 쪽지함
     @GetMapping("/send")

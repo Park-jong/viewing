@@ -36,6 +36,7 @@ public class MemberMessageInterceptor implements HandlerInterceptor {
             if (annotation != null) {
                 if(annotation.authorityType()!= AuthorityType.Member_Message) return true;
             }
+            else return true;
         }
 
         //uri에서 Path Variable 추출하기

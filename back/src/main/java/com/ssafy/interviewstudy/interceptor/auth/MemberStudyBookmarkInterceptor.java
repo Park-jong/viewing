@@ -42,6 +42,7 @@ public class MemberStudyBookmarkInterceptor implements HandlerInterceptor {
             if (annotation != null) {
                 if(annotation.authorityType()!= AuthorityType.Member_Study_Bookmark) return true;
             }
+            else return true;
         }
 
         //uri에서 Path Variable 추출하기

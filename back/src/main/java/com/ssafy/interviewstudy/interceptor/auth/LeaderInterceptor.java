@@ -40,6 +40,7 @@ public class LeaderInterceptor implements HandlerInterceptor {
             if (annotation != null) {
                 if (annotation.authorityType() != AuthorityType.Leader) return true;
             }
+            else return true;
         }
 
         //uri에서 Path Variable 추출하기

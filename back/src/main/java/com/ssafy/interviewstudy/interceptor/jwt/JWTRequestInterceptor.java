@@ -17,6 +17,9 @@ public class JWTRequestInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+
+        Boolean isJwtRequired = true;
+
         //자기가 처리해야 할 부분인지 체크
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -25,7 +28,12 @@ public class JWTRequestInterceptor implements HandlerInterceptor {
             if (annotation == null) {
                 return true;
             }
+            else{
+                isJwtRequired = annotation.required();
+            }
         }
+
+
 
         //JWT관리 클래스 생성
         JWTProvider jwtProvider = new JWTProviderImpl();
@@ -35,6 +43,7 @@ public class JWTRequestInterceptor implements HandlerInterceptor {
 
         //Authorization 헤더가 없으면 = JWT 토큰 없음
         if(authorizationHeader == null){
+            if(!isJwtRequired) return true;
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"No JWT Token");
             return false;
         }

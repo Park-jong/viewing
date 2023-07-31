@@ -152,6 +152,7 @@ public class MemberController {
     }
 
 
+
     @GetMapping("/login/nickname/check/{nickname}")
     public ResponseEntity<?> checkDuplicateNickname(@ModelAttribute("memberInfo") JWTMemberInfo memberInfo,
                                                     @PathVariable(required = true) String nickname){
@@ -165,14 +166,10 @@ public class MemberController {
         else return ResponseEntity.badRequest().build();
     }
 
-    @JWTRequired
-    @Authority(authorityType = AuthorityType.Member)
+
     @PutMapping("/users/{userId}/nickname")
     public ResponseEntity<?> selectNickname(@RequestBody(required = true) String nickname,
-                                            @PathVariable("userId") Integer memberId,
-                                            @MemberInfo JWTMemberInfo memberInfo){
-
-        System.out.println(memberInfo.getEmail()+" "+memberInfo.getMemberId());
+                                            @PathVariable("userId") Integer memberId){
 
         //닉네임 중복체크
         Member checkedMember = memberService.checkDuplicateNickname(nickname);

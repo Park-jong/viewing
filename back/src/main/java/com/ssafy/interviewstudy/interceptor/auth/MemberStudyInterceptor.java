@@ -44,6 +44,7 @@ public class MemberStudyInterceptor implements HandlerInterceptor {
                         && annotation.authorityType()!=AuthorityType.Study_Member) return true;
                 if(annotation.authorityType() == AuthorityType.Study_Member) isStudyMember = true;
             }
+            else return true;
         }
 
         //uri에서 Path Variable 추출하기

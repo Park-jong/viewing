@@ -2,6 +2,7 @@ package com.ssafy.interviewstudy.domain.board;
 
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,8 +20,6 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "board_type")
 @Setter
 public class Board {
     @Id
@@ -43,6 +42,10 @@ public class Board {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Column(name = "board_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType;
+
     @ColumnDefault("0")
     @Column(name = "view_count", insertable = false)
     private Integer viewCount;
@@ -63,8 +66,25 @@ public class Board {
         this.title = boardRequest.getTitle();
         this.content = boardRequest.getContent();
     }
-//
-//    public void updateViewCount(){
-//        this.viewCount += 1;
-//    }
+
+    public void updateViewCount(){
+        this.viewCount += 1;
+    }
+
+    @Builder
+    public Board(Integer id, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, BoardType boardType, Integer viewCount, List<ArticleComment> comments, List<ArticleLike> likes, List<ArticleFile> files, List<ReportArticle> reports) {
+        this.id = id;
+        this.author = author;
+        this.title = title;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.boardType = boardType;
+        this.viewCount = viewCount;
+        this.comments = comments;
+        this.likes = likes;
+        this.files = files;
+        this.reports = reports;
+    }
+
 }

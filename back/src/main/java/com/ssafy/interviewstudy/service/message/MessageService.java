@@ -76,6 +76,19 @@ public class MessageService {
         return new MessageCreatedResponse(message.getId());
     }
 
+    @Transactional
+    public Boolean checkMessageByMember(Integer messageId,Integer memberId){
+        Member member = memberRepository.findMemberById(memberId);
+        Message message = messageRepository.findMessageById(messageId);
+
+        if(message==null) return false;
+
+        if(message.getAuthor().getId().equals(memberId) || message.getReceiver().getId().equals(memberId)){
+            return true;
+        }
+        return false;
+    }
+
     //쪽지 삭제
     @Transactional
     public Integer deleteMessage(Integer messageID){

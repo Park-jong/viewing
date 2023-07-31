@@ -18,4 +18,5 @@ public interface CalendarRepository extends JpaRepository<Calendar,Integer> {
     @Modifying(clearAutomatically = true)
     Integer deleteCalendarById(Integer calendarId);
 
+    public Calendar findCalendarByAuthorIdAndId(Integer authorId,Integer id);
 }

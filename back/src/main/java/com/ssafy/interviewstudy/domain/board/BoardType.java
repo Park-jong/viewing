@@ -4,7 +4,10 @@ public enum BoardType {
 
     FreeBoard,
     QuestionBoard,
-    InterviewReviewBoard;
+    InterviewReviewBoard,
+    qna,
+    review,
+    general;
 
 
     @Override

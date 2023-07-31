@@ -11,4 +11,5 @@ public interface NotificationRepository extends JpaRepository<Notification,Integ
 
     List<Notification> findNotificationsByAuthorId(Integer authorId);
 
+    Notification findNotificationByAuthorIdAndId(Integer authorId,Integer id);
 }

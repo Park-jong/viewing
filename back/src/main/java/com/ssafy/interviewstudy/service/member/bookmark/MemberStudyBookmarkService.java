@@ -83,4 +83,9 @@ public class MemberStudyBookmarkService {
             throw new NotFoundException("스터디 북마크");
         }
     }
+
+    @Transactional
+    public Boolean checkStudyBookmarkByMemberId(Integer memberId,Integer studyId){
+        return memberStudyBookmarkRepository.findStudyBookmarkByStudyIdAndMemberId(studyId,memberId) != null;
+    }
 }

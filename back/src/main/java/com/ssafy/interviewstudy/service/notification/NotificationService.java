@@ -133,6 +133,10 @@ public class NotificationService {
                     notification.getId()
             );
         }
+    }
 
+    @Transactional
+    public Boolean checkNotificationByMemberId(Integer memberId,Integer notificationId){
+        return notificationRepository.findNotificationByAuthorIdAndId(memberId,notificationId) != null;
     }
 }

@@ -74,4 +74,11 @@ public class CalendarService {
         calendarRepository.save(CalendarDto.toEntity(calendarDto,updatedMember));
     }
 
+    //본인 일정이 맞는지 체크
+    @Transactional
+    public Boolean checkOwnCalendar(Integer memberId,Integer calendarId){
+        Calendar calendar = calendarRepository.findCalendarByAuthorIdAndId(memberId,calendarId);
+        return calendar!=null;
+    }
+
 }

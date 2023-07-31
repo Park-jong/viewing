@@ -74,7 +74,7 @@ public class MessageService {
                 NotificationDto
                         .builder()
                         .memberId(messageSendRequest.getReceiverId())
-                        .content(message.getAuthor().getNickname()+"님에게 메세지가 도착했습니다.")
+                        .content("메시지가 도착했습니다! "+message.getTitle())
                         .build());
 
         return new MessageCreatedResponse(message.getId());

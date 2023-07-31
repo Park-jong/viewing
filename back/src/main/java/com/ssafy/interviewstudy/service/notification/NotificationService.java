@@ -99,10 +99,9 @@ public class NotificationService {
                 emitterRepository.getEmittersByMemberId(notificationDto.getMemberId());
 
         String eventId = notificationDto.getMemberId()+"_"+System.currentTimeMillis();
-
         memberEmitters.forEach(
                 (emitterId,sseEmitter)->{
-                    sendEventByEmitter(sseEmitter,notificationDto,emitterId, notification.getId());
+                    sendEventByEmitter(sseEmitter,NotificationDto.fromEntity(notification),emitterId, notification.getId());
                 }
         );
 

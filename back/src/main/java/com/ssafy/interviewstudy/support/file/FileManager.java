@@ -19,16 +19,16 @@ import java.io.InputStream;
 public class FileManager {
     private AmazonS3 s3Client;
     private final String accessKey = "AKIARQ46CXIWPSR4L7SV"; // 액세스키
-    private final String secretkey = "yRqPCAdGh85oaCkmabP+ohMXFZi1YQ98C7G9q+8m"; // 스크릿 엑세스 키
+    private final String secretkey = "yRqPCAdGh85oaCkmabP+ohMXFZi1YQ98C7G9q+8m"; // 시크릿키
 
     private final Regions clientRegion = Regions.AP_NORTHEAST_2; // 한국
-    private final String bucket = "205viewing"; // 버킷 명
+    private final String bucket = "205viewing"; // 버킷명
 
     private FileManager() {
         createS3Client();
     }
 
-    // singleton 으로 구현
+    // singleton
     private static final FileManager instance = null;
 
     public static FileManager getInstance() {

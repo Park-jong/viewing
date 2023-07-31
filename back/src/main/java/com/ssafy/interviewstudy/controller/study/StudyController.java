@@ -29,7 +29,7 @@ public class StudyController {
 
     //스터디 조회
     @GetMapping
-    public ResponseEntity<?> studyList(@Param("option") Boolean option, @Param("appliedCompany") Integer appliedCompany, @Param("appliedJob") String appliedJob, @Param("careerLevel")CareerLevel careerLevel, @PageableDefault(size = 20)Pageable pageable){
+    public ResponseEntity<?> studyList(@RequestParam(name = "option", required = false) Boolean option, @RequestParam(name = "appliedCompany", required = false) Integer appliedCompany, @RequestParam(name = "appliedJob", required = false) String appliedJob, @RequestParam(name = "careerLevel", required = false)CareerLevel careerLevel, @PageableDefault(size = 20)Pageable pageable){
         Page<StudyDtoResponse> page = studyService.findStudiesBySearch(option, appliedCompany, appliedJob, careerLevel, pageable);
         return ResponseEntity.ok().body(page);
     }
@@ -158,7 +158,7 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/chats")
-    public ResponseEntity<?> studyChatList(@PathVariable("study_id") Integer studyId, @Param("lastChatId") Integer lastChatId){
+    public ResponseEntity<?> studyChatList(@PathVariable("study_id") Integer studyId, @RequestParam(name = "lastChatId", required = false) Integer lastChatId){
         return ResponseEntity.ok().body(studyService.findStudyChats(studyId, lastChatId));
     }
 

@@ -354,6 +354,11 @@ public class StudyService {
         return studyMemberOp.get().getIsLeader() == true ? true : false;
     }
 
+    //스터디 요청 유효성 체크 반환
+    public boolean checkStudyRequest(Integer requestId, Integer studyId, Integer memberId){
+        return checkRequest(requestId, studyId, memberId) != null;
+    }
+
 
     //****************************내부 사용 함수*******************************//
 
@@ -368,16 +373,17 @@ public class StudyService {
         studyRequestRepository.deleteStudyRequestById(requestId);
     }
 
+    //유효한 요청인지 체크
     private StudyRequest checkRequest(Integer requestId, Integer studyId, Integer memberId){
         Optional<Study> studyOp = studyRepository.findById(studyId);
         Optional<Member> memberOp = memberRepository.findById(memberId);
         if(studyOp.isEmpty() || studyOp.get().getIsDelete() || memberOp.isEmpty()){
-            throw new NotFoundException("요청을 찾을 수 없음");
+            return null;
         }
 
         Optional<StudyRequest> studyRequestOp = studyRequestRepository.findStudyAndMemberById(requestId);
         if(studyRequestOp.isEmpty() || studyRequestOp.get().getApplicant().getId() != memberId || studyRequestOp.get().getStudy().getId() != studyId){
-            throw new NotFoundException("요청을 찾을 수 없음");
+            return null;
         }
         return studyRequestOp.get();
     }

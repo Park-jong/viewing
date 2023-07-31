@@ -51,7 +51,7 @@ class StudyServiceTest {
     @Autowired
     StudyRequestRepository studyRequestRepository;
 
-    @BeforeEach
+//    @BeforeEach
     public void init(){
         Company c = Company.builder().name("삼성").build();
         em.persist(c);
@@ -166,7 +166,7 @@ class StudyServiceTest {
 
     @Test
     public void findBookmarkTest(){
-        List<StudyDtoResponse> myStudies = studyService.findBookmarkStudies(1);
+        List<StudyDtoResponse> myStudies = studyService.findBookmarkStudies(3);
         for (StudyDtoResponse myStudy : myStudies) {
             System.out.println(myStudy);
         }
@@ -331,9 +331,9 @@ class StudyServiceTest {
     @Test
     public void leaderTest(){
         studyService.delegateLeader(1, 1, 2);
-        System.out.println(studyRepository.findStudyById(1).getLeader().getId());
+        System.out.println(studyRepository.findById(1).get().getLeader().getId());
         studyService.delegateLeader(1, 2, 3);
-        System.out.println(studyRepository.findStudyById(1).getLeader().getId());
+        System.out.println(studyRepository.findById(1).get().getLeader().getId());
     }
     @Test
     public void memberListTest(){
@@ -378,13 +378,13 @@ class StudyServiceTest {
         studyService.addStudyCalendar(1, StudyCalendarDtoRequest.builder().userId(1).build());
         studyService.addStudyCalendar(1, StudyCalendarDtoRequest.builder().userId(1).build());
 
-        List<StudyCalendarDtoResponse> result = studyService.findStudyCalenarByStudy(1);
+        List<StudyCalendarDtoResponse> result = studyService.findStudyCalendarsByStudy(1);
 
         studyService.modifyStudyCalendar(1, 1, StudyCalendarDtoRequest.builder().userId(1).description("12345").build());
 
         studyService.removeStudyCalendar(1, 2);
 
-        List<StudyCalendarDtoResponse> result2 = studyService.findStudyCalenarByStudy(1);
+        List<StudyCalendarDtoResponse> result2 = studyService.findStudyCalendarsByStudy(1);
 
         for (StudyCalendarDtoResponse studyCalendarDtoResponse : result2) {
             System.out.println(studyCalendarDtoResponse);

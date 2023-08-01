@@ -32,6 +32,7 @@ public class JWTRequestInterceptor implements HandlerInterceptor {
                 isJwtRequired = annotation.required();
             }
         }
+        else return true;
 
 
 

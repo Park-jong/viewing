@@ -38,6 +38,7 @@ public class MemberStudyRequestInterceptor implements HandlerInterceptor {
             }
             else return true;
         }
+        else return true;
 
         //uri에서 Path Variable 추출하기
         String requestUri = request.getRequestURI();

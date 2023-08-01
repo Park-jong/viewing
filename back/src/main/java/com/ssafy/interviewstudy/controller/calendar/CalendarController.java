@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 
-@RequestMapping("/users/{userId}/calendars")
+@RequestMapping(value = {"users/{userId}/calendars"})
 @RestController
 public class CalendarController {
 

@@ -31,7 +31,7 @@ public class MemberArticleLikeService {
     public List<BoardResponse> getLikedArticleByMemberId(BoardRequest boardRequest, BoardType boardType){
         List<BoardResponse> boardResponses = new ArrayList<>();
         List<Board> boardList = new ArrayList<>();
-        boardList = memberArticleLikeRepository.getArticleByMemberId(boardRequest.getMemberId(),boardType.toString());
+        boardList = memberArticleLikeRepository.getArticleByMemberId(boardRequest.getMemberId(),boardType);
         for(Board b : boardList){
             boardResponses.add(boardDtoService.fromEntityWithoutContent(b));
         }

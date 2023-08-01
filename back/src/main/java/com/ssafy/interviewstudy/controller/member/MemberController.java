@@ -98,11 +98,8 @@ public class MemberController {
             return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
         }
 
-        System.out.println("이메일 : "+memberInfoResult.getEmail());
         //이메일롷 현재 멤버 찾아보기
         Member currentMember = memberService.findByEmail(memberInfoResult.getEmail());
-
-        System.out.println(currentMember);
 
         //이미 가입한 유저일때 이 부분을 인터셉터로 확인해야함
         //그냥 JWT토큰 쥐어주고 리다이렉트 시키자

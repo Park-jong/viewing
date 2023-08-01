@@ -15,6 +15,6 @@ public interface MemberArticleLikeRepository extends JpaRepository<Board,Integer
 
     //자유게시판에서 좋아요 한 게시글 가져오기
     @Query("select a from Board a inner join a.likes l where l.member.id=:id and a.boardType = :boardType")
-    public List<Board> getArticleByMemberId(@Param("id") Integer memberId, @Param("boardType")String boardType);
+    public List<Board> getArticleByMemberId(@Param("id") Integer memberId, @Param("boardType")BoardType boardType);
 
 }

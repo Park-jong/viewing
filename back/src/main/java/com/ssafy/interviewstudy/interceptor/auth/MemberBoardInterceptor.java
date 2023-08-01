@@ -9,6 +9,7 @@ import com.ssafy.interviewstudy.service.board.BoardService;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.util.auth.BoardTypeExtractor;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -19,17 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class MemberBoardInterceptor implements HandlerInterceptor {
 
     private final MemberService memberService;
 
     private final BoardService boardService;
-
-    @Autowired
-    public MemberBoardInterceptor(MemberService memberService, BoardService boardService) {
-        this.memberService = memberService;
-        this.boardService = boardService;
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

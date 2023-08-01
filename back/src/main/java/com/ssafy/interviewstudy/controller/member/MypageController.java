@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.controller.member;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
@@ -28,6 +30,8 @@ public class MypageController {
         this.memberArticleLikeService = memberArticleLikeService;
     }
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
     @GetMapping(value="/users/{userId}/article",params = "searchType=favor")
     public ResponseEntity<?> getFavorArticleList(@RequestParam("board")BoardType boardType, @PathVariable("userId") Integer memberId){
         BoardRequest boardRequest = new BoardRequest();
@@ -38,6 +42,8 @@ public class MypageController {
     }
 
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
     @GetMapping(value="/users/{userId}/article",params = "searchType=comment")
     public ResponseEntity<?> getCommentedArticleList(@RequestParam("board")BoardType boardType, @PathVariable("userId") Integer memberId){
         BoardRequest boardRequest = new BoardRequest();

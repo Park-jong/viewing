@@ -29,7 +29,7 @@ public class MemberCommentService {
     public List<BoardResponse> getCommentedArticle(BoardRequest boardRequest, BoardType boardType){
         List<BoardResponse> boardResponses = new ArrayList<>();
         List<Board> boardList = new ArrayList<>();
-        boardList = memberCommentRepository.getCommentedBoardByMemberId(boardRequest.getMemberId(),boardType.name());
+        boardList = memberCommentRepository.getCommentedBoardByMemberId(boardRequest.getMemberId(),boardType);
         for(Board b : boardList){
             boardResponses.add(boardDtoService.fromEntityWithoutContent(b));
         }

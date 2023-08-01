@@ -46,7 +46,7 @@ public class MemberCalendarInterceptor implements HandlerInterceptor {
         List<Integer> pathVariables = PathVariableExtractor.extract(requestUri);
 
         //jwt에 담긴 유저 정보 확인
-        Object jwtMemberInfoAttribute = request.getAttribute("JWTMemberInfo");
+        Object jwtMemberInfoAttribute = request.getAttribute("memberInfo");
         JWTMemberInfo jwtMemberInfo;
 
         if(jwtMemberInfoAttribute instanceof JWTMemberInfo){

@@ -1,5 +1,8 @@
 package com.ssafy.interviewstudy.controller.calendar;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
+import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.dto.calendar.CalendarCreatedResponse;
 import com.ssafy.interviewstudy.dto.calendar.CalendarDto;
 import com.ssafy.interviewstudy.service.calendar.CalendarService;
@@ -21,11 +24,15 @@ public class CalendarController {
         this.calendarService = calendarService;
     }
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
     @GetMapping
     public ResponseEntity<?> getCalendars(@PathVariable Integer userId){
         return ResponseEntity.ok().body(calendarService.getCalendarList(userId));
     }
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
     @PostMapping
     public ResponseEntity<?> createCalendar(@Valid @RequestBody CalendarDto calendarDto,@PathVariable Integer userId){
         calendarDto.setMemberId(userId);
@@ -36,6 +43,8 @@ public class CalendarController {
                 .body(calendarCreatedResponse);
     }
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Calendar)
     @PutMapping("/{calendarId}")
     public ResponseEntity<?> updateCalendar(@Valid @RequestBody CalendarDto calendarDto,
                                             @PathVariable(required = true) Integer calendarId,
@@ -46,6 +55,8 @@ public class CalendarController {
         return ResponseEntity.ok().build();
     }
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Calendar)
     @DeleteMapping("/{calendarId}")
     public ResponseEntity<?> deleteCalendar(@PathVariable(required = true) Integer calendarId){
         calendarService.deleteCalendar(calendarId);

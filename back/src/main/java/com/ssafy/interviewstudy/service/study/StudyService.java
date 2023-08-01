@@ -359,6 +359,12 @@ public class StudyService {
         return checkRequest(requestId, studyId, memberId) != null;
     }
 
+    //스터디 유효성 체크
+    public boolean checkStudy(Integer studyId){
+        Optional<Study> study = studyRepository.findById(studyId);
+        return study.isPresent() && !study.get().getIsDelete();
+    }
+
 
     //****************************내부 사용 함수*******************************//
 

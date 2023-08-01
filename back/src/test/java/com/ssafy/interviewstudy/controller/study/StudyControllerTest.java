@@ -383,9 +383,62 @@ class StudyControllerTest {
                 .extract();
         assertThat(postResult.statusCode()).isEqualTo(HttpStatus.OK.value());
         String resultId = postResult.response().getBody().print();
+
         //일정 조회
+        ExtractableResponse<Response> getResult = RestAssured
+                .given()
+                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .when()
+                .get("/studies/"+studyId+"/calendars/"+resultId)
+                .then().log().all()
+                .extract();
+        assertThat(getResult.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(getResult.jsonPath().getString("description")).isEqualTo("일정 테스트");
+
         //일정 수정
+        ExtractableResponse<Response> putResult = RestAssured
+                .given()
+                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .body("{\n" +
+                        "    \"started_at\":\"2023-08-11T21:59\",\n" +
+                        "    \"ended_at\":\"2023-08-11T23:59\",\n" +
+                        "    \"description\":\"일정 수정\"\n" +
+                        "}")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .put("/studies/"+studyId+"/calendars/"+resultId)
+                .then().log().all()
+                .extract();
+        assertThat(putResult.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        ExtractableResponse<Response> getResult2 = RestAssured
+                .given()
+                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .when()
+                .get("/studies/"+studyId+"/calendars/"+resultId)
+                .then().log().all()
+                .extract();
+        assertThat(getResult2.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(getResult2.jsonPath().getString("description")).isEqualTo("일정 수정");
+
         //일정 삭제
+        ExtractableResponse<Response> deleteResult = RestAssured
+                .given()
+                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .when()
+                .delete("/studies/"+studyId+"/calendars/"+resultId)
+                .then().log().all()
+                .extract();
+        assertThat(deleteResult.statusCode()).isEqualTo(HttpStatus.OK.value());
+
         //일정 전체 조회
+        ExtractableResponse<Response> getResults = RestAssured
+                .given()
+                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .when()
+                .get("/studies/"+studyId+"/calendars")
+                .then().log().all()
+                .extract();
+        assertThat(getResults.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 }

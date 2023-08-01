@@ -7,37 +7,32 @@ import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.member.MemberStatus;
 import com.ssafy.interviewstudy.domain.member.RegistrationStatus;
+import com.ssafy.interviewstudy.dto.member.dto.MemberProfileChangeDto;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTToken;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.support.member.*;
 import com.ssafy.interviewstudy.util.jwt.JWTProvider;
 import com.ssafy.interviewstudy.util.jwt.JWTProviderImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDateTime;
 
 @RestController
 @CrossOrigin(origins="*")
+@RequiredArgsConstructor
 public class MemberController {
 
-    private MemberService memberService;
-
-    @Autowired
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
-
-    @GetMapping("/")
-    public String home(){
-        return "hi";
-    }
+    private final MemberService memberService;
 
     @PostMapping("/login/{socialLoginType}")
     public ResponseEntity<?> login(@PathVariable SocialLoginType socialLoginType){
@@ -180,5 +175,17 @@ public class MemberController {
         else{
             return ResponseEntity.badRequest().body("중복된 닉네임");
         }
+    }
+
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
+    @PutMapping("/users/{userId}/profile")
+    public ResponseEntity changeCharacter(@RequestBody MemberProfileChangeDto memberProfileChangeDto,
+                                         @PathVariable Integer userId){
+        memberProfileChangeDto.setUserId(userId);
+        if(memberProfileChangeDto.getCharacter()==null &&
+                memberProfileChangeDto.getBackground()==null) return ResponseEntity.badRequest().body("바꿀 필드가 모두 null입니다");
+        memberService.changeMemberProfile(memberProfileChangeDto);
+        return ResponseEntity.ok().build();
     }
 }

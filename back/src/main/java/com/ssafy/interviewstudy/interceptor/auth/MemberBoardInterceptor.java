@@ -49,7 +49,7 @@ public class MemberBoardInterceptor implements HandlerInterceptor {
         BoardType boardType = BoardTypeExtractor.extract(requestUri);
         
         //jwt에 담긴 유저 정보 확인
-        Object jwtMemberInfoAttribute = request.getAttribute("JWTMemberInfo");
+        Object jwtMemberInfoAttribute = request.getAttribute("memberInfo");
         JWTMemberInfo jwtMemberInfo;
 
         if(jwtMemberInfoAttribute instanceof JWTMemberInfo){
@@ -73,6 +73,11 @@ public class MemberBoardInterceptor implements HandlerInterceptor {
 
         if(member==null){
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,"없는 유저 입니다.");
+            return false;
+        }
+
+        if(!boardService.checkAuthor(articleId, member.getId())){
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"본인 글이 아닙니다");
             return false;
         }
 

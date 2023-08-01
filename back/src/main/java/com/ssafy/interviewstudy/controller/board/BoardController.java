@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.controller.board;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.domain.board.BoardType;
@@ -32,27 +34,34 @@ public class BoardController {
     }
 
     // 글 저장
-    @JWTRequired
+    @JWTRequired(required = true)
     @PostMapping("/{boardType}")
-    public ResponseEntity<?> articleAdd(@PathVariable BoardType boardType, @RequestBody BoardRequest boardRequest){
+    public ResponseEntity<?> articleAdd(@PathVariable BoardType boardType,
+                                        @MemberInfo JWTMemberInfo memberInfo,
+                                        @RequestBody BoardRequest boardRequest){
         System.out.println(boardRequest.getBoardType());
-
+        boardRequest.setMemberId(memberInfo.getMemberId());
         Integer articleId = boardService.saveBoard(boardRequest);
 
         return ResponseEntity.ok(articleId);
     }
 
-    @JWTRequired
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Board)
     @PutMapping("/{boardType}/{articleId}")
-    public ResponseEntity<?> articleModify(@PathVariable Integer articleId, @RequestBody BoardRequest boardRequest){
+    public ResponseEntity<?> articleModify(@PathVariable Integer articleId,
+                                           @MemberInfo JWTMemberInfo memberInfo,
+                                           @RequestBody BoardRequest boardRequest){
         System.out.println("수정 컨트롤러");
         System.out.println("멤버 id:"+boardRequest.getMemberId());
+        boardRequest.setMemberId(memberInfo.getMemberId());
         BoardResponse response = boardService.modifyArticle(articleId, boardRequest);
 
         return ResponseEntity.ok(response);
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Board)
     @DeleteMapping("/{boardType}/{articleId}")
     public ResponseEntity<?> articleRemove(@PathVariable Integer articleId){
         System.out.println("delete controller");

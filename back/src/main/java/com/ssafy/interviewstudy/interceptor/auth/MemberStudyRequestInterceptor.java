@@ -45,7 +45,7 @@ public class MemberStudyRequestInterceptor implements HandlerInterceptor {
         List<Integer> pathVariables = PathVariableExtractor.extract(requestUri);
 
         //jwt에 담긴 유저 정보 확인
-        Object jwtMemberInfoAttribute = request.getAttribute("JWTMemberInfo");
+        Object jwtMemberInfoAttribute = request.getAttribute("memberInfo");
         JWTMemberInfo jwtMemberInfo;
 
         if(jwtMemberInfoAttribute instanceof JWTMemberInfo){
@@ -76,7 +76,8 @@ public class MemberStudyRequestInterceptor implements HandlerInterceptor {
         //이 스터디 가입 요청을 보낸 멤버가 맞는지 확인
         Boolean isRequestByMember = studyService.checkStudyRequest(requestId,studyId,memberId);
 
-        if(!isRequestByMember){
+        Boolean isLeader = studyService.checkStudyLeader(studyId,memberId);
+        if(!isRequestByMember && !isLeader){
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"해당 요청을 신청한 유저가 아닙니다.");
             return false;
         }

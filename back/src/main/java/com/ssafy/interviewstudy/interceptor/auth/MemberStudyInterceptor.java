@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.interceptor.auth;
 
 import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
+import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.service.study.StudyService;
@@ -49,7 +50,7 @@ public class MemberStudyInterceptor implements HandlerInterceptor {
         List<Integer> pathVariables = PathVariableExtractor.extract(requestUri);
 
         //jwt에 담긴 유저 정보 확인
-        Object jwtMemberInfoAttribute = request.getAttribute("JWTMemberInfo");
+        Object jwtMemberInfoAttribute = request.getAttribute("memberInfo");
         JWTMemberInfo jwtMemberInfo;
 
         if(jwtMemberInfoAttribute instanceof JWTMemberInfo){
@@ -61,16 +62,30 @@ public class MemberStudyInterceptor implements HandlerInterceptor {
         }
 
         //PathVariable 유효성 검사
-        if(pathVariables.size()!=2){
+        Integer memberId,studyId;
+        if(pathVariables.size()==1){
+            memberId = jwtMemberInfo.getMemberId();
+            studyId = pathVariables.get(0);
+        }
+        else if(pathVariables.size()==2){
+            memberId = isStudyMember ? pathVariables.get(1) : pathVariables.get(0);
+            studyId = isStudyMember ? pathVariables.get(0) : pathVariables.get(1);
+        }
+        else{
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,"잘못된 Path Variable");
             return false;
         }
-        Integer memberId = pathVariables.get(0);
-        Integer studyId = pathVariables.get(1);
 
-        if(isStudyMember){
-            memberId = pathVariables.get(1);
-            studyId = pathVariables.get(0);
+        if(memberId ==null || studyId==null){
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"잘못된 Path Variable");
+            return false;
+        }
+
+        Member member = memberService.findMemberByMemberId(memberId);
+
+        if(member==null){
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"없는 유저 입니다.");
+            return false;
         }
 
         //스터디에 가입한 멤버 조회

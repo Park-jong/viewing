@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.controller.study;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.domain.study.CareerLevel;
@@ -59,6 +61,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Leader)
     @DeleteMapping("/{study_id}")
     public ResponseEntity<?> studyDelete(@PathVariable("study_id") Integer studyId){
         studyService.removeStudy(studyId);
@@ -66,6 +69,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Leader)
     @PutMapping("/{study_id}")
     public ResponseEntity<?> studyModify(@PathVariable("study_id") Integer studyId, @Valid @RequestBody StudyDtoRequest study){
         try {
@@ -78,7 +82,7 @@ public class StudyController {
 
     @JWTRequired(required = true)
     @PostMapping("/{study_id}/requests")
-    public ResponseEntity<?> studyRequestAdd(@PathVariable("study_id") Integer studyId, @Valid @RequestBody RequestDto request){
+    public ResponseEntity<?> studyRequestAdd(@PathVariable("study_id") Integer studyId,     @Valid @RequestBody RequestDto request){
         Integer madeRequest = null;
         try{
             madeRequest = studyService.addRequest(studyId, request);
@@ -99,6 +103,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Leader)
     @GetMapping("/{study_id}/requests")
     public ResponseEntity<?> studyRequestList(@PathVariable("study_id") Integer studyId){
         List<RequestDtoResponse> response = studyService.findRequestsByStudy(studyId);
@@ -106,6 +111,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Request)
     @GetMapping("/{study_id}/requests/{request_id}")
     public ResponseEntity<?> studyRequest(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId){
         RequestDtoResponse response = studyService.findRequestById(requestId);
@@ -113,6 +119,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Leader)
     @PostMapping("/{study_id}/requests/{request_id}/approval")
     public ResponseEntity<?> requestApproval(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
         Integer userId = null;
@@ -122,6 +129,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Leader)
     @PostMapping("/{study_id}/requests/{request_id}/denial")
     public ResponseEntity<?> requestDenial(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
         Integer userId = null;
@@ -131,6 +139,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Request)
     @DeleteMapping("/{study_id}/requests/{request_id}")
     public ResponseEntity<?> requestCancel(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId){
         Integer userId = memberInfo.getMemberId();
@@ -139,6 +148,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Leader)
     @DeleteMapping("/{study_id}/members/{user_id}")
     public ResponseEntity<?> studyMemberBan(@PathVariable("study_id") Integer studyId, @PathVariable("user_id") Integer memberId){
         boolean result = studyService.banMemberStudy(studyId, memberId);
@@ -148,6 +158,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Leader)
     @PutMapping("/{study_id}/members/leader")
     public ResponseEntity<?> studyLeaderChange(@PathVariable("study_id") Integer studyId, @Valid@RequestBody Map map){
 
@@ -162,12 +173,14 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/members")
     public ResponseEntity<?> studyMemberList(@PathVariable("study_id") Integer studyId){
         return ResponseEntity.ok().body(studyService.findStudyMembers(studyId));
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @PostMapping("/{study_id}/chats")
     public ResponseEntity<?> studyChatsAdd(@PathVariable("study_id") Integer studyId, @Valid@RequestBody ChatRequest chat){
         studyService.addChat(studyId, chat);
@@ -175,24 +188,28 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/chats")
     public ResponseEntity<?> studyChatList(@PathVariable("study_id") Integer studyId, @RequestParam(name = "lastChatId", required = false) Integer lastChatId){
         return ResponseEntity.ok().body(studyService.findStudyChats(studyId, lastChatId));
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/calendars")
     public ResponseEntity<?> studyCalendarList(@PathVariable("study_id") Integer studyId){
         return ResponseEntity.ok().body(studyService.findStudyCalendarsByStudy(studyId));
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/calendars/{calendar_id}")
     public ResponseEntity<?> studyCalendarDetail(@PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId){
         return ResponseEntity.ok().body(studyService.findStudyCalendarByStudy(studyId, calendarId));
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @PostMapping("/{study_id}/calendars")
     public ResponseEntity<?> studyCalendarAdd(@PathVariable("study_id") Integer studyId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
         Integer madeSchedule = null;
@@ -206,6 +223,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @PutMapping("/{study_id}/calendars/{calendar_id}")
     public ResponseEntity<?> studyCalendarModify(@PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
         studyService.modifyStudyCalendar(studyId, calendarId, studyCalendar);
@@ -213,6 +231,7 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @DeleteMapping("/{study_id}/calendars/{calendar_id}")
     public ResponseEntity<?> studyCalendarRemove(@PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId){
         studyService.removeStudyCalendar(studyId, calendarId);

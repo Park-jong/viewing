@@ -98,13 +98,13 @@ public class CommentService {
 
     // 댓글 좋아요
     public Integer saveCommentLike(Integer memberId, Integer commentId){
-
-        // 이미 좋아요를 누른 회원인지 체크
-        if(commentLikeRepository.existsByMember_IdAndComment_Id(memberId, commentId))
-            return 0;
-
         Member member = memberRepository.findMemberById(memberId);
         ArticleComment comment = articleCommentRepository.findById(commentId).get();
+
+        // 이미 좋아요를 누른 회원인지 체크
+        if(commentLikeRepository.existsByMemberAndComment(member, comment))
+            return 0;
+
 
         CommentLike commentLike =commentLikeRepository.save(CommentLike.builder()
                 .member(member)
@@ -115,8 +115,11 @@ public class CommentService {
 
     // 댓글 좋아요 삭제
     public void removeCommentLike(Integer memberId, Integer commentId){
-        commentLikeRepository.removeCommentLikeByCommentAndMember(articleCommentRepository.findById(commentId).get()
-                ,memberRepository.findMemberById(memberId));
+        Member member = memberRepository.findMemberById(memberId);
+        ArticleComment comment = articleCommentRepository.findById(commentId).get();
+
+        if(!commentLikeRepository.existsByMemberAndComment(member, comment))
+            commentLikeRepository.removeCommentLikeByCommentAndMember(comment, member);
     }
 
     // 댓글 작성자가 본인인지 체크

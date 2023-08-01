@@ -1,12 +1,15 @@
 package com.ssafy.interviewstudy.service.board;
 
+import com.ssafy.interviewstudy.domain.board.ArticleLike;
 import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.BoardType;
+import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
+import com.ssafy.interviewstudy.repository.board.ArticleLikeRepository;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
-import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ssafy.interviewstudy.repository.member.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -15,24 +18,17 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class BoardService {
 
-    final int pageSize = 20;
-
-    private BoardRepository boardRepository;
-    private StudyBoardRepository studyBoardRepository;
-    private BoardDtoService boardDtoService;
+    private final BoardRepository boardRepository;
+    private final BoardDtoService boardDtoService;
+    private final ArticleLikeRepository articleLikeRepository;
+    private final MemberRepository memberRepository;
 
     @PersistenceContext
     private EntityManager em;
-
-    @Autowired
-    public BoardService(BoardRepository boardRepository, StudyBoardRepository studyBoardRepository, BoardDtoService boardDtoService) {
-        this.boardRepository = boardRepository;
-        this.studyBoardRepository = studyBoardRepository;
-        this.boardDtoService = boardDtoService;
-    }
 
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
 
@@ -52,7 +48,6 @@ public class BoardService {
     public BoardResponse findArticle(Integer memberId, Integer articleId, BoardType boardType) {
         Board article = boardRepository.findById(articleId).get();
 
-//        System.out.println(article.getTitle());
         if(article != null) modifyViewCount(article);
         else System.out.println("null입니다...");
 
@@ -105,7 +100,6 @@ public class BoardService {
 
     // 조회수+1
     public void modifyViewCount(Board article){
-//        Board article = boardRepository.findById(articleId).get();
         article.updateViewCount();
         boardRepository.save(article);
     }
@@ -120,5 +114,27 @@ public class BoardService {
         else return false;
     }
 
+    public Integer saveArticleLike(Integer memberId, Integer articleId){
+        Member member = memberRepository.findMemberById(memberId);
+        Board article = boardRepository.findById(articleId).get();
+
+        if(articleLikeRepository.existsByMemberAndArticle(member, article)) return 0;
+
+        ArticleLike articleLike = articleLikeRepository.save(ArticleLike.builder()
+                .member(member)
+                .article(article)
+                .build());
+
+        return articleLike.getId();
+    }
+
+    public void removeArticleLike(Integer memberId, Integer articleId){
+        Member member = memberRepository.findMemberById(memberId);
+        Board article = boardRepository.findById(articleId).get();
+
+        if(!articleLikeRepository.existsByMemberAndArticle(member, article)){
+            articleLikeRepository.removeByArticleAndMember(article, member);
+        }
+    }
 
 }

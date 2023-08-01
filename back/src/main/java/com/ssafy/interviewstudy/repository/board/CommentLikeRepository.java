@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Integer> {
     // 이미 좋아요를 누른 회원인지 체크
-    Boolean existsByMember_IdAndComment_Id(Integer memberId, Integer CommentId);
+    Boolean existsByMemberAndComment(Member member, ArticleComment comment);
+
+    Boolean existsByMember_IdAndComment_Id(Integer memberId, Integer commentId);
 
     // 댓글마다 좋아요 수 체크
     Integer countByComment(ArticleComment comment);

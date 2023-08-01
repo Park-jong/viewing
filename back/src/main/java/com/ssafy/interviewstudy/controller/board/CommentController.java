@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.controller.board;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
@@ -36,7 +38,10 @@ public class CommentController {
     // 댓글 저장
     @JWTRequired(required = true)
     @PostMapping
-    public ResponseEntity<?> commentSave(@PathVariable Integer articleId, @RequestBody CommentRequest commentRequest){
+    public ResponseEntity<?> commentSave(@PathVariable Integer articleId,
+                                         @MemberInfo JWTMemberInfo memberInfo,
+                                         @RequestBody CommentRequest commentRequest){
+        commentRequest.setMemberId(memberInfo.getMemberId());
         Integer commentId = commentService.saveComment(articleId, commentRequest);
 
         return ResponseEntity.ok(commentId);
@@ -44,8 +49,12 @@ public class CommentController {
 
     // 댓글 수정
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Comment)
     @PutMapping("/{commentId}")
-    public ResponseEntity<?> commentModify(@PathVariable Integer commentId, @RequestBody CommentRequest commentRequest){
+    public ResponseEntity<?> commentModify(@PathVariable Integer commentId,
+                                           @MemberInfo JWTMemberInfo memberInfo,
+                                           @RequestBody CommentRequest commentRequest){
+        commentRequest.setMemberId(memberInfo.getMemberId());
         CommentResponse commentResponse = commentService.modifyComment(commentId, commentRequest);
 
         return ResponseEntity.ok(commentResponse);
@@ -53,16 +62,21 @@ public class CommentController {
 
     // 댓글 삭제
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Comment)
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> commentRemove(@PathVariable Integer commentId){
         commentService.removeComment(commentId);
-
         return ResponseEntity.ok().build();
     }
 
     // 대댓글 작성
+    @JWTRequired(required = true)
     @PostMapping("/{commentId}/replies")
-    public ResponseEntity<?> replySave(@PathVariable Integer articleId, @PathVariable Integer commentId, @RequestBody CommentRequest commentRequest){
+    public ResponseEntity<?> replySave(@PathVariable Integer articleId,
+                                       @PathVariable Integer commentId,
+                                       @MemberInfo JWTMemberInfo memberInfo,
+                                       @RequestBody CommentRequest commentRequest){
+        commentRequest.setMemberId(memberInfo.getMemberId());
         Integer replyId = commentService.saveCommentReply(articleId, commentId, commentRequest);
 
         return  ResponseEntity.ok(replyId);

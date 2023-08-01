@@ -20,7 +20,7 @@ public enum MemberProfileBackground {
         COLOR_9c209c("#9c209c"),
         COLOR_ffa600("#ffa600"),
         COLOR_058e00("#058e00"),
-        COLOR_ff00ee("ff00ee");
+        COLOR_ff00ee("#ff00ee");
 
         private final String value;
 

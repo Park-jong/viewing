@@ -3,10 +3,7 @@ package com.ssafy.interviewstudy.controller.member;
 import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
-import com.ssafy.interviewstudy.annotation.MemberInfo;
-import com.ssafy.interviewstudy.domain.member.Member;
-import com.ssafy.interviewstudy.domain.member.MemberStatus;
-import com.ssafy.interviewstudy.domain.member.RegistrationStatus;
+import com.ssafy.interviewstudy.domain.member.*;
 import com.ssafy.interviewstudy.dto.member.dto.MemberProfileChangeDto;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTToken;
@@ -15,15 +12,11 @@ import com.ssafy.interviewstudy.support.member.*;
 import com.ssafy.interviewstudy.util.jwt.JWTProvider;
 import com.ssafy.interviewstudy.util.jwt.JWTProviderImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.validation.Valid;
+import org.springframework.web.util.UriComponentsBuilder;;
 import java.net.URI;
 import java.time.LocalDateTime;
 
@@ -112,6 +105,11 @@ public class MemberController {
             ).build();
             return ResponseEntity.ok().body(jwtToken);
         }
+        //랜덤 프로필 배경 만들기
+        Long randomProfileBackground = System.currentTimeMillis()%(long)(MemberProfileBackground.values().length);
+        Long randomProfileImage = System.currentTimeMillis()%(long)(MemberProfileImage.values().length);
+
+
         //가입한 유저가 아닐때
         Member registeredMember = Member.builder()
                 .created_at(LocalDateTime.now())
@@ -120,6 +118,12 @@ public class MemberController {
                 .registrationStatus(RegistrationStatus.SELECT_NICKNAME)
                 .email(memberInfoResult.getEmail())
                 .nickname("user"+System.currentTimeMillis())
+                .memberProfileBackground(
+                        MemberProfileBackground.values()[randomProfileBackground.intValue()]
+                )
+                .memberProfileImage(
+                        MemberProfileImage.values()[randomProfileImage.intValue()]
+                )
                 .build();
 
 

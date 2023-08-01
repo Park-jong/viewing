@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.controller.board;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.service.board.BoardService;
 import com.ssafy.interviewstudy.service.board.CommentService;
@@ -16,6 +18,7 @@ public class BoardLikeController {
     private final CommentService commentService;
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Article_Like)
     @PostMapping("/boards/{articleId}")
     public ResponseEntity<?> articleLikeSave(@PathVariable Integer memberId, @PathVariable Integer articleId){
         Integer likeId = boardService.saveArticleLike(memberId, articleId);
@@ -24,6 +27,7 @@ public class BoardLikeController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Article_Like)
     @DeleteMapping("/boards/{articleId}")
     public ResponseEntity<?> articleLikeRemove(@PathVariable Integer memberId, @PathVariable Integer articleId){
         boardService.removeArticleLike(memberId, articleId);
@@ -32,6 +36,7 @@ public class BoardLikeController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Comment_Like)
     @PostMapping("comments/{commentId}")
     public ResponseEntity<?> commentLikeSave(@PathVariable Integer memberId, @PathVariable Integer commentId){
         Integer likeId = commentService.saveCommentLike(memberId, commentId);
@@ -40,6 +45,7 @@ public class BoardLikeController {
     }
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Comment_Like)
     @DeleteMapping("comments/{commentId}")
     public ResponseEntity<?> commentLikeRemove(@PathVariable Integer memberId, @PathVariable Integer commentId){
         commentService.removeCommentLike(memberId, commentId);

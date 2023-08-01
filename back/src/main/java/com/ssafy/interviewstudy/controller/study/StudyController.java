@@ -55,7 +55,7 @@ public class StudyController {
         catch(ConstraintViolationException ce){
             return ResponseEntity.internalServerError().body("스터디 생성 실패");
         }
-        return ResponseEntity.created(URI.create("/studies/"+madeStudy)).build();
+        return ResponseEntity.created(URI.create("/studies/"+madeStudy)).body(madeStudy);
     }
 
     @JWTRequired(required = true)
@@ -95,7 +95,7 @@ public class StudyController {
         else if (madeRequest == -3){
             return ResponseEntity.badRequest().body("유효하지 않은 접근");
         }
-        return ResponseEntity.created(URI.create("/studies/"+madeRequest)).build();
+        return ResponseEntity.created(URI.create("/studies")).body(madeRequest);
     }
 
     @JWTRequired(required = true)
@@ -132,9 +132,8 @@ public class StudyController {
 
     @JWTRequired(required = true)
     @DeleteMapping("/{study_id}/requests/{request_id}")
-    public ResponseEntity<?> requestCancel(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
-        Integer userId = null;
-        if(map.containsKey("user_id")) userId = (Integer)map.get("user_id");
+    public ResponseEntity<?> requestCancel(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId){
+        Integer userId = memberInfo.getMemberId();
         studyService.cancelRequest(requestId, studyId, userId);
         return ResponseEntity.ok().build();
     }
@@ -196,8 +195,14 @@ public class StudyController {
     @JWTRequired(required = true)
     @PostMapping("/{study_id}/calendars")
     public ResponseEntity<?> studyCalendarAdd(@PathVariable("study_id") Integer studyId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
-        studyService.addStudyCalendar(studyId, studyCalendar);
-        return ResponseEntity.ok().build();
+        Integer madeSchedule = null;
+        try {
+            madeSchedule = studyService.addStudyCalendar(studyId, studyCalendar);
+        }
+        catch(ConstraintViolationException ce){
+            return ResponseEntity.internalServerError().body("일정 생성 실패");
+        }
+        return ResponseEntity.ok().body(madeSchedule);
     }
 
     @JWTRequired(required = true)

@@ -32,12 +32,12 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Intege
     public Optional<StudyMember> findByStudyIdAndMemberId(Integer studyId, Integer memberId);
 
     //스터디 멤버 목록
-    @Query("select new com.ssafy.interviewstudy.dto.study.StudyMemberDto(sm.member, sm.isLeader) from StudyMember sm join sm.member m where sm.study.id = :studyId")
-    public List<StudyMemberDto> findMembersByStudyId(@Param("studyId") Integer studyId);
+    @Query("select sm from StudyMember sm join fetch sm.member m where sm.study.id = :studyId")
+    public List<StudyMember> findMembersByStudyId(@Param("studyId") Integer studyId);
 
     //스터디 멤버 목록
-    @Query("select new com.ssafy.interviewstudy.dto.study.StudyMemberDto(sm.member, sm.isLeader) from StudyMember sm join sm.member m where sm.study = :study")
-    public List<StudyMemberDto> findMembersByStudy(@Param("study") Study study);
+    @Query("select sm from StudyMember sm join fetch sm.member m where sm.study = :study")
+    public List<StudyMember> findMembersByStudy(@Param("study") Study study);
 
     //스터디 삭제 시
     @Modifying(clearAutomatically = true, flushAutomatically = true)

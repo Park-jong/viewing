@@ -221,8 +221,8 @@ class StudyServiceTest {
         em.flush();
         em.clear();
 
-        List<StudyMemberDto> result = studyMemberRepository.findMembersByStudyId(id);
-        Assertions.assertEquals(result.get(0).getId(), m.getId());
+        List<StudyMember> result = studyMemberRepository.findMembersByStudyId(id);
+        Assertions.assertEquals(result.get(0).getMember().getId(), m.getId());
     }
 
     @Test

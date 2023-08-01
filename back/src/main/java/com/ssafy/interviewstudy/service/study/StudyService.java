@@ -276,7 +276,11 @@ public class StudyService {
 
     //스터디원 목록 확인
     public List<StudyMemberDto> findStudyMembers(Integer studyId){
-        List<StudyMemberDto> result = studyMemberRepository.findMembersByStudyId(studyId);
+        List<StudyMember> studyMembers = studyMemberRepository.findMembersByStudyId(studyId);
+        List<StudyMemberDto> result = new ArrayList<>();
+        for (StudyMember studyMember : studyMembers) {
+            result.add(new StudyMemberDto(studyMember.getMember(), studyMember.getIsLeader()));
+        }
         return result;
     }
 
@@ -313,11 +317,12 @@ public class StudyService {
 
     //스터디 일정 추가
     @Transactional
-    public void addStudyCalendar(Integer studyId, StudyCalendarDtoRequest studyCalendarDtoRequest){
+    public Integer addStudyCalendar(Integer studyId, StudyCalendarDtoRequest studyCalendarDtoRequest){
         Study study = studyRepository.findById(studyId).get();
         Member member = memberRepository.findById(studyCalendarDtoRequest.getUserId()).get();
         StudyCalendar studyCalendar = new StudyCalendar(study, member, studyCalendarDtoRequest);
         studyCalendarRepository.save(studyCalendar);
+        return studyCalendar.getId();
     }
 
 

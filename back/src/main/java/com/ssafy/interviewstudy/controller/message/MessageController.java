@@ -1,5 +1,10 @@
 package com.ssafy.interviewstudy.controller.message;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
+import com.ssafy.interviewstudy.annotation.JWTRequired;
+import com.ssafy.interviewstudy.annotation.MemberInfo;
+import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.message.MessageCreatedResponse;
 import com.ssafy.interviewstudy.dto.message.MessageDto;
 import com.ssafy.interviewstudy.dto.message.MessageListResponse;
@@ -24,8 +29,11 @@ public class MessageController {
 
     private final MessageService messageService;
 
-    
+
+
     //보낸 쪽지함
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
     @GetMapping("/send")
     public ResponseEntity<?> getSentMessage(@PathVariable Integer userId){
         MessageListResponse messageList = messageService.getSentMessages(userId);
@@ -33,12 +41,16 @@ public class MessageController {
     }
 
     //받은 쪽지함
+    @JWTRequired
+    @Authority(authorityType = AuthorityType.Member)
     @GetMapping("/receive")
     public ResponseEntity<?> getReceivedMessage(@PathVariable Integer userId){
         MessageListResponse messageList = messageService.getReceivedMessages(userId);
         return ResponseEntity.ok().body(messageList);
     }
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Message)
     //쪽지 조회
     @GetMapping("/{messageId}")
     public ResponseEntity<?> getMessageDetail(@PathVariable Integer messageId){
@@ -46,6 +58,8 @@ public class MessageController {
         return ResponseEntity.ok(messageDto);
     }
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Message)
     //쪽지 삭제
     @DeleteMapping("/{messageId}")
     public ResponseEntity<?> deleteMessage(@PathVariable Integer messageId){
@@ -54,9 +68,12 @@ public class MessageController {
         return ResponseEntity.ok().build();
     }
 
+    @JWTRequired(required = true)
     //쪽지 보내기
     @PostMapping
-    public ResponseEntity<?> sendMessage(@Valid @RequestBody MessageSendRequest messageSendRequest){
+    public ResponseEntity<?> sendMessage(@MemberInfo JWTMemberInfo memberInfo,
+                                         @Valid @RequestBody MessageSendRequest messageSendRequest){
+        messageSendRequest.setAuthorId(memberInfo.getMemberId());
         MessageCreatedResponse messageCreatedResponse;
         try{
             messageCreatedResponse = messageService.sendMessage(messageSendRequest);

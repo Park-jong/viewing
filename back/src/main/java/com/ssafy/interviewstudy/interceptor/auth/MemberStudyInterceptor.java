@@ -7,6 +7,7 @@ import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.service.study.StudyService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -17,17 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class MemberStudyInterceptor implements HandlerInterceptor {
 
     private final StudyService studyService;
 
     private final MemberService memberService;
-
-    @Autowired
-    public MemberStudyInterceptor(StudyService studyService, MemberService memberService) {
-        this.studyService = studyService;
-        this.memberService = memberService;
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

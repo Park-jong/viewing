@@ -5,6 +5,7 @@ import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.message.MessageService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -15,15 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class MemberMessageInterceptor implements HandlerInterceptor {
 
 
     private final MessageService messageService;
-
-    @Autowired
-    public MemberMessageInterceptor(MessageService messageService) {
-        this.messageService = messageService;
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -44,7 +41,7 @@ public class MemberMessageInterceptor implements HandlerInterceptor {
         List<Integer> pathVariables = PathVariableExtractor.extract(requestUri);
 
         //jwt에 담긴 유저 정보 확인
-        Object jwtMemberInfoAttribute = request.getAttribute("JWTMemberInfo");
+        Object jwtMemberInfoAttribute = request.getAttribute("memberInfo");
         JWTMemberInfo jwtMemberInfo;
 
         if(jwtMemberInfoAttribute instanceof JWTMemberInfo){
@@ -56,19 +53,19 @@ public class MemberMessageInterceptor implements HandlerInterceptor {
         }
 
         //PathVariable 유효성 검사
-        if(pathVariables.size()!=2){
+        if(pathVariables.size()!=1){
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,"잘못된 Path Variable");
             return false;
         }
 
-        Integer memberId = jwtMemberInfo.getMemberId();
-        Integer messageId = pathVariables.get(1);
+        Integer JWTMemberId = jwtMemberInfo.getMemberId();
+        Integer messageId = pathVariables.get(0);
 
         //스터디에 가입한 멤버 조회
-        Boolean isMessageByMember = messageService.checkMessageByMember(messageId,memberId);
+        Boolean isMessageByMember = messageService.checkMessageByMember(messageId,JWTMemberId);
 
         if(!isMessageByMember ){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"해당 스터디의 스터디원이 아닙니다");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"해당 메시지를 읽을 권한이 없습니다");
             return false;
         }
         return true;

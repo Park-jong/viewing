@@ -85,7 +85,7 @@ public class MessageService {
         Member member = memberRepository.findMemberById(memberId);
         Message message = messageRepository.findMessageById(messageId);
 
-        if(message==null) return false;
+        if(message==null || member==null) return false;
 
         if(message.getAuthor().getId().equals(memberId) || message.getReceiver().getId().equals(memberId)){
             return true;

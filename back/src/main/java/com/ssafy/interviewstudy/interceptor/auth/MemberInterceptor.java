@@ -6,6 +6,7 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -16,14 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class MemberInterceptor implements HandlerInterceptor {
 
     private final MemberService memberService;
 
-    @Autowired
-    public MemberInterceptor(MemberService memberService) {
-        this.memberService = memberService;
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -69,7 +67,7 @@ public class MemberInterceptor implements HandlerInterceptor {
         }
         else{
             if(jwtMemberInfo.getMemberId()!=member.getId()){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,"잘못된 Path Variable");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Path Variable과 JWT 유저 정보가 일치하지 않습니다.");
                 return false;
             }
         }

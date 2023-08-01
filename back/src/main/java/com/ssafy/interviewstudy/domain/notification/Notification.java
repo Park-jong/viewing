@@ -44,6 +44,10 @@ public class Notification {
     @Column(name = "is_read",insertable = false)
     private Boolean isRead;
 
+    public void readNotification(){
+         this.isRead = true;
+    }
+
     @Builder
     public Notification(Integer id, LocalDateTime createdAt, String url, String content, Member author, NotificationType notificationType, Boolean isRead) {
         this.id = id;

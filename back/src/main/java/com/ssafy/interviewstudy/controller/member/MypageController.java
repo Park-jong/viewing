@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.controller.member;
 
+import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
@@ -35,6 +36,7 @@ public class MypageController {
         return ResponseEntity.ok().body(boardResponseList);
 
     }
+
 
     @GetMapping(value="/users/{userId}/article",params = "searchType=comment")
     public ResponseEntity<?> getCommentedArticleList(@RequestParam("board")BoardType boardType, @PathVariable("userId") Integer memberId){

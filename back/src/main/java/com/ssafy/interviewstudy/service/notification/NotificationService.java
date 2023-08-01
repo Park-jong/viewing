@@ -135,6 +135,14 @@ public class NotificationService {
     }
 
     @Transactional
+    public Boolean checkNotification(Integer notificationId){
+        Notification notification = notificationRepository.findNotificationById(notificationId);
+        if(notification==null) return false;
+        notification.readNotification();
+        return true;
+    }
+
+    @Transactional
     public Boolean checkNotificationByMemberId(Integer memberId,Integer notificationId){
         return notificationRepository.findNotificationByAuthorIdAndId(memberId,notificationId) != null;
     }

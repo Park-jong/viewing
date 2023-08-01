@@ -6,9 +6,9 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Integer> {
-    // 이미 좋아요를 누른 회원인지 체크
-    Boolean existsByMemberAndComment(Member member, ArticleComment comment);
+//    Boolean existsByMemberAndComment(Member member, ArticleComment comment);
 
+    // 이미 좋아요를 누른 회원인지 체크
     Boolean existsByMember_IdAndComment_Id(Integer memberId, Integer commentId);
 
     // 댓글마다 좋아요 수 체크

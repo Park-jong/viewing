@@ -114,11 +114,12 @@ public class BoardService {
         else return false;
     }
 
+    // 좋아요 누르기
     public Integer saveArticleLike(Integer memberId, Integer articleId){
         Member member = memberRepository.findMemberById(memberId);
         Board article = boardRepository.findById(articleId).get();
 
-        if(articleLikeRepository.existsByMemberAndArticle(member, article)) return 0;
+        if(checkMemberLikeArticle(memberId, articleId)) return 0;
 
         ArticleLike articleLike = articleLikeRepository.save(ArticleLike.builder()
                 .member(member)
@@ -128,13 +129,19 @@ public class BoardService {
         return articleLike.getId();
     }
 
+    // 좋아요 삭제
     public void removeArticleLike(Integer memberId, Integer articleId){
         Member member = memberRepository.findMemberById(memberId);
         Board article = boardRepository.findById(articleId).get();
 
-        if(!articleLikeRepository.existsByMemberAndArticle(member, article)){
+        if(!checkMemberLikeArticle(memberId, articleId)){
             articleLikeRepository.removeByArticleAndMember(article, member);
         }
+    }
+
+    // 유저가 좋아요를 한 상태면 true, 아니면 false
+    public Boolean checkMemberLikeArticle(Integer memberId, Integer articleId){
+        return articleLikeRepository.existsByMember_IdAndArticle_Id(memberId, articleId);
     }
 
 }

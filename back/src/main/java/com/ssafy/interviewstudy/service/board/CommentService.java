@@ -102,9 +102,8 @@ public class CommentService {
         ArticleComment comment = articleCommentRepository.findById(commentId).get();
 
         // 이미 좋아요를 누른 회원인지 체크
-        if(commentLikeRepository.existsByMemberAndComment(member, comment))
+        if(checkMemberLikeComment(memberId, commentId))
             return 0;
-
 
         CommentLike commentLike =commentLikeRepository.save(CommentLike.builder()
                 .member(member)
@@ -118,8 +117,12 @@ public class CommentService {
         Member member = memberRepository.findMemberById(memberId);
         ArticleComment comment = articleCommentRepository.findById(commentId).get();
 
-        if(!commentLikeRepository.existsByMemberAndComment(member, comment))
+        if(!checkMemberLikeComment(memberId, commentId))
             commentLikeRepository.removeCommentLikeByCommentAndMember(comment, member);
+    }
+
+    public Boolean checkMemberLikeComment(Integer memberId, Integer commentId){
+        return commentLikeRepository.existsByMember_IdAndComment_Id(memberId, commentId);
     }
 
     // 댓글 작성자가 본인인지 체크

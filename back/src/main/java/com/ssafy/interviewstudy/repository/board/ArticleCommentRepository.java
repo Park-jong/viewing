@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ArticleCommentRepository extends JpaRepository<ArticleComment, Integer> {
-    @Query("select c from ArticleComment c join fetch c.author join fetch c.replies where c.comment is null")
+
+    // 댓글 리스트 조회(최신순)
+    @Query("select distinct c from ArticleComment c join fetch c.author ca left join c.replies cr left join cr.author where c.comment is null and c.article = :article order by c.createdAt desc")
     List<ArticleComment> findAllByArticle(Board article);
 
 //    @Query("select c from ArticleComment c join fetch c.replies where c.comment.id = :parentId")
@@ -28,6 +30,8 @@ public interface ArticleCommentRepository extends JpaRepository<ArticleComment, 
 
     // 글마다 댓글 수 count
     Integer countByArticle(Board article);
+
+//    ArticleComment saveReply(Integer commentId, )
 
     // 대댓글 수 count
     @Query("select count(c) from ArticleComment c where c.comment.id = :commentId and c.isDelete = false")

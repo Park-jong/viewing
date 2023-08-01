@@ -38,9 +38,17 @@ public class CommentDtoService {
         ArticleComment articleComment = ArticleComment.builder()
                 .author(author)
                 .article(boardRepository.findById(commentRequest.getArticleId()).get())
+                .isDelete(false)
                 .content(commentRequest.getContent()).build();
 
         return articleComment;
+    }
+
+    public ArticleComment toEntityWithParent(Integer commentId, CommentRequest commentRequest){
+        ArticleComment comment = toEntity(commentRequest);
+        comment.setComment(commentRepository.findById(commentId).get());
+
+        return comment;
     }
 
     public CommentResponse fromEntityWithoutCommentCount(Integer memberId, ArticleComment articleComment){
@@ -67,32 +75,46 @@ public class CommentDtoService {
                 .createdAt(articleComment.getCreatedAt())
                 .updatedAt(articleComment.getUpdatedAt())
                 .likeCount(commentLikeRepository.countByComment(articleComment))
-                .isLike(commentLikeRepository.existsByMember_IdAndComment_Id(memberId, articleComment.getId()))
                 .commentCount(commentRepository.countByComment(articleComment.getId()))
                 .build();
 
-        commentResponse.setReplies(fromEntity(articleComment.getReplies()));
+        if(memberId != null)
+            commentResponse.setIsLike(commentLikeRepository.existsByMember_IdAndComment_Id(memberId, articleComment.getId()));
+
+        commentResponse.setReplies(fromEntity(memberId, articleComment.getReplies()));
         commentResponse.setCommentCount(commentRepository.countByComment(articleComment.getId()));
 
         return commentResponse;
     }
 
-    public List<CommentReplyResponse> fromEntity(List<ArticleComment> replies){
+    public List<CommentReplyResponse> fromEntity(Integer memberId, List<ArticleComment> replies){
         List<CommentReplyResponse> replyResponses = new ArrayList<>();
         for (ArticleComment c: replies) {
-            replyResponses.add(CommentReplyResponse.builder()
-                    .id(c.getId())
-                    .content(c.getContent())
-                    .author(new Author(c.getAuthor()))
-                    .isDelete(c.getIsDelete())
-                    .createdAt(c.getCreatedAt())
-                    .updatedAt(c.getUpdatedAt())
-                    .likeCount(commentLikeRepository.countByComment(c))
-                    .isLike(commentLikeRepository.existsByMember_IdAndComment_Id(c.getAuthor().getId(), c.getId()))
-                    .build());
+            if(memberId != null){
+                replyResponses.add(CommentReplyResponse.builder()
+                        .id(c.getId())
+                        .content(c.getContent())
+                        .author(new Author(c.getAuthor()))
+                        .isDelete(c.getIsDelete())
+                        .createdAt(c.getCreatedAt())
+                        .updatedAt(c.getUpdatedAt())
+                        .likeCount(commentLikeRepository.countByComment(c))
+                        .isLike(commentLikeRepository.existsByMember_IdAndComment_Id(memberId, c.getId()))
+                        .build());
+            }else{
+                replyResponses.add(CommentReplyResponse.builder()
+                        .id(c.getId())
+                        .content(c.getContent())
+                        .author(new Author(c.getAuthor()))
+                        .isDelete(c.getIsDelete())
+                        .createdAt(c.getCreatedAt())
+                        .updatedAt(c.getUpdatedAt())
+                        .likeCount(commentLikeRepository.countByComment(c))
+                        .build());
+            }
+
         }
         return replyResponses;
     }
-
 
 }

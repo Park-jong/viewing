@@ -1,7 +1,6 @@
 package com.ssafy.interviewstudy.domain.board;
 
 import com.ssafy.interviewstudy.domain.member.Member;
-import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import lombok.Builder;
 import lombok.Getter;

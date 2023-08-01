@@ -1,22 +1,19 @@
 package com.ssafy.interviewstudy.service.board;
 
-import com.ssafy.interviewstudy.domain.board.*;
+import com.ssafy.interviewstudy.domain.board.Board;
+import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
-import com.ssafy.interviewstudy.dto.board.StudyBoardRequest;
-import com.ssafy.interviewstudy.repository.board.*;
+import com.ssafy.interviewstudy.repository.board.BoardRepository;
+import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BoardService {
@@ -55,7 +52,9 @@ public class BoardService {
     public BoardResponse findArticle(Integer memberId, Integer articleId, BoardType boardType) {
         Board article = boardRepository.findById(articleId).get();
 
+//        System.out.println(article.getTitle());
         if(article != null) modifyViewCount(article);
+        else System.out.println("null입니다...");
 
         // Null이면 예외 발생 처리
         BoardResponse boardResponse = boardDtoService.fromEntity(memberId, article);

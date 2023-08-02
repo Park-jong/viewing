@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Alarm from "../../Icons/Alarm";
 import { Link } from "react-router-dom";
+import { PiBellThin } from "react-icons/pi";
 
 const Container = styled.div`
   cursor: pointer;
@@ -80,6 +81,10 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const BellIcon = styled(PiBellThin)`
+  margin-right: 4px;
+`;
+
 export default function DropAlert() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showItems, setShowItems] = useState(4); // Number of items to show initially
@@ -119,7 +124,7 @@ export default function DropAlert() {
   return (
     <Container ref={AlertRef}>
       <AlarmIcon onClick={handleAlarmClick}>
-        <Alarm />
+        <BellIcon size={24} />
       </AlarmIcon>
       <DropdownMenu open={menuOpen}>
         {sortedAlertList.slice(0, showItems).map((alert, index) => (

@@ -3,7 +3,7 @@ package com.ssafy.interviewstudy.service.calendar;
 import com.ssafy.interviewstudy.domain.calendar.Calendar;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.calendar.CalendarCreatedResponse;
-import com.ssafy.interviewstudy.dto.calendar.CalendarDto;
+import com.ssafy.interviewstudy.dto.calendar.CalendarRetrieveRequest;
 import com.ssafy.interviewstudy.dto.calendar.CalendarListResponse;
 import com.ssafy.interviewstudy.exception.message.CreationFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
@@ -41,9 +41,9 @@ public class CalendarService {
 
     //일정 추가
     @Transactional
-    public CalendarCreatedResponse createCalendar(CalendarDto calendarDto){
+    public CalendarCreatedResponse createCalendar(CalendarRetrieveRequest calendarDto){
         Member author = memberRepository.findMemberById(calendarDto.getMemberId());
-        Calendar calendar = CalendarDto.toEntity(calendarDto,author);
+        Calendar calendar = CalendarRetrieveRequest.toEntity(calendarDto,author);
         calendarRepository.save(calendar);
         //Optional을 쓸만한 상황
         if(calendar==null){
@@ -66,12 +66,12 @@ public class CalendarService {
 
     //일정 수정
     @Transactional
-    public void updateCalendar(CalendarDto calendarDto){
+    public void updateCalendar(CalendarRetrieveRequest calendarDto){
         Member updatedMember = memberRepository.findMemberById(calendarDto.getMemberId());
         if(updatedMember==null){
             throw new CreationFailException("캘린더");
         }
-        calendarRepository.save(CalendarDto.toEntity(calendarDto,updatedMember));
+        calendarRepository.save(CalendarRetrieveRequest.toEntity(calendarDto,updatedMember));
     }
 
     //본인 일정이 맞는지 체크

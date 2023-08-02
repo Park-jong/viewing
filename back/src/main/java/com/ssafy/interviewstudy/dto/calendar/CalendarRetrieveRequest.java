@@ -7,8 +7,6 @@ import com.ssafy.interviewstudy.domain.calendar.Calendar;
 import com.ssafy.interviewstudy.domain.member.Member;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.bytebuddy.asm.Advice;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class CalendarDto {
+public class CalendarRetrieveRequest {
 
     private Integer calendarId;
 
@@ -32,17 +30,8 @@ public class CalendarDto {
 
     private Integer memberId;
 
-    public static CalendarDto fromEntity(Calendar calendar){
-        CalendarDto calendarDto = new CalendarDto();
-        calendarDto.setCalendarId(calendar.getId());
-        calendarDto.setMemberId(calendar.getAuthor().getId());
-        calendarDto.setStartedAt(calendar.getStartedAt());
-        calendarDto.setEndedAt(calendar.getEndedAt());
-        calendarDto.setDescription(calendar.getDescription());
-        return calendarDto;
-    }
 
-    public static Calendar toEntity(CalendarDto calendarDto, Member author){
+    public static Calendar toEntity(CalendarRetrieveRequest calendarDto, Member author){
         Calendar calendar =
                 Calendar.builder()
                         .id(calendarDto.getCalendarId())

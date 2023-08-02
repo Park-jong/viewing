@@ -1,7 +1,7 @@
 package com.ssafy.interviewstudy.service.member;
 
 import com.ssafy.interviewstudy.domain.member.Member;
-import com.ssafy.interviewstudy.dto.member.dto.MemberProfileChangeDto;
+import com.ssafy.interviewstudy.dto.member.MemberProfileChangeDto;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;

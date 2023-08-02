@@ -11,13 +11,13 @@ import java.util.List;
 @Data
 public class CalendarListResponse {
 
-    private List<CalendarDto> data = new ArrayList<>();
+    private List<CalendarRetrieveResponse> data = new ArrayList<>();
 
     public static CalendarListResponse fromEntity(List<Calendar> calendarList){
 
         CalendarListResponse calendarListResponse = new CalendarListResponse();
         for(Calendar c : calendarList){
-            calendarListResponse.getData().add(CalendarDto.fromEntity(c));
+            calendarListResponse.getData().add(CalendarRetrieveResponse.fromEntity(c));
         }
         return calendarListResponse;
     }

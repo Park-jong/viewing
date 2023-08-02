@@ -4,7 +4,8 @@ import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.member.*;
-import com.ssafy.interviewstudy.dto.member.dto.MemberProfileChangeDto;
+import com.ssafy.interviewstudy.dto.member.MemberNicknameChangeDto;
+import com.ssafy.interviewstudy.dto.member.MemberProfileChangeDto;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTToken;
 import com.ssafy.interviewstudy.service.member.MemberService;
@@ -163,17 +164,17 @@ public class MemberController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
     @PutMapping("/users/{userId}/nickname")
-    public ResponseEntity<?> selectNickname(@RequestBody(required = true) String nickname,
+    public ResponseEntity<?> selectNickname(@RequestBody(required = true)MemberNicknameChangeDto memberNicknameChangeDto,
                                             @PathVariable("userId") Integer memberId){
 
         //닉네임 중복체크
-        Member checkedMember = memberService.checkDuplicateNickname(nickname);
+        Member checkedMember = memberService.checkDuplicateNickname(memberNicknameChangeDto.getNickname());
         if(checkedMember==null){
             Member nowMember = memberService.findMemberByMemberId(
                     memberId
             );
             memberService.nextRegistrationStatus(nowMember);
-            memberService.changeMemberNickname(nowMember,nickname);
+            memberService.changeMemberNickname(nowMember,memberNicknameChangeDto.getNickname());
             return ResponseEntity.ok().build();
         }
         else{

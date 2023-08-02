@@ -4,7 +4,7 @@ import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.dto.calendar.CalendarCreatedResponse;
-import com.ssafy.interviewstudy.dto.calendar.CalendarDto;
+import com.ssafy.interviewstudy.dto.calendar.CalendarRetrieveRequest;
 import com.ssafy.interviewstudy.service.calendar.CalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,8 @@ import java.net.URI;
 
 @RequestMapping(value = {"/users/{userId}/calendars"})
 @RestController
-public class CalendarController {
+public class
+CalendarController {
 
     private final CalendarService calendarService;
 
@@ -34,7 +35,7 @@ public class CalendarController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
     @PostMapping
-    public ResponseEntity<?> createCalendar(@Valid @RequestBody CalendarDto calendarDto,@PathVariable Integer userId){
+    public ResponseEntity<?> createCalendar(@Valid @RequestBody CalendarRetrieveRequest calendarDto, @PathVariable Integer userId){
         calendarDto.setMemberId(userId);
         System.out.println("calendarDto : "+calendarDto);
         CalendarCreatedResponse calendarCreatedResponse = calendarService.createCalendar(calendarDto);
@@ -46,7 +47,7 @@ public class CalendarController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member_Calendar)
     @PutMapping("/{calendarId}")
-    public ResponseEntity<?> updateCalendar(@Valid @RequestBody CalendarDto calendarDto,
+    public ResponseEntity<?> updateCalendar(@Valid @RequestBody CalendarRetrieveRequest calendarDto,
                                             @PathVariable(required = true) Integer calendarId,
                                             @PathVariable(required = true) Integer userId){
         calendarDto.setMemberId(userId);

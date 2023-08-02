@@ -53,13 +53,13 @@ public class StudyBoardComment {
     //셀프 참조
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reply_comment_id")
-    private ArticleComment comment;
+    private StudyBoardComment comment;
 
     @OneToMany(mappedBy = "comment")
-    private List<ArticleComment> replies = new ArrayList<>();
+    private List<StudyBoardComment> replies = new ArrayList<>();
 
     @Builder
-    public StudyBoardComment(Integer id, StudyBoard article, Member author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isDelete, ArticleComment comment, List<ArticleComment> replies) {
+    public StudyBoardComment(Integer id, StudyBoard article, Member author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isDelete, StudyBoardComment comment, List<StudyBoardComment> replies) {
         this.id = id;
         this.article = article;
         this.author = author;

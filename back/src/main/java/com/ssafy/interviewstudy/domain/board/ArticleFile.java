@@ -20,6 +20,10 @@ public class ArticleFile {
     @JoinColumn(name = "article_id")
     private Board article;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_article_id")
+    private StudyBoard studyArticle;
+
     @Column(name = "original_file_name", nullable = false)
     private String originalFileName;
     @Lob

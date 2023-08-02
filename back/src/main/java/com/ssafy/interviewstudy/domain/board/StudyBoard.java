@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class StudyBoard {
 
     @Id
@@ -44,14 +46,10 @@ public class StudyBoard {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @ColumnDefault("0")
-    @Column(name = "view_count", insertable = false)
-    private Integer viewCount;
-
     @OneToMany(mappedBy = "article")
-    private List<ArticleComment> comments = new ArrayList<>();
+    private List<StudyBoardComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "studyArticle")
     private List<ArticleFile> files = new ArrayList<>();
 
     @OneToMany(mappedBy = "article")
@@ -62,12 +60,8 @@ public class StudyBoard {
         this.content = boardRequest.getContent();
     }
 
-    public void updateViewCount(){
-        this.viewCount += 1;
-    }
-
     @Builder
-    public StudyBoard(Integer id, Study study, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount, List<ArticleComment> comments, List<ArticleFile> files, List<ReportArticle> reports) {
+    public StudyBoard(Integer id, Study study, Member author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, List<StudyBoardComment> comments, List<ArticleFile> files, List<ReportArticle> reports) {
         this.id = id;
         this.study = study;
         this.author = author;
@@ -75,7 +69,6 @@ public class StudyBoard {
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.viewCount = viewCount;
         this.comments = comments;
         this.files = files;
         this.reports = reports;

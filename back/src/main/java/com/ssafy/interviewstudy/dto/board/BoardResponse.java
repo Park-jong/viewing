@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.dto.board;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ssafy.interviewstudy.domain.board.ArticleFile;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import lombok.Builder;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BoardResponse {
     private Integer id;
 

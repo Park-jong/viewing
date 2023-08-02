@@ -10,14 +10,15 @@ export default function GoogleLogin() {
   let navigate = useNavigate();
 
   useEffect(() => {
-    customAxios.get(`oauth/kakao?code=${code}`)
+    customAxios
+      .get(`oauth/google?code=${code}`)
       .then((res) => {
         localStorage.setItem("access_token", res.data.access_token);
         if (localStorage.getItem("prevPage")) {
           navigate(localStorage.getItem("prevPage"));
           localStorage.removeItem("prevPage");
         } else {
-          navigate('/')
+          navigate("/");
         }
       })
       .catch((err) => {

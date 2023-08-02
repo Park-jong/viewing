@@ -26,6 +26,7 @@ public class StudyBoardCommentController {
 
     // 댓글 조회
     @JWTRequired
+    @Authority(authorityType = AuthorityType.Member_Study_Comment)
     @GetMapping
     public ResponseEntity<?> commentList(@PathVariable Integer articleId){
         List<StudyBoardCommentResponse> commentResponses = commentService.findComments(articleId);
@@ -35,6 +36,7 @@ public class StudyBoardCommentController {
 
     // 댓글 저장
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Comment)
     @PostMapping
     public ResponseEntity<?> commentSave(@PathVariable Integer articleId,
                                          @MemberInfo JWTMemberInfo memberInfo,
@@ -45,9 +47,9 @@ public class StudyBoardCommentController {
         return ResponseEntity.ok(commentId);
     }
 
-    // 댓글 수정
-//    @Authority(authorityType = AuthorityType.Member_Comment)
+    // 댓글 수정\
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Comment)
     @PutMapping("/{commentId}")
     public ResponseEntity<?> commentModify(@PathVariable Integer commentId,
                                            @MemberInfo JWTMemberInfo memberInfo,
@@ -58,9 +60,9 @@ public class StudyBoardCommentController {
         return ResponseEntity.ok(commentResponse);
     }
 
-    // 댓글 삭제
-//    @Authority(authorityType = AuthorityType.Member_Comment)
+    // 댓글 삭제\
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Comment)
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> commentRemove(@PathVariable Integer commentId){
         commentService.removeComment(commentId);
@@ -69,6 +71,7 @@ public class StudyBoardCommentController {
 
     // 대댓글 작성
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Comment)
     @PostMapping("/{commentId}/replies")
     public ResponseEntity<?> replySave(@PathVariable Integer articleId,
                                        @PathVariable Integer commentId,

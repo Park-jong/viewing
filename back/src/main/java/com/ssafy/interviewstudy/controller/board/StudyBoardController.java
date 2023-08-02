@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.controller.board;
 
+import com.ssafy.interviewstudy.annotation.Authority;
+import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.domain.board.BoardType;
@@ -23,6 +25,7 @@ public class StudyBoardController {
     private final StudyBoardService boardService;
 
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Article)
     @GetMapping("/{articleId}")
     public ResponseEntity<?> articleDetail(@PathVariable Integer articleId){
         StudyBoardResponse boardResponse = boardService.findArticle(articleId);
@@ -32,6 +35,7 @@ public class StudyBoardController {
 
     // 글 저장
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @PostMapping
     public ResponseEntity<?> articleAdd(@PathVariable Integer studyId, @MemberInfo JWTMemberInfo memberInfo,
                                         @RequestBody BoardRequest boardRequest){
@@ -45,6 +49,7 @@ public class StudyBoardController {
 
 //    @Authority(authorityType = AuthorityType.Member_Board)
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Article)
     @PutMapping("/{articleId}")
     public ResponseEntity<?> articleModify(@PathVariable Integer studyId, @PathVariable Integer articleId,
                                            @MemberInfo JWTMemberInfo memberInfo,
@@ -58,6 +63,7 @@ public class StudyBoardController {
 
 //    @Authority(authorityType = AuthorityType.Member_Board)
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member_Study_Article)
     @DeleteMapping("/{articleId}")
     public ResponseEntity<?> articleRemove(@PathVariable Integer articleId){
         Integer response = boardService.removeArticle(articleId);
@@ -70,6 +76,7 @@ public class StudyBoardController {
 
     // 글 검색(키워드 없으면 전체 글 조회
     @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping
     public ResponseEntity<?> articleList(@PathVariable Integer studyId, @RequestParam(value = "searchBy", required = false) String searchBy,
                                          @RequestParam(value = "keyword", required = false) String keyword, Pageable pageable){

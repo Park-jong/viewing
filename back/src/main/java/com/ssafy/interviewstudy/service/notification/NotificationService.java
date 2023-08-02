@@ -7,6 +7,7 @@ import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.notification.EmitterRepository;
 import com.ssafy.interviewstudy.repository.notification.NotificationRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class NotificationService {
 
     //알림 CRUD 레포지토리
@@ -31,15 +33,6 @@ public class NotificationService {
 
     //SSE 연결시간
     private final Long sseEmitterTimeOut= 60L*60L*24L;
-
-    @Autowired
-    public NotificationService(NotificationRepository notificationRepository, EmitterRepository emitterRepository, MemberRepository memberRepository) {
-        this.notificationRepository = notificationRepository;
-        this.emitterRepository = emitterRepository;
-        this.memberRepository = memberRepository;
-    }
-
-
 
     public SseEmitter connect(Integer memberId, Integer lastEventId){
         String timeIncludeId = memberId+"_"+System.currentTimeMillis();
@@ -65,9 +58,8 @@ public class NotificationService {
                 0
 
         );
-        if(lastEventId!=null){
-            sendMissingData(lastEventId,memberId,timeIncludeId,sseEmitter);
-        }
+        if(lastEventId==null) lastEventId=0;
+        sendMissingData(lastEventId,memberId,timeIncludeId,sseEmitter);
 
         return sseEmitter;
 

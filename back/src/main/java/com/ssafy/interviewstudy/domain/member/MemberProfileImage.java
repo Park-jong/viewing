@@ -17,9 +17,7 @@ public enum MemberProfileImage {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(prefix);
         sb.append(name());
-        sb.append(ext);
         return sb.toString();
     }
 

@@ -3,9 +3,12 @@ package com.ssafy.interviewstudy.controller.member;
 import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
+import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.domain.member.*;
+import com.ssafy.interviewstudy.dto.board.Author;
 import com.ssafy.interviewstudy.dto.member.MemberNicknameChangeDto;
 import com.ssafy.interviewstudy.dto.member.MemberProfileChangeDto;
+import com.ssafy.interviewstudy.dto.member.ProfileResponseDto;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTToken;
 import com.ssafy.interviewstudy.service.member.MemberService;
@@ -180,6 +183,15 @@ public class MemberController {
         else{
             return ResponseEntity.badRequest().body("중복된 닉네임");
         }
+    }
+
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
+    @GetMapping("/users/{userId}")
+    public ResponseEntity retrieveProfile(@MemberInfo JWTMemberInfo memberInfo,
+                                          @PathVariable Integer userId){
+        ProfileResponseDto profileResponseDto = new ProfileResponseDto(memberService.findMemberByMemberId(userId));
+        return ResponseEntity.ok(profileResponseDto);
     }
 
     @JWTRequired(required = true)

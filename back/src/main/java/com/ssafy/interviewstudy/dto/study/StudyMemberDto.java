@@ -36,7 +36,7 @@ public class StudyMemberDto {
         this.nickname = member.getNickname();
         this.background = member.getMemberProfileBackground();
         this.character = member.getMemberProfileImage();
-        this.isLeader = false;
+        this.isLeader = null;
     }
 
     public StudyMemberDto(Member member, Boolean isLeader){

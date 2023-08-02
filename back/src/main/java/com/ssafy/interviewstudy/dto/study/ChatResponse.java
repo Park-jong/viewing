@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ssafy.interviewstudy.domain.member.MemberProfileBackground;
 import com.ssafy.interviewstudy.domain.member.MemberProfileImage;
+import com.ssafy.interviewstudy.domain.study.StudyChat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,13 @@ public class ChatResponse {
         this.content = content;
         this.createdAt = createdAt;
         this.user = new StudyMemberDto(userId, userNickname, userBg, userCharcter);
+    }
+
+    public ChatResponse(StudyChat studyChat){
+        this.chatId = studyChat.getId();
+        this.content = studyChat.getContent();
+        this.createdAt = studyChat.getCreatedAt();
+        this.user = new StudyMemberDto(studyChat.getAuthor());
     }
 
     public ChatResponse(Integer chatId){

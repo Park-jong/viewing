@@ -40,7 +40,9 @@ class StudyControllerTest {
     @LocalServerPort
     int port;
 
-    String auth = "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc";
+    String authId1 = "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MjAwMDAwMDAwMCwiaWF0IjoxNjkwODQ4MDI3LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6MX0.ZfJu9Dx4Si9ImOVtoX_tjYLiNHMuZq8NTDWb2R6D1Rw";
+    String authId2 = "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MjAwMDAwMDAwMCwiaWF0IjoxNjkwODQ4MDI3LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.yZDA8XFBExrQPOIRWfLdICpiawk1kSB6wzHKt2f-d8g";
+    String authId3 = "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MjAwMDAwMDAwMCwiaWF0IjoxNjkwODQ4MDI3LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6M30.PLViJmJgeRs9baSYJ2Mw34Xjjyi1roCUyJ89x4MkNvs";
 
     @Autowired
     private StudyService studyService;
@@ -95,11 +97,11 @@ class StudyControllerTest {
     @Test
     public void postGetPutDeleteStudyTest(){
         //post
-        StudyDtoRequest study = StudyDtoRequest.builder().title("test code").description("test 코드용").leaderId(2).appliedCompany(1).tags(new ArrayList<>()).capacity(7).careerLevel(CareerLevel.valueOf("ALL")).appliedJob("직무").recruitment(true).build();
+        StudyDtoRequest study = StudyDtoRequest.builder().title("test code").description("test 코드용").leaderId(1).appliedCompany(1).tags(new ArrayList<>()).capacity(7).careerLevel(CareerLevel.valueOf("ALL")).appliedJob("직무").recruitment(true).build();
 
         ExtractableResponse<Response> postResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .body(study)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
@@ -113,7 +115,7 @@ class StudyControllerTest {
         //get
         ExtractableResponse<Response> getResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .get("/studies/"+id)
                 .then().log().all()
@@ -123,11 +125,11 @@ class StudyControllerTest {
         assertThat(jsonPath.getInt("study_id")).isEqualTo(Integer.parseInt(id));
 
         //put
-        StudyDtoRequest updateStudy = StudyDtoRequest.builder().title("test 수정").description("test 코드용 수정").leaderId(2).appliedCompany(1).tags(new ArrayList<>()).capacity(7).careerLevel(CareerLevel.valueOf("ALL")).appliedJob("직무").recruitment(true).build();
+        StudyDtoRequest updateStudy = StudyDtoRequest.builder().title("test 수정").description("test 코드용 수정").leaderId(1).appliedCompany(1).tags(new ArrayList<>()).capacity(7).careerLevel(CareerLevel.valueOf("ALL")).appliedJob("직무").recruitment(true).build();
 
         ExtractableResponse<Response> putResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .body(updateStudy)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
@@ -139,7 +141,7 @@ class StudyControllerTest {
         //get
         ExtractableResponse<Response> getResult2 = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .get("/studies/"+id)
                 .then().log().all()
@@ -152,7 +154,7 @@ class StudyControllerTest {
         //delete
         ExtractableResponse<Response> deleteResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .delete("/studies/"+id)
                 .then().log().all()
@@ -166,7 +168,7 @@ class StudyControllerTest {
     public void studyRequestGet(){
         ExtractableResponse<Response> result = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .get("/studies/1/requests")
                 .then().log().all()
@@ -177,8 +179,8 @@ class StudyControllerTest {
     @Test
     public void studyRequestTest(){
         int studyId = 1;
-        int memberId1 = 3;
-        int memberId2 = 2;
+        int memberId1 = 2;
+        int memberId2 = 3;
 
 
         String body1 = "{\n" +
@@ -197,7 +199,7 @@ class StudyControllerTest {
         ExtractableResponse<Response> postResult = RestAssured
                 .given()
                 .body(body1)
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId2)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .post("/studies/"+studyId+"/requests")
@@ -209,7 +211,7 @@ class StudyControllerTest {
         ExtractableResponse<Response> postResult2 = RestAssured
                 .given()
                 .body(body2)
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId3)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .post("/studies/"+studyId+"/requests")
@@ -221,7 +223,7 @@ class StudyControllerTest {
         //조회
         ExtractableResponse<Response> getResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .get("/studies/"+studyId+"/requests/"+resultId)
                 .then().log().all()
@@ -236,7 +238,7 @@ class StudyControllerTest {
         //승인
         ExtractableResponse<Response> approvalResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .body("{\"user_id\":"+ memberId1+"}")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
@@ -249,7 +251,7 @@ class StudyControllerTest {
         //거절
         ExtractableResponse<Response> denialResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .body("{\"user_id\":"+ memberId2+"}")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
@@ -262,7 +264,7 @@ class StudyControllerTest {
         ExtractableResponse<Response> postResult3 = RestAssured
                 .given()
                 .body(body2)
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId3)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .post("/studies/"+studyId+"/requests")
@@ -275,7 +277,7 @@ class StudyControllerTest {
         //취소
         ExtractableResponse<Response> cancelResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId3)
                 .when()
                 .delete("/studies/"+studyId+"/requests/"+resultId3)
                 .then().log().all()
@@ -285,7 +287,7 @@ class StudyControllerTest {
         //get
         ExtractableResponse<Response> studyResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .get("/studies/"+studyId)
                 .then().log().all()
@@ -298,7 +300,7 @@ class StudyControllerTest {
         //스터디장 위임
         ExtractableResponse<Response> leaderChange = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .body("{\n" +
                         "    \"before_leader_id\":"+leaderId+",\n" +
                         "    \"after_leader_id\":"+memberId1+"\n" +
@@ -313,7 +315,7 @@ class StudyControllerTest {
         //get
         ExtractableResponse<Response> studyResult2 = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .get("/studies/"+studyId)
                 .then().log().all()
@@ -327,7 +329,7 @@ class StudyControllerTest {
         //스터디장 위임
         ExtractableResponse<Response> leaderChange2 = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId2)
                 .body("{\n" +
                         "    \"before_leader_id\":"+memberId1+",\n" +
                         "    \"after_leader_id\":"+leaderId+"\n" +
@@ -342,9 +344,9 @@ class StudyControllerTest {
         //추방
         ExtractableResponse<Response> banResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
-                .delete("/studies/"+studyId+"/members/"+memberId1)
+                .delete("/studies/"+studyId+"/members/"+memberId1+"/exit")
                 .then().log().all()
                 .extract();
         assertThat(banResult.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -354,7 +356,7 @@ class StudyControllerTest {
     public void getStudyMembersTest(){
         ExtractableResponse<Response> result = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId2)
                 .when()
                 .get("/studies/2/members")
                 .then().log().all()
@@ -375,7 +377,7 @@ class StudyControllerTest {
         ExtractableResponse<Response> postResult = RestAssured
                 .given()
                 .body(body)
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .post("/studies/"+studyId+"/calendars")
@@ -387,7 +389,7 @@ class StudyControllerTest {
         //일정 조회
         ExtractableResponse<Response> getResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId2)
                 .when()
                 .get("/studies/"+studyId+"/calendars/"+resultId)
                 .then().log().all()
@@ -398,7 +400,7 @@ class StudyControllerTest {
         //일정 수정
         ExtractableResponse<Response> putResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .body("{\n" +
                         "    \"started_at\":\"2023-08-11T21:59\",\n" +
                         "    \"ended_at\":\"2023-08-11T23:59\",\n" +
@@ -413,7 +415,7 @@ class StudyControllerTest {
 
         ExtractableResponse<Response> getResult2 = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .get("/studies/"+studyId+"/calendars/"+resultId)
                 .then().log().all()
@@ -424,7 +426,7 @@ class StudyControllerTest {
         //일정 삭제
         ExtractableResponse<Response> deleteResult = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .delete("/studies/"+studyId+"/calendars/"+resultId)
                 .then().log().all()
@@ -434,7 +436,7 @@ class StudyControllerTest {
         //일정 전체 조회
         ExtractableResponse<Response> getResults = RestAssured
                 .given()
-                .header("Authorization", "bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbnRlcnZpZXdTdHVkeSIsImV4cCI6MTY5MDg2MzUyOCwiaWF0IjoxNjkwNzc3MTI4LCJlbWFpbCI6InRrZHdvNzY5OUBnbWFpbC5jb20iLCJtZW1iZXJJZCI6Mn0.kyA6xr5zGx2oDnqMInh8w-UyJrmrbFHw33TGiFMLbXc")
+                .header("Authorization", authId1)
                 .when()
                 .get("/studies/"+studyId+"/calendars")
                 .then().log().all()

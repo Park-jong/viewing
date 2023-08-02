@@ -286,11 +286,12 @@ public class StudyService {
 
     //스터디 실시간 채팅 작성
     @Transactional
-    public void addChat(Integer studyId, ChatRequest chat){
+    public ChatResponse addChat(Integer studyId, ChatRequest chat){
         Member member = memberRepository.findById(chat.getUserId()).get();
         Study study = studyRepository.findById(studyId).get();
         StudyChat studyChat = new StudyChat(study, member, chat.getContent());
         studyChatRepository.save(studyChat);
+        return new ChatResponse(studyChat);
     }
 
     //스터디 실시간 채팅 조회

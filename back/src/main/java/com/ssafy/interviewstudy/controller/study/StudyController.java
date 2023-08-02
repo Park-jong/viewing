@@ -149,11 +149,21 @@ public class StudyController {
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Leader)
-    @DeleteMapping("/{study_id}/members/{user_id}")
+    @DeleteMapping("/{study_id}/members/{user_id}/ban")
     public ResponseEntity<?> studyMemberBan(@PathVariable("study_id") Integer studyId, @PathVariable("user_id") Integer memberId){
         boolean result = studyService.banMemberStudy(studyId, memberId);
         if(!result)
             return ResponseEntity.badRequest().body("스터디장은 추방할 수 없음");
+        return ResponseEntity.ok().build();
+    }
+
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
+    @DeleteMapping("/{study_id}/members/{user_id}/exit")
+    public ResponseEntity<?> studyMemberExit(@PathVariable("study_id") Integer studyId, @PathVariable("user_id") Integer memberId){
+        boolean result = studyService.leaveStudy(studyId, memberId);
+        if(!result)
+            return ResponseEntity.badRequest().body("스터디장은 탈퇴할 수 없음");
         return ResponseEntity.ok().build();
     }
 
@@ -195,23 +205,26 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
-    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/calendars")
-    public ResponseEntity<?> studyCalendarList(@PathVariable("study_id") Integer studyId){
+    public ResponseEntity<?> studyCalendarList(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId){
+        Integer memberId = memberInfo.getMemberId();
+        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok().body(studyService.findStudyCalendarsByStudy(studyId));
     }
 
     @JWTRequired(required = true)
-    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/calendars/{calendar_id}")
-    public ResponseEntity<?> studyCalendarDetail(@PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId){
+    public ResponseEntity<?> studyCalendarDetail(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId){
+        Integer memberId = memberInfo.getMemberId();
+        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok().body(studyService.findStudyCalendarByStudy(studyId, calendarId));
     }
 
     @JWTRequired(required = true)
-    @Authority(authorityType = AuthorityType.Study_Member)
     @PostMapping("/{study_id}/calendars")
-    public ResponseEntity<?> studyCalendarAdd(@PathVariable("study_id") Integer studyId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
+    public ResponseEntity<?> studyCalendarAdd(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
+        Integer memberId = memberInfo.getMemberId();
+        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
         Integer madeSchedule = null;
         try {
             madeSchedule = studyService.addStudyCalendar(studyId, studyCalendar);
@@ -223,17 +236,19 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
-    @Authority(authorityType = AuthorityType.Study_Member)
     @PutMapping("/{study_id}/calendars/{calendar_id}")
-    public ResponseEntity<?> studyCalendarModify(@PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
+    public ResponseEntity<?> studyCalendarModify(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
+        Integer memberId = memberInfo.getMemberId();
+        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
         studyService.modifyStudyCalendar(studyId, calendarId, studyCalendar);
         return ResponseEntity.ok().build();
     }
 
     @JWTRequired(required = true)
-    @Authority(authorityType = AuthorityType.Study_Member)
     @DeleteMapping("/{study_id}/calendars/{calendar_id}")
-    public ResponseEntity<?> studyCalendarRemove(@PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId){
+    public ResponseEntity<?> studyCalendarRemove(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId){
+        Integer memberId = memberInfo.getMemberId();
+        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
         studyService.removeStudyCalendar(studyId, calendarId);
         return ResponseEntity.ok().build();
     }

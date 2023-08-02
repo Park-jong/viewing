@@ -12,9 +12,10 @@ import lombok.*;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class RequestFile {
     private String name;
+    private Integer fileId;
     private byte[] fileData;
     public RequestFile(StudyRequestFile file){
         this.name = file.getOriginalFileName();
-        this.fileData = file.getFileData();
+        this.fileId = file.getId();
     }
 }

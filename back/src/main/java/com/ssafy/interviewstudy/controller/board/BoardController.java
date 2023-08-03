@@ -39,7 +39,7 @@ public class BoardController {
     public ResponseEntity<?> articleAdd(@PathVariable BoardType boardType,
                                         @MemberInfo JWTMemberInfo memberInfo,
                                         @RequestBody BoardRequest boardRequest){
-        System.out.println(boardRequest.getBoardType());
+        boardRequest.setBoardType(boardType);
         boardRequest.setMemberId(memberInfo.getMemberId());
         Integer articleId = boardService.saveBoard(boardRequest);
 
@@ -49,11 +49,10 @@ public class BoardController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member_Board)
     @PutMapping("/{boardType}/{articleId}")
-    public ResponseEntity<?> articleModify(@PathVariable Integer articleId,
+    public ResponseEntity<?> articleModify(@PathVariable BoardType boardType, @PathVariable Integer articleId,
                                            @MemberInfo JWTMemberInfo memberInfo,
                                            @RequestBody BoardRequest boardRequest){
-        System.out.println("수정 컨트롤러");
-        System.out.println("멤버 id:"+boardRequest.getMemberId());
+        boardRequest.setBoardType(boardType);
         boardRequest.setMemberId(memberInfo.getMemberId());
         BoardResponse response = boardService.modifyArticle(articleId, boardRequest);
 
@@ -64,7 +63,6 @@ public class BoardController {
     @Authority(authorityType = AuthorityType.Member_Board)
     @DeleteMapping("/{boardType}/{articleId}")
     public ResponseEntity<?> articleRemove(@PathVariable Integer articleId){
-        System.out.println("delete controller");
         Integer response = boardService.removeArticle(articleId);
         if(response == 0)
             return ResponseEntity.badRequest().body("없는 게시물입니다.");

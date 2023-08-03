@@ -12,6 +12,7 @@ import com.ssafy.interviewstudy.repository.board.CommentLikeRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -113,11 +114,12 @@ public class CommentService {
     }
 
     // 댓글 좋아요 삭제
+    @Transactional
     public void removeCommentLike(Integer memberId, Integer commentId){
         Member member = memberRepository.findMemberById(memberId);
         ArticleComment comment = articleCommentRepository.findById(commentId).get();
 
-        if(!checkMemberLikeComment(memberId, commentId))
+        if(checkMemberLikeComment(memberId, commentId))
             commentLikeRepository.removeCommentLikeByCommentAndMember(comment, member);
     }
 

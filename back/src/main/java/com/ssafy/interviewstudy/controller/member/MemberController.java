@@ -205,4 +205,29 @@ public class MemberController {
         memberService.changeMemberProfile(memberProfileChangeDto);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/users/createMemberTest")
+    public ResponseEntity changeCharacter(@RequestParam("code") String code){
+
+        if(!code.equals("a205")){
+            return ResponseEntity.badRequest().body("코드가 잘못됐습니다 당신 누구야");
+        }
+        Member testMember = Member.builder()
+                .created_at(LocalDateTime.now())
+                .status(MemberStatus.ACTIVE)
+                .registrationStatus(RegistrationStatus.FINISHED)
+                .email("test123@viewing.com")
+                .nickname("user"+System.currentTimeMillis())
+                .memberProfileBackground(
+                        MemberProfileBackground.COLOR_93ffff
+                )
+                .memberProfileImage(
+                        MemberProfileImage.cow
+                )
+                .build();
+
+        memberService.register(testMember);
+
+        return ResponseEntity.ok(testMember);
+    }
 }

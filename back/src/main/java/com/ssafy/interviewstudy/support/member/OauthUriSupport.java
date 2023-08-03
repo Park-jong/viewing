@@ -47,7 +47,7 @@ public class OauthUriSupport {
     }
 
     public static String getRedirectUri(SocialLoginType socialLoginType){
-        return "http://localhost:3000/login/"+socialLoginType.toString();
+        return "http://localhost:3000/login/loading";
     }
 
     public static String getClientSecret(SocialLoginType socialLoginType){

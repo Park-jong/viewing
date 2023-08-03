@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MemberNicknameChangeDto {
-    private Integer userId;
+    private Integer memberId;
     @NotNull
     private String nickname;
 }

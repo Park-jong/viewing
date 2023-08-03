@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class RequestDto {
-    private Integer userId;
+    private Integer memberId;
     private String content;
     private List<RequestFile> requestFiles = new ArrayList<>();
 }

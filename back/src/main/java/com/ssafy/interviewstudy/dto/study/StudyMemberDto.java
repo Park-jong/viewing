@@ -13,7 +13,7 @@ import lombok.*;
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class StudyMemberDto {
-    private Integer id;
+    private Integer memberId;
 
     private String nickname;
 
@@ -23,8 +23,8 @@ public class StudyMemberDto {
 
     private MemberProfileImage character;
 
-    public StudyMemberDto(Integer id, String nickname, MemberProfileBackground background, MemberProfileImage character) {
-        this.id = id;
+    public StudyMemberDto(Integer memberId, String nickname, MemberProfileBackground background, MemberProfileImage character) {
+        this.memberId = memberId;
         this.nickname = nickname;
         this.background = background;
         this.character = character;
@@ -32,7 +32,7 @@ public class StudyMemberDto {
 
     public StudyMemberDto(Member member){
         if(member == null) return;
-        this.id = member.getId();
+        this.memberId = member.getId();
         this.nickname = member.getNickname();
         this.background = member.getMemberProfileBackground();
         this.character = member.getMemberProfileImage();
@@ -41,7 +41,7 @@ public class StudyMemberDto {
 
     public StudyMemberDto(Member member, Boolean isLeader){
         if(member == null) return;
-        this.id = member.getId();
+        this.memberId = member.getId();
         this.nickname = member.getNickname();
         this.background = member.getMemberProfileBackground();
         this.character = member.getMemberProfileImage();

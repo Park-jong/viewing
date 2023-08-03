@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MemberProfileChangeDto {
 
-    private Integer userId;
+    private Integer memberId;
 
     private MemberProfileImage character;
 

@@ -157,7 +157,7 @@ public class StudyService {
         }
         Study study = studyOptional.get();
 
-        Member member = memberRepository.findById(requestDto.getUserId()).get();
+        Member member = memberRepository.findById(requestDto.getMemberId()).get();
 
         Optional<StudyMember> isMember = studyMemberRepository.findByStudyAndMember(study, member);
         if(isMember.isPresent()){//이미 가입 되어 있음
@@ -321,7 +321,7 @@ public class StudyService {
     @Transactional
     public Integer addStudyCalendar(Integer studyId, StudyCalendarDtoRequest studyCalendarDtoRequest){
         Study study = studyRepository.findById(studyId).get();
-        Member member = memberRepository.findById(studyCalendarDtoRequest.getUserId()).get();
+        Member member = memberRepository.findById(studyCalendarDtoRequest.getMemberId()).get();
         StudyCalendar studyCalendar = new StudyCalendar(study, member, studyCalendarDtoRequest);
         studyCalendarRepository.save(studyCalendar);
         return studyCalendar.getId();

@@ -123,9 +123,9 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Leader)
     @PostMapping("/{study_id}/requests/{request_id}/approval")
     public ResponseEntity<?> requestApproval(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
-        Integer userId = null;
-        if(map.containsKey("user_id")) userId = (Integer)map.get("user_id");
-        studyService.permitRequest(requestId, studyId, userId);
+        Integer memberId = null;
+        if(map.containsKey("user_id")) memberId = (Integer)map.get("user_id");
+        studyService.permitRequest(requestId, studyId, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -133,9 +133,9 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Leader)
     @PostMapping("/{study_id}/requests/{request_id}/denial")
     public ResponseEntity<?> requestDenial(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
-        Integer userId = null;
-        if(map.containsKey("user_id")) userId = (Integer)map.get("user_id");
-        studyService.rejectRequest(requestId, studyId, userId);
+        Integer memberId = null;
+        if(map.containsKey("user_id")) memberId = (Integer)map.get("user_id");
+        studyService.rejectRequest(requestId, studyId, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -143,8 +143,8 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Member_Study_Request)
     @DeleteMapping("/{study_id}/requests/{request_id}")
     public ResponseEntity<?> requestCancel(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId){
-        Integer userId = memberInfo.getMemberId();
-        studyService.cancelRequest(requestId, studyId, userId);
+        Integer memberId = memberInfo.getMemberId();
+        studyService.cancelRequest(requestId, studyId, memberId);
         return ResponseEntity.ok().build();
     }
 

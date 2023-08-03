@@ -25,7 +25,6 @@ import java.net.URI;
 import java.time.LocalDateTime;
 
 @RestController
-@CrossOrigin(origins="*")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -166,9 +165,9 @@ public class MemberController {
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
-    @PutMapping("/users/{userId}/nickname")
+    @PutMapping("/members/{memberId}/nickname")
     public ResponseEntity<?> selectNickname(@RequestBody(required = true)MemberNicknameChangeDto memberNicknameChangeDto,
-                                            @PathVariable("userId") Integer memberId){
+                                            @PathVariable("memberId") Integer memberId){
 
         //닉네임 중복체크
         Member checkedMember = memberService.checkDuplicateNickname(memberNicknameChangeDto.getNickname());
@@ -187,26 +186,26 @@ public class MemberController {
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
-    @GetMapping("/users/{userId}")
+    @GetMapping("/members/{memberId}")
     public ResponseEntity retrieveProfile(@MemberInfo JWTMemberInfo memberInfo,
-                                          @PathVariable Integer userId){
-        ProfileResponseDto profileResponseDto = new ProfileResponseDto(memberService.findMemberByMemberId(userId));
+                                          @PathVariable Integer memberId){
+        ProfileResponseDto profileResponseDto = new ProfileResponseDto(memberService.findMemberByMemberId(memberId));
         return ResponseEntity.ok(profileResponseDto);
     }
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
-    @PutMapping("/users/{userId}/profile")
+    @PutMapping("/members/{memberId}/profile")
     public ResponseEntity changeCharacter(@RequestBody MemberProfileChangeDto memberProfileChangeDto,
-                                         @PathVariable Integer userId){
-        memberProfileChangeDto.setUserId(userId);
+                                         @PathVariable Integer memberId){
+        memberProfileChangeDto.setMemberId(memberId);
         if(memberProfileChangeDto.getCharacter()==null &&
                 memberProfileChangeDto.getBackground()==null) return ResponseEntity.badRequest().body("바꿀 필드가 모두 null입니다");
         memberService.changeMemberProfile(memberProfileChangeDto);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/users/createMemberTest")
+    @GetMapping("/members/createMemberTest")
     public ResponseEntity changeCharacter(@RequestParam("code") String code){
 
         if(!code.equals("a205")){

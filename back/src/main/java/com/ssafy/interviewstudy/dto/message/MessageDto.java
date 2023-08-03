@@ -45,14 +45,14 @@ public class MessageDto {
         messageDetailResponse.setIsRead(message.getIsRead());
         messageDetailResponse.setAuthor(
                 memberDto.builder()
-                        .id(message.getAuthor().getId())
+                        .memberId(message.getAuthor().getId())
                         .background(message.getAuthor().getMemberProfileBackground())
                         .character(message.getAuthor().getMemberProfileImage())
                         .build()
         );
         messageDetailResponse.setReceiver(
                 memberDto.builder()
-                        .id(message.getReceiver().getId())
+                        .memberId(message.getReceiver().getId())
                         .background(message.getReceiver().getMemberProfileBackground())
                         .character(message.getReceiver().getMemberProfileImage())
                         .build()

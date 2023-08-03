@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 
-@RequestMapping(value = {"/users/{userId}/calendars"})
+@RequestMapping(value = {"/members/{memberId}/calendars"})
 @RestController
 public class
 CalendarController {
@@ -28,15 +28,15 @@ CalendarController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
     @GetMapping
-    public ResponseEntity<?> getCalendars(@PathVariable Integer userId){
-        return ResponseEntity.ok().body(calendarService.getCalendarList(userId));
+    public ResponseEntity<?> getCalendars(@PathVariable Integer memberId){
+        return ResponseEntity.ok().body(calendarService.getCalendarList(memberId));
     }
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
     @PostMapping
-    public ResponseEntity<?> createCalendar(@Valid @RequestBody CalendarRetrieveRequest calendarDto, @PathVariable Integer userId){
-        calendarDto.setMemberId(userId);
+    public ResponseEntity<?> createCalendar(@Valid @RequestBody CalendarRetrieveRequest calendarDto, @PathVariable Integer memberId){
+        calendarDto.setMemberId(memberId);
         System.out.println("calendarDto : "+calendarDto);
         CalendarCreatedResponse calendarCreatedResponse = calendarService.createCalendar(calendarDto);
         return ResponseEntity
@@ -49,8 +49,8 @@ CalendarController {
     @PutMapping("/{calendarId}")
     public ResponseEntity<?> updateCalendar(@Valid @RequestBody CalendarRetrieveRequest calendarDto,
                                             @PathVariable(required = true) Integer calendarId,
-                                            @PathVariable(required = true) Integer userId){
-        calendarDto.setMemberId(userId);
+                                            @PathVariable(required = true) Integer memberId){
+        calendarDto.setMemberId(memberId);
         calendarDto.setCalendarId(calendarId);
         calendarService.updateCalendar(calendarDto);
         return ResponseEntity.ok().build();

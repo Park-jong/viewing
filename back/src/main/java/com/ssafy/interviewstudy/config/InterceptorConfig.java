@@ -3,7 +3,6 @@ package com.ssafy.interviewstudy.config;
 import com.ssafy.interviewstudy.interceptor.auth.*;
 import com.ssafy.interviewstudy.interceptor.jwt.JWTRequestInterceptor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

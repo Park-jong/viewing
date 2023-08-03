@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
-@RequestMapping("/users/{userId}/notification")
+@RequestMapping("/members/{memberId}/notification")
 @RequiredArgsConstructor
 public class NotificationController {
 
@@ -23,14 +23,14 @@ public class NotificationController {
     @Authority(authorityType = AuthorityType.Member)
     @GetMapping(produces = "text/event-stream")
     public SseEmitter subscribe(@RequestParam(required = false)Integer lastEventId,
-                                @PathVariable("userId") Integer memberId){
+                                @PathVariable("memberId") Integer memberId){
         return notificationService.connect(memberId,lastEventId);
     }
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member_Notification)
     @PutMapping("/{notificationId}")
-    public ResponseEntity readNotification(@PathVariable("userId") Integer memberId,
+    public ResponseEntity readNotification(@PathVariable("memberId") Integer memberId,
                                            @PathVariable("notificationId") Integer notificationId){
         Boolean result = notificationService.checkNotification(notificationId);
         if(!result) return ResponseEntity.badRequest().body("잘못된 알림 ID");

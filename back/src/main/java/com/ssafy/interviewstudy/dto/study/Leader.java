@@ -13,7 +13,7 @@ import lombok.*;
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Leader {
-    private Integer id;
+    private Integer memberId;
 
     private String nickname;
 
@@ -23,7 +23,7 @@ public class Leader {
 
     public Leader(Member member){
         if(member == null) return;
-        this.id = member.getId();
+        this.memberId = member.getId();
         this.nickname = member.getNickname();
         this.background = member.getMemberProfileBackground();
         this.character = member.getMemberProfileImage();

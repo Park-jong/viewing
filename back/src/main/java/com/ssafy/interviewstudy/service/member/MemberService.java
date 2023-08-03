@@ -51,7 +51,7 @@ public class MemberService {
 
     @Transactional
     public void changeMemberProfile(MemberProfileChangeDto memberProfileChangeDto){
-        Member member = findMemberByMemberId(memberProfileChangeDto.getUserId());
+        Member member = findMemberByMemberId(memberProfileChangeDto.getMemberId());
         if(member==null) throw new NotFoundException("유저가 존재하지 않습니다");
         if(memberProfileChangeDto.getCharacter()!=null){
             member.changeMemberProfileImage(

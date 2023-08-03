@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/users/{userId}/studies/{studyId}/bookmark")
+@RequestMapping("/members/{memberId}/studies/{studyId}/bookmark")
 public class MemberBookmarkController {
 
     private MemberStudyBookmarkService memberStudyBookmarkService;
@@ -43,7 +43,7 @@ public class MemberBookmarkController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member_Study_Bookmark)
     @DeleteMapping
-    public ResponseEntity<?> deleteStudyBookmark(@PathVariable("userId") Integer memberId, @PathVariable("studyId") Integer studyId){
+    public ResponseEntity<?> deleteStudyBookmark(@PathVariable("memberId") Integer memberId, @PathVariable("studyId") Integer studyId){
         memberStudyBookmarkService.deleteStudyBookmark(
                 StudyBookmarkRequest
                         .builder()

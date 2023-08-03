@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class memberDto {
-    Integer id;
+    Integer memberId;
     String nickname;
     MemberProfileBackground background;
     MemberProfileImage character;
 
     @Builder
-    public memberDto(Integer id, String nickname, MemberProfileBackground background, MemberProfileImage character) {
-        this.id = id;
+    public memberDto(Integer memberId, String nickname, MemberProfileBackground background, MemberProfileImage character) {
+        this.memberId = memberId;
         this.nickname = nickname;
         this.background = background;
         this.character = character;

@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.List;
 
 //메세지를 담당하는 컨트롤러
-@RequestMapping(value={"/users/{userId}/messages","/messages"})
+@RequestMapping(value={"/members/{memberId}/messages","/messages"})
 @RestController
 @RequiredArgsConstructor
 public class MessageController {
@@ -35,8 +35,8 @@ public class MessageController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
     @GetMapping("/send")
-    public ResponseEntity<?> getSentMessage(@PathVariable Integer userId){
-        MessageListResponse messageList = messageService.getSentMessages(userId);
+    public ResponseEntity<?> getSentMessage(@PathVariable Integer memberId){
+        MessageListResponse messageList = messageService.getSentMessages(memberId);
         return ResponseEntity.ok().body(messageList);
     }
 
@@ -44,8 +44,8 @@ public class MessageController {
     @JWTRequired
     @Authority(authorityType = AuthorityType.Member)
     @GetMapping("/receive")
-    public ResponseEntity<?> getReceivedMessage(@PathVariable Integer userId){
-        MessageListResponse messageList = messageService.getReceivedMessages(userId);
+    public ResponseEntity<?> getReceivedMessage(@PathVariable Integer memberId){
+        MessageListResponse messageList = messageService.getReceivedMessages(memberId);
         return ResponseEntity.ok().body(messageList);
     }
 

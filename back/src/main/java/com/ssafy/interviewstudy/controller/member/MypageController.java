@@ -32,8 +32,8 @@ public class MypageController {
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
-    @GetMapping(value="/users/{userId}/article",params = "searchType=favor")
-    public ResponseEntity<?> getFavorArticleList(@RequestParam("board")BoardType boardType, @PathVariable("userId") Integer memberId){
+    @GetMapping(value="/members/{memberId}/article",params = "searchType=favor")
+    public ResponseEntity<?> getFavorArticleList(@RequestParam("board")BoardType boardType, @PathVariable("memberId") Integer memberId){
         BoardRequest boardRequest = new BoardRequest();
         boardRequest.setMemberId(memberId);
         List<BoardResponse> boardResponseList = memberArticleLikeService.getLikedArticleByMemberId(boardRequest,boardType);
@@ -44,8 +44,8 @@ public class MypageController {
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
-    @GetMapping(value="/users/{userId}/article",params = "searchType=comment")
-    public ResponseEntity<?> getCommentedArticleList(@RequestParam("board")BoardType boardType, @PathVariable("userId") Integer memberId){
+    @GetMapping(value="/members/{memberId}/article",params = "searchType=comment")
+    public ResponseEntity<?> getCommentedArticleList(@RequestParam("board")BoardType boardType, @PathVariable("memberId") Integer memberId){
         BoardRequest boardRequest = new BoardRequest();
         boardRequest.setMemberId(memberId);
         List<BoardResponse> boardResponseList = memberCommentService.getCommentedArticle(boardRequest,boardType);

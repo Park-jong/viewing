@@ -130,7 +130,7 @@ export default function Search() {
 
   //search 통신 보내기
   useEffect(() => {
-    customAxios
+    customAxios()
       .get(`studies?appliedCompany=1&job=dd&careerLevel=ALL`)
       .then((res) => {
         SetsearchData(res.data);

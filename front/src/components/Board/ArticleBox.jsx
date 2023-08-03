@@ -2,7 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import UserProfile from "./../Common/UserProfile";
 import { Link, useLocation } from "react-router-dom";
-import { BiCommentDetail, BiHeart } from "react-icons/bi";
+import { BiCommentDetail, BiHeart,BiSolidHeart } from "react-icons/bi";
+
 
 const Container = styled.div`
   width: ${(props) => `${props.$width}px`};
@@ -63,10 +64,15 @@ export default function ArticleBox({
   heartCount,
   url,
   viewCount,
-  width
+  width,
+  is_like
 }) {
   const location = useLocation();
   const isNotice = location.pathname === "/board/notice";
+
+  const handleLike = () => {
+
+  }
 
   return (
     <Container $width={width}>
@@ -93,7 +99,7 @@ export default function ArticleBox({
             {commentCount}
           </MetaItem>
           <MetaItem>
-            <BiHeart size={14} />
+            {is_like ? <BiSolidHeart size={14} /> : <BiHeart size={14} />}
             {heartCount}
           </MetaItem>
         </MetaContainer>

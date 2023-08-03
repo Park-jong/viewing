@@ -46,6 +46,7 @@ import GoogleLogin from "./pages/GoogleLogin";
 import GitHubLogin from "./pages/GitHubLogin";
 import SideBar from "./components/MyPage/SideBar";
 import LoginLoading from "./pages/LoginLoading";
+import BoardPk from "./pages/BoardPk";
 
 const router = createBrowserRouter([
   {
@@ -172,7 +173,7 @@ const router = createBrowserRouter([
       },
       {
         path: "board/interview/:articlePk",
-        element: <BoardInterviewPk />,
+        element: <BoardPk />,
       },
       {
         path: "board/notice",
@@ -180,7 +181,7 @@ const router = createBrowserRouter([
       },
       {
         path: "board/notice/:articlePk",
-        element: <BoardNoticePk />,
+        element: <BoardPk />,
       },
       {
         path: "board/question",
@@ -188,7 +189,7 @@ const router = createBrowserRouter([
       },
       {
         path: "board/question/:articlePk",
-        element: <BoardQuestionPk />,
+        element: <BoardPk />,
       },
       {
         path: "board/write",

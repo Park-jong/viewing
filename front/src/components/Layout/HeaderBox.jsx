@@ -52,6 +52,16 @@ const ThirdContainer = styled(Link)`
   color: var(--gray-800);
 `;
 
+const ForthContainer = styled.div`
+  padding-right: 170px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--gray-800);
+`;
+
 const RightMenu = styled.div`
   display: flex;
   align-items: center;
@@ -78,14 +88,14 @@ export default function HeaderBox() {
       </SecondContainer>
       {/* 로그인 상태에 따라 알맞은 내용 표시 */}
       {isSocialLogin ? (
-        <ThirdContainer>
+        <ForthContainer>
           <RightMenu>
             <MarginRight>
               <DropAlert />
             </MarginRight>
             <DropProfile user={user}/>
           </RightMenu>
-        </ThirdContainer>
+        </ForthContainer>
       ) : (
         <ThirdContainer to={"/login"}>로그인/회원가입</ThirdContainer>
       )}

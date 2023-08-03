@@ -1,12 +1,20 @@
 import React from "react";
 import styled from "styled-components";
-import { BiBullseye, BiCommentDetail, BiHeart } from "react-icons/bi";
+import {
+  BiBullseye,
+  BiCommentDetail,
+  BiHeart,
+  BiSolidHeart,
+} from "react-icons/bi";
 import UserProfile from "../Common/UserProfile";
 import { useLocation, useParams } from "react-router-dom";
 import { PiSirenLight } from "react-icons/pi";
 
 // import { data } from "../Layout/db";
 //import { data } from "./../Layout/db";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
+import { useSelector } from "react-redux";
+import { UserReducer } from "./../../modules/UserReducer/UserReducer";
 
 const ArticleContainer = styled.div`
   max-width: 800px;
@@ -79,12 +87,14 @@ const BottomContainer = styled.div`
   justify-content: space-between;
 `;
 
-export default function ArticleDetail({ data }) {
+export default function ArticleDetail({ data, setData }) {
   // const boardType = useParams(); // Extract the boardType from the URL
   // console.log(boardType);
 
-  const location = useLocation();
+  const param = useLocation().pathname.split("/")[3];
 
+  const location = useLocation();
+  const userId = useSelector((state) => state.UserReducer.userId);
   const url = location.pathname;
   let boardType = "";
   const pattern = /\/board\/(\w+)\/\d+/;
@@ -93,6 +103,38 @@ export default function ArticleDetail({ data }) {
     boardType = matches[1];
     // console.log(boardType); // "free"가 콘솔에 출력됩니다.
   }
+
+  const handleLike = (user_id, article_id) => {
+    customAxios()
+      .post(`users/${user_id}/likes/boards/${article_id}`)
+      .then((res) => {
+        customAxios()
+          .get(`boards/qna/${param}`)
+          .then((res) => {
+            setData(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDislike = (user_id, article_id) => {
+    customAxios()
+      .delete(`users/${user_id}/likes/boards/${article_id}`)
+      .then((res) => {
+        customAxios()
+          .get(`boards/qna/${param}`)
+          .then((res) => {
+            setData(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => console.log(err));
+  };
 
   // Map the boardType to the appropriate display text
   const boardTypeText = (boardType) => {
@@ -125,8 +167,8 @@ export default function ArticleDetail({ data }) {
           ) : (
             data.author && ( // Check if data.author exists
               <UserProfile
-                backgroundcolor={data.author.background}
-                characterimg={data.author.character}
+                backgroundcolor={data.author.member_profile_background}
+                characterimg={data.author.member_profile_image}
                 nickname={data.author.nickname}
               />
             )
@@ -160,7 +202,17 @@ export default function ArticleDetail({ data }) {
               <span> &nbsp; {data.comment_count}</span>
             </IconWrapper>
             <IconWrapper>
-              <BiHeart size={16} />
+              {data.is_like ? (
+                <BiSolidHeart
+                  onClick={() => handleDislike(userId, data.article_id)}
+                  size={16}
+                />
+              ) : (
+                <BiHeart
+                  onClick={() => handleLike(userId, data.article_id)}
+                  size={16}
+                />
+              )}
               <span> &nbsp; {data.like_count}</span>
             </IconWrapper>
           </CountInfo>

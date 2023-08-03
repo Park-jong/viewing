@@ -7,7 +7,7 @@ import { PiBellThin } from "react-icons/pi";
 
 const Container = styled.div`
   cursor: pointer;
-  z-index: 99;
+  
   /* background-color: white; */
 `;
 
@@ -29,6 +29,7 @@ const DropdownMenu = styled.div`
   overflow-y: auto; /* Make the menu scrollable vertically */
   overflow-x: hidden; /* Hide the horizontal scrollbar */
   max-height: 400px; /* Set a max height to limit the menu height */
+  z-index: 99;
 `;
 
 const CardContainer = styled(Link)`

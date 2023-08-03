@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { BiLike, BiCommentDetail } from "react-icons/bi";
+import { BiLike, BiSolidLike, BiCommentDetail } from "react-icons/bi";
 import UserProfile from "../Common/UserProfile";
 import { css } from "styled-components";
 import ReplyInput from "./ReplyInput";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
+import { useSelector } from "react-redux";
+import { UserReducer } from "./../../modules/UserReducer/UserReducer";
+import { useLocation } from "react-router-dom";
 
 // const Container = styled.div`
 //   width: 800px;
@@ -68,6 +72,9 @@ const LikeCount = styled.div`
 const LikeIcon = styled(BiLike)`
   margin-right: 4px;
 `;
+const SolidLikeIcon = styled(BiSolidLike)`
+  margin-right: 4px;
+`;
 
 const CommentIcon = styled(BiCommentDetail)`
   margin-right: 4px;
@@ -93,10 +100,46 @@ export default function ReplyBox({
   like_count,
   reply_count,
   isDelete,
+  isLike,
   isNestedReply,
+  setReply,
 }) {
   const [showInput, setShowInput] = useState(false); // Use parentheses instead of square brackets
   const toggleShowInput = () => setShowInput(!showInput);
+  const userId = useSelector((state) => state.UserReducer.userId);
+  const param = useLocation().pathname.split("/")[3];
+
+  const handleLike = () => {
+    customAxios()
+      .post(`users/${userId}/likes/comments/${comment_id}`)
+      .then((res) => {
+        customAxios()
+          .get(`boards/${param}/comments`)
+          .then((res) => {
+            setReply(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDislike = () => {
+    customAxios()
+      .delete(`users/${userId}/likes/comments/${comment_id}`)
+      .then((res) => {
+        customAxios()
+          .get(`boards/${param}/comments`)
+          .then((res) => {
+            setReply(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <>
@@ -113,7 +156,11 @@ export default function ReplyBox({
         <BottomContainer isNestedReply={isNestedReply}>
           <CreatedAt> {created_at}</CreatedAt>
           <LikeCount>
-            <LikeIcon size={16} />
+            {isLike ? (
+              <SolidLikeIcon onClick={() => handleDislike()} size={16} />
+            ) : (
+              <LikeIcon onClick={() => handleLike()} size={16} />
+            )}
             {like_count}
           </LikeCount>
           {!isNestedReply && (
@@ -123,7 +170,7 @@ export default function ReplyBox({
             </ReplyCount>
           )}
         </BottomContainer>
-        {showInput && <ReplyInput />}
+        {showInput && <ReplyInput commentId={comment_id} />}
       </ReplyContainer>
     </>
   );

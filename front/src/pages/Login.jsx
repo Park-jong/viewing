@@ -2,6 +2,10 @@ import { styled } from "styled-components";
 import GithubButton from "../components/Button/GithubButton";
 import GoogleButton from "../components/Button/GoogleButton";
 import KakaoButton from "../components/Button/KakaoButton";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { UserReducer } from './../modules/UserReducer/UserReducer';
+import { useEffect } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -30,6 +34,16 @@ const ButtonsContainer = styled.div`
 `;
 
 export default function Login() {
+  const isLogin = useSelector((state) => state.UserReducer.userId);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+    }
+  }, [])
+  
+
   return (
     <Container>
       <InnerContainer>

@@ -104,8 +104,8 @@ export default function ArticleList({ data, width, type }) {
                 url={"/board/" + type + "/" + article.article_id}
                 key={idx}
                 nickname={article.author.nickname}
-                backgroundcolor={article.author.background}
-                character={article.author.character}
+                backgroundcolor={article.author.member_profile_background}
+                character={article.author.member_profile_image}
                 title={article.title}
                 commentCount={article.comment_count}
                 heartCount={article.like_count}

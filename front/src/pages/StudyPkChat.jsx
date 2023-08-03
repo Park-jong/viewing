@@ -1,7 +1,9 @@
-import { useLocation } from "react-router-dom";
+import Chat from "../components/Study/Chat";
 
 export default function StudyPkChat() {
-  console.log(useLocation().pathname.split("/")[2])
-
-  return <></>;
+  return (
+    <>
+      <Chat></Chat>
+    </>
+  );
 }

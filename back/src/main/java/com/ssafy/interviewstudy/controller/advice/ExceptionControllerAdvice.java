@@ -1,8 +1,5 @@
 package com.ssafy.interviewstudy.controller.advice;
 
-import com.ssafy.interviewstudy.controller.calendar.CalendarController;
-import com.ssafy.interviewstudy.controller.member.bookmark.MemberBookmarkController;
-import com.ssafy.interviewstudy.controller.message.MessageController;
 import com.ssafy.interviewstudy.exception.calendar.updateFailException;
 import com.ssafy.interviewstudy.exception.message.CreationFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;

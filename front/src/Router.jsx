@@ -45,6 +45,7 @@ import KaKaoLogin from "./pages/KakaoLogin";
 import GoogleLogin from "./pages/GoogleLogin";
 import GitHubLogin from "./pages/GitHubLogin";
 import SideBar from "./components/MyPage/SideBar";
+import LoginLoading from "./pages/LoginLoading";
 
 const router = createBrowserRouter([
   {
@@ -231,6 +232,10 @@ const router = createBrowserRouter([
   {
     path: "login/github",
     element: <GitHubLogin/>,
+  },
+  {
+    path: "login/loading",
+    element: <LoginLoading/>,
   },
 ]);
 

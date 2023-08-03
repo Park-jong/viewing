@@ -17,11 +17,11 @@ export function LoginKakao() {
   const queries = {
     response_type : "code",
     client_id: "2869d34ce0755e095b7d39e5eb3aeafb",
-    redirect_uri: "http://localhost:3000/login/kakao"
+    redirect_uri: "http://localhost:3000/login/loading"
   };
 
   const params = new URLSearchParams(queries).toString();
-
+  localStorage.setItem("web", "kakao")
   window.location.href = `${KAKAO_URL}?${params}`
 }
 

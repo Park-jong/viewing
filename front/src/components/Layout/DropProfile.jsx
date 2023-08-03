@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { Logout } from "../../modules/UserReducer/Actions";
 
 const ProfileImgWrapper = styled.div`
   position: relative;
@@ -9,10 +11,15 @@ const ProfileImgWrapper = styled.div`
 
 `;
 
-const ProfileImg = styled.img`
+const ProfileImg = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  background-color: ${(props) => props.$backgroundcolor};
+  background-image: ${(props) => `url(/profile/${props.$backgroundimg}.png)`};
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center;
 `;
 
 const DropdownMenu = styled.div`
@@ -41,9 +48,10 @@ const MenuItem = styled(Link)`
   }
 `;
 
-export default function DropProfile() {
+export default function DropProfile({user}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const profileImgRef = useRef(null);
+  const dispatch = useDispatch()
 
   const handleProfileImgClick = () => {
     setMenuOpen(!menuOpen);
@@ -58,6 +66,11 @@ export default function DropProfile() {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem("access_token")
+    dispatch(Logout())
+  }
+
   useEffect(() => {
     window.addEventListener("click", handleClickOutside);
     return () => {
@@ -68,9 +81,9 @@ export default function DropProfile() {
   return (
     <ProfileImgWrapper ref={profileImgRef}>
       <ProfileImg
-        src={"/ty.jpg"}
-        alt="프로필사진"
         onClick={handleProfileImgClick}
+        $backgroundcolor={user.backgroundColor}
+        $backgroundimg = {user.backgroundImg}
       />
       <DropdownMenu open={menuOpen}>
         <MenuItem to="/mypage/edit" style={{ fontWeight: "600" }}>
@@ -79,7 +92,7 @@ export default function DropProfile() {
         <MenuItem to="/mypage/study">내 스터디</MenuItem>
         <MenuItem to="/mypage/get">내 쪽지함</MenuItem>
         <MenuItem to="/mypage/myarticle">내 게시글</MenuItem>
-        <MenuItem to="/" style={{ color: "red", fontSize: "14px" }}>
+        <MenuItem onClick={logout} style={{ color: "red", fontSize: "14px" }}>
           로그아웃
         </MenuItem>
       </DropdownMenu>

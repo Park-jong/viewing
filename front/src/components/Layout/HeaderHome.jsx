@@ -7,6 +7,7 @@ import DropProfile from "./DropProfile";
 import DropAlert from "./DropAlert";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const HeaderStyle = styled.div`
   position: fixed;
@@ -52,11 +53,14 @@ const MenuItem = styled(Link)`
   color: var(--gray-800);
 `;
 
-const ThirdContainer = styled.div`
+const ThirdContainer = styled(Link)`
   padding-right: 170px;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--gray-800);
 `;
 
 const RightMenu = styled.div`
@@ -70,6 +74,7 @@ const MarginRight = styled.div`
 
 export default function HeaderHome() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const user = useSelector((state) => state.UserReducer)
 
   // Handle scroll event and update isScrolled state
   const handleScroll = () => {
@@ -90,7 +95,7 @@ export default function HeaderHome() {
     };
   }, []);
 
-  const isSocialLogin = true; // true라고 가정하겠습니다. 실제 상태는 알맞게 설정해주세요.
+  const isSocialLogin = user.userId; // true라고 가정하겠습니다. 실제 상태는 알맞게 설정해주세요.
 
   return (
     <HeaderStyle isScrolled={isScrolled}>
@@ -109,11 +114,11 @@ export default function HeaderHome() {
             <MarginRight>
               <DropAlert />
             </MarginRight>
-            <DropProfile />
+            <DropProfile user={user}/>
           </RightMenu>
         </ThirdContainer>
       ) : (
-        <ThirdContainer>로그인/회원가입</ThirdContainer>
+        <ThirdContainer to="/login">로그인/회원가입</ThirdContainer>
       )}
     </HeaderStyle>
   );

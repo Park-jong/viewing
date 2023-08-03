@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class StudyBoardCommentReplyResponse {
-    private Integer id;
+    private Integer commentId;
     private Author author;
     private String content;
     private LocalDateTime createdAt;
@@ -21,8 +21,8 @@ public class StudyBoardCommentReplyResponse {
     private Boolean isDelete;
 
     @Builder
-    public StudyBoardCommentReplyResponse(Integer id, Author author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isDelete) {
-        this.id = id;
+    public StudyBoardCommentReplyResponse(Integer commentId, Author author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isDelete) {
+        this.commentId = commentId;
         this.author = author;
         this.content = content;
         this.createdAt = createdAt;

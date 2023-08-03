@@ -42,7 +42,7 @@ public class StudyBoardCommentDtoService {
 
     public StudyBoardCommentResponse fromEntityWithoutCommentCount(StudyBoardComment articleComment){
         StudyBoardCommentResponse commentResponse = StudyBoardCommentResponse.builder()
-                .id(articleComment.getId())
+                .commentId(articleComment.getId())
                 .content(articleComment.getContent())
                 .author(new Author(articleComment.getAuthor()))
                 .isDelete(articleComment.getIsDelete())
@@ -55,7 +55,7 @@ public class StudyBoardCommentDtoService {
 
     public StudyBoardCommentResponse fromEntity(StudyBoardComment articleComment){
         StudyBoardCommentResponse commentResponse = StudyBoardCommentResponse.builder()
-                .id(articleComment.getId())
+                .commentId(articleComment.getId())
                 .content(articleComment.getContent())
                 .author(new Author(articleComment.getAuthor()))
                 .isDelete(articleComment.getIsDelete())
@@ -74,7 +74,7 @@ public class StudyBoardCommentDtoService {
         List<StudyBoardCommentReplyResponse> replyResponses = new ArrayList<>();
         for (StudyBoardComment c: replies) {
             replyResponses.add(StudyBoardCommentReplyResponse.builder()
-                    .id(c.getId())
+                    .commentId(c.getId())
                     .content(c.getContent())
                     .author(new Author(c.getAuthor()))
                     .isDelete(c.getIsDelete())

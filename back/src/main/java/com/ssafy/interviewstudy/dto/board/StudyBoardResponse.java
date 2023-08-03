@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class StudyBoardResponse{
-    private Integer id;
+    private Integer articleId;
     private Integer studyId;
 
     private Author author;
@@ -29,8 +29,8 @@ public class StudyBoardResponse{
     private List<ArticleFile> articleFiles;
 
     @Builder
-    public StudyBoardResponse(Integer id, Integer studyId, Author author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer commentCount, List<ArticleFile> articleFiles) {
-        this.id = id;
+    public StudyBoardResponse(Integer articleId, Integer studyId, Author author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer commentCount, List<ArticleFile> articleFiles) {
+        this.articleId = articleId;
         this.studyId = studyId;
         this.author = author;
         this.title = title;

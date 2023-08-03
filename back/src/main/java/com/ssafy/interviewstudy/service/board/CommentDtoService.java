@@ -53,7 +53,7 @@ public class CommentDtoService {
 
     public CommentResponse fromEntityWithoutCommentCount(Integer memberId, ArticleComment articleComment){
         CommentResponse commentResponse = CommentResponse.builder()
-                .id(articleComment.getId())
+                .commentId(articleComment.getId())
                 .content(articleComment.getContent())
                 .author(new Author(articleComment.getAuthor()))
                 .isDelete(articleComment.getIsDelete())
@@ -68,7 +68,7 @@ public class CommentDtoService {
 
     public CommentResponse fromEntity(Integer memberId, ArticleComment articleComment){
         CommentResponse commentResponse = CommentResponse.builder()
-                .id(articleComment.getId())
+                .commentId(articleComment.getId())
                 .content(articleComment.getContent())
                 .author(new Author(articleComment.getAuthor()))
                 .isDelete(articleComment.getIsDelete())
@@ -92,7 +92,7 @@ public class CommentDtoService {
         for (ArticleComment c: replies) {
             if(memberId != null){
                 replyResponses.add(CommentReplyResponse.builder()
-                        .id(c.getId())
+                        .commentId(c.getId())
                         .content(c.getContent())
                         .author(new Author(c.getAuthor()))
                         .isDelete(c.getIsDelete())
@@ -103,7 +103,7 @@ public class CommentDtoService {
                         .build());
             }else{
                 replyResponses.add(CommentReplyResponse.builder()
-                        .id(c.getId())
+                        .commentId(c.getId())
                         .content(c.getContent())
                         .author(new Author(c.getAuthor()))
                         .isDelete(c.getIsDelete())

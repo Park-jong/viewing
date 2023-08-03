@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CommentResponse {
-    private Integer id;
+    private Integer commentId;
     private Author author;
     private String content;
     private LocalDateTime createdAt;
@@ -27,8 +27,8 @@ public class CommentResponse {
     private List<CommentReplyResponse> replies;
 
     @Builder
-    public CommentResponse(Integer id, Author author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer commentCount, Integer likeCount, Boolean isLike, Boolean isDelete, List<CommentReplyResponse> replies) {
-        this.id = id;
+    public CommentResponse(Integer commentId, Author author, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer commentCount, Integer likeCount, Boolean isLike, Boolean isDelete, List<CommentReplyResponse> replies) {
+        this.commentId = commentId;
         this.author = author;
         this.content = content;
         this.createdAt = createdAt;

@@ -36,7 +36,7 @@ public class BoardDtoService {
 
     public BoardResponse fromEntityWithoutContent(Board article) {
         BoardResponse boardResponse = BoardResponse.builder()
-                .id(article.getId())
+                .articleId(article.getId())
                 .author(new Author(article.getAuthor()))
                 .title(article.getTitle())
                 .viewCount(article.getViewCount())

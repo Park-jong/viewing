@@ -134,7 +134,7 @@ public class BoardService {
         Member member = memberRepository.findMemberById(memberId);
         Board article = boardRepository.findById(articleId).get();
 
-        if(!checkMemberLikeArticle(memberId, articleId)){
+        if(checkMemberLikeArticle(memberId, articleId)){
             articleLikeRepository.removeByArticleAndMember(article, member);
         }
     }

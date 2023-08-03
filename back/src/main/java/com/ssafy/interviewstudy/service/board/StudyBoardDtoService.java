@@ -39,7 +39,7 @@ public class StudyBoardDtoService {
 
     public StudyBoardResponse fromEntityWithoutContent(StudyBoard article) {
         StudyBoardResponse boardResponse = StudyBoardResponse.builder()
-                .id(article.getId())
+                .articleId(article.getId())
                 .studyId(article.getStudy().getId())
                 .author(new Author(article.getAuthor()))
                 .title(article.getTitle())

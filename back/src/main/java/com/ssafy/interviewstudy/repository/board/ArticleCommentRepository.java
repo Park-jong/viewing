@@ -10,7 +10,7 @@ import java.util.List;
 public interface ArticleCommentRepository extends JpaRepository<ArticleComment, Integer> {
 
     // 댓글 리스트 조회(최신순)
-    @Query("select distinct c from ArticleComment c join fetch c.author ca left join c.replies cr left join cr.author where c.comment is null and c.article = :article order by c.createdAt desc")
+    @Query("select distinct c from ArticleComment c join fetch c.author ca left join c.replies cr left join cr.author where c.comment is null and c.article = :article order by c.createdAt")
     List<ArticleComment> findAllByArticle(Board article);
 
 //    @Query("SELECT c," +

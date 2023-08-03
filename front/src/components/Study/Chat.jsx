@@ -5,7 +5,7 @@ import * as SockJS from "sockjs-client";
 import UserProfile from "../Common/UserProfile";
 import { useLocation } from "react-router-dom";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
-import { BiCaretUp } from "react-icons/bi";
+import { BiCaretUp, BiCaretDown } from "react-icons/bi";
 import { useSelector } from "react-redux";
 
 const Container = styled.div`
@@ -53,23 +53,44 @@ const ShowOldBox = styled.div`
   user-select: none;
 `;
 
+const NewMessageAlram = styled.div`
+  background: var(--gray-100);
+  height: 50px;
+  width: 100%;
+  opacity: 0.5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  margin-top: -50px;
+`;
+
 export default function Chat() {
   const user = useSelector((state) => state.UserReducer);
   const [msg, setMsg] = useState("");
   const [msgList, setMsgList] = useState([]);
-  const sockJS = new SockJS("http://localhost:8080/studyChat");
+  const sockJS = new SockJS("http://70.12.246.107:8080/studyChat");
   const stompClient = stompjs.over(sockJS);
   const studyId = useLocation().pathname.split("/")[2];
   const [oldMsgState, setOldMsgState] = useState(true);
   const scrollRef = useRef();
   const [newPage, setNewPage] = useState(0);
+  const [newMsgState, setNewMsgState] = useState(false);
+  const [scroll, setScroll] = useState(false);
 
   const sendMsg = () => {
-    stompClient.send(
-      "/app/chats/studies/" + studyId,
-      {},
-      JSON.stringify({ user_id: 1, content: msg })
-    );
+    try {
+      stompClient.send(
+        "/app/chats/studies/" + studyId,
+        {},
+        JSON.stringify({ member_id: 1, content: msg })
+      );
+      moveEnd();
+    } catch (error) {
+      console.log("전송 실패");
+    }
     setMsg("");
   };
   //이전 채팅 불러오기
@@ -77,11 +98,49 @@ export default function Chat() {
     customAxios()
       .get(`studies/${studyId}/chats?startChatId=${msgList[0].chat_id}`)
       .then(({ data }) => {
-        if (data.length < 100) setOldMsgState((prev) => false);
+        if (data.length < 100) {
+          setOldMsgState((prev) => false);
+        }
         const oldMessage = data;
         setMsgList((arr) => [...oldMessage, ...arr]);
-        scrollRef.current.scrollTop = 1;
+        scrollRef.current.scrollTop = 100;
       });
+  };
+
+  const chgMsg = (e) => {
+    setMsg(e.target.value);
+  };
+
+  const checkSendState = () => {
+    if (msg) {
+      sendMsg();
+    }
+  };
+
+  const moveEnd = () => {
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    setNewMsgState((prev) => false);
+  };
+
+  const handleScroll = () => {
+    let chatAreaHeight = parseInt(
+      window
+        .getComputedStyle(scrollRef.current)
+        .getPropertyValue("height")
+        .replace(/[^0-9]/g, "")
+    );
+    if (
+      Math.abs(
+        scrollRef.current.scrollHeight -
+          chatAreaHeight -
+          scrollRef.current.scrollTop
+      ) < 100
+    ) {
+      setScroll(true);
+      if (newMsgState) setNewMsgState((prev) => false);
+    } else {
+      setScroll(false);
+    }
   };
 
   //처음 접속 시
@@ -97,9 +156,28 @@ export default function Chat() {
       stompClient.subscribe("/topic/" + studyId, (data) => {
         const newMessage = JSON.parse(data.body);
         setMsgList((arr) => [...arr, newMessage]);
+
+        //현재 영역 크기
+        let chatAreaHeight = parseInt(
+          window
+            .getComputedStyle(scrollRef.current)
+            .getPropertyValue("height")
+            .replace(/[^0-9]/g, "")
+        );
+        if (
+          Math.abs(
+            scrollRef.current.scrollHeight -
+              chatAreaHeight -
+              scrollRef.current.scrollTop
+          ) >= 100
+        ) {
+          setNewMsgState((prev) => true);
+        }
       });
     });
-    return () => stompClient.disconnect();
+    return () => {
+      stompClient.disconnect();
+    };
   }, []);
 
   //새로운(,이전) 채팅을 불러왔을 때
@@ -108,12 +186,15 @@ export default function Chat() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       setNewPage((prev) => prev + 1);
     }
+    //현재 영역 크기
     let chatAreaHeight = parseInt(
       window
         .getComputedStyle(scrollRef.current)
         .getPropertyValue("height")
         .replace(/[^0-9]/g, "")
     );
+
+    //스크롤이 높이 있는지
     if (
       Math.abs(
         scrollRef.current.scrollHeight -
@@ -125,13 +206,9 @@ export default function Chat() {
     }
   }, [msgList]);
 
-  const chgMsg = (e) => {
-    setMsg(e.target.value);
-  };
-
   return (
     <Container>
-      <ChatArea ref={scrollRef}>
+      <ChatArea ref={scrollRef} onScroll={handleScroll}>
         {oldMsgState && (
           <ShowOldBox onClick={getOldMsg}>
             <BiCaretUp></BiCaretUp>
@@ -153,15 +230,20 @@ export default function Chat() {
           );
         })}
       </ChatArea>
+      {newMsgState && (
+        <NewMessageAlram onClick={moveEnd}>
+          <BiCaretDown></BiCaretDown>
+        </NewMessageAlram>
+      )}
       <MessageInputBox
         type="text"
-        onKeyDown={(e) => {
-          if (e.key === "Enter") sendMsg();
+        onKeyUp={(e) => {
+          if (e.key === "Enter") checkSendState();
         }}
         onChange={chgMsg}
         value={msg}
       ></MessageInputBox>
-      <SendButton onClick={sendMsg}>전송</SendButton>
+      <SendButton onClick={checkSendState}>전송</SendButton>
     </Container>
   );
 }

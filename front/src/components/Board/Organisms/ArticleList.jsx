@@ -54,22 +54,22 @@ const MetaItem = styled.div`
   margin-right: 31px;
 `;
 
-export default function ArticleList({ data, width}) {
+export default function ArticleList({ data, width, type }) {
   const location = useLocation();
-  const isNotice = location.pathname === "/board/notice";
+  const isNotice = location.pathname === `/board/notice`;
 
-  const [page, setPage] = useState(1); //페이지
-  const limit = 5; // posts가 보일 최대한의 갯수
-  const offset = (page - 1) * limit; // 시작점과 끝점을 구하는 offset
+  // const [page, setPage] = useState(1); //페이지
+  // const limit = 5; // posts가 보일 최대한의 갯수
+  // const offset = (page - 1) * limit; // 시작점과 끝점을 구하는 offset
 
-  const postsData = (data) => {
-    if (data) {
-      let result = data.slice(offset, offset + limit);
-      return result;
-    }
-  };
+  // const postsData = (data) => {
+  //   if (data) {
+  //     let result = data.slice(offset, offset + limit);
+  //     return result;
+  //   }
+  // };
 
-/*
+  /*
 1. page : 현재의 page
 2. setPage : 변경될 page를 만드는 useState함수
 3. limit : 한번에 posts의 최대 갯수
@@ -93,7 +93,7 @@ export default function ArticleList({ data, width}) {
         {isNotice
           ? data.map((article, idx) => (
               <ArticleBox
-                url={"/board/" + article.board_type + "/" + article.article_id}
+                url={"/board/" + type + "/" + article.article_id}
                 key={idx}
                 title={article.title}
                 width={width}
@@ -101,7 +101,7 @@ export default function ArticleList({ data, width}) {
             ))
           : data.map((article, idx) => (
               <ArticleBox
-                url={"/board/" + article.board_type + "/" + article.article_id}
+                url={"/board/" + type + "/" + article.article_id}
                 key={idx}
                 nickname={article.author.nickname}
                 backgroundcolor={article.author.background}
@@ -114,12 +114,12 @@ export default function ArticleList({ data, width}) {
               />
             ))}
       </ArticleContainer>
-      <Pagination
+      {/* <Pagination
         limit={limit}
         page={page}
         totalPosts={data.length} //4. totalPosts : 데이터의 총 posts 갯수
         setPage={setPage}
-      />
+      /> */}
     </>
   );
 }

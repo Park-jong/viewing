@@ -249,7 +249,7 @@ export default function Home() {
         animate="animate"
       >
         <InnerContainer>
-          <SearchBox />
+        <SearchBox width={750} />
           <Hot10Container>
             <Hot10Box />
           </Hot10Container>

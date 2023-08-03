@@ -13,6 +13,7 @@ const HeaderStyle = styled.div`
   width: 100%;
   height: 64px;
   background-color: white; /* Optional: Add a background color for the header */
+border-bottom: 0.5px var(--gray-200) solid;
 `;
 
 const FirstContainer = styled(Link)`

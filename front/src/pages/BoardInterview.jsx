@@ -47,7 +47,7 @@ export default function BoardInterview() {
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} />
+      <ArticleList data={data} width={1000} type={"interview"}/>
       <SearchBoxBoard></SearchBoxBoard>
     </Container>
   );

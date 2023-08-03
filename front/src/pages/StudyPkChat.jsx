@@ -1,3 +1,6 @@
 export default function StudyPkChat() {
-  return <></>;
+  return <>
+  
+  <>내용</>
+  </>;
 }

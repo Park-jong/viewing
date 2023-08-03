@@ -46,7 +46,7 @@ export default function BoardFree() {
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} />
+      <ArticleList data={data} width={1000} type={"free"}/>
       <SearchBoxBoard></SearchBoxBoard>
     </Container>
   );

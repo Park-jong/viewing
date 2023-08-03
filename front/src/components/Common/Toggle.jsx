@@ -7,7 +7,9 @@ const Container = styled.div`
 `
 
 const H1 = styled.h1`
-  font-size: 25px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-800);
 `
 
 const colorAnimation = keyframes`

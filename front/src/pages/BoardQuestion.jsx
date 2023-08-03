@@ -47,7 +47,7 @@ export default function BoardQuestion() {
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} />
+      <ArticleList data={data} width={1000} type={"question"}/>
       <SearchBoxBoard></SearchBoxBoard>
 
     </Container>

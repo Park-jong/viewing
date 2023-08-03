@@ -7,6 +7,8 @@ import { PiBellThin } from "react-icons/pi";
 
 const Container = styled.div`
   cursor: pointer;
+  z-index: 99;
+  /* background-color: white; */
 `;
 
 const AlarmIcon = styled.div`
@@ -40,6 +42,7 @@ const CardContainer = styled(Link)`
     props.$isRead ? "var(--gray-200)" : "var(--gray-50)"};
   border: 1px var(--gray-200) solid;
   text-decoration: none;
+  z-index: 999;
 
   overflow-wrap: break-word; /* Prevent div from getting cut off */
 

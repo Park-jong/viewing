@@ -4,13 +4,21 @@ import Search from "../../Icons/Search";
 import { Link } from "react-router-dom";
 
 const SearchContainer = styled.div`
-  width: 762px;
+  width: ${(props) => `${props.$width}px`};
   height: 30px;
   display: flex;
   align-items: center;
   background-color: #ffffff;
   padding: 8px;
   border-radius: 24px;
+
+  border: 0.5px var(--gray-200) solid;
+
+  &:focus-within {
+    border-color: var(--primary);
+    border-width: 2px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.207); /* Change the shadow color and size when focused */
+  }
 `;
 
 const VerticalLine = styled.div`
@@ -75,10 +83,10 @@ const SearchIcon = styled(Search)`
   width: 20px; /* Adjust the size of the Search icon */
 `;
 
-export default function SearchBox() {
+export default function SearchBox({ width }) {
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
-  const [selectedOption, setSelectedOption] = useState("option1");
+  const [selectedOption, setSelectedOption] = useState("ALL");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -111,7 +119,7 @@ export default function SearchBox() {
   const isInput1Empty = input1.trim() === "";
 
   return (
-    <SearchContainer>
+    <SearchContainer $width={width}>
       <SearchInput
         type="text"
         name="input1"
@@ -130,10 +138,10 @@ export default function SearchBox() {
       <VerticalLine />
 
       <Dropdown value={selectedOption} onChange={handleDropdownChange}>
-        <option value="option1">전체</option>
-        <option value="option2">신입</option>
-        <option value="option3">경력</option>
-        <option value="option4">경력무관</option>
+        <option value="ALL">전체</option>
+        <option value="NEWCOMER">신입</option>
+        <option value="EXPERIENCED">경력</option>
+        <option value="INTERN">인턴</option>
       </Dropdown>
       <ButtonContainer>
         <SearchButton onClick={handleSearch} disabled={isInput1Empty}>

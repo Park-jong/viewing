@@ -5,6 +5,8 @@ import styled from "styled-components";
 const ProfileImgWrapper = styled.div`
   position: relative;
   cursor: pointer;
+  z-index: 99;
+
 `;
 
 const ProfileImg = styled.img`

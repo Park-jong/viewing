@@ -12,6 +12,16 @@ const Container = styled.div`
   position: relative;
 
   display: flex;
+
+  /* Add transition for smooth scaling on hover */
+  transition: transform 0.2s ease;
+
+  /* Apply scaling on hover */
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  cursor: pointer;
 `;
 
 const BookmarkContainer = styled.div`

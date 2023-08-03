@@ -97,7 +97,7 @@ export default function BoardNotice() {
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} />
+      <ArticleList data={data} width={1000} type={"notice"}/>
     </Container>
   );
 }

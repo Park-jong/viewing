@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -197,11 +198,13 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
-    @JWTRequired(required = true)
-    @Authority(authorityType = AuthorityType.Study_Member)
+    //@JWTRequired(required = true)
+    //@Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/chats")
-    public ResponseEntity<?> studyChatList(@PathVariable("study_id") Integer studyId, @RequestParam(name = "lastChatId", required = false) Integer lastChatId){
-        return ResponseEntity.ok().body(studyService.findStudyChats(studyId, lastChatId));
+    public ResponseEntity<?> studyChatList(@PathVariable("study_id") Integer studyId, @RequestParam(name = "startChatId", required = false) Integer startChatId){
+        List<ChatResponse> oldStudyChats = studyService.findOldStudyChats(studyId, startChatId);
+        Collections.reverse(oldStudyChats);
+        return ResponseEntity.ok().body(oldStudyChats);
     }
 
     @JWTRequired(required = true)

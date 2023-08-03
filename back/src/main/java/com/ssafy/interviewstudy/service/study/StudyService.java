@@ -289,6 +289,7 @@ public class StudyService {
     public ChatResponse addChat(Integer studyId, ChatRequest chat){
         Member member = memberRepository.findById(chat.getUserId()).get();
         Study study = studyRepository.findById(studyId).get();
+        if(!checkStudyMember(study.getId(), member.getId())) throw new updateFailException("잘못된 접근");
         StudyChat studyChat = new StudyChat(study, member, chat.getContent());
         studyChatRepository.save(studyChat);
         return new ChatResponse(studyChat);
@@ -299,7 +300,7 @@ public class StudyService {
         return studyChatRepository.findNewStudyChatsById(studyId, lastChatId == null ? 0 : lastChatId);
     }
 
-    //이전 채팅 보기(아직 적용 x)
+    //이전 채팅 보기
     public List<ChatResponse> findOldStudyChats(Integer studyId, Integer startChatId){
         PageRequest pageRequest = PageRequest.of(0, 100);
         return startChatId == null ? studyChatRepository.findOldStudyChats(studyId, pageRequest) : studyChatRepository.findOldStudyChatsByStartId(studyId, startChatId, pageRequest);

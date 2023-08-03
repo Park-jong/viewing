@@ -10,6 +10,6 @@ import lombok.*;
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class ChatRequest {
-    private Integer userId;
+    private Integer memberId;
     private String content;
 }

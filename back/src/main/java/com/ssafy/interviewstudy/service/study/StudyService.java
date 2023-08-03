@@ -287,7 +287,7 @@ public class StudyService {
     //스터디 실시간 채팅 작성
     @Transactional
     public ChatResponse addChat(Integer studyId, ChatRequest chat){
-        Member member = memberRepository.findById(chat.getUserId()).get();
+        Member member = memberRepository.findById(chat.getMemberId()).get();
         Study study = studyRepository.findById(studyId).get();
         if(!checkStudyMember(study.getId(), member.getId())) throw new updateFailException("잘못된 접근");
         StudyChat studyChat = new StudyChat(study, member, chat.getContent());

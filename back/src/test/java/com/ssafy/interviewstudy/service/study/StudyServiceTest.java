@@ -6,11 +6,9 @@ import com.ssafy.interviewstudy.dto.study.*;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -335,10 +333,10 @@ class StudyServiceTest {
 
     @Test
     public void studyChatTest(){
-        ChatRequest cr1 = ChatRequest.builder().userId(1).content("내용1").build();
-        ChatRequest cr2 = ChatRequest.builder().userId(2).content("내용2").build();
-        ChatRequest cr3 = ChatRequest.builder().userId(1).content("내용3").build();
-        ChatRequest cr4 = ChatRequest.builder().userId(2).content("내용4").build();
+        ChatRequest cr1 = ChatRequest.builder().memberId(1).content("내용1").build();
+        ChatRequest cr2 = ChatRequest.builder().memberId(2).content("내용2").build();
+        ChatRequest cr3 = ChatRequest.builder().memberId(1).content("내용3").build();
+        ChatRequest cr4 = ChatRequest.builder().memberId(2).content("내용4").build();
         studyService.addChat(1, cr1);
         studyService.addChat(1, cr2);
         studyService.addChat(1, cr3);
@@ -348,9 +346,9 @@ class StudyServiceTest {
 
         Assertions.assertEquals(studyChats.size(), 4);
 
-        ChatRequest cr5 = ChatRequest.builder().userId(1).content("내용1").build();
-        ChatRequest cr6 = ChatRequest.builder().userId(1).content("내용1").build();
-        ChatRequest cr7 = ChatRequest.builder().userId(1).content("내용1").build();
+        ChatRequest cr5 = ChatRequest.builder().memberId(1).content("내용1").build();
+        ChatRequest cr6 = ChatRequest.builder().memberId(1).content("내용1").build();
+        ChatRequest cr7 = ChatRequest.builder().memberId(1).content("내용1").build();
 
         studyService.addChat(1, cr5);
         studyService.addChat(1, cr6);

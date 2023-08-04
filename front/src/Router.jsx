@@ -118,52 +118,52 @@ const router = createBrowserRouter([
         element: <StudyPkDetail />,
       },
       {
-        path: "study",
+        path: "study/:studyPk",
         element: <StudySideBar />,
         children: [
           {
-            path: ":studyPk",
+            path: "",
             element: <StudyPk />,
           },
           {
-            path: ":studyPk/admin",
+            path: "admin",
             element: <StudyPkAdmin />,
           },
           {
-            path: ":studyPk/applicant",
+            path: "applicant",
             element: <StudyPkApplicant />,
           },
           {
-            path: ":studyPk/board",
+            path: "board",
             element: <StudyPkBoard />,
           },
           {
-            path: ":studyPk/board/:boardPk",
+            path: "board/:boardPk",
             element: <StudyPkBoardPk />,
           },
           {
-            path: ":studyPk/board/write",
+            path: "board/write",
             element: <StudyPkBoardWrite />,
           },
           {
-            path: ":studyPk/calendar",
+            path: "calendar",
             element: <StudyPkCalendar />,
           },
           {
-            path: ":studyPk/chat",
+            path: "chat",
             element: <StudyPkChat />,
           },
 
           {
-            path: ":studyPk/info",
+            path: "info",
             element: <StudyPkInfo />,
           },
           {
-            path: ":studyPk/meeting",
+            path: "meeting",
             element: <StudyPkMeeting />,
           },
           {
-            path: ":studyPk/withdraw",
+            path: "withdraw",
             element: <StudyPkWithdraw />,
           },
         ],

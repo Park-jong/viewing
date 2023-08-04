@@ -5,7 +5,6 @@ import StudySideBar from "../components/Study/StudySideBar";
 export default function StudyPkApplicant() {
   return (
     <>
-      <StudySideBar />
       <ResumeList />
     </>
   );

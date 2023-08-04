@@ -17,23 +17,23 @@ import java.time.LocalDateTime;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class ChatResponse {
     private Integer chatId;
-    private StudyMemberDto user;
+    private StudyMemberDto member;
     private String content;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdAt;
 
-    public ChatResponse(Integer chatId, Integer memberId, String userNickname, MemberProfileBackground userBg, MemberProfileImage userCharcter, String content, LocalDateTime createdAt){
+    public ChatResponse(Integer chatId, Integer memberId, String memberNickname, MemberProfileBackground memberBg, MemberProfileImage memberCharcter, String content, LocalDateTime createdAt){
         this.chatId = chatId;
         this.content = content;
         this.createdAt = createdAt;
-        this.user = new StudyMemberDto(memberId, userNickname, userBg, userCharcter);
+        this.member = new StudyMemberDto(memberId, memberNickname, memberBg, memberCharcter);
     }
 
     public ChatResponse(StudyChat studyChat){
         this.chatId = studyChat.getId();
         this.content = studyChat.getContent();
         this.createdAt = studyChat.getCreatedAt();
-        this.user = new StudyMemberDto(studyChat.getAuthor());
+        this.member = new StudyMemberDto(studyChat.getAuthor());
     }
 
     public ChatResponse(Integer chatId){

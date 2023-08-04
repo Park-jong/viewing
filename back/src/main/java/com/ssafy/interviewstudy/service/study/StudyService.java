@@ -79,6 +79,14 @@ public class StudyService {
         return new StudyDtoResponse(study, sb != null, headCount);
     }
 
+    //참가한 스터디 자세히보기
+    public StudyDetailDtoResponse findStudyDetailById(JWTMemberInfo memberInfo, Integer id){
+        Integer memberId = memberInfo.getMemberId();
+        Study study = studyRepository.findStudyById(id);
+        studyMemberRepository.findMembersByStudy(study);
+        return new StudyDetailDtoResponse(study);
+    }
+
     //스터디 검색 결과 조회
     public Page<StudyDtoResponse> findStudiesBySearch(JWTMemberInfo memberInfo, Boolean option, String appliedCompany, String appliedJob, CareerLevel careerLevel, Pageable pageable){
         Integer memberId = memberInfo != null ? memberInfo.getMemberId() : null;

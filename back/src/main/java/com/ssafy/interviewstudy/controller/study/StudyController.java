@@ -49,6 +49,13 @@ public class StudyController {
     }
 
     @JWTRequired(required = true)
+    @GetMapping("/{study_id}/detail")
+    public ResponseEntity<?> studyInfoDetail(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") int studyId){
+        StudyDetailDtoResponse study = studyService.findStudyDetailById(memberInfo, studyId);
+        return ResponseEntity.ok().body(study);
+    }
+
+    @JWTRequired(required = true)
     @PostMapping
     public ResponseEntity<?> studySave(@Valid @RequestBody StudyDtoRequest study){
         Integer madeStudy = null;

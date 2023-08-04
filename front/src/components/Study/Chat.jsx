@@ -78,21 +78,23 @@ export default function Chat() {
   const scrollRef = useRef();
   const [newPage, setNewPage] = useState(0);
   const [newMsgState, setNewMsgState] = useState(false);
-  const [scroll, setScroll] = useState(false);
+  const maxLength = 5000;
 
+  //메시지 전송
   const sendMsg = () => {
     try {
       stompClient.send(
         "/app/chats/studies/" + studyId,
         {},
-        JSON.stringify({ member_id: 1, content: msg })
+        JSON.stringify({ member_id: 1, content: msg }) //로그인 되면 수정
       );
       moveEnd();
+      setMsg("");
     } catch (error) {
       console.log("전송 실패");
     }
-    setMsg("");
   };
+
   //이전 채팅 불러오기
   const getOldMsg = () => {
     customAxios()
@@ -107,21 +109,26 @@ export default function Chat() {
       });
   };
 
+  //메시지 입력 값 변경
   const chgMsg = (e) => {
     setMsg(e.target.value);
   };
 
+  //메시지가 유효한지
   const checkSendState = () => {
-    if (msg) {
+    if (msg.length > maxLength) {
+      console.log(`입력가능한 최대 글자 수는 ${maxLength}자 입니다.`);
+    } else if (msg) {
       sendMsg();
     }
   };
 
+  //마지막으로 스크롤이동
   const moveEnd = () => {
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    setNewMsgState((prev) => false);
   };
 
+  //스크롤 이동에 따른 이벤트
   const handleScroll = () => {
     let chatAreaHeight = parseInt(
       window
@@ -136,17 +143,16 @@ export default function Chat() {
           scrollRef.current.scrollTop
       ) < 100
     ) {
-      setScroll(true);
-      if (newMsgState) setNewMsgState((prev) => false);
-    } else {
-      setScroll(false);
+      if (newMsgState) {
+        setNewMsgState((prev) => false);
+      }
     }
   };
 
   //처음 접속 시
   useEffect(() => {
     customAxios()
-      .get(`studies/${studyId}/chats`)
+      .get(`studies/${studyId}/chats`) //로그인 되면 수정
       .then(({ data }) => {
         if (data.length < 100) setOldMsgState((prev) => false);
         const oldMessage = data;
@@ -232,6 +238,7 @@ export default function Chat() {
       </ChatArea>
       {newMsgState && (
         <NewMessageAlram onClick={moveEnd}>
+          새로운 메시지
           <BiCaretDown></BiCaretDown>
         </NewMessageAlram>
       )}

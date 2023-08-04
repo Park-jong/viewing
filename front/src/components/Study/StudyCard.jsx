@@ -2,9 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Bookmark from "../../Icons/bookmark";
-import Capacity from "./../../Icons/capacity";
+import { BiUser } from "react-icons/bi";
+import UserProfile from "../Common/UserProfile";
 
-const Container = styled.div`
+const Container = styled(Link)`
   width: 280px;
   height: 320px;
   border-radius: 36px;
@@ -12,6 +13,7 @@ const Container = styled.div`
   position: relative;
 
   display: flex;
+  margin: 8px;
 
   /* Add transition for smooth scaling on hover */
   transition: transform 0.2s ease;
@@ -22,6 +24,9 @@ const Container = styled.div`
   }
 
   cursor: pointer;
+
+  text-decoration: none;
+  color: var(--gray-900);
 `;
 
 const BookmarkContainer = styled.div`
@@ -167,7 +172,7 @@ const HorizontalLine = styled.div`
 
 const ProfileContainer = styled.div`
   position: absolute;
-  bottom: 15px;
+  bottom: 8px;
   left: 20px;
 `;
 
@@ -175,42 +180,50 @@ const CapacityContainer = styled.div`
   position: absolute;
   bottom: 15px;
   right: 20px;
+
+  display: flex;
+  align-items: center;
+
+  color: var(--gray-400);
+  font-weight: 300;
 `;
 
-export default function StudyCard() {
+export default function StudyCard({ study }) {
+  // console.log(study.tag);
   return (
-    <Container>
+    <Container to={`/study/${study.study_id}/detail`}>
       <BookmarkContainer>
         <Bookmark />
       </BookmarkContainer>
 
       <CompanyContainer>
-        <CompanyTag>삼삼성전자삼성전자삼성전자</CompanyTag>
-        <PositionTag>DX개발</PositionTag>
-        <CareerTag>신입</CareerTag>
+        <CompanyTag>{study.applied_company}</CompanyTag>
+        <PositionTag>{study.applied_job}</PositionTag>
+        <CareerTag>{study.career_level}</CareerTag>
       </CompanyContainer>
 
-      <DateContainer>마감일 | 2020.02.02</DateContainer>
+      <DateContainer>마감일 | {study.deadline}</DateContainer>
 
-      <TitleContainer>
-        빡세게 준비하실 분 빡세게 준비하실 분 빡세게 준비하실 분 빡세게 준비하실
-        분
-      </TitleContainer>
+      <TitleContainer>{study.title}</TitleContainer>
 
       <TagContainer>
-        <TagStyled>자소서 제출 필수</TagStyled>
-        <TagStyled>압박면접</TagStyled>
-        <TagStyled>정보공유</TagStyled>
-        <TagStyled>합격 인증 필수</TagStyled>
-        <TagStyled>합격 인증 필수</TagStyled>
+        {study.tags.map((tag, idx) => (
+          <TagStyled key={idx}>{tag}</TagStyled>
+        ))}
       </TagContainer>
 
       <HorizontalLine></HorizontalLine>
 
-      <ProfileContainer>지우</ProfileContainer>
+      <ProfileContainer>
+        <UserProfile
+          nickname={study.leader.nickname}
+          backgroundcolor={study.leader.background}
+          characterimg={study.leader.character}
+        />
+      </ProfileContainer>
       <CapacityContainer>
-        <Capacity />
-        6/8
+        <BiUser style={{ marginRight: "5px" }} />
+        {study.head_count}/{study.capacity}
       </CapacityContainer>
     </Container>
   );

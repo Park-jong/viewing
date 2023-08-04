@@ -133,6 +133,13 @@ const CardContainer = styled.div`
     filter: blur(3px); /* Apply the filter to the background image */
     z-index: -1; /* Move the background image behind the content */
   }
+
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  cursor: pointer;
+
 `;
 
 const bgData = [

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const Container = styled.div`
   position: relative;
@@ -60,6 +60,9 @@ export default function StudySideBar({ isLeader }) {
           )}
         </SidebarList>
       </SidebarContainer>
+      <div>
+        <Outlet></Outlet>
+      </div>
     </Container>
   );
 }

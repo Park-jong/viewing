@@ -47,6 +47,8 @@ import GitHubLogin from "./pages/GitHubLogin";
 import SideBar from "./components/MyPage/SideBar";
 import LoginLoading from "./pages/LoginLoading";
 import BoardPk from "./pages/BoardPk";
+import StudyPk from "./pages/StudyPk";
+import StudySideBar from "./components/Study/StudySideBar";
 
 const router = createBrowserRouter([
   {
@@ -59,8 +61,8 @@ const router = createBrowserRouter([
     children: [
       {
         path: "mypage",
-        element: <SideBar/>,
-        children:[
+        element: <SideBar />,
+        children: [
           {
             path: "edit",
             element: <MypageEdit />,
@@ -109,51 +111,62 @@ const router = createBrowserRouter([
             path: "withdraw",
             element: <MypageWithdraw />,
           },
-        ]
-      },
-      {
-        path: "study/:studyPk/admin",
-        element: <StudyPkAdmin />,
-      },
-      {
-        path: "study/:studyPk/applicant",
-        element: <StudyPkApplicant />,
-      },
-      {
-        path: "study/:studyPk/board",
-        element: <StudyPkBoard />,
-      },
-      {
-        path: "study/:studyPk/board/:boardPk",
-        element: <StudyPkBoardPk />,
-      },
-      {
-        path: "study/:studyPk/board/write",
-        element: <StudyPkBoardWrite />,
-      },
-      {
-        path: "study/:studyPk/calendar",
-        element: <StudyPkCalendar />,
-      },
-      {
-        path: "study/:studyPk/chat",
-        element: <StudyPkChat />,
+        ],
       },
       {
         path: "study/:studyPk/detail",
         element: <StudyPkDetail />,
       },
       {
-        path: "study/:studyPk/info",
-        element: <StudyPkInfo />,
-      },
-      {
-        path: "study/:studyPk/meeting",
-        element: <StudyPkMeeting />,
-      },
-      {
-        path: "study/:studyPk/withdraw",
-        element: <StudyPkWithdraw />,
+        path: "study",
+        element: <StudySideBar />,
+        children: [
+          {
+            path: ":studyPk",
+            element: <StudyPk />,
+          },
+          {
+            path: ":studyPk/admin",
+            element: <StudyPkAdmin />,
+          },
+          {
+            path: ":studyPk/applicant",
+            element: <StudyPkApplicant />,
+          },
+          {
+            path: ":studyPk/board",
+            element: <StudyPkBoard />,
+          },
+          {
+            path: ":studyPk/board/:boardPk",
+            element: <StudyPkBoardPk />,
+          },
+          {
+            path: ":studyPk/board/write",
+            element: <StudyPkBoardWrite />,
+          },
+          {
+            path: ":studyPk/calendar",
+            element: <StudyPkCalendar />,
+          },
+          {
+            path: ":studyPk/chat",
+            element: <StudyPkChat />,
+          },
+
+          {
+            path: ":studyPk/info",
+            element: <StudyPkInfo />,
+          },
+          {
+            path: ":studyPk/meeting",
+            element: <StudyPkMeeting />,
+          },
+          {
+            path: ":studyPk/withdraw",
+            element: <StudyPkWithdraw />,
+          },
+        ],
       },
       {
         path: "board",
@@ -224,19 +237,19 @@ const router = createBrowserRouter([
   },
   {
     path: "login/kakao",
-    element: <KaKaoLogin/>,
+    element: <KaKaoLogin />,
   },
   {
     path: "login/google",
-    element: <GoogleLogin/>,
+    element: <GoogleLogin />,
   },
   {
     path: "login/github",
-    element: <GitHubLogin/>,
+    element: <GitHubLogin />,
   },
   {
     path: "login/loading",
-    element: <LoginLoading/>,
+    element: <LoginLoading />,
   },
 ]);
 

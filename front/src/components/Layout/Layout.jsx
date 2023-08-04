@@ -8,14 +8,14 @@ const LayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-
 `;
 
 const LayoutBody = styled.div`
   width: 1200px;
   background-color: #ffffff;
-  height: 100vh;
+  height: 100%;
   margin: 0 auto;
+  margin-bottom: 50px;
 `;
 
 export default function Layout({ children }) {

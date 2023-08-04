@@ -1,4 +1,5 @@
 import styled from "styled-components";
+
 import StudyCard from "../components/Study/StudyCard";
 import Toggle from "./../components/Common/Toggle";
 import SearchBox from "../components/Home/SearchBox";
@@ -6,6 +7,7 @@ import StyledButton from "../components/Button/StyledButton";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Tag from "../components/Study/Tag";
 
 const data = [
   {
@@ -16,22 +18,22 @@ const data = [
         description: null,
         applied_company: "삼성",
         applied_job: "it",
-        capacity: 0, //전체 정원
+        capacity: 6, //전체 정원
         head_count: 2, // 현재인원
         created_at: "2023-07-26T15:17",
-        deadline: null, //마감날짜.
+        deadline: "2023-07-26T15:17", //마감날짜.
         recruitment: true,
         leader: {
-          id: null,
-          nickname: null,
-          background: null,
-          character: null,
+          member_id: 11,
+          nickname: "jiwoo",
+          background: "red",
+          character: "cow",
         },
-        career_level: null,
-        tags: ["tag1", "tag2"],
+        career_level: "ALL",
+        tags: ["tag1", "tag2", "a", "b", "c"],
       },
       {
-        study_id: 2,
+        study_id: 3,
         title: "test2",
         description: null,
         applied_company: "삼성",
@@ -39,15 +41,35 @@ const data = [
         capacity: 0, //전체 정원
         head_count: 2, // 현재인원
         created_at: "2023-07-26T15:17",
-        deadline: null, //마감날짜.
+        deadline: "2023-07-26T15:17", //마감날짜.
         recruitment: true,
         leader: {
-          id: null,
-          nickname: null,
-          background: null,
-          character: null,
+          member_id: 22,
+          nickname: "jiwoo",
+          background: "red",
+          character: "cow",
         },
-        career_level: null,
+        career_level: "ALL",
+        tags: ["tag1", "tag2"],
+      },
+      {
+        study_id: 4,
+        title: "test2",
+        description: null,
+        applied_company: "삼성",
+        applied_job: "it",
+        capacity: 0, //전체 정원
+        head_count: 2, // 현재인원
+        created_at: "2023-07-26T15:17",
+        deadline: "2023-07-26T15:17", //마감날짜.
+        recruitment: true,
+        leader: {
+          member_id: 33,
+          nickname: "jiwoo",
+          background: "red",
+          character: "cow",
+        },
+        career_level: "ALL",
         tags: ["tag1", "tag2"],
       },
     ],
@@ -113,29 +135,34 @@ const TagContainer = styled.div`
 
 const BodyContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
 `;
 
 ///studies?appliedCompany={지원회사(string)}&job={직무(String)}&careerLevel={신입/경력/무관(ALL, INTERN, NEWCOMER, EXPERIENCED)}&option=true&page=0&size=20&sort=id,desc&sort=username,desc
 
 export default function Search() {
   const url = new URL(document.URL);
-  const [searchData, SetsearchData] = useState([]);
   const query = url.searchParams; //?appliedCompany=%E3%85%87%E3%85%87&job=hh&careerLevel=ALL
   console.log(query.get("appliedCompany"));
 
-  console.log(url);
+  const appliedCompany = query.get("appliedCompany");
+  const job = query.get("job");
+  const careerLevel = query.get("careerLevel");
+
+  const [searchData, SetsearchData] = useState([]);
 
   console.log(searchData);
 
   //search 통신 보내기
-  useEffect(() => {
-    customAxios()
-      .get(`studies?appliedCompany=1&job=dd&careerLevel=ALL`)
-      .then((res) => {
-        SetsearchData(res.data);
-      });
-  }, []);
+  // useEffect(() => {
+  //   customAxios()
+  //     .get(
+  //       `studies?appliedCompany=${appliedCompany}&job=${job}&careerLevel=${careerLevel}`
+  //     )
+  //     .then((res) => {
+  //       SetsearchData(res.data);
+  //     });
+  // }, []);
 
   const handleClick = () => {};
 
@@ -144,7 +171,6 @@ export default function Search() {
       <ToggleContainer>
         <Toggle />
       </ToggleContainer>
-
       <SearchContainer>
         {/* <MainButton
           marginright={10}
@@ -169,13 +195,18 @@ export default function Search() {
 
       <HorizontalLine></HorizontalLine>
 
-      <TagContainer></TagContainer>
+      <TagContainer>
+        <Tag />
+      </TagContainer>
 
       <BodyContainer>
-        <StudyCard></StudyCard>
-        <StudyCard></StudyCard>
-        <StudyCard></StudyCard>
-        <StudyCard></StudyCard>
+        {data[0].content && data[0].content.length > 0 ? (
+          data[0].content.map((study, idx) => (
+            <StudyCard key={idx} study={study} />
+          ))
+        ) : (
+          <p>찾으시는 스터디가 없습니다.</p>
+        )}
       </BodyContainer>
     </Container>
   );

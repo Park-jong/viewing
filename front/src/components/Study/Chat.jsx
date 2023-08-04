@@ -68,7 +68,7 @@ const NewMessageAlram = styled.div`
 `;
 
 export default function Chat() {
-  const user = useSelector((state) => state.UserReducer);
+  const member = useSelector((state) => state.UserReducer);
   const [msg, setMsg] = useState("");
   const [msgList, setMsgList] = useState([]);
   const sockJS = new SockJS("http://70.12.246.107:8080/studyChat");
@@ -86,7 +86,7 @@ export default function Chat() {
       stompClient.send(
         "/app/chats/studies/" + studyId,
         {},
-        JSON.stringify({ member_id: 1, content: msg }) //로그인 되면 수정
+        JSON.stringify({ member_id: member.memberId, content: msg })
       );
       moveEnd();
       setMsg("");
@@ -152,7 +152,7 @@ export default function Chat() {
   //처음 접속 시
   useEffect(() => {
     customAxios()
-      .get(`studies/${studyId}/chats`) //로그인 되면 수정
+      .get(`studies/${studyId}/chats`) //유저가 스터디 멤버인지 체크 수정
       .then(({ data }) => {
         if (data.length < 100) setOldMsgState((prev) => false);
         const oldMessage = data;
@@ -225,9 +225,9 @@ export default function Chat() {
             <ChatBox key={m.chat_id}>
               <ChatProfile>
                 <UserProfile
-                  nickname={m.user.nickname}
-                  backgroundcolor={"red"}
-                  characterimg={"cow"}
+                  nickname={m.member.nickname}
+                  backgroundcolor={m.member.background}
+                  characterimg={m.member.character}
                 />
               </ChatProfile>
               <ChatText>{m.content}</ChatText>

@@ -19,7 +19,7 @@ public class StudyChat {
     @Column(name = "study_chat_id")
     private Integer id;
 
-    @Column
+    @Column(length = 5000)
     private String content;
 
     @CreatedDate

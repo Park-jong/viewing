@@ -80,10 +80,10 @@ public class StudyService {
     }
 
     //스터디 검색 결과 조회
-    public Page<StudyDtoResponse> findStudiesBySearch(JWTMemberInfo memberInfo, Boolean option, Integer appliedCompanyId, String appliedJob, CareerLevel careerLevel, Pageable pageable){
+    public Page<StudyDtoResponse> findStudiesBySearch(JWTMemberInfo memberInfo, Boolean option, String appliedCompany, String appliedJob, CareerLevel careerLevel, Pageable pageable){
         Integer memberId = memberInfo != null ? memberInfo.getMemberId() : null;
         //검색 결과 (study_id, Study, 북마크여부, 인원)
-        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompanyId, appliedJob, careerLevel, memberId, pageable);
+        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompany, appliedJob, careerLevel, memberId, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
         List<Integer> studyids = new ArrayList<>();
         for (Tuple study : studies) {

@@ -46,7 +46,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
 
     @Override
     //조건에 따라 study 검색 결과
-    public Page<Tuple> findStudiesBySearch(Boolean isRecruit, Integer appliedCompany, String appliedJob, CareerLevel careerLevel, Integer memberId, Pageable pageable) {
+    public Page<Tuple> findStudiesBySearch(Boolean isRecruit, String appliedCompany, String appliedJob, CareerLevel careerLevel, Integer memberId, Pageable pageable) {
         List<Tuple> result = queryFactory.select(
                         study.id,
                         study,
@@ -59,7 +59,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                 .leftJoin(studyBookmark).on(study.id.eq(studyBookmark.study.id), isBookmarked(memberId)).fetchJoin()
                 .where(isRecruitTrue(isRecruit),
                         study.isDelete.eq(false),
-                        appliedCompanyEq(appliedCompany),
+                        appliedCompanyLike(appliedCompany),
                         appliedJobLike(appliedJob),
                         careerLevelEq(careerLevel))
                 .offset(pageable.getOffset())
@@ -71,7 +71,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                 .from(study)
                 .where(isRecruitTrue(isRecruit),
                         study.isDelete.eq(false),
-                        appliedCompanyEq(appliedCompany),
+                        appliedCompanyLike(appliedCompany),
                         appliedJobLike(appliedJob),
                         careerLevelEq(careerLevel))
                 .fetchOne();
@@ -101,8 +101,8 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
     }
 
 
-    private BooleanExpression appliedCompanyEq(Integer appliedCompany){
-        return appliedCompany != null ? study.appliedCompany.id.eq(appliedCompany) : null;
+    private BooleanExpression appliedCompanyLike(String appliedCompany){
+        return StringUtils.hasText(appliedCompany) ? study.appliedCompany.name.like("%" + appliedCompany + "%") : null;
     }
 
     private BooleanExpression appliedJobLike(String appliedJob){

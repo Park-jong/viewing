@@ -18,6 +18,7 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 12;
 `;
 
 const ModalContent = styled.div`
@@ -51,6 +52,8 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
   const [text, setText] = useState("");
   const [files, setFiles] = useState([]);
   const nickname = useSelector((state) => state.UserReducer.nickname);
+  const member_id = useSelector((state) => state.UserReducer.memberId);
+  const token = localStorage.getItem("access_token");
   // const userId = useSelector((state) => state.UserReducer.)
 
   const handleInputChange = (event) => {
@@ -58,14 +61,26 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
   };
 
   const handleApply = () => {
-    const applicationData = {
-      member_id: 8,
-      content: text,
-      request_files: [],
-    };
+    const formData = new FormData();
+    const request = {member_id, content:text,}
+    // formData.append("member_id", member_id);
+    // formData.append("content", text);
+    files.forEach((file)=> formData.append("request_files", file))
+    
+    console.log(member_id) 
+
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(request)], { type: 'application/json' })
+    );
 
     customAxios()
-      .post(`studies/1/requests`, applicationData)
+      .post(`studies/1/requests`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + token,
+        },
+      })
       .then(function (response) {
         console.log(response);
         handleCloseModal();
@@ -117,8 +132,8 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
                 width={80}
                 height={40}
                 onClick={handleCloseModal}
+                marginright={15}
               />
-              &nbsp;&nbsp;
               <MainButton
                 content="신청하기"
                 onClick={handleApply}

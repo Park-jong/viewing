@@ -66,8 +66,8 @@ export default function UploadFile({ width, height, setFiles, files }) {
     <Container>
       <CurrentFile>
         {files.length > 0 ? (
-          files.map((file) => 
-          <SelectedFile>
+          files.map((file, idx) => 
+          <SelectedFile key={idx}>
             <FileName>{file.name}</FileName>
             <div onClick={() => deleteFile(file, files)}>
               <SubButton content="삭제하기" ></SubButton>   

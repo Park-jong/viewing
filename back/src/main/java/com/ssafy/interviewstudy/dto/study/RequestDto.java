@@ -15,5 +15,4 @@ import java.util.List;
 public class RequestDto {
     private Integer memberId;
     private String content;
-    private List<RequestFile> requestFiles = new ArrayList<>();
 }

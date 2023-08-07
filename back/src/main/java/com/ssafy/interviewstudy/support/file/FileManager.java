@@ -8,12 +8,11 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class FileManager {
@@ -107,5 +106,13 @@ public class FileManager {
         } catch (SdkClientException e) {
             e.printStackTrace();
         }
+    }
+
+    public byte[] download(String key) throws IOException{
+        S3Object s3Object = s3Client.getObject(new GetObjectRequest(bucket, key));
+        S3ObjectInputStream inputStream = s3Object.getObjectContent();
+        byte[] file = IOUtils.toByteArray(inputStream);
+
+        return file;
     }
 }

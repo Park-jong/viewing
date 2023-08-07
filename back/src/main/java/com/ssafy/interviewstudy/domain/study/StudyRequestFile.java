@@ -2,8 +2,10 @@ package com.ssafy.interviewstudy.domain.study;
 
 import com.ssafy.interviewstudy.dto.study.RequestFile;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.io.File;
 
 @Entity
 @Getter
@@ -17,7 +19,7 @@ public class StudyRequestFile {
 
     private String originalFileName;
 
-    private byte[] fileData;
+    private String saveFileName;
 
     private String fileType;
 
@@ -25,9 +27,10 @@ public class StudyRequestFile {
     @JoinColumn(name = "study_request_id")
     private StudyRequest request;
 
-    public StudyRequestFile(RequestFile requestFile, StudyRequest studyRequest){
+    public StudyRequestFile(MultipartFile requestFile, StudyRequest studyRequest, String saveFileName){
         this.request = studyRequest;
-        this.fileData = requestFile.getFileData();
-        this.originalFileName = requestFile.getName();
+        this.originalFileName = requestFile.getOriginalFilename();
+        this.fileType = requestFile.getContentType();
+        this.saveFileName = saveFileName;
     }
 }

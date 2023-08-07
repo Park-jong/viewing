@@ -12,6 +12,8 @@ const Container = styled.div`
   border-radius: 15px;
   font-size: ${(props) => `${props.fontSize}px`};
   margin-right: ${(props) => `${props.marginright}px`};
+
+  cursor: pointer;
 `;
 
 export default function MainButton({
@@ -22,11 +24,16 @@ export default function MainButton({
   content,
   onClick,
 }) {
-  return <Container 
-  onClick={onClick}
-  marginright={marginright}
-  width={width}
-  height={height}
-  fontSize={fontSize}
-  >{content}</Container>;
+  return (
+    <Container
+      onClick={onClick}
+      marginright={marginright}
+      width={width}
+      height={height}
+      fontSize={fontSize}
+    >
+      {content}
+    </Container>
+  );
 }
+

@@ -51,22 +51,28 @@ const Input = styled.input`
   display: none;
 `;
 
-export default function DownloadFiles({ width, height, setFiles, files }) {
+export default function UploadFile({ width, height, setFiles, files }) {
   const handleFileChange = (e) => {
-    setFiles(e.target.files);
+    setFiles([...files, ...e.target.files]);
+
   };
-  const deleteFile = (e) => {
-    setFiles([]);
+  const deleteFile = (file, files) => {
+    files.splice(files.findIndex((f) => f===file), 1)
+    const temp = [...files]
+    setFiles(temp);
   };
 
   return (
     <Container>
       <CurrentFile>
         {files.length > 0 ? (
+          files.map((file) => 
           <SelectedFile>
-            <FileName>{files[0].name}</FileName>
-            <SubButton content="삭제하기" onClick={deleteFile}></SubButton>
-          </SelectedFile>
+            <FileName>{file.name}</FileName>
+            <div onClick={() => deleteFile(file, files)}>
+              <SubButton content="삭제하기" ></SubButton>   
+            </div>
+          </SelectedFile>)
         ) : (
           "파일을 업로드하세요."
         )}

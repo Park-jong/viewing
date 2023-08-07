@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import UserProfile from "../components/Common/UserProfile";
 import { BiUser } from "react-icons/bi";
+import ApplyModal from "../components/Modal/ApplyModal";
+import CompanyJobTag from "../components/Study/CompanyJobTag";
 
 const studyData = {
   study_id: 1,
@@ -29,60 +31,6 @@ const studyData = {
 };
 
 const Container = styled.div``;
-
-const CompanyContainer = styled.div`
-  display: flex;
-  margin-top: 30px;
-`;
-
-const CompanyTag = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: fit-content;
-  height: 25px;
-  background-color: rgb(
-    145,
-    118,
-    255
-  ); /* Change the alpha value to adjust opacity */
-
-  margin: 5px;
-  padding: 0 5px;
-
-  border-radius: 5px;
-`;
-
-const PositionTag = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: fit-content;
-  height: 25px;
-
-  background-color: var(--secondary);
-
-  margin: 5px;
-  padding: 0 5px;
-
-  border-radius: 5px;
-`;
-
-const CareerTag = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: fit-content;
-  height: 25px;
-  background-color: var(--secondary);
-
-  margin: 5px;
-  padding: 0 5px;
-
-  border-radius: 5px;
-`;
 
 const Title = styled.div`
   font-size: 36px;
@@ -122,6 +70,14 @@ const Tag = styled.div``;
 
 const Description = styled.div`
   margin: 30px 0px;
+  padding: 30px;
+  border: 1px solid var(--gray-200);
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default function StudyPkDetail() {
@@ -139,13 +95,23 @@ export default function StudyPkDetail() {
   //     });
   // }, []);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Container>
-      <CompanyContainer>
-        <CompanyTag>{studyData.applied_company}</CompanyTag>
-        <PositionTag>{studyData.applied_job}</PositionTag>
-        <CareerTag>{studyData.career_level}</CareerTag>
-      </CompanyContainer>
+      <CompanyJobTag
+        company={studyData.applied_company}
+        position={studyData.applied_job}
+        career={studyData.career_level}
+      />
       <Title>{studyData.title}</Title>
       <Leader>
         <UserProfile
@@ -161,19 +127,32 @@ export default function StudyPkDetail() {
         </Date>
         <CapacityContainer>
           <BiUser style={{ marginRight: "5px" }} />
-          {"   "}
           {studyData.head_count}/{studyData.capacity}
         </CapacityContainer>
       </DateContainer>
-
       <Tag>
         {studyData.tags.map((tag, idx) => {
-          <Tag></Tag>;
+          <Tag>{tag}</Tag>;
         })}
       </Tag>
       <Description>{studyData.description}</Description>
-      <MainButton />
-      <SubButton />
+
+      <ButtonContainer>
+        <MainButton
+          marginright={10}
+          width={300}
+          height={45}
+          fontSize={16}
+          content="신청하기"
+          onClick={handleOpenModal}
+        />
+      </ButtonContainer>
+
+      <ApplyModal
+        isModalOpen={isModalOpen}
+        onClose={handleCloseModal}
+        studyData={studyData}
+      />
     </Container>
   );
 }

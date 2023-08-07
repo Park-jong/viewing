@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Bookmark from "../../Icons/bookmark";
 import { BiUser } from "react-icons/bi";
 import UserProfile from "../Common/UserProfile";
+import CompanyJobTag from "./CompanyJobTag";
 
 const Container = styled(Link)`
   width: 280px;
@@ -53,54 +54,7 @@ const CompanyContainer = styled.div`
   flex-wrap: wrap; /* Add this line to allow tags to wrap to multiple lines */
 `;
 
-const CompanyTag = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
-  width: fit-content;
-  height: 25px;
-  background-color: rgb(
-    145,
-    118,
-    255
-  ); /* Change the alpha value to adjust opacity */
-
-  margin: 5px;
-  padding: 0 5px;
-
-  border-radius: 5px;
-`;
-
-const PositionTag = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: fit-content;
-  height: 25px;
-
-  background-color: var(--secondary);
-
-  margin: 5px;
-  padding: 0 5px;
-
-  border-radius: 5px;
-`;
-
-const CareerTag = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: fit-content;
-  height: 25px;
-  background-color: var(--secondary);
-
-  margin: 5px;
-  padding: 0 5px;
-
-  border-radius: 5px;
-`;
 
 const DateContainer = styled.div`
   position: absolute;
@@ -197,9 +151,11 @@ export default function StudyCard({ study }) {
       </BookmarkContainer>
 
       <CompanyContainer>
-        <CompanyTag>{study.applied_company}</CompanyTag>
-        <PositionTag>{study.applied_job}</PositionTag>
-        <CareerTag>{study.career_level}</CareerTag>
+        <CompanyJobTag
+          company={study.applied_company}
+          position={study.applied_job}
+          career={study.career_level}
+        />
       </CompanyContainer>
 
       <DateContainer>마감일 | {study.deadline}</DateContainer>

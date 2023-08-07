@@ -1,14 +1,13 @@
 package com.ssafy.interviewstudy.domain.board;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "article_file")
 public class ArticleFile {
     @Id
@@ -26,18 +25,12 @@ public class ArticleFile {
 
     @Column(name = "original_file_name", nullable = false)
     private String originalFileName;
-    @Lob
-    @Column(name = "file_data", nullable = false)
-    private byte[] fileData;
+
+    @Column(name = "save_file_name", nullable = false)
+    private String saveFileName;
+
     @Column(name = "file_type", nullable = false)
     private String fileType;
 
-    @Builder
-    public ArticleFile(Integer id, Board article, String originalFileName, byte[] fileData, String fileType) {
-        this.id = id;
-        this.article = article;
-        this.originalFileName = originalFileName;
-        this.fileData = fileData;
-        this.fileType = fileType;
-    }
+
 }

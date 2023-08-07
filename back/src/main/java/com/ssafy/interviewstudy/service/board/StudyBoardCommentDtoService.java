@@ -40,19 +40,6 @@ public class StudyBoardCommentDtoService {
         return comment;
     }
 
-    public StudyBoardCommentResponse fromEntityWithoutCommentCount(StudyBoardComment articleComment){
-        StudyBoardCommentResponse commentResponse = StudyBoardCommentResponse.builder()
-                .commentId(articleComment.getId())
-                .content(articleComment.getContent())
-                .author(new Author(articleComment.getAuthor()))
-                .isDelete(articleComment.getIsDelete())
-                .createdAt(articleComment.getCreatedAt())
-                .updatedAt(articleComment.getUpdatedAt())
-                .build();
-
-        return commentResponse;
-    }
-
     public StudyBoardCommentResponse fromEntity(StudyBoardComment articleComment){
         StudyBoardCommentResponse commentResponse = StudyBoardCommentResponse.builder()
                 .commentId(articleComment.getId())
@@ -61,11 +48,10 @@ public class StudyBoardCommentDtoService {
                 .isDelete(articleComment.getIsDelete())
                 .createdAt(articleComment.getCreatedAt())
                 .updatedAt(articleComment.getUpdatedAt())
-                .commentCount(commentRepository.countByComment(articleComment.getId()))
                 .build();
 
         commentResponse.setReplies(fromEntity(articleComment.getReplies()));
-        commentResponse.setCommentCount(commentRepository.countByComment(articleComment.getId()));
+        commentResponse.setCommentCount(articleComment.getReplies().size());
 
         return commentResponse;
     }

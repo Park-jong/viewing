@@ -47,21 +47,6 @@ public class CommentDtoService {
         return comment;
     }
 
-//    public CommentResponse fromEntityWithoutCommentCount(Integer memberId, ArticleComment articleComment){
-//        CommentResponse commentResponse = CommentResponse.builder()
-//                .commentId(articleComment.getId())
-//                .content(articleComment.getContent())
-//                .author(new Author(articleComment.getAuthor()))
-//                .isDelete(articleComment.getIsDelete())
-//                .createdAt(articleComment.getCreatedAt())
-//                .updatedAt(articleComment.getUpdatedAt())
-//                .likeCount(commentLikeService.getLikeCount(articleComment.getId()))
-//                .isLike(commentLikeService.checkMemberLikeComment(articleComment.getId(), memberId))
-//                .build();
-//
-//        return commentResponse;
-//    }
-
     public CommentResponse fromEntity(Integer memberId, ArticleComment articleComment){
         CommentResponse commentResponse = CommentResponse.builder()
                 .commentId(articleComment.getId())
@@ -71,14 +56,13 @@ public class CommentDtoService {
                 .createdAt(articleComment.getCreatedAt())
                 .updatedAt(articleComment.getUpdatedAt())
                 .likeCount(commentLikeService.getLikeCount(articleComment.getId()))
-                .commentCount(commentRepository.countByComment(articleComment.getId()))
                 .build();
 
         if(memberId != null)
             commentResponse.setIsLike(commentLikeService.checkMemberLikeComment(articleComment.getId(), memberId));
 
         commentResponse.setReplies(fromEntity(memberId, articleComment.getReplies()));
-        commentResponse.setCommentCount(commentRepository.countByComment(articleComment.getId()));
+        commentResponse.setCommentCount(articleComment.getReplies().size());
 
         return commentResponse;
     }

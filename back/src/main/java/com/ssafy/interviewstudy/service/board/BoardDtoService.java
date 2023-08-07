@@ -5,7 +5,6 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.Author;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
-import com.ssafy.interviewstudy.repository.board.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.service.redis.ArticleLikeService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class BoardDtoService {
-    private final ArticleCommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final ArticleLikeService articleLikeService;
 
@@ -38,7 +36,7 @@ public class BoardDtoService {
                 .author(new Author(article.getAuthor()))
                 .title(article.getTitle())
                 .viewCount(article.getViewCount())
-                .commentCount(commentRepository.countByArticle(article))
+                .commentCount(article.getComments().size())
                 .likeCount(articleLikeService.getLikeCount(article.getId()))
                 .build();
 

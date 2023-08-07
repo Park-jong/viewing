@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -68,6 +69,7 @@ public class ArticleLikeService {
     }
 
     // 좋아요 삭제
+    @Transactional
     public int removeArticleLike(Integer articleId, Integer memberId) {
         if (!checkMemberLikeArticle(articleId, memberId)) return 0;
 

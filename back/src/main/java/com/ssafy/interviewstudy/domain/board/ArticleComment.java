@@ -56,6 +56,7 @@ public class ArticleComment {
     private ArticleComment comment;
 
     @OneToMany(mappedBy = "comment")
+    @OrderBy("createdAt asc")
     private List<ArticleComment> replies = new ArrayList<>();
 
     @OneToMany(mappedBy = "comment")

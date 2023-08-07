@@ -10,6 +10,8 @@ import com.ssafy.interviewstudy.repository.board.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import com.ssafy.interviewstudy.repository.board.CommentLikeRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
+import com.ssafy.interviewstudy.service.redis.CommentLikeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,20 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CommentDtoService {
 
-    private MemberRepository memberRepository;
-    private BoardRepository boardRepository;
-    private CommentLikeRepository commentLikeRepository;
-    private ArticleCommentRepository commentRepository;
-
-    @Autowired
-    public CommentDtoService(MemberRepository memberRepository, BoardRepository boardRepository, CommentLikeRepository commentLikeRepository, ArticleCommentRepository commentRepository) {
-        this.memberRepository = memberRepository;
-        this.boardRepository = boardRepository;
-        this.commentLikeRepository = commentLikeRepository;
-        this.commentRepository = commentRepository;
-    }
+    private final MemberRepository memberRepository;
+    private final BoardRepository boardRepository;
+    private final CommentLikeRepository commentLikeRepository;
+    private final ArticleCommentRepository commentRepository;
+    private final CommentLikeService commentLikeService;
 
     public ArticleComment toEntity(CommentRequest commentRequest){
         Member author = memberRepository.findMemberById(commentRequest.getMemberId());
@@ -51,20 +47,20 @@ public class CommentDtoService {
         return comment;
     }
 
-    public CommentResponse fromEntityWithoutCommentCount(Integer memberId, ArticleComment articleComment){
-        CommentResponse commentResponse = CommentResponse.builder()
-                .commentId(articleComment.getId())
-                .content(articleComment.getContent())
-                .author(new Author(articleComment.getAuthor()))
-                .isDelete(articleComment.getIsDelete())
-                .createdAt(articleComment.getCreatedAt())
-                .updatedAt(articleComment.getUpdatedAt())
-                .likeCount(commentLikeRepository.countByComment(articleComment))
-                .isLike(commentLikeRepository.existsByMember_IdAndComment_Id(memberId, articleComment.getId()))
-                .build();
-
-        return commentResponse;
-    }
+//    public CommentResponse fromEntityWithoutCommentCount(Integer memberId, ArticleComment articleComment){
+//        CommentResponse commentResponse = CommentResponse.builder()
+//                .commentId(articleComment.getId())
+//                .content(articleComment.getContent())
+//                .author(new Author(articleComment.getAuthor()))
+//                .isDelete(articleComment.getIsDelete())
+//                .createdAt(articleComment.getCreatedAt())
+//                .updatedAt(articleComment.getUpdatedAt())
+//                .likeCount(commentLikeService.getLikeCount(articleComment.getId()))
+//                .isLike(commentLikeService.checkMemberLikeComment(articleComment.getId(), memberId))
+//                .build();
+//
+//        return commentResponse;
+//    }
 
     public CommentResponse fromEntity(Integer memberId, ArticleComment articleComment){
         CommentResponse commentResponse = CommentResponse.builder()
@@ -74,12 +70,12 @@ public class CommentDtoService {
                 .isDelete(articleComment.getIsDelete())
                 .createdAt(articleComment.getCreatedAt())
                 .updatedAt(articleComment.getUpdatedAt())
-                .likeCount(commentLikeRepository.countByComment(articleComment))
+                .likeCount(commentLikeService.getLikeCount(articleComment.getId()))
                 .commentCount(commentRepository.countByComment(articleComment.getId()))
                 .build();
 
         if(memberId != null)
-            commentResponse.setIsLike(commentLikeRepository.existsByMember_IdAndComment_Id(memberId, articleComment.getId()));
+            commentResponse.setIsLike(commentLikeService.checkMemberLikeComment(articleComment.getId(), memberId));
 
         commentResponse.setReplies(fromEntity(memberId, articleComment.getReplies()));
         commentResponse.setCommentCount(commentRepository.countByComment(articleComment.getId()));
@@ -98,8 +94,8 @@ public class CommentDtoService {
                         .isDelete(c.getIsDelete())
                         .createdAt(c.getCreatedAt())
                         .updatedAt(c.getUpdatedAt())
-                        .likeCount(commentLikeRepository.countByComment(c))
-                        .isLike(commentLikeRepository.existsByMember_IdAndComment_Id(memberId, c.getId()))
+                        .likeCount(commentLikeService.getLikeCount(c.getId()))
+                        .isLike(commentLikeService.checkMemberLikeComment(c.getId(), memberId))
                         .build());
             }else{
                 replyResponses.add(CommentReplyResponse.builder()
@@ -109,7 +105,7 @@ public class CommentDtoService {
                         .isDelete(c.getIsDelete())
                         .createdAt(c.getCreatedAt())
                         .updatedAt(c.getUpdatedAt())
-                        .likeCount(commentLikeRepository.countByComment(c))
+                        .likeCount(commentLikeService.getLikeCount(c.getId()))
                         .build());
             }
 

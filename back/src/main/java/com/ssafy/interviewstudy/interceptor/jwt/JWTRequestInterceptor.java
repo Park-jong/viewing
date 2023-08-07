@@ -35,7 +35,6 @@ public class JWTRequestInterceptor implements HandlerInterceptor {
         else return true;
 
 
-
         //JWT관리 클래스 생성
         JWTProvider jwtProvider = new JWTProviderImpl();
 

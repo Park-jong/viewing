@@ -58,10 +58,7 @@ public class MemberController {
     ) {
         if (authorizeCode == null) {
             //로그인 실패인데 이페이지 온거니까 리다이렉트 시켜버려
-            HttpHeaders responseHttpHeaders = new HttpHeaders();
-            //프론트 소셜 로그인페이지로 ㄱㄱ (어디 사이트로 할지 고르는 페이지)
-            responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.home));
-            return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
+            return ResponseEntity.badRequest().body("auth code가 없습니다");
         }
 
         //access Token 가져오기
@@ -71,9 +68,7 @@ public class MemberController {
 
         if(!accessTokenResult.getIsSuccess()){
             //로그인 실패
-            HttpHeaders responseHttpHeaders = new HttpHeaders();
-            responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.home));
-            return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
+            return ResponseEntity.badRequest().body("accessToken 가져오기 실패");
         }
 
         String accessToken = accessTokenResult.getAccessToken();
@@ -84,9 +79,7 @@ public class MemberController {
 
         if(!memberInfoResult.getIsSucess()){
             //이메일 가져오는거 실패 (서버 잘못,,)
-            HttpHeaders responseHttpHeaders = new HttpHeaders();
-            responseHttpHeaders.setLocation(URI.create(RedirectUriSupport.home));
-            return new ResponseEntity<>(responseHttpHeaders, HttpStatus.MOVED_PERMANENTLY);
+            return ResponseEntity.badRequest().body("이메일 가져오기 실패");
         }
 
         //이메일롷 현재 멤버 찾아보기

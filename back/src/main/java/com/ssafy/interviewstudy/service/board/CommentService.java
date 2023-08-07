@@ -4,12 +4,17 @@ import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.board.ArticleComment;
 import com.ssafy.interviewstudy.domain.board.CommentLike;
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.domain.notification.Notification;
+import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.CommentResponse;
+import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.repository.board.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import com.ssafy.interviewstudy.repository.board.CommentLikeRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
+import com.ssafy.interviewstudy.service.notification.NotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,32 +26,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
-    private BoardRepository boardRepository;
-    private ArticleCommentRepository articleCommentRepository;
-    private CommentLikeRepository commentLikeRepository;
-    private MemberRepository memberRepository;
-    private CommentDtoService commentDtoService;
+    private final BoardRepository boardRepository;
+    private final ArticleCommentRepository articleCommentRepository;
+    private final CommentLikeRepository commentLikeRepository;
+    private final MemberRepository memberRepository;
+    private final CommentDtoService commentDtoService;
 
-    @PersistenceContext
-    EntityManager em;
+    private final NotificationService notificationService;
 
-    @Autowired
-    public CommentService(BoardRepository boardRepository, ArticleCommentRepository articleCommentRepository, CommentLikeRepository commentLikeRepository
-            , CommentDtoService commentDtoService, MemberRepository memberRepository) {
-        this.boardRepository = boardRepository;
-        this.articleCommentRepository = articleCommentRepository;
-        this.commentLikeRepository = commentLikeRepository;
-        this.memberRepository = memberRepository;
-        this.commentDtoService = commentDtoService;
-    }
 
     // 게시글 댓글 저장
-    @JWTRequired
     public Integer saveComment(Integer articleId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         ArticleComment comment = articleCommentRepository.save(commentDtoService.toEntity(commentRequest));
+
+       if(comment.getId()!=null) {
+           notificationService.sendNotificationToMember(
+                   NotificationDto.fromEntity(
+                           Notification.builder()
+                                   .author(comment.getArticle().getAuthor())
+                                   .content("회원님의 "+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
+                                   .notificationType(NotificationType.BoardComment)
+                                   .build()
+                   )
+           );
+       }
 
         return comment.getId();
     }

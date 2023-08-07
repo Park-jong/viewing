@@ -5,38 +5,7 @@ import SearchBoxBoard from "../components/Board/SearchBoxBoard";
 import { useEffect, useState } from "react";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import MainButton from "../components/Button/MainButton";
-
-//자유게시판
-// const data = [
-//   {
-//     author: {
-//       id: 1,
-//       nickname: "배고파요",
-//       hat: "모자",
-//       character: "cow",
-//       background: "#ff6767",
-//     },
-//     article_id: 123,
-//     title: "제목입니다",
-//     view_count: 123,
-//     comment_count: 123,
-//     like_count: 25,
-//   },
-//   {
-//     author: {
-//       id: 1,
-//       nickname: "배고파요",
-//       hat: "모자",
-//       character: "cow",
-//       background: "#ff6767",
-//     },
-//     article_id: 123,
-//     title: "제목입니다",
-//     view_count: 123,
-//     comment_count: 123,
-//     like_count: 25,
-//   },
-// ];
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -45,24 +14,36 @@ const Container = styled.div`
   align-items: center;
 `;
 
-export default function BoardFree() {
+export default function BoardCommon() {
   const [data, setData] = useState([]);
+  const navigate = useNavigate()
+  const type = useLocation().pathname.split('/')[2]
+  const param = (type) => {
+    if (type === "free") {
+      return "general"
+    } else if (type === "interview") {
+      return "review"
+    } else if (type === "question") {
+      return "qna"
+    }
+  }
+  console.log(param(type))
 
   useEffect(()=>{
-    customAxios().get("boards/general")
+    customAxios().get(`boards/${param(type)}`)
     .then((res) => {
       setData(res.data)
     })
     .catch((err) => {
       console.log(err)
     })
-  },[])
+  },[type])
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} width={1000} type={"free"}/>
+      <ArticleList data={data} width={1000} type={type}/>
       <SearchBoxBoard></SearchBoxBoard>
-      <MainButton content={"글쓰기"} width={100} height={30}></MainButton>
+      <MainButton content={"글쓰기"} width={80} height={35} onClick={() => navigate(`/board/write?type=${type}`)}></MainButton>
     </Container>
   );
 }

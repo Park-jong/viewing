@@ -55,11 +55,11 @@ public class ArticleComment {
     @JoinColumn(name = "reply_comment_id")
     private ArticleComment comment;
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     @OrderBy("createdAt asc")
     private List<ArticleComment> replies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private List<CommentLike> likes = new ArrayList<>();
 
     @Builder

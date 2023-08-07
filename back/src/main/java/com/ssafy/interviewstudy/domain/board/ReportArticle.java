@@ -38,7 +38,7 @@ public class ReportArticle {
     @CreatedDate
     private LocalDateTime reportedAt;
 
-    @OneToMany(mappedBy = "reportArticle")
+    @OneToMany(mappedBy = "reportArticle", cascade = CascadeType.REMOVE)
     private List<ReportReason> reasons = new ArrayList<>();
 
     @Builder

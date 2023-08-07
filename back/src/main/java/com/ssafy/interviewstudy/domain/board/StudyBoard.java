@@ -46,13 +46,13 @@ public class StudyBoard {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<StudyBoardComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "studyArticle")
+    @OneToMany(mappedBy = "studyArticle", cascade = CascadeType.REMOVE)
     private List<ArticleFile> files = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<ReportArticle> reports = new ArrayList<>();
 
     public void modifyArticle(BoardRequest boardRequest) {

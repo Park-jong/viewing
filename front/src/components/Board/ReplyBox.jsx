@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { UserReducer } from "./../../modules/UserReducer/UserReducer";
 import { useLocation } from "react-router-dom";
 import CommentAxios from "../../modules/Other/Axios/CommentAxios";
+import SubButton from "./../Button/SubButton";
 
 // const Container = styled.div`
 //   width: 800px;
@@ -91,6 +92,14 @@ const ReplyCount = styled.div`
   margin-right: 10px;
 `;
 
+const ButtonsContainer = styled.div`
+  display: inline-block;
+`;
+
+const ButtonsFlex = styled.div`
+  display: flex;
+`;
+
 export default function ReplyBox({
   comment_id,
   nickname,
@@ -104,31 +113,65 @@ export default function ReplyBox({
   isLike,
   isNestedReply,
   setReply,
-  author
+  author,
 }) {
   const [showInput, setShowInput] = useState(false); // Use parentheses instead of square brackets
   const toggleShowInput = () => setShowInput(!showInput);
-  const userId = useSelector((state) => state.UserReducer.userId);
+  const memberId = useSelector((state) => state.UserReducer.memberId);
   const param = useLocation().pathname.split("/")[3];
+  const [isUpdating, setIsUpdating] = useState(false);
+  const text = (isUpdating, isDelete, content) => {
+    if (isDelete) {
+      return "삭제된 메세지입니다.";
+    } else if (isUpdating) {
+      return (
+        <ReplyInput
+          commentId={comment_id}
+          value={content}
+          setReply={setReply}
+          update={true}
+          setIsUpdating={(a) => setIsUpdating(a)}
+        />
+      );
+    } else {
+      return content;
+    }
+  };
 
-  const handleLike = () => {
+  const handleLike = (isDelete) => {
+    if (isDelete) {
+      return;
+    } else {
+      customAxios()
+        .post(`members/${memberId}/likes/comments/${comment_id}`)
+        .then((res) => {
+          CommentAxios(setReply, param);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const handleDislike = (isDelete) => {
+    if (isDelete) {
+      return;
+    } else {
+      customAxios()
+        .delete(`members/${memberId}/likes/comments/${comment_id}`)
+        .then((res) => {
+          CommentAxios(setReply, param);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const handleDelete = () => {
     customAxios()
-      .post(`members/${userId}/likes/comments/${comment_id}`)
+      .delete(`boards/${param}/comments/${comment_id}`)
       .then((res) => {
-        CommentAxios(setReply, param)
+        CommentAxios(setReply, param);
       })
       .catch((err) => console.log(err));
   };
-
-  const handleDislike = () => {
-    customAxios()
-      .delete(`members/${userId}/likes/comments/${comment_id}`)
-      .then((res) => {
-        CommentAxios(setReply, param)
-      })
-      .catch((err) => console.log(err));
-  };
-
   return (
     <>
       <ReplyContainer isNestedReply={isNestedReply}>
@@ -139,15 +182,36 @@ export default function ReplyBox({
             nickname={nickname}
           />
         </UserStyled>
-        <Content isNestedReply={isNestedReply}>{content} {author===userId ? <button>수정하기</button> : <></>}</Content>
+        <Content isNestedReply={isNestedReply}>
+          {text(isUpdating, isDelete, content)}
+          {author === memberId && !isDelete ? (
+            <ButtonsContainer>
+              <ButtonsFlex>
+                <SubButton
+                  content="수정하기"
+                  onClick={() => setIsUpdating(true)}
+                ></SubButton>
+                <SubButton
+                  content="삭제하기"
+                  onClick={() => handleDelete()}
+                ></SubButton>
+              </ButtonsFlex>
+            </ButtonsContainer>
+          ) : (
+            <></>
+          )}
+        </Content>
 
         <BottomContainer isNestedReply={isNestedReply}>
           <CreatedAt> {created_at}</CreatedAt>
           <LikeCount>
             {isLike ? (
-              <SolidLikeIcon onClick={() => handleDislike()} size={16} />
+              <SolidLikeIcon
+                onClick={() => handleDislike(isDelete)}
+                size={16}
+              />
             ) : (
-              <LikeIcon onClick={() => handleLike()} size={16} />
+              <LikeIcon onClick={() => handleLike(isDelete)} size={16} />
             )}
             {like_count}
           </LikeCount>
@@ -158,7 +222,9 @@ export default function ReplyBox({
             </ReplyCount>
           )}
         </BottomContainer>
-        {showInput && <ReplyInput commentId={comment_id} setReply={setReply} />}
+        {showInput && !isDelete && (
+          <ReplyInput commentId={comment_id} setReply={setReply} />
+        )}
       </ReplyContainer>
     </>
   );

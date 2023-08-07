@@ -24,7 +24,7 @@ const Username =styled.div`
 `
 
 
-export default function UserProfile({ backgroundcolor, characterimg, nickname }) {
+export default function UserProfile({ backgroundcolor, characterimg, nickname, width=32, height=32 }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const AlertRef = useRef(null);

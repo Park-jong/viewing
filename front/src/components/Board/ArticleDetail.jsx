@@ -7,7 +7,7 @@ import {
   BiSolidHeart,
 } from "react-icons/bi";
 import UserProfile from "../Common/UserProfile";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PiSirenLight } from "react-icons/pi";
 
 // import { data } from "../Layout/db";
@@ -16,6 +16,7 @@ import { customAxios } from "../../modules/Other/Axios/customAxios";
 import { useSelector } from "react-redux";
 import { UserReducer } from "./../../modules/UserReducer/UserReducer";
 import ArticleAxios from "../../modules/Other/Axios/ArticleAxios";
+import SubButton from "../Button/SubButton";
 
 const ArticleContainer = styled.div`
   max-width: 800px;
@@ -88,37 +89,64 @@ const BottomContainer = styled.div`
   justify-content: space-between;
 `;
 
-export default function ArticleDetail({ data, setData }) {
+const ButtonContainer = styled.div`
+  display: flex;
+`;
+const ButtonContainerContainer = styled.div`
+  display: inline-block;
+`;
+
+export default function ArticleDetail({ data, setData, count }) {
   // const boardType = useParams(); // Extract the boardType from the URL
   // console.log(boardType);
 
   const param = useLocation().pathname.split("/")[3];
   const type = useLocation().pathname.split("/")[2];
   const location = useLocation();
-  const userId = useSelector((state) => state.UserReducer.userId);
+  const memberId = useSelector((state) => state.UserReducer.memberId);
   const url = location.pathname;
   let boardType = "";
   const pattern = /\/board\/(\w+)\/\d+/;
   const matches = url.match(pattern);
+  const navigate = useNavigate();
   if (matches) {
     boardType = matches[1];
     // console.log(boardType); // "free"가 콘솔에 출력됩니다.
   }
 
-  const handleLike = (user_id, article_id) => {
+  const board_type = () => {
+    if (type === "free") {
+      return "general";
+    } else if (type === "interview") {
+      return "review";
+    } else if (type === "question") {
+      return "qna";
+    }
+  };
+
+  const handleLike = (member_id, article_id) => {
     customAxios()
-      .post(`members/${user_id}/likes/boards/${article_id}`)
+      .post(`members/${member_id}/likes/boards/${article_id}`)
       .then((res) => {
-        ArticleAxios(setData, param, type)
+        ArticleAxios(setData, param, type);
       })
       .catch((err) => console.log(err));
   };
 
-  const handleDislike = (user_id, article_id) => {
+  const handleDislike = (member_id, article_id) => {
     customAxios()
-      .delete(`members/${user_id}/likes/boards/${article_id}`)
+      .delete(`members/${member_id}/likes/boards/${article_id}`)
       .then((res) => {
-        ArticleAxios(setData, param, type)
+        ArticleAxios(setData, param, type);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleDelete = () => {
+    customAxios()
+      .delete(`boards/${board_type}/${param}`)
+      .then((res) => {
+        navigate(`/board/${type}`);
       })
       .catch((err) => console.log(err));
   };
@@ -186,17 +214,17 @@ export default function ArticleDetail({ data, setData }) {
           <CountInfo>
             <IconWrapper>
               <BiCommentDetail size={16} />
-              <span> &nbsp; {data.comment_count}</span>
+              <span> &nbsp; {count}</span>
             </IconWrapper>
             <IconWrapper>
               {data.is_like ? (
                 <BiSolidHeart
-                  onClick={() => handleDislike(userId, data.article_id)}
+                  onClick={() => handleDislike(memberId, data.article_id)}
                   size={16}
                 />
               ) : (
                 <BiHeart
-                  onClick={() => handleLike(userId, data.article_id)}
+                  onClick={() => handleLike(memberId, data.article_id)}
                   size={16}
                 />
               )}
@@ -205,8 +233,20 @@ export default function ArticleDetail({ data, setData }) {
           </CountInfo>
 
           <IconWrapper style={{ color: " #888" }}>
+            {data.author && memberId === data.author.member_id ? (
+              <ButtonContainerContainer>
+                <ButtonContainer>
+                  <SubButton
+                    content="수정하기"
+                    onClick={() => navigate(`update`)}
+                  ></SubButton>
+                  <SubButton content="삭제하기" onClick={() => handleDelete()}></SubButton>
+                </ButtonContainer>
+              </ButtonContainerContainer>
+            ) : (
+              <></>
+            )}
             <PiSirenLight size={16} />
-
             <span style={{ fontSize: "12px" }}> &nbsp;신고하기</span>
           </IconWrapper>
         </BottomContainer>

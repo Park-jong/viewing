@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Search from "../../Icons/Search";
 import { Link } from "react-router-dom";
+import MainButton from './../Button/MainButton';
 
 const SearchContainer = styled.div`
   width: 762px;

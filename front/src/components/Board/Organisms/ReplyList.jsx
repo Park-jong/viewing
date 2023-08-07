@@ -11,7 +11,7 @@ export default function ReplyList({ reply, setReply }) {
         <React.Fragment key={idx}>
           <ReplyBox
             comment_id={comment.comment_id}
-            author = {comment.member_id}
+            author = {comment.author.member_id}
             nickname={comment.author.nickname}
             character={comment.author.member_profile_image}
             background={comment.author.member_profile_background}

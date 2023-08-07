@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { BiLike, BiCommentDetail } from "react-icons/bi";
 import UserProfile from "../Common/UserProfile";
@@ -56,11 +56,16 @@ const ButtonReply = styled.button`
   }
 `;
 
-export default function ReplyInput({commentId, setReply}) {
+export default function ReplyInput({commentId, setReply, value, update=false, setIsUpdating}) {
   const [text, setText] = useState("");
   const param = useLocation().pathname.split("/")[3];
   const navigate = useNavigate()
   const location = useLocation().pathname
+
+
+  useEffect(() => {
+    setText(value)
+  }, [])
 
 
   const handleInput = (e) => {
@@ -68,13 +73,24 @@ export default function ReplyInput({commentId, setReply}) {
   };
 
   const handleClick = () => {
-    const url = commentId ? `boards/${param}/comments/${commentId}/replies` : `boards/${param}/comments`
-    customAxios()
-      .post(url,{content : text})
-      .then((res) => {
-        setText("")
-        CommentAxios(setReply, param)
-      });
+    if (update) {
+      const url = `boards/${param}/comments/${commentId}/`
+      customAxios()
+        .put(url,{content : text})
+        .then((res) => {
+          CommentAxios(setReply, param)
+          setIsUpdating(false)
+        });
+
+    } else {
+      const url = commentId ? `boards/${param}/comments/${commentId}/replies` : `boards/${param}/comments`
+      customAxios()
+        .post(url,{content : text})
+        .then((res) => {
+          CommentAxios(setReply, param)
+          setText("")
+        });
+    }
   };
 
   return (

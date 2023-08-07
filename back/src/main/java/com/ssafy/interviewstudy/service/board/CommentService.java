@@ -11,6 +11,7 @@ import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import com.ssafy.interviewstudy.repository.board.CommentLikeRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +62,10 @@ public class CommentService {
 
     // 게시글 댓글 조회
     public List<CommentResponse> findComments(Integer memberId, Integer articleId){
+        Sort sort = Sort.by(
+                Sort.Order.asc("createdAt"),
+                Sort.Order.asc("cr.createdAt")
+        );
         List<ArticleComment> comment = articleCommentRepository.findAllByArticle(boardRepository.findById(articleId).get());
         System.out.println(comment.size());
         findReplies(comment);

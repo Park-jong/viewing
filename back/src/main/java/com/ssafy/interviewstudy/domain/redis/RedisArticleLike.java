@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @RedisHash("article")
-public class ArticleLikeRedis {
+public class RedisArticleLike {
 
     @Id
     private Integer articleId;
@@ -15,7 +15,7 @@ public class ArticleLikeRedis {
     private Integer memberId;
 
     @Builder
-    public ArticleLikeRedis(Integer articleId, Integer memberId) {
+    public RedisArticleLike(Integer articleId, Integer memberId) {
         this.articleId = articleId;
         this.memberId = memberId;
     }

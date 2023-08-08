@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
@@ -56,24 +56,22 @@ const StyledLink = styled(Link)`
 export default function StudySideBar() {
   const [clicked, setClicked] = useState(document.location.pathname);
 
-  const navigate = useNavigate();
   const location = useLocation();
 
   const member = useSelector((state) => state.UserReducer);
   const memberId = member.memberId;
   const studyId = location.pathname.split("/")[2];
   const [isLeader, setIsLeader] = useState(false);
-  const [menuList, setMenuList] = useState([
-    "스터디 정보",
+  const [manageMenu, setManageMenu] = useState("스터디 정보");
+  const menuList = [
     "스터디 캘린더",
     "스터디 게시판",
     "스터디 채팅",
     "영상회의 참여",
     "참여신청관리",
     "탈퇴하기",
-  ]);
+  ];
   const linkList = [
-    `/study/${studyId}`,
     `/study/${studyId}/calendar`,
     `/study/${studyId}/board`,
     `/study/${studyId}/chat`,
@@ -86,14 +84,19 @@ export default function StudySideBar() {
     customAxios()
       .get(`studies/${studyId}`)
       .then(({ data }) => {
-        console.log(data);
         if (data.leader.member_id === memberId) {
           setIsLeader(() => true);
-          menuList[0] = "스터디 관리";
-          setMenuList((prev) => [...menuList]);
         }
       });
   }, []);
+
+  useEffect(() => {
+    if (isLeader) {
+      setManageMenu(() => "스터디 관리");
+    } else {
+      setManageMenu(() => "스터디 정보");
+    }
+  }, [isLeader]);
 
   function handleClick(menu) {
     setClicked(menu);
@@ -115,11 +118,17 @@ export default function StudySideBar() {
     <Container>
       <SidebarContainer>
         <Study>스터디</Study>
+        <StyledLink
+          to={`/study/${studyId}`}
+          onClick={() => handleClick(manageMenu)}
+        >
+          <Menu $active={clicked === manageMenu}>{manageMenu}</Menu>
+        </StyledLink>
         {menuListDoms}
       </SidebarContainer>
       {/* <StudySideBar></StudySideBar> */}
       <div>
-        <Outlet />
+        <Outlet context={{ isLeader, setIsLeader }} />
       </div>
     </Container>
   );

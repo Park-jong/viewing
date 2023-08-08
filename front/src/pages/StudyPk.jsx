@@ -1,3 +1,9 @@
+import { useOutletContext } from "react-router-dom";
+import StudyPkAdmin from "./StudyPkAdmin";
+import StudyPkInfo from "./StudyPkInfo";
+
 export default function StudyPk() {
-  return <>1 </>;
+  const { isLeader } = useOutletContext();
+
+  return <>{isLeader ? <StudyPkAdmin /> : <StudyPkInfo />}</>;
 }

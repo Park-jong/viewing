@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MemberEmailSupport implements MemberInfoSupport{
+public class MemberIdPlatformSupport implements MemberInfoSupport{
     @Override
     public MemberInfoResult getMemberInfo(SocialLoginType socialLoginType,String accessToken) {
 
@@ -56,32 +56,50 @@ public class MemberEmailSupport implements MemberInfoSupport{
             ex.printStackTrace();
             return MemberInfoResult
                     .builder()
-                    .email(null)
+                    .memberId(null)
                     .isSucess(false)
                     .build();
         }
         LinkedHashMap responseMap;
+        String memberId = null;
         String email = null;
         try{
             responseMap = (LinkedHashMap) getMemberInfoResponse
                     .getBody();
 
-            if(socialLoginType==SocialLoginType.kakao){
-                responseMap = (LinkedHashMap) responseMap.get("kakao_account");
+            if(socialLoginType==SocialLoginType.google){
+                memberId = (String) responseMap.get("sub");
             }
-            email = (String)responseMap.get("email");
+            if(socialLoginType==SocialLoginType.kakao){
+                memberId = ((Long) responseMap.get("id")).toString();
+            }
+            if(socialLoginType==SocialLoginType.github){
+                memberId = ((Integer) responseMap.get("id")).toString();
+            }
+
+            try{
+                //이메일도 얻어보기
+                if(socialLoginType==SocialLoginType.kakao){
+                    responseMap = (LinkedHashMap) responseMap.get("kakao_account");
+                }
+                email = (String) responseMap.get("email");
+            }
+            catch(Exception e){
+            }
         }
         catch(Exception e){
             return MemberInfoResult
                     .builder()
-                    .email(null)
+                    .memberId(null)
                     .isSucess(false)
                     .build();
         }
         return MemberInfoResult
                 .builder()
-                .email(null)
-                .isSucess(false)
+                .memberId(memberId)
+                .socialLoginType(socialLoginType)
+                .email(email)
+                .isSucess(true)
                 .build();
     }
 }

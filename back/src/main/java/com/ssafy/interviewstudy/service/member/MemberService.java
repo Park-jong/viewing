@@ -4,6 +4,7 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.MemberProfileChangeDto;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
+import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,11 @@ public class MemberService {
     public void changeMemberNickname(Member member,String nickname){
         member.changeNickname(nickname);
         em.flush();
+    }
+
+    public Member findByIdAndPlatform(String id, SocialLoginType socialLoginType){
+        Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginType(id,socialLoginType);
+        return member;
     }
 
     @Transactional

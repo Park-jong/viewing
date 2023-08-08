@@ -2,13 +2,18 @@ package com.ssafy.interviewstudy.service.study;
 
 import com.querydsl.core.Tuple;
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.domain.notification.Notification;
+import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.domain.study.*;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
+import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
 import com.ssafy.interviewstudy.dto.study.*;
 import com.ssafy.interviewstudy.exception.calendar.updateFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.*;
+import com.ssafy.interviewstudy.service.notification.NotificationService;
 import com.ssafy.interviewstudy.support.file.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,6 +49,7 @@ public class StudyService {
     private final StudyChatRepository studyChatRepository;
     private final StudyCalendarRepository studyCalendarRepository;
     private  final StudyBookmarkRepository studyBookmarkRepository;
+    private final NotificationService notificationService;
 
     private FileManager fm = FileManager.getInstance();
 
@@ -200,6 +206,18 @@ public class StudyService {
             }
         }
 
+        //스터디 리더에게 스터디 신청 알림을 보내자!
+        if(studyRequest.getId()!=null){
+            notificationService.sendNotificationToMember(
+                    NotificationDto
+                            .builder()
+                            .notificationType(NotificationType.StudyRequest)
+                            .content(study.getTitle()+" 스터디에 가입신청이 왔습니다.")
+                            .memberId(study.getLeader().getId())
+                            .build()
+            );
+        }
+
         return studyRequest.getId();
     }
 
@@ -252,13 +270,39 @@ public class StudyService {
         StudyMember sm = new StudyMember(studyRequest.getStudy(), studyRequest.getApplicant());
         sm.updateLeader(false);
         studyMemberRepository.save(sm);
+
+        //스터디가 승인되었을때
+        //승인된 멤버에게 알림을 보내자
+        if(sm.getId()!=null){
+            notificationService.sendNotificationToMember(
+                    NotificationDto
+                            .builder()
+                            .memberId(memberId)
+                            .content(studyRequest.getStudy().getTitle()+" 스터디에 가입이 승인되었습니다! ")
+                            .notificationType(NotificationType.StudyRequest)
+                            .build()
+            );
+        }
     }
 
     //가입 신청 거절
     @Transactional
     public void rejectRequest(Integer requestId, Integer studyId, Integer memberId){
         StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
+        //deleteRequest전에 study를 가져오자
+        Study study = studyRequest.getStudy();
         deleteRequest(requestId);
+
+        //스터디가 거절되었을때
+        notificationService.sendNotificationToMember(
+              NotificationDto
+                      .builder()
+                      .content(study.getTitle()+" 스터디에 가입신청이 거절 되었습니다.")
+                      .notificationType(NotificationType.StudyRequest)
+                      .memberId(memberId)
+                      .build()
+        );
+
     }
 
     //가입 신청 취소
@@ -287,12 +331,23 @@ public class StudyService {
             return false;
         }
         studyMemberRepository.deleteStudyMemberByStudyIdAndMemberId(studyId, memberId);
+
+        //스터디에서 추방되었을때 추방된 당사자에게 알림
+        notificationService.sendNotificationToMember(
+                NotificationDto
+                        .builder()
+                        .content(study.getTitle()+" 스터디에서 추방되었습니다.")
+                        .memberId(memberId)
+                        .notificationType(NotificationType.StudyRequest)
+                        .build()
+        );
         return true;
     }
 
     //스터디장 위임
     @Transactional
     public void delegateLeader(Integer studyId, Integer leaderId, Integer memberId){
+        StudyMember studyLeader,studyMember;
         try {
             if (leaderId == null || memberId == null || leaderId == memberId) throw new updateFailException("잘못된 요청");
             Study study = studyRepository.findById(studyId).get();
@@ -300,13 +355,38 @@ public class StudyService {
             if (leader.getId() != leaderId) throw new updateFailException("잘못된 요청");
             Member member = memberRepository.findById(memberId).get();
             study.updateLeader(member);
-            StudyMember studyLeader = studyMemberRepository.findByStudyAndMember(study, leader).get();
+            studyLeader = studyMemberRepository.findByStudyAndMember(study, leader).get();
             studyLeader.updateLeader(false);
-            StudyMember studyMember = studyMemberRepository.findByStudyAndMember(study, member).get();
+            studyMember = studyMemberRepository.findByStudyAndMember(study, member).get();
             studyMember.updateLeader(true);
         }catch (NoSuchElementException ne){
             throw new updateFailException("잘못된 요청");
         }
+        //리더 당사자에게 리더가 되었음을 알림
+        notificationService.sendNotificationToMember(
+                NotificationDto
+                        .builder()
+                        .notificationType(NotificationType.Leader)
+                        .content(studyMember.getStudy().getTitle()+" 스터디의 리더가 되셨습니다!")
+                        .memberId(memberId)
+                        .build()
+        );
+
+        //스터디원들에게 리더가 변경되었음을 알림
+        notificationService.sendNotificationToStudyMember(
+                NotificationStudyDto
+                        .builder()
+                        .notificationDto(
+                                NotificationDto
+                                        .builder()
+                                        .notificationType(NotificationType.Leader)
+                                        .content(studyMember.getStudy().getTitle()+" 스터디의 리더가 변경되었습니다.")
+                                        .memberId(memberId)
+                                        .build()
+                        )
+                        .studyId(studyId)
+                        .build()
+        );
     }
 
     //스터디원 목록 확인
@@ -359,6 +439,25 @@ public class StudyService {
         Member member = memberRepository.findById(studyCalendarDtoRequest.getMemberId()).get();
         StudyCalendar studyCalendar = new StudyCalendar(study, member, studyCalendarDtoRequest);
         studyCalendarRepository.save(studyCalendar);
+        
+        //스터디에 일정이 등록될 경우 스터디원들에게 알림을 보냄
+        if(studyCalendar.getId()!=null){
+            notificationService
+                    .sendNotificationToStudyMember(
+                            NotificationStudyDto
+                                    .builder()
+                                    .notificationDto(
+                                            NotificationDto
+                                                    .builder()
+                                                    .notificationType(NotificationType.StudyCalendar)
+                                                    .content(study.getTitle()+" 스터디에 일정이 등록되었습니다!")
+                                                    .memberId(member.getId())
+                                                    .build()
+                                    )
+                                    .studyId(studyId)
+                                    .build()
+                    );
+        }
         return studyCalendar.getId();
     }
 

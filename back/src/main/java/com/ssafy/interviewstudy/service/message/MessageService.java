@@ -2,6 +2,7 @@ package com.ssafy.interviewstudy.service.message;
 
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.message.Message;
+import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.dto.message.MessageCreatedResponse;
 import com.ssafy.interviewstudy.dto.message.MessageListResponse;
 import com.ssafy.interviewstudy.dto.message.MessageSendRequest;
@@ -75,6 +76,7 @@ public class MessageService {
                         .builder()
                         .memberId(messageSendRequest.getReceiverId())
                         .content("메시지가 도착했습니다! "+message.getTitle())
+                        .notificationType(NotificationType.Message)
                         .build());
 
         return new MessageCreatedResponse(message.getId());

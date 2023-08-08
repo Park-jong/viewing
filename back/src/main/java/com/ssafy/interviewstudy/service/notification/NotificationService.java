@@ -3,13 +3,21 @@ package com.ssafy.interviewstudy.service.notification;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.notification.Notification;
 import com.ssafy.interviewstudy.domain.notification.NotificationType;
+import com.ssafy.interviewstudy.domain.study.Study;
+import com.ssafy.interviewstudy.domain.study.StudyMember;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
+import com.ssafy.interviewstudy.dto.study.StudyMemberDto;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.notification.EmitterRepository;
 import com.ssafy.interviewstudy.repository.notification.NotificationRepository;
+import com.ssafy.interviewstudy.repository.study.StudyMemberRepository;
+import com.ssafy.interviewstudy.repository.study.StudyRepository;
+import com.ssafy.interviewstudy.service.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -30,6 +38,8 @@ public class NotificationService {
 
     //멤버 리포지토리
     private final MemberRepository memberRepository;
+
+    private final StudyMemberRepository studyMemberRepository;
 
     //SSE 연결시간
     private final Long sseEmitterTimeOut= 60L*60L*24L;
@@ -81,7 +91,7 @@ public class NotificationService {
     }
 
     //특정 멤버에게 이벤트 보내기
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendNotificationToMember(NotificationDto notificationDto){
 
         Notification notification = dtoToEntity(notificationDto);
@@ -97,6 +107,20 @@ public class NotificationService {
                 }
         );
 
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendNotificationToStudyMember(NotificationStudyDto notificationStudyDto){
+        List<StudyMember> studyMembers = studyMemberRepository.findMembersByStudyId(notificationStudyDto.getStudyId());
+        NotificationDto notificationDto = notificationStudyDto.getNotificationDto();
+        studyMembers.forEach(
+                (studyMember)->{
+                    Integer memberId = studyMember.getMember().getId();
+                    sendNotificationToMember(
+                            NotificationDto.changeMember(notificationDto,memberId)
+                    );
+                }
+        );
     }
 
     @Transactional

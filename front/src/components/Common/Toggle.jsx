@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import React, { useState } from "react";
+import styled, { css, keyframes } from "styled-components";
 
 const Container = styled.div`
   display: flex;
   align-items: center;
-`
+`;
 
 const H1 = styled.h1`
   font-size: 15px;
   font-weight: 700;
   color: var(--gray-800);
-`
+`;
 
 const colorAnimation = keyframes`
   from {
@@ -30,7 +30,6 @@ const colorAnimation2 = keyframes`
     background-color: var(--gray-200);
   }
 `;
-
 
 const ToggleContainer = styled.div`
   width: 40px;
@@ -57,7 +56,6 @@ const ToggleContainer = styled.div`
       animation: ${colorAnimation2} 0.3s linear;
       background-color: var(--gray-200);
     `}
-
 `;
 
 const ToggleButton = styled.div`
@@ -74,17 +72,13 @@ const ToggleButton = styled.div`
     `}
 `;
 
-const Toggle = ({text}) => {
-  const [isToggled, setIsToggled] = useState(false);
-
-  const handleToggle = () => {
-    setIsToggled(!isToggled);
-  };
+const Toggle = ({ onClick, isToggled, setIsToggled}) => {
+  // const [isToggled, setIsToggled] = useState(false);
 
   return (
     <Container>
-      <H1 onClick={handleToggle}>모집 중만 보기</H1>
-      <ToggleContainer onClick={handleToggle} $isToggled={isToggled}>
+      <H1 onClick={onClick}>모집 중만 보기</H1>
+      <ToggleContainer onClick={onClick} $isToggled={isToggled}>
         <ToggleButton $isToggled={isToggled} />
       </ToggleContainer>
     </Container>

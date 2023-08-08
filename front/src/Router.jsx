@@ -118,6 +118,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+      { path: "makestudy", element: <MakeStudy /> },
       {
         path: "study/:studyPk/detail",
         element: <StudyPkDetail />,

@@ -8,6 +8,7 @@ import UserProfile from "../components/Common/UserProfile";
 import { BiUser } from "react-icons/bi";
 import ApplyModal from "../components/Modal/ApplyModal";
 import CompanyJobTag from "../components/Study/CompanyJobTag";
+import TagStyled from "../components/Study/TagStyled";
 
 const studyData = {
   study_id: 1,
@@ -36,47 +37,70 @@ const Title = styled.div`
   font-size: 36px;
   font-weight: 700;
 
-  margin-top: 15px;
+  margin-top: 60px;
+  margin-bottom: 30px;
 `;
 
-const DateContainer = styled.div`
+const DetailTitle = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+
+  margin-bottom: 30px;
+`;
+
+const CreatedAt = styled.div`
+  font-size: 12px;
+`;
+
+const FlexContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
 `;
 
-const Leader = styled.div`
-  margin-top: 15px;
-`;
-
-const Date = styled.div`
-  color: var(--gray-400);
-  font-weight: 300;
-
-  margin-top: 10px;
-`;
-
-const CapacityContainer = styled.div`
-  display: flex;
-  align-items: center;
-
-  color: var(--gray-400);
-  font-weight: 300;
-`;
-
-const Capacity = styled.div``;
-
-const Tag = styled.div``;
-
 const Description = styled.div`
   margin: 30px 0px;
-  padding: 30px;
-  border: 1px solid var(--gray-200);
+  padding: 30px 0px;
+  /* border: 1px solid var(--gray-200); */
+  color: var(--gray-700);
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
+`;
+
+const HorizontalLine = styled.div`
+  width: 100%;
+  height: 3px;
+  background-color: var(--gray-100);
+  margin-bottom: 20px;
+`;
+
+const DetailContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  font-size: 20px;
+
+  margin-bottom: 100px;
+`;
+
+const DetailTag = styled.div`
+  color: var(--gray-500);
+  font-weight: 500;
+
+  display: flex;
+  align-items: center;
+
+  margin: 10px 0;
+`;
+
+const DetailContent = styled.div`
+  color: var(--gray-900);
+  font-weight: 500;
+  display: flex;
   align-items: center;
 `;
 
@@ -107,36 +131,54 @@ export default function StudyPkDetail() {
 
   return (
     <Container>
-      <CompanyJobTag
-        company={studyData.applied_company}
-        position={studyData.applied_job}
-        career={studyData.career_level}
-      />
       <Title>{studyData.title}</Title>
-      <Leader>
+      <FlexContainer>
         <UserProfile
           nickname={studyData.leader.nickname}
           backgroundcolor={studyData.leader.background}
           characterimg={studyData.leader.character}
         />
-      </Leader>
-      <DateContainer>
-        <Date>
-          마감날짜 {"   "}
-          {studyData.deadline}
-        </Date>
-        <CapacityContainer>
-          <BiUser style={{ marginRight: "5px" }} />
-          {studyData.head_count}/{studyData.capacity}
-        </CapacityContainer>
-      </DateContainer>
-      <Tag>
-        {studyData.tags.map((tag, idx) => {
-          <Tag>{tag}</Tag>;
-        })}
-      </Tag>
-      <Description>{studyData.description}</Description>
+        &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+        <CreatedAt>{studyData.created_at}</CreatedAt>
+      </FlexContainer>
+      <HorizontalLine style={{ marginTop: "20px" }}></HorizontalLine>
 
+      <DetailContainer>
+        <DetailTag>
+          마감일&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <DetailContent>{studyData.deadline}</DetailContent>
+        </DetailTag>
+        <DetailTag>
+          모집인원&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <DetailContent>
+            <BiUser style={{ marginRight: "5px" }} />
+            {studyData.head_count}/{studyData.capacity}
+          </DetailContent>
+        </DetailTag>
+        <DetailTag>
+          회사/직무&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <DetailContent>
+            <CompanyJobTag
+              company={studyData.applied_company}
+              position={studyData.applied_job}
+              career={studyData.career_level}
+              style={{ marginTop: "0px" }}
+            />
+          </DetailContent>
+        </DetailTag>
+        <DetailTag>
+          태그&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;
+          <DetailContent>
+            {studyData.tags.map((tag, idx) => (
+              <TagStyled key={idx} content={tag} />
+            ))}
+          </DetailContent>
+        </DetailTag>
+      </DetailContainer>
+
+      <DetailTitle>스터디소개</DetailTitle>
+      <HorizontalLine></HorizontalLine>
+      <Description>{studyData.description}</Description>
       <ButtonContainer>
         <MainButton
           marginright={10}
@@ -147,7 +189,6 @@ export default function StudyPkDetail() {
           onClick={handleOpenModal}
         />
       </ButtonContainer>
-
       <ApplyModal
         isModalOpen={isModalOpen}
         onClose={handleCloseModal}

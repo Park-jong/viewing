@@ -6,8 +6,22 @@ import SearchBox from "../components/Home/SearchBox";
 import StyledButton from "../components/Button/StyledButton";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import Tag from "../components/Study/Tag";
+import { Link, useLocation } from "react-router-dom";
+import TagStyled from "../components/Study/TagStyled";
+
+const tags = [
+  "자소서 제출 필수",
+  "합격인증 필수",
+  "압박면접",
+  "정보공유",
+  "영상회의 필수",
+  "중고신입",
+  "온라인 진행",
+  "오프라인 진행",
+  "온오프라인 혼합",
+  "피드백 필수",
+  "초보 환영",
+];
 
 const data = [
   {
@@ -62,7 +76,7 @@ const data = [
         head_count: 2, // 현재인원
         created_at: "2023-07-26T15:17",
         deadline: "2023-07-26T15:17", //마감날짜.
-        recruitment: true,
+        recruitment: false,
         leader: {
           member_id: 33,
           nickname: "jiwoo",
@@ -120,17 +134,19 @@ const SearchContainer = styled.div`
   margin-bottom: 16px;
 `;
 
-// Styled div for the horizontal line
 const HorizontalLine = styled.div`
   width: 100%;
   height: 1px;
-  background-color: var(--gray-200); /* You can change the color as needed */
+  background-color: var(--gray-200);
   margin-bottom: 20px;
 `;
 
 const TagContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  overflow-x: auto;
+
+  padding-bottom: 20px;
 `;
 
 const BodyContainer = styled.div`
@@ -143,7 +159,7 @@ const BodyContainer = styled.div`
 export default function Search() {
   const url = new URL(document.URL);
   const query = url.searchParams; //?appliedCompany=%E3%85%87%E3%85%87&job=hh&careerLevel=ALL
-  console.log(query.get("appliedCompany"));
+  // console.log(query.get("appliedCompany"));
 
   const appliedCompany = query.get("appliedCompany");
   const job = query.get("job");
@@ -151,7 +167,7 @@ export default function Search() {
 
   const [searchData, SetsearchData] = useState([]);
 
-  console.log(searchData);
+  // console.log(searchData);
 
   //search 통신 보내기
   // useEffect(() => {
@@ -166,42 +182,61 @@ export default function Search() {
 
   const handleClick = () => {};
 
+  //토글 로직
+  const [isToggled, setIsToggled] = useState(false);
+  const [filteredData, setFilteredData] = useState(data[0].content);
+
+  console.log(data[0]);
+  console.log(data[0].content);
+
+  useEffect(() => {
+    if (isToggled) {
+      setFilteredData(data[0].content.filter((study) => study.recruitment));
+    } else {
+      setFilteredData(data[0].content);
+    }
+  }, [isToggled]);
+
+  // const handleToggle = () => {
+  //   setIsToggled(!isToggled);
+  // };
+
   return (
     <Container>
       <ToggleContainer>
-        <Toggle />
+        <Toggle
+          onClick={() => setIsToggled(!isToggled)}
+          isToggled={isToggled}
+          setIsToggled={setIsToggled}
+        />
       </ToggleContainer>
       <SearchContainer>
-        {/* <MainButton
-          marginright={10}
-          width={200}
-          height={45}
-          fontSize={16}
-          content="스터디 생성하기
-"
-          onClick={handleClick}
-        /> */}
-
-        <StyledButton
-          marginright={10}
-          width={200}
-          height={45}
-          fontSize={16}
-          content="스터디 생성하기"
-          onClick={handleClick}
-        />
+        <Link to={"/makestudy"}>
+          <StyledButton
+            marginright={10}
+            width={200}
+            height={45}
+            fontSize={16}
+            content="스터디 생성하기"
+            onClick={handleClick}
+          />
+        </Link>
         <SearchBox width={950} />
       </SearchContainer>
 
       <HorizontalLine></HorizontalLine>
 
       <TagContainer>
-        <Tag />
+        {tags.map((tag, idx) => (
+          <TagStyled key={idx} content={tag} />
+        ))}
       </TagContainer>
 
+      <HorizontalLine></HorizontalLine>
+
       <BodyContainer>
-        {data[0].content && data[0].content.length > 0 ? (
-          data[0].content.map((study, idx) => (
+        {filteredData.length > 0 ? (
+          filteredData.map((study, idx) => (
             <StudyCard key={idx} study={study} />
           ))
         ) : (

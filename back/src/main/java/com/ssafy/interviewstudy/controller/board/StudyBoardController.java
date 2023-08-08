@@ -6,15 +6,22 @@ import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
+import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.dto.board.StudyBoardResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.board.StudyBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 @RequestMapping("/studies/{studyId}/boards")
@@ -38,11 +45,12 @@ public class StudyBoardController {
     @Authority(authorityType = AuthorityType.Study_Member)
     @PostMapping
     public ResponseEntity<?> articleAdd(@PathVariable Integer studyId, @MemberInfo JWTMemberInfo memberInfo,
-                                        @RequestBody BoardRequest boardRequest){
+                                        @RequestBody BoardRequest boardRequest,
+                                        @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
         boardRequest.setMemberId(memberInfo.getMemberId());
         System.out.println(studyId);
         boardRequest.setStudyId(studyId);
-        Integer articleId = boardService.saveBoard(boardRequest);
+        Integer articleId = boardService.saveBoard(boardRequest, requestFiles);
 
         return ResponseEntity.ok(articleId);
     }
@@ -53,10 +61,11 @@ public class StudyBoardController {
     @PutMapping("/{articleId}")
     public ResponseEntity<?> articleModify(@PathVariable Integer studyId, @PathVariable Integer articleId,
                                            @MemberInfo JWTMemberInfo memberInfo,
-                                           @RequestBody BoardRequest boardRequest){
+                                           @RequestBody BoardRequest boardRequest,
+                                           @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
         boardRequest.setMemberId(memberInfo.getMemberId());
         boardRequest.setStudyId(studyId);
-        StudyBoardResponse response = boardService.modifyArticle(articleId, boardRequest);
+        StudyBoardResponse response = boardService.modifyArticle(articleId, boardRequest, requestFiles);
 
         return ResponseEntity.ok(response);
     }
@@ -86,6 +95,34 @@ public class StudyBoardController {
         else boardResponses = boardService.findBoardList(studyId, pageable);
 
         return ResponseEntity.ok(boardResponses);
+    }
+
+    // 파일 다운로드
+    @GetMapping("/{articleId}/files/{fileId}")
+    public ResponseEntity<?> articleFile(@PathVariable Integer articleId, @PathVariable Integer fileId){
+        FileResponse file = boardService.fileDownload(fileId);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        String fileName = null;
+        try {
+            fileName = URLEncoder.encode(file.getName(), "UTF-8").replaceAll("\\+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        httpHeaders.setContentType(MediaType.parseMediaType(file.getFileType()));
+        httpHeaders.setContentLength(file.getFileData().length);
+        httpHeaders.setContentDispositionFormData("attachment", fileName);
+
+        return new ResponseEntity<>(file.getFileData(), httpHeaders, HttpStatus.OK);
+    }
+
+    // 파일 삭제
+    @JWTRequired(required = true)
+    @DeleteMapping("/{articleId}/files")
+    public ResponseEntity<?> articleFile(@PathVariable Integer articleId){
+        boardService.removeFiles(articleId);
+
+        return ResponseEntity.ok().build();
     }
 
 }

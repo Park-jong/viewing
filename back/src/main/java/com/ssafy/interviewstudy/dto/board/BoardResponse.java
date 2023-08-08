@@ -30,10 +30,10 @@ public class BoardResponse {
     private BoardType boardType;
     private Boolean isLike;
 
-    private List<ArticleFile> articleFiles;
+    private List<FileResponse> articleFiles;
 
     @Builder
-    public BoardResponse(Integer articleId, Author author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount, Integer commentCount, Integer likeCount, BoardType boardType, Boolean isLike, List<ArticleFile> articleFiles) {
+    public BoardResponse(Integer articleId, Author author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount, Integer commentCount, Integer likeCount, BoardType boardType, Boolean isLike, List<FileResponse> articleFiles) {
         this.articleId = articleId;
         this.author = author;
         this.title = title;

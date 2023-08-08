@@ -1,13 +1,13 @@
 package com.ssafy.interviewstudy.domain.board;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "article_file")
 public class ArticleFile {
     @Id
@@ -32,5 +32,17 @@ public class ArticleFile {
     @Column(name = "file_type", nullable = false)
     private String fileType;
 
+    public ArticleFile(Board article, MultipartFile files, String saveFileName) {
+        this.article = article;
+        this.originalFileName = files.getOriginalFilename();
+        this.fileType = files.getContentType();
+        this.saveFileName = saveFileName;
+    }
 
+    public ArticleFile(StudyBoard studyArticle, MultipartFile files, String saveFileName) {
+        this.studyArticle = studyArticle;
+        this.originalFileName = files.getOriginalFilename();
+        this.fileType = files.getContentType();
+        this.saveFileName = saveFileName;
+    }
 }

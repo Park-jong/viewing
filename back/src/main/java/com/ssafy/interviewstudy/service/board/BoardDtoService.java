@@ -24,7 +24,6 @@ public class BoardDtoService {
                 .content(boardRequest.getContent())
                 .author(author)
                 .boardType(boardRequest.getBoardType())
-                .files(boardRequest.getFiles())
                 .build();
 
         return article;
@@ -52,7 +51,6 @@ public class BoardDtoService {
         boardResponse.setContent(article.getContent());
         boardResponse.setCreatedAt(article.getCreatedAt());
         boardResponse.setUpdatedAt(article.getUpdatedAt());
-        boardResponse.setArticleFiles(article.getFiles());
 
         return boardResponse;
     }

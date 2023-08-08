@@ -37,11 +37,12 @@ const TestVideo = styled.video`
 `;
 
 const TestAudio = styled.div`
-  width: 100px;
-  height: 480px;
-  background-color: red;
+  width: 30px;
+  height: ${(props) => `${props.height * 3}px`};
+  background: linear-gradient(lightCyan, skyBlue, deepSkyBlue);
   margin-right: 5px;
   margin-right: 5px;
+  margin-top: auto;
 `;
 
 const UtilContainer = styled.div`
@@ -90,8 +91,6 @@ export default function MeetingPkReady() {
     // return JSON.parse(stringData);
     return { background: "red", character: "cow", nickname: "tmp" };
   };
-
-  const CLIENT_URL = process.env.REACT_APP_CLIENT;
 
   const OV = new OpenVidu();
 
@@ -173,9 +172,7 @@ export default function MeetingPkReady() {
   // 비디오 기기 변경
   const onChangeVideo = (e) => {
     setVideoDevice(JSON.parse(e.target.value));
-    if (document.getElementById("videoTest").srcObject) {
-      testVideo();
-    }
+    testVideo();
   };
 
   // 오디오 기기 변경
@@ -183,18 +180,15 @@ export default function MeetingPkReady() {
     setAudioDevice(JSON.parse(e.target.value));
   };
 
-  const videoTestBox = useRef();
-  const audioTestBox = useRef();
-
   const testVideo = async () => {
-    const element = videoTestBox;
+    const element = document.getElementById("videoTest");
     let stream = undefined;
     const savedId = currVideo.current.value
       ? JSON.parse(currVideo.current.value).deviceId
       : devices.video[0];
     if (savedId === "noDevice") {
       const img = document.createElement("img");
-      img.src = `url(/profile/${getUserData().character})`;
+      img.src = `/profile/${getUserData().character}.png`;
       const canvas = document.createElement("canvas");
       canvas.width = img.width;
       canvas.height = img.height;
@@ -264,69 +258,69 @@ export default function MeetingPkReady() {
       audio: audioDevice ? audioDevice : devices.audio[0],
     };
     localStorage.setItem("deviceInfo", JSON.stringify(deviceInfo));
-    window.open(`${CLIENT_URL}/meeting/${studyId}`);
-    navigate(`/study${studyId}/meeting`);
+    window.open(`/meeting/${studyId}`);
+    navigate(`/study/${studyId}/meeting`);
   };
 
   return (
-    <Container>
-      <HeaderBox></HeaderBox>
-      <BodyContainer>
-        <TitleContainer>{"스터디 이름"}</TitleContainer>
-        <TestContainer>
-          <TestVideo
-            id="videoTest"
-            autoPlay={true}
-            ref={videoTestBox}
-          ></TestVideo>
-          <TestAudio
-            ref={audioTestBox}
-            style={{ height: { volume } }}
-          ></TestAudio>
-        </TestContainer>
-        <UtilContainer>
-          <LabelContainer htmlFor="choiceVideo">비디오 선택</LabelContainer>
-          <SelectContainer
-            id="choiceVideo"
-            value={JSON.stringify(videoDevice)}
-            ref={currVideo}
-            onChange={onChangeVideo}
-          >
-            {devices.video
-              ? devices.video.map((d) => (
-                  <OptionContainer value={JSON.stringify(d)} key={d.deviceId}>
-                    {d.label}
-                  </OptionContainer>
-                ))
-              : undefined}
-          </SelectContainer>
-          <LabelContainer htmlFor="choiceAudio">오디오 선택</LabelContainer>
-          <SelectContainer
-            id="choiceAudio"
-            onChange={onChangeAudio}
-            value={JSON.stringify(audioDevice)}
-            ref={currAudio}
-          >
-            {devices.audio
-              ? devices.audio.map((d) => (
-                  <OptionContainer value={JSON.stringify(d)} key={d.deviceId}>
-                    {d.label}
-                  </OptionContainer>
-                ))
-              : undefined}
-          </SelectContainer>
-          <EntranceContainer>
-            <MainButton
-              content={"입장"}
-              fontSize={30}
-              height={50}
-              width={80}
-              onClick={goToConferencePage}
-            ></MainButton>
-          </EntranceContainer>
-        </UtilContainer>
-      </BodyContainer>
-      <Footer></Footer>
-    </Container>
+    <>
+      <img
+        src={`/profile/${getUserData().character}.png`}
+        alt="프로필이미지"
+        hidden
+      ></img>
+      <Container>
+        <HeaderBox></HeaderBox>
+        <BodyContainer>
+          <TitleContainer>{"스터디 이름"}</TitleContainer>
+          <TestContainer>
+            <TestVideo id="videoTest" autoPlay={true}></TestVideo>
+            <TestAudio height={volume}></TestAudio>
+          </TestContainer>
+          <UtilContainer>
+            <LabelContainer htmlFor="choiceVideo">비디오 선택</LabelContainer>
+            <SelectContainer
+              id="choiceVideo"
+              value={JSON.stringify(videoDevice)}
+              ref={currVideo}
+              onChange={onChangeVideo}
+            >
+              {devices.video
+                ? devices.video.map((d) => (
+                    <OptionContainer value={JSON.stringify(d)} key={d.deviceId}>
+                      {d.label}
+                    </OptionContainer>
+                  ))
+                : undefined}
+            </SelectContainer>
+            <LabelContainer htmlFor="choiceAudio">오디오 선택</LabelContainer>
+            <SelectContainer
+              id="choiceAudio"
+              onChange={onChangeAudio}
+              value={JSON.stringify(audioDevice)}
+              ref={currAudio}
+            >
+              {devices.audio
+                ? devices.audio.map((d) => (
+                    <OptionContainer value={JSON.stringify(d)} key={d.deviceId}>
+                      {d.label}
+                    </OptionContainer>
+                  ))
+                : undefined}
+            </SelectContainer>
+            <EntranceContainer>
+              <MainButton
+                content={"입장"}
+                fontSize={30}
+                height={50}
+                width={80}
+                onClick={goToConferencePage}
+              ></MainButton>
+            </EntranceContainer>
+          </UtilContainer>
+        </BodyContainer>
+        <Footer></Footer>
+      </Container>
+    </>
   );
 }

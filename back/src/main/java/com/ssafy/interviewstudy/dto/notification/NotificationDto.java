@@ -49,6 +49,15 @@ public class NotificationDto {
         this.createdAt = createdAt;
     }
 
+    public static NotificationDto changeMember(NotificationDto notificationDto,Integer changeMemberId){
+        return NotificationDto
+                .builder()
+                .notificationType(notificationDto.getNotificationType())
+                .memberId(changeMemberId)
+                .content(notificationDto.getContent())
+                .build();
+    }
+
     public static NotificationDto fromEntity(Notification notification){
         return NotificationDto
                 .builder()

@@ -18,6 +18,9 @@ public enum NotificationType {
     //스터디 게시판에 내 게시글에 댓글이 달림
     //스터디이름 게시글 제목
     StudyComment,
+    //스터디에 일정이 등록됨
+    //스터디이름
+    StudyCalendar,
     //스터디 게시판 내 댓글에 답글이 달림
     //스터디 이름 댓글 내용
     StudyReply,

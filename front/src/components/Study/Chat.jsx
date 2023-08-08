@@ -9,9 +9,6 @@ import { BiCaretUp, BiCaretDown } from "react-icons/bi";
 import { useSelector } from "react-redux";
 
 const Container = styled.div`
-  border: "2px solid black";
-  padding: "16px";
-
   width: 1000px;
   height: 500px;
 `;

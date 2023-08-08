@@ -48,7 +48,7 @@ public class CommentService {
            notificationService.sendNotificationToMember(
                    NotificationDto
                            .builder()
-                           .memberId(comment.getArticle().getAuthor().getId())
+                           .memberId(commentRequest.getMemberId())
                            .content("게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
                            .notificationType(NotificationType.BoardComment)
                            .url(articleId.toString())
@@ -68,7 +68,7 @@ public class CommentService {
                 .sendNotificationToMember(
                         NotificationDto
                                 .builder()
-                                .memberId(comment.getAuthor().getId())
+                                .memberId(commentRequest.getMemberId())
                                 .content("댓글에 대댓글이 달렸습니다.")
                                 .url(commentId.toString())
                                 .notificationType(NotificationType.StudyComment)

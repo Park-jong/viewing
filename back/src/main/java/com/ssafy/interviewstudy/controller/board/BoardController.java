@@ -35,7 +35,7 @@ public class BoardController {
     // 글 상세조회(하나)
     @JWTRequired
     @GetMapping("/{articleId}")
-    public ResponseEntity<?> articleDetail(@MemberInfo JWTMemberInfo memberInfo, @PathVariable BoardType boardType, @PathVariable Integer articleId){
+    public ResponseEntity<?> articleDetail(@MemberInfo JWTMemberInfo memberInfo, @PathVariable BoardType boardType, @PathVariable Integer articleId) {
         Integer memberId = (memberInfo == null) ? null : memberInfo.getMemberId();
         BoardResponse boardResponse = boardService.findArticle(memberId, articleId, boardType);
 
@@ -47,8 +47,8 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<?> articleAdd(@PathVariable BoardType boardType,
                                         @MemberInfo JWTMemberInfo memberInfo,
-                                        @RequestBody BoardRequest boardRequest,
-                                        @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
+                                        @RequestPart(value = "request", required = false) BoardRequest boardRequest,
+                                        @RequestPart(value = "request_files", required = false) List<MultipartFile> requestFiles) {
         boardRequest.setBoardType(boardType);
         boardRequest.setMemberId(memberInfo.getMemberId());
         Integer articleId = boardService.saveBoard(boardRequest, requestFiles);
@@ -62,10 +62,14 @@ public class BoardController {
     @PutMapping("/{articleId}")
     public ResponseEntity<?> articleModify(@PathVariable BoardType boardType, @PathVariable Integer articleId,
                                            @MemberInfo JWTMemberInfo memberInfo,
-                                           @RequestBody BoardRequest boardRequest,
-                                           @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
+                                           @RequestPart(value = "request", required = false) BoardRequest boardRequest,
+                                           @RequestPart(value = "request_files", required = false) List<MultipartFile> requestFiles) {
         boardRequest.setBoardType(boardType);
         boardRequest.setMemberId(memberInfo.getMemberId());
+
+        // 삭제된 파일의 리스트를 받아서 서버와 db에서 삭제
+        if (boardRequest.getFilesDeleted()!= null) boardService.removeFileList(boardRequest.getFilesDeleted());
+
         BoardResponse response = boardService.modifyArticle(articleId, boardRequest, requestFiles);
 
         return ResponseEntity.ok(response);
@@ -75,9 +79,9 @@ public class BoardController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member_Board)
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<?> articleRemove(@PathVariable Integer articleId){
+    public ResponseEntity<?> articleRemove(@PathVariable Integer articleId) {
         Integer response = boardService.removeArticle(articleId);
-        if(response == 0)
+        if (response == 0)
             return ResponseEntity.badRequest().body("없는 게시물입니다.");
 
         return ResponseEntity.ok(response);
@@ -87,9 +91,9 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<?> articleList(@RequestParam(value = "searchBy", required = false) String searchBy,
                                          @RequestParam(value = "keyword", required = false) String keyword,
-                                         @PathVariable BoardType boardType, Pageable pageable){
+                                         @PathVariable BoardType boardType, Pageable pageable) {
         List<BoardResponse> boardResponses;
-        if(StringUtils.hasText(keyword))
+        if (StringUtils.hasText(keyword))
             boardResponses = boardService.findArticleByKeyword(searchBy, keyword, boardType, pageable);
         else boardResponses = boardService.findBoardList(boardType, pageable);
 
@@ -98,7 +102,7 @@ public class BoardController {
 
     // 파일 다운로드
     @GetMapping("/{articleId}/files/{fileId}")
-    public ResponseEntity<?> articleFile(@PathVariable Integer boardType, @PathVariable Integer articleId, @PathVariable Integer fileId){
+    public ResponseEntity<?> articleFile(@PathVariable BoardType boardType, @PathVariable Integer articleId, @PathVariable Integer fileId) {
         FileResponse file = boardService.fileDownload(fileId);
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -118,7 +122,7 @@ public class BoardController {
     // 파일 삭제
     @JWTRequired(required = true)
     @DeleteMapping("/{articleId}/files")
-    public ResponseEntity<?> articleFile(@PathVariable Integer boardType, @PathVariable Integer articleId){
+    public ResponseEntity<?> articleFile(@PathVariable BoardType boardType, @PathVariable Integer articleId) {
         boardService.removeFiles(articleId);
 
         return ResponseEntity.ok().build();

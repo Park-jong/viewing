@@ -19,8 +19,8 @@ public class BoardRequest {
     // 그냥 게시판일 때는 null
     private Integer studyId;
 
-
     private String title;
     private String content;
     private BoardType boardType;
+    private List<FileResponse> filesDeleted;
 }

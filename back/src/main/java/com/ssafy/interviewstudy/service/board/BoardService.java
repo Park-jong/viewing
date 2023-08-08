@@ -96,8 +96,18 @@ public class BoardService {
             return 0;
         }
 
+        removeFiles(articleId);
         boardRepository.deleteById(articleId);
         return articleId;
+    }
+
+    @Transactional
+    public void removeFileList(List<FileResponse> files){
+        for (FileResponse f : files) {  
+            ArticleFile file = articleFileRepository.findById(f.getFileId()).get();
+            fm.delete(file.getSaveFileName());
+            articleFileRepository.deleteById(file.getId());
+        }
     }
 
     // 글 저장
@@ -141,7 +151,12 @@ public class BoardService {
     // 파일 삭제
     @Transactional
     public void removeFiles(Integer articleId){
-        articleFileRepository.removeByArticleId(articleId);
+        List<ArticleFile> files = articleFileRepository.findByArticle_Id(articleId);
+
+        for (ArticleFile file : files) {
+            fm.delete(file.getSaveFileName());
+            articleFileRepository.deleteById(file.getId());
+        }
     }
 
     // 파일 다운로드
@@ -174,7 +189,5 @@ public class BoardService {
         if (article.getAuthor().getId() == memberId) return true;
         else return false;
     }
-
-    // 게시물 파일 저장, 삭제, 조회? 다운로드
 
 }

@@ -87,6 +87,7 @@ public class StudyBoardService {
             return 0;
         }
 
+        removeFiles(articleId);
         boardRepository.deleteById(articleId);
         return articleId;
     }
@@ -158,7 +159,12 @@ public class StudyBoardService {
     // 파일 삭제
     @Transactional
     public void removeFiles(Integer articleId){
-        articleFileRepository.removeByStudyArticleId(articleId);
+        List<ArticleFile> files = articleFileRepository.findByStudyArticle_Id(articleId);
+
+        for (ArticleFile file : files) {
+            fm.delete(file.getSaveFileName());
+            articleFileRepository.deleteById(file.getId());
+        }
     }
 
     // 파일 다운로드

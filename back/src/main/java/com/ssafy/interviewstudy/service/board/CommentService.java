@@ -42,19 +42,19 @@ public class CommentService {
     public Integer saveComment(Integer articleId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         ArticleComment comment = articleCommentRepository.save(commentDtoService.toEntity(commentRequest));
-
+        
+        //댓글이 달릴 게시글 작성자에게 알림을 보내줘야함
        if(comment.getId()!=null) {
            notificationService.sendNotificationToMember(
-                   NotificationDto.fromEntity(
-                           Notification.builder()
-                                   .author(comment.getArticle().getAuthor())
-                                   .content("회원님의 "+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
-                                   .notificationType(NotificationType.BoardComment)
-                                   .build()
-                   )
+                   NotificationDto
+                           .builder()
+                           .memberId(comment.getArticle().getAuthor().getId())
+                           .content("게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
+                           .notificationType(NotificationType.BoardComment)
+                           .url(articleId.toString())
+                           .build()
            );
        }
-
         return comment.getId();
     }
 
@@ -63,9 +63,20 @@ public class CommentService {
         commentRequest.setArticleId(articleId);
         ArticleComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
 
+        //대댓글이 달릴 댓글의 작성자에게 알림 보내기
+        notificationService
+                .sendNotificationToMember(
+                        NotificationDto
+                                .builder()
+                                .memberId(comment.getAuthor().getId())
+                                .content("댓글에 대댓글이 달렸습니다.")
+                                .url(commentId.toString())
+                                .notificationType(NotificationType.StudyComment)
+                                .build()
+                );
+
         return articleCommentRepository.save(comment).getId();
     }
-//    public
 
     // 게시글 댓글 조회
     public List<CommentResponse> findComments(Integer memberId, Integer articleId){

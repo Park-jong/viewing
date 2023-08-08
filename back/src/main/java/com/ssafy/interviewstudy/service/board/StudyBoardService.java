@@ -2,11 +2,15 @@ package com.ssafy.interviewstudy.service.board;
 
 import com.ssafy.interviewstudy.domain.board.ArticleFile;
 import com.ssafy.interviewstudy.domain.board.StudyBoard;
+import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.dto.board.StudyBoardResponse;
+import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
 import com.ssafy.interviewstudy.repository.board.ArticleFileRepository;
 import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
+import com.ssafy.interviewstudy.service.notification.NotificationService;
 import com.ssafy.interviewstudy.support.file.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +29,7 @@ public class StudyBoardService {
     private final ArticleFileRepository articleFileRepository;
     private final StudyBoardRepository boardRepository;
     private final StudyBoardDtoService boardDtoService;
+    private final NotificationService notificationService;
 
     private FileManager fm = FileManager.getInstance();
 
@@ -104,6 +109,25 @@ public class StudyBoardService {
             }
         }
 
+        //스터디 게시판에 게시글이 달리면 스터디원들에게 알림이 가야함
+        if(article.getId()!=null){
+            notificationService
+                    .sendNotificationToStudyMember(
+                            NotificationStudyDto
+                                    .builder()
+                                    .notificationDto(
+                                            NotificationDto
+                                                    .builder()
+                                                    .memberId(boardRequest.getMemberId())
+                                                    .content(article.getStudy().getTitle()+" 스터디에 게시글이 작성되었습니다.")
+                                                    .url(article.getStudy().getId().toString()+" "+article.getId())
+                                                    .notificationType(NotificationType.StudyArticle)
+                                                    .build()
+                                    )
+                                    .studyId(article.getStudy().getId())
+                                    .build()
+                    );
+        }
         return article.getId();
     }
 

@@ -55,6 +55,7 @@ public class NotificationDto {
                 .notificationType(notificationDto.getNotificationType())
                 .memberId(changeMemberId)
                 .content(notificationDto.getContent())
+                .url(notificationDto.getUrl())
                 .build();
     }
 

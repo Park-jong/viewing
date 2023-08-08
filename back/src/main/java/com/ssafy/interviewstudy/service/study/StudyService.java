@@ -214,6 +214,7 @@ public class StudyService {
                             .notificationType(NotificationType.StudyRequest)
                             .content(study.getTitle()+" 스터디에 가입신청이 왔습니다.")
                             .memberId(study.getLeader().getId())
+                            .url(study.getId().toString())
                             .build()
             );
         }
@@ -280,6 +281,7 @@ public class StudyService {
                             .memberId(memberId)
                             .content(studyRequest.getStudy().getTitle()+" 스터디에 가입이 승인되었습니다! ")
                             .notificationType(NotificationType.StudyRequest)
+                            .url(studyId.toString())
                             .build()
             );
         }
@@ -300,6 +302,7 @@ public class StudyService {
                       .content(study.getTitle()+" 스터디에 가입신청이 거절 되었습니다.")
                       .notificationType(NotificationType.StudyRequest)
                       .memberId(memberId)
+                      .url(studyId.toString())
                       .build()
         );
 
@@ -339,6 +342,7 @@ public class StudyService {
                         .content(study.getTitle()+" 스터디에서 추방되었습니다.")
                         .memberId(memberId)
                         .notificationType(NotificationType.StudyRequest)
+                        .url(studyId.toString())
                         .build()
         );
         return true;
@@ -369,6 +373,7 @@ public class StudyService {
                         .notificationType(NotificationType.Leader)
                         .content(studyMember.getStudy().getTitle()+" 스터디의 리더가 되셨습니다!")
                         .memberId(memberId)
+                        .url(studyId.toString())
                         .build()
         );
 
@@ -382,6 +387,7 @@ public class StudyService {
                                         .notificationType(NotificationType.Leader)
                                         .content(studyMember.getStudy().getTitle()+" 스터디의 리더가 변경되었습니다.")
                                         .memberId(memberId)
+                                        .url(studyId.toString())
                                         .build()
                         )
                         .studyId(studyId)
@@ -452,6 +458,7 @@ public class StudyService {
                                                     .notificationType(NotificationType.StudyCalendar)
                                                     .content(study.getTitle()+" 스터디에 일정이 등록되었습니다!")
                                                     .memberId(member.getId())
+                                                    .url(studyId.toString())
                                                     .build()
                                     )
                                     .studyId(studyId)

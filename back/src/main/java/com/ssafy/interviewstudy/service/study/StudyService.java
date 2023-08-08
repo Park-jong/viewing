@@ -86,6 +86,7 @@ public class StudyService {
     public StudyDtoResponse findStudyById(JWTMemberInfo memberInfo, Integer id){
         Integer memberId = memberInfo.getMemberId();
         Study study = studyRepository.findStudyById(id);
+        checkExist(study);
         long headCount = studyMemberRepository.countStudyMemberByStudy(study);
         StudyBookmark sb = studyBookmarkRepository.findStudyBookmarkByStudyIdAndMemberId(id, memberId);
         return new StudyDtoResponse(study, sb != null, headCount);
@@ -95,6 +96,7 @@ public class StudyService {
     public StudyDetailDtoResponse findStudyDetailById(JWTMemberInfo memberInfo, Integer id){
         Integer memberId = memberInfo.getMemberId();
         Study study = studyRepository.findStudyById(id);
+        checkExist(study);
         studyMemberRepository.findMembersByStudy(study);
         return new StudyDetailDtoResponse(study);
     }
@@ -145,6 +147,7 @@ public class StudyService {
     @Transactional
     public void removeStudy(Integer studyId){
         Study study = studyRepository.findById(studyId).get();
+        study.updateLeader(null);
         study.deleteStudy();
         studyMemberRepository.deleteStudyMemberByStudy(study);
     }
@@ -152,9 +155,11 @@ public class StudyService {
     //스터디 정보 수정
     @Transactional
     public void modifyStudy(Integer studyId, StudyDtoRequest studyDtoRequest){
-        Study study = studyRepository.findById(studyId).get();
+        Optional<Study> studyOp = studyRepository.findById(studyId);
 
-        if(study == null) throw new NotFoundException("스터디를 찾을 수 없습니다.");
+        if(studyOp == null) throw new NotFoundException("스터디를 찾을 수 없습니다.");
+
+        Study study = studyOp.get();
 
         study.updateStudy(studyDtoRequest);
 
@@ -534,5 +539,9 @@ public class StudyService {
             return null;
         }
         return studyRequestOp.get();
+    }
+
+    private void checkExist(Study study){
+        if(study == null || study.getIsDelete()) throw new NotFoundException("스터디를 찾을 수 없습니다.");
     }
 }

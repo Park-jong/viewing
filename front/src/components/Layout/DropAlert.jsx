@@ -4,10 +4,13 @@ import styled from "styled-components";
 import Alarm from "../../Icons/Alarm";
 import { Link } from "react-router-dom";
 import { PiBellThin } from "react-icons/pi";
+import { useSelector } from "react-redux";
+import { UserReducer } from "./../../modules/UserReducer/UserReducer";
+import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 
 const Container = styled.div`
   cursor: pointer;
-  
+
   /* background-color: white; */
 `;
 
@@ -93,6 +96,13 @@ export default function DropAlert() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showItems, setShowItems] = useState(4); // Number of items to show initially
   const AlertRef = useRef(null);
+  const SERVER = "http://70.12.246.87:8080/";
+  const memberId = useSelector((state) => state.UserReducer.memberId);
+  const token = localStorage.getItem("access_token");
+
+  // SSE
+
+  const EventSource = EventSourcePolyfill;
 
   const handleAlarmClick = () => {
     setMenuOpen(!menuOpen);
@@ -105,11 +115,35 @@ export default function DropAlert() {
   };
 
   useEffect(() => {
+    let eventSource;
+    const fetchSse = () => {
+      eventSource = new EventSource(
+        SERVER + `members/${memberId}/notification`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+
+      eventSource.onmessage = (event) => {
+        const res = event.data;
+        console.log(res);
+      };
+
+      eventSource.onerror = async (event) => {
+        console.log(event);
+        eventSource.close();
+      };
+    };
+    fetchSse();
+
     window.addEventListener("click", handleClickOutside);
     return () => {
       window.removeEventListener("click", handleClickOutside);
       // Reset showItems to 4 when the dropdown is closed
       setShowItems(4);
+      eventSource.close();
     };
   }, []);
 

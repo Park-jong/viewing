@@ -7,7 +7,6 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
   width: 100%;
   background-color: white;
 `;
@@ -27,10 +26,9 @@ const InputButton = styled.div`
 
 const CurrentFile = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  overflow: hidden;
-  width: 400px;
-  height: 50px;
+  width: 900px;
 `;
 
 const SelectedFile = styled.div`
@@ -51,15 +49,17 @@ const Input = styled.input`
   display: none;
 `;
 
-export default function UploadFile({ width, height, setFiles, files }) {
+export default function UploadFile({ width, height, setFiles, files, deleted, setDeleted }) {
   const handleFileChange = (e) => {
     setFiles([...files, ...e.target.files]);
-
   };
   const deleteFile = (file, files) => {
     files.splice(files.findIndex((f) => f===file), 1)
     const temp = [...files]
     setFiles(temp);
+    if(file.fileId) {
+      setDeleted([...deleted, file])
+    }
   };
 
   return (

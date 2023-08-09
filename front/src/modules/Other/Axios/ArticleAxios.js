@@ -16,6 +16,7 @@ export default function ArticleAxios(callback, param, board) {
   return customAxios()
     .get(`boards/${type()}/${param}`)
     .then((res) => {
+      console.log(res.data)
       callback(res.data);
     })
     .catch((err) => {

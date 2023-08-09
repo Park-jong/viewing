@@ -5,6 +5,7 @@ import { customAxios } from "../modules/Other/Axios/customAxios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { UserReducer } from './../modules/UserReducer/UserReducer';
+import UploadFile from './../components/Common/UploadFile';
 
 const Container = styled.div``;
 
@@ -28,7 +29,9 @@ export default function BoardWrite() {
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [files, setFiles] = useState([])
   const param = new URLSearchParams(window.location.search).get("type")
+  const token = localStorage.getItem("access_token");
   const board_type = () => {
     if (param === "free") {
       return "general"
@@ -39,7 +42,6 @@ export default function BoardWrite() {
     }
   }
   const member_id = useSelector(state => state.UserReducer.memberId)
-  const upload_files = []
   const navigate = useNavigate()
 
 
@@ -54,14 +56,31 @@ export default function BoardWrite() {
   };
 
   const SendRequest = (e) => {
-    customAxios().post(`boards/${category}`,{title, content, member_id, board_type, upload_files})
-    .then((res) => {
-      console.log(res.data)
-      navigate(`/board/${param}/${res.data}`)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    const formData = new FormData();
+    const request = {member_id, content,title, category}
+    // formData.append("member_id", member_id);
+    // formData.append("content", text);
+    files.forEach((file)=> formData.append("request_files", file))
+
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(request)], { type: 'application/json' })
+    );
+
+    customAxios()
+      .post(`boards/${category}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then(function (res) {
+        console.log(res);
+        navigate(`/board/${param}/${res.data}`)
+      })
+      .catch((error) => {
+        console.error("에러가 발생했습니다.:", error);
+      });
   }
 
   useEffect(()=>{
@@ -83,6 +102,7 @@ export default function BoardWrite() {
       </Title>
       <Content>내용</Content>
       <TextArea onChange={(e) => handleContent(e)}></TextArea>
+      <UploadFile width={200} height={100} files={files} setFiles={setFiles}></UploadFile>
       <ButtonsContainer>
           <MainButton
             width={80}

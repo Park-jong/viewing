@@ -23,6 +23,7 @@ export default function MainButton({
   fontSize,
   content,
   onClick,
+  type,
 }) {
   return (
     <Container
@@ -31,9 +32,9 @@ export default function MainButton({
       width={width}
       height={height}
       fontSize={fontSize}
+      type={type}
     >
       {content}
     </Container>
   );
 }
-

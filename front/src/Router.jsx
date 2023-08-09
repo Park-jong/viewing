@@ -54,6 +54,7 @@ import ReadyPage from "./testWebRTC/Pages/ReadyPage";
 import StudyPage from "./testWebRTC/Pages/StudyPage";
 import BoardCommon from "./pages/BoardCommon";
 import BoardUpdate from "./pages/BoardUpdate";
+import MakeStudy from "./pages/Makestudy";
 
 const router = createBrowserRouter([
   {

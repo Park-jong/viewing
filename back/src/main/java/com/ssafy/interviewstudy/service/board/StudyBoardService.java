@@ -30,8 +30,7 @@ public class StudyBoardService {
     private final StudyBoardRepository boardRepository;
     private final StudyBoardDtoService boardDtoService;
     private final NotificationService notificationService;
-
-    private FileManager fm = FileManager.getInstance();
+    private final FileManager fm;
 
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
 

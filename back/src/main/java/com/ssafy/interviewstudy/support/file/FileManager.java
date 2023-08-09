@@ -7,43 +7,31 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+@RequiredArgsConstructor
+@Service
+@Component
 public class FileManager {
-    private AmazonS3 s3Client;
-    private final String accessKey = "AKIARQ46CXIWPSR4L7SV"; // 액세스키
-    private final String secretkey = "yRqPCAdGh85oaCkmabP+ohMXFZi1YQ98C7G9q+8m"; // 시크릿키
 
-    private final Regions clientRegion = Regions.AP_NORTHEAST_2; // 한국
-    private final String bucket = "205viewing"; // 버킷명
+    private final AmazonS3 s3Client;
 
-    private FileManager() {
-        createS3Client();
-    }
-
-    // singleton
-    private static final FileManager instance = null;
-
-    public static FileManager getInstance() {
-        if (instance == null) {
-            return new FileManager();
-        } else {
-            return instance;
-        }
-    }
-
-    // aws S3 client 생성
-    private void createS3Client() {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretkey);
-        this.s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(clientRegion).build();
-    }
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket; // 버킷명
 
     // upload 메서드 | 단일 파일 업로드
     public void upload(File file, String key) {

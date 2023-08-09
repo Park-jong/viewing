@@ -26,7 +26,7 @@ import java.util.Objects;
 @Service
 public class BoardService {
 
-    private FileManager fm = FileManager.getInstance();
+    private final FileManager fm;
 
     private final BoardRepository boardRepository;
     private final BoardDtoService boardDtoService;

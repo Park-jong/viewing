@@ -48,10 +48,10 @@ public class StudyService {
     private final StudyRequestFileRepository studyRequestFileRepository;
     private final StudyChatRepository studyChatRepository;
     private final StudyCalendarRepository studyCalendarRepository;
-    private  final StudyBookmarkRepository studyBookmarkRepository;
+    private final StudyBookmarkRepository studyBookmarkRepository;
     private final NotificationService notificationService;
 
-    private FileManager fm = FileManager.getInstance();
+    private  final FileManager fm;
 
     //내 스터디 조회
     public List<StudyDtoResponse> findMyStudies(Integer id){

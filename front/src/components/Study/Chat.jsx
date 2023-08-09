@@ -221,11 +221,15 @@ export default function Chat() {
           return (
             <ChatBox key={m.chat_id}>
               <ChatProfile>
-                <UserProfile
-                  nickname={m.member.nickname}
-                  backgroundcolor={m.member.background}
-                  characterimg={m.member.character}
-                />
+                {m.member.nickname != null ? (
+                  <UserProfile
+                    nickname={m.member.nickname}
+                    backgroundcolor={m.member.background}
+                    characterimg={m.member.character}
+                  />
+                ) : (
+                  <UserProfile nickname={"알 수 없음"} />
+                )}
               </ChatProfile>
               <ChatText>{m.content}</ChatText>
               <ChatTime>{m.created_at}</ChatTime>

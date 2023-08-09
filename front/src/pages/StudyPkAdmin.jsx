@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { customAxios } from "./../modules/Other/Axios/customAxios";
 import UserProfile from "./../components/Common/UserProfile";
-import { BiCrown, BiSolidXSquare } from "react-icons/bi";
-import StyledButton from "./../components/Button/StyledButton";
+import { BiCrown } from "react-icons/bi";
 import StudyToggle from "../components/Study/StudyToggle";
+import { useNavigate } from "react-router-dom";
+
 const Container = styled.div`
   width: 500px;
 `;
@@ -38,7 +39,17 @@ const TagArea = styled.div`
   padding-bottom: 5px;
 `;
 
-const TagBox = styled.span`
+const TagBox = styled.span``;
+
+const SelectedTagBox = styled.span`
+  background: blue;
+  display: inline-flex;
+  align-items: center;
+  margin: 5px;
+  user-select: none;
+`;
+
+const UnselectedTagBox = styled.span`
   background: gray;
   display: inline-flex;
   align-items: center;
@@ -82,27 +93,60 @@ const CareerLevel = styled.div``;
 
 const CareerLevelInputBox = styled.select``;
 
+const StudyJobInputBox = styled.input``;
+
 export default function StudyPkAdmin() {
   const location = useLocation();
 
+  const navigate = useNavigate();
+
   const studyId = location.pathname.split("/")[2];
 
+  const date = new Date();
+  const minDate = date.toISOString().split("T")[0];
   const [memberList, setMemberList] = useState([]);
   const [tagList, setTagList] = useState([]);
   const [studyTitle, setStudyTitle] = useState("");
   const [studyDesc, setStudyDesc] = useState("");
   const [studyLeaderId, setStudyLeaderId] = useState();
   const [company, setCompany] = useState(null);
-  const [job, setJob] = useState(null);
+  const [job, setJob] = useState("");
   const [recruit, setRecruit] = useState(false);
   const [capacity, setCapacity] = useState(0);
   const [deadline, setDeadline] = useState(0);
   const [careerLevel, setCareerLevel] = useState("ALL");
+  const [tagSelected, setTagSelected] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+  const loginMember = useSelector((state) => state.UserReducer);
+  const tags = [
+    "자소서 제출 필수",
+    "합격인증 필수",
+    "압박면접",
+    "정보공유",
+    "영상회의 필수",
+    "중고신입",
+    "온라인 진행",
+    "오프라인 진행",
+    "온오프라인 혼합",
+    "피드백 필수",
+    "초보 환영",
+  ];
 
   const [study, setStudy] = useState({
     title: null,
     description: null,
-    applied_company: 1, //수정 해야함
+    applied_company: "",
     applied_job: null,
     capacity: 0,
     recruitment: null,
@@ -132,31 +176,112 @@ export default function StudyPkAdmin() {
     setCareerLevel(() => e.target.value);
   };
 
+  const changeJob = (e) => {
+    setJob(() => e.target.value);
+  };
+
+  const changeTagState = (idx) => {
+    setTagSelected((prev) => {
+      const arr = [...prev];
+      arr[idx] = !arr[idx];
+      return arr;
+    });
+  };
+
   const deleteStudy = () => {
-    customAxios().delete(`studies/${studyId}`);
+    if (
+      window.confirm(
+        "현재 사용중인 스터디를 해체하시겠습니까?\n스터디의 데이터는 모두 삭제되며 복구할 수 없습니다."
+      )
+    ) {
+      customAxios()
+        .delete(`studies/${studyId}`)
+        .then((res) => {
+          alert("승인되었습니다.");
+          navigate("/");
+        })
+        .catch(() => {
+          alert("실패하였습니다.");
+        });
+    }
   };
 
   const updateStudy = () => {
     const body = {
       title: studyTitle,
       description: studyDesc,
-      applied_company: 1, //수정 해야함
       applied_job: job,
       capacity: capacity,
       recruitment: recruit,
       deadline: new Date(deadline).toJSON().split(".")[0],
       leader_id: study.leader.member_id,
       career_level: careerLevel,
-      tags: [1, 2, 3],
+      tags: [],
     };
-    customAxios()
-      .put(`studies/${studyId}`, body)
-      .then((res) => {});
+    for (let i = 0; i < tagSelected.length; i++) {
+      if (tagSelected[i]) {
+        body.tags.push(i + 1);
+      }
+    }
+    if (
+      window.confirm(
+        "스터디정보를 변경하시겠습니까?\n기존에 저장된 내용은 삭제되며 복구할 수 없습니다."
+      )
+    ) {
+      customAxios()
+        .put(`studies/${studyId}`, body)
+        .then((res) => {
+          alert("변경되었습니다.");
+        })
+        .catch(() => {
+          alert("변경에 실패하였습니다.");
+        });
+    }
   };
 
-  const changeLeader = () => {};
+  const changeLeader = (newLeaderId) => {
+    if (window.confirm("스터디장 권한을 위임하시겠습니까?")) {
+      customAxios()
+        .put(`studies/${studyId}/members/leader`, {
+          before_leader_id: loginMember.memberId,
+          after_leader_id: newLeaderId,
+        })
+        .then((res) => {
+          alert("승인되었습니다.");
+          window.location.reload();
+        })
+        .catch(() => {
+          alert("실패하였습니다.");
+        });
+    }
+  };
 
-  const banLeader = () => {};
+  const banMember = (banMemberId) => {
+    if (
+      window.confirm(
+        "해당 멤버를 추방하시겠습니까?\n추방된 회원의 정보는 삭제됩니다."
+      )
+    ) {
+      customAxios()
+        .delete(`studies/${studyId}/members/${banMemberId}/ban`)
+        .then((res) => {
+          alert("승인되었습니다.");
+          setMemberList((prev) => {
+            const arr = [...prev];
+            for (let i = 0; i < arr.length; i++) {
+              if (arr[i].member_id === banMemberId) {
+                arr.splice(i, 1);
+                break;
+              }
+            }
+            return arr;
+          });
+        })
+        .catch(() => {
+          alert("실패하였습니다.");
+        });
+    }
+  };
 
   useEffect(() => {
     customAxios()
@@ -177,6 +302,18 @@ export default function StudyPkAdmin() {
       });
   }, []);
 
+  useEffect(() => {
+    for (let i = 0; i < tags.length; i++) {
+      if (tagList.includes(tags[i])) {
+        setTagSelected((prev) => {
+          const arr = [...prev];
+          arr[i] = true;
+          return arr;
+        });
+      }
+    }
+  }, [tagList]);
+
   const MemberListDoms = memberList.map((member, idx) => {
     return (
       <MemberBox key={member.member_id}>
@@ -191,18 +328,32 @@ export default function StudyPkAdmin() {
           <BiCrown />
         ) : (
           <>
-            <DelegateButton onClick={changeLeader}>
+            <DelegateButton
+              onClick={() => {
+                changeLeader(member.member_id);
+              }}
+            >
               스터디장 위임
             </DelegateButton>
-            <BanButton onClick={banLeader}>추방하기</BanButton>
+            <BanButton onClick={() => banMember(member.member_id)}>
+              추방하기
+            </BanButton>
           </>
         )}
       </MemberBox>
     );
   });
 
-  const TagListDoms = tagList.map((tag, idx) => {
-    return <TagBox key={idx}>{tag}</TagBox>;
+  const TagListDoms = tags.map((tag, idx) => {
+    return (
+      <TagBox key={idx} onClick={() => changeTagState(idx)}>
+        {tagSelected[idx] ? (
+          <SelectedTagBox>{tag}</SelectedTagBox>
+        ) : (
+          <UnselectedTagBox>{tag}</UnselectedTagBox>
+        )}
+      </TagBox>
+    );
   });
 
   const CareerLevelType = () => {
@@ -221,8 +372,8 @@ export default function StudyPkAdmin() {
       <Title>스터디 관리</Title>
       <StudyManage>
         <StudyToggle state={recruit} setState={setRecruit}></StudyToggle>
-        <DeleteButton onClick={deleteStudy}>스터디 삭제</DeleteButton>
-        <UpdateButton onClick={updateStudy}>변경사항 저장</UpdateButton>
+        <DeleteButton onClick={() => deleteStudy()}>스터디 삭제</DeleteButton>
+        <UpdateButton onClick={() => updateStudy()}>변경사항 저장</UpdateButton>
       </StudyManage>
       <MemberArea>
         <Category>회원 목록</Category>
@@ -233,6 +384,7 @@ export default function StudyPkAdmin() {
         <CapacityInputBox
           type="number"
           value={capacity}
+          min={memberList.length}
           max={6}
           onChange={changeCapacity}
         ></CapacityInputBox>
@@ -251,7 +403,11 @@ export default function StudyPkAdmin() {
       </Company>
       <Job>
         <Category>지원 직무</Category>
-        {job}
+        <StudyJobInputBox
+          type="text"
+          value={job}
+          onChange={changeJob}
+        ></StudyJobInputBox>
       </Job>
       <TagArea>
         <Category>태그 목록</Category>
@@ -277,6 +433,7 @@ export default function StudyPkAdmin() {
           value={deadline}
           type="date"
           onChange={changeDeadline}
+          min={minDate}
         ></DeadLineInputBox>
       </DeadLine>
     </Container>

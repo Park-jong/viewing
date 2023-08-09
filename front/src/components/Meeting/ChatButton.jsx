@@ -4,6 +4,15 @@ const Container = styled.div`
   border: 1px solid black;
 `;
 
-export default function ChatButton() {
-  return <Container>{"채팅"}</Container>;
+export default function ChatButton({ toggleSideBar, changeOption }) {
+  return (
+    <Container
+      onClick={() => {
+        toggleSideBar(false);
+        changeOption("chat");
+      }}
+    >
+      {"채팅"}
+    </Container>
+  );
 }

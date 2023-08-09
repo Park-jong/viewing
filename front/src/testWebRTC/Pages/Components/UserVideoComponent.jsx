@@ -13,7 +13,7 @@ const UserVideoComponent = (props) => {
           {!!props.streamManager.stream.videoActive ? (
             <OpenViduVideoComponent streamManager={props.streamManager} />
           ) : (
-            <img src="test.jpg" alt="profileImage"></img>
+            <img src="/test.jpg" alt="profileImage"></img>
           )}
 
           <div>

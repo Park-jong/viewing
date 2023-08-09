@@ -9,6 +9,10 @@ const Container = styled.div`
   width: 100%;
 `;
 
+const MemberContainer = styled.div`
+  border: 1px solid black;
+`;
+
 const ChatContainer = styled.div`
   border: 1px solid black;
 `;
@@ -17,17 +21,28 @@ const FeedbackContainer = styled.div`
   border: 1px solid black;
 `;
 
-export default function MeetingSideBar() {
+export default function MeetingSideBar({
+  toggleSideBar,
+  option,
+  changeOption,
+}) {
   return (
     <Container>
-      <MeetingTabBar></MeetingTabBar>
-      <MemberBox></MemberBox>
-      <ChatContainer>
+      <MeetingTabBar
+        changeOption={changeOption}
+        toggleSideBar={toggleSideBar}
+      ></MeetingTabBar>
+      <MemberContainer hidden={option !== "member"}>
+        <MemberBox></MemberBox>
+        <MemberBox></MemberBox>
+        <MemberBox></MemberBox>
+      </MemberContainer>
+      <ChatContainer hidden={option !== "chat"}>
         <MeetingChatBox></MeetingChatBox>
         <MeetingChatBox></MeetingChatBox>
         <MeetingChatBox></MeetingChatBox>
       </ChatContainer>
-      <FeedbackContainer>
+      <FeedbackContainer hidden={option !== "feedback"}>
         <MeetingFeedbackBox></MeetingFeedbackBox>
         <MeetingFeedbackBox></MeetingFeedbackBox>
         <MeetingFeedbackBox></MeetingFeedbackBox>

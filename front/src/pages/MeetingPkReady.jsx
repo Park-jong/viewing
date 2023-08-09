@@ -250,8 +250,6 @@ export default function MeetingPkReady() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioDevice]);
 
-  const navigate = useNavigate();
-
   const goToConferencePage = () => {
     const deviceInfo = {
       video: videoDevice ? videoDevice : devices.video[0],
@@ -259,7 +257,7 @@ export default function MeetingPkReady() {
     };
     localStorage.setItem("deviceInfo", JSON.stringify(deviceInfo));
     window.open(`/meeting/${studyId}`);
-    navigate(`/study/${studyId}/meeting`);
+    window.location.replace(`/study/${studyId}/meeting`);
   };
 
   return (

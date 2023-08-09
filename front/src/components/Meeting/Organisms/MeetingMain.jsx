@@ -8,6 +8,8 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+  width: 100%;
+  height: 100%;
 `;
 
 export default function MeetingMain() {

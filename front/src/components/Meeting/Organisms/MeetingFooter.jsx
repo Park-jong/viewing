@@ -13,6 +13,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  width: 100%;
 `;
 
 const GroupingContainer = styled.div`
@@ -20,9 +21,10 @@ const GroupingContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  width: 20%;
 `;
 
-export default function MeetingFooter() {
+export default function MeetingFooter({ toggleSideBar, changeOption }) {
   return (
     <Container>
       <GroupingContainer>
@@ -34,9 +36,18 @@ export default function MeetingFooter() {
         <RecordButton></RecordButton>
       </GroupingContainer>
       <GroupingContainer>
-        <MembersButton></MembersButton>
-        <ChatButton></ChatButton>
-        <FeedbackButton></FeedbackButton>
+        <MembersButton
+          toggleSideBar={toggleSideBar}
+          changeOption={changeOption}
+        ></MembersButton>
+        <ChatButton
+          toggleSideBar={toggleSideBar}
+          changeOption={changeOption}
+        ></ChatButton>
+        <FeedbackButton
+          toggleSideBar={toggleSideBar}
+          changeOption={changeOption}
+        ></FeedbackButton>
       </GroupingContainer>
       <ExitButton></ExitButton>
     </Container>

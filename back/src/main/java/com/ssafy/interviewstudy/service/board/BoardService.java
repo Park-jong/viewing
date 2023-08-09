@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -103,7 +104,7 @@ public class BoardService {
 
     @Transactional
     public void removeFileList(List<FileResponse> files){
-        for (FileResponse f : files) {  
+        for (FileResponse f : files) {
             ArticleFile file = articleFileRepository.findById(f.getFileId()).get();
             fm.delete(file.getSaveFileName());
             articleFileRepository.deleteById(file.getId());
@@ -181,13 +182,14 @@ public class BoardService {
     }
 
 
-    // 글 작성자가 본인인지 아닌지 체크
+    /**
+     * 글 작성자가 본인인지 아닌지 체크
+     */
     public Boolean checkAuthor(Integer articleId, Integer memberId) {
         Board article = boardRepository.findById(articleId).get();
 
         // 본인이면 true, 아니면 false
-        if (article.getAuthor().getId() == memberId) return true;
-        else return false;
+        return Objects.equals(article.getAuthor().getId(), memberId);
     }
 
 }

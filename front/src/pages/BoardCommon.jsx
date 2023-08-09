@@ -30,7 +30,7 @@ export default function BoardCommon() {
   console.log(param(type))
 
   useEffect(()=>{
-    customAxios().get(`boards/${param(type)}`)
+    customAxios().get(`boards/${param(type)}`) // 페이지size, page
     .then((res) => {
       setData(res.data)
     })

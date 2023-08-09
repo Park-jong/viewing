@@ -99,7 +99,7 @@ export default function DropAlert() {
   const SERVER = "http://70.12.246.87:8080/";
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const token = localStorage.getItem("access_token");
-
+  
   // SSE
 
   const EventSource = EventSourcePolyfill;
@@ -131,7 +131,7 @@ export default function DropAlert() {
         console.log(res);
       };
 
-      eventSource.onerror = async (event) => {
+      eventSource.onerror = (event) => {
         console.log(event);
         eventSource.close();
       };

@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.service.notification;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.notification.Notification;
 import com.ssafy.interviewstudy.domain.notification.NotificationType;
@@ -16,6 +17,7 @@ import com.ssafy.interviewstudy.repository.study.StudyRepository;
 import com.ssafy.interviewstudy.service.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
+
+    //JSON화 시키는 Object Mapper
+    private final ObjectMapper objectMapper;
 
     //알림 CRUD 레포지토리
     private final NotificationRepository notificationRepository;
@@ -66,11 +71,9 @@ public class NotificationService {
                         .build(),
                 timeIncludeId,
                 0
-
         );
         if(lastEventId==null) lastEventId=0;
         sendMissingData(lastEventId,memberId,timeIncludeId,sseEmitter);
-
         return sseEmitter;
 
     }
@@ -82,11 +85,12 @@ public class NotificationService {
                             .event()
                             .id(eventId.toString())
                             .name("notification")
-                            .data(notificationDto)
+                            .data(objectMapper.writeValueAsString(notificationDto))
             );
         }
         catch(IOException e){
             emitterRepository.deleteSseEmitterById(emitterId);
+            sseEmitter.complete();
         }
     }
 

@@ -106,8 +106,4 @@ public class Study {
         this.deadline = studyDtoRequest.getDeadline();
         this.isRecruit = studyDtoRequest.getRecruitment();
     }
-
-    public void switchRecruit(boolean isRecruit){
-        this.isRecruit = isRecruit;
-    }
 }

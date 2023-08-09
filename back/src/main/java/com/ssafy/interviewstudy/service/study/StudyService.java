@@ -327,6 +327,7 @@ public class StudyService {
         if(study.getLeader().getId() == memberId){
             return false;
         }
+        studyChatRepository.deleteChatMemberByStudyIdAndAuthorId(studyId, memberId);
         studyMemberRepository.deleteStudyMemberByStudyIdAndMemberId(studyId, memberId);
         return true;
     }
@@ -338,6 +339,7 @@ public class StudyService {
         if(study.getLeader().getId() == memberId){
             return false;
         }
+        studyChatRepository.deleteChatMemberByStudyIdAndAuthorId(studyId, memberId);
         studyMemberRepository.deleteStudyMemberByStudyIdAndMemberId(studyId, memberId);
 
         //스터디에서 추방되었을때 추방된 당사자에게 알림

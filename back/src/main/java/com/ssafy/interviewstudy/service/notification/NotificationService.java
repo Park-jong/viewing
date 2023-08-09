@@ -33,9 +33,9 @@ import java.util.Map;
 public class NotificationService {
 
     //JSON화 시키는 Object Mapper
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    //알림 CRUD 레포지토리
+    //알림 CRUD 레포지토리 
     private final NotificationRepository notificationRepository;
 
     //SSE 연결 핸들러 레포지토리
@@ -47,7 +47,7 @@ public class NotificationService {
     private final StudyMemberRepository studyMemberRepository;
 
     //SSE 연결시간
-    private final Long sseEmitterTimeOut= 60L*60L*24L;
+    private final Long sseEmitterTimeOut= 3600L*60L*60L*24L;
 
     public SseEmitter connect(Integer memberId, Integer lastEventId){
         String timeIncludeId = memberId+"_"+System.currentTimeMillis();
@@ -90,7 +90,6 @@ public class NotificationService {
         }
         catch(IOException e){
             emitterRepository.deleteSseEmitterById(emitterId);
-            sseEmitter.complete();
         }
     }
 

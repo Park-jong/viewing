@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.dto.board;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ssafy.interviewstudy.domain.board.ArticleFile;
@@ -21,7 +22,10 @@ public class BoardResponse {
     private String title;
     private String content;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime updatedAt;
 
     private Integer viewCount;

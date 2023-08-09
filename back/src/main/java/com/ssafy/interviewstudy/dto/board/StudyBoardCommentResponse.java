@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.dto.board;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
@@ -16,7 +17,9 @@ public class StudyBoardCommentResponse {
     private Integer commentId;
     private Author author;
     private String content;
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime updatedAt;
 
     private Integer commentCount;

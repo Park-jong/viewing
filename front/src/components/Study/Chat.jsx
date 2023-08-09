@@ -68,7 +68,7 @@ export default function Chat() {
   const member = useSelector((state) => state.UserReducer);
   const [msg, setMsg] = useState("");
   const [msgList, setMsgList] = useState([]);
-  const sockJS = new SockJS("http://70.12.246.107:8080/studyChat");
+  const sockJS = new SockJS("https://i9a205.p.ssafy.io:8080/studyChat");
   const stompClient = stompjs.over(sockJS);
   const studyId = useLocation().pathname.split("/")[2];
   const [oldMsgState, setOldMsgState] = useState(true);

@@ -31,8 +31,6 @@ public class MessageService {
 
     private final MemberRepository memberRepository;
 
-    private final EntityManager em;
-
     private final NotificationService notificationService;
 
 

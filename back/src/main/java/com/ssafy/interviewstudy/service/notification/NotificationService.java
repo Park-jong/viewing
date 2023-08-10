@@ -101,7 +101,7 @@ public class NotificationService {
     }
 
     //특정 멤버에게 이벤트 보내기
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void sendNotificationToMember(NotificationDto notificationDto){
 
         Notification notification = dtoToEntity(notificationDto);
@@ -119,7 +119,7 @@ public class NotificationService {
 
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void sendNotificationToStudyMember(NotificationStudyDto notificationStudyDto){
         List<StudyMember> studyMembers = studyMemberRepository.findMembersByStudyId(notificationStudyDto.getStudyId());
         NotificationDto notificationDto = notificationStudyDto.getNotificationDto();
@@ -166,7 +166,7 @@ public class NotificationService {
         return true;
     }
 
-    @Transactional
+
     public Boolean checkNotificationByMemberId(Integer memberId,Integer notificationId){
         return notificationRepository.findNotificationByAuthorIdAndId(memberId,notificationId) != null;
     }

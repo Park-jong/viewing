@@ -18,16 +18,16 @@ const colors = [
 
 // PNG files
 const images = [
-  "/profile/cow.png",
-  "/profile/crab.png",
-  "/profile/dolphin.png",
-  "/profile/jellyfish.png",
-  "/profile/koala.png",
-  "/profile/octopus.png",
-  "/profile/penguin.png",
-  "/profile/seahorse.png",
-  "/profile/sheep.png",
-  "/profile/turtle.png",
+  "cow",
+  "crab",
+  "dolphin",
+  "jellyfish",
+  "koala",
+  "octopus",
+  "penguin",
+  "seahorse",
+  "sheep",
+  "turtle",
   // Add the paths to your 10 PNG files here
 ];
 
@@ -74,7 +74,7 @@ const ImageOption = styled.div`
 
   border: 0.5px var(--gray-200) solid;
 
-  background-image: ${({ $selectedimage }) => `url(${$selectedimage})`};
+  background-image: ${({ $selectedimage }) => `url(/profile/${$selectedimage}.png)`};
 
   background-size: 65%; /* Set the background image to cover 90% of the container */
   background-repeat: no-repeat; /* Prevent image repetition */
@@ -109,13 +109,11 @@ const SelectedContainer = styled.div`
   background-position: center; /* Center the background image */
 `;
 
-export default function SetProfileImage() {
-  const [selectedColor, setSelectedColor] = useState("var(--gray-100)");
-  const [selectedImage, setSelectedImage] = useState("/profile/default.png");
+export default function SetProfileImage({selectedColor, setSelectedColor, selectedImage, setSelectedImage}) {
 
   const handleReset = () => {
-    setSelectedColor("var(--gray-100)");
-    setSelectedImage("/profile/default.png");
+    setSelectedColor("var(--gray-300)");
+    setSelectedImage("default");
   };
 
   const handleColorClick = (color) => {
@@ -134,14 +132,15 @@ export default function SetProfileImage() {
 
       <SelectedContainer
         $selectedcolor={selectedColor}
-        $selectedimage={selectedImage}
+        $selectedimage={`/profile/${selectedImage}.png`}
       ></SelectedContainer>
       <br></br>
 
-      <SubButton content="초기화" onClick={handleReset} />
+      <SubButton content="초기화" onClick={() => handleReset()} />
 
       <br></br>
       <ImageContainer>
+        
         {/* Render image options */}
         {images.map((image, index) => (
           <ImageOption

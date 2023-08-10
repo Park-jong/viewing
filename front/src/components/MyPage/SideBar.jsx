@@ -121,11 +121,11 @@ export default function SideBar() {
   const menuListDoms = menuList.map((menu, idx) => {
     if (menu === "내 쪽지함") {
       return (
-        <>
+        <div key={idx}>
           <Menu
             $active={clicked === menu}
             onClick={() => setClicked(menu)}
-            key={idx}
+            
           >
             {menu}
           </Menu>
@@ -147,7 +147,7 @@ export default function SideBar() {
               보낸 쪽지함
             </SubMenu>
           </StyledLink>
-        </>
+        </div>
       );
     } else {
       return (

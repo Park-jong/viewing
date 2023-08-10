@@ -56,6 +56,7 @@ import BoardCommon from "./pages/BoardCommon";
 import BoardUpdate from "./pages/BoardUpdate";
 import MakeStudy from "./pages/Makestudy";
 import Message from "./pages/Message";
+import MypageArticles from "./pages/MypageArticles";
 
 const router = createBrowserRouter([
   {
@@ -76,7 +77,7 @@ const router = createBrowserRouter([
           },
           {
             path: "like",
-            element: <MypageLike />,
+            element: <MypageArticles />,
           },
           {
             path: "bookmark",
@@ -88,7 +89,7 @@ const router = createBrowserRouter([
           },
           {
             path: "comment",
-            element: <MypageComment />,
+            element: <MypageArticles />,
           },
           {
             path: "get",
@@ -100,7 +101,7 @@ const router = createBrowserRouter([
           },
           {
             path: "myarticle",
-            element: <MypageMyarticle />,
+            element: <MypageArticles />,
           },
           {
             path: "send",

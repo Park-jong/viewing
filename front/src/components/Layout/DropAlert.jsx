@@ -4,10 +4,13 @@ import styled from "styled-components";
 import Alarm from "../../Icons/Alarm";
 import { Link } from "react-router-dom";
 import { PiBellThin } from "react-icons/pi";
+import { useSelector } from "react-redux";
+import { UserReducer } from "./../../modules/UserReducer/UserReducer";
+import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
 
 const Container = styled.div`
   cursor: pointer;
-  
+
   /* background-color: white; */
 `;
 
@@ -93,6 +96,13 @@ export default function DropAlert() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showItems, setShowItems] = useState(4); // Number of items to show initially
   const AlertRef = useRef(null);
+  const SERVER = process.env.REACT_APP_SERVER_URL;
+  const memberId = useSelector((state) => state.UserReducer.memberId);
+  const token = localStorage.getItem("access_token");
+
+  // SSE
+
+  const EventSource = EventSourcePolyfill;
 
   const handleAlarmClick = () => {
     setMenuOpen(!menuOpen);
@@ -105,11 +115,65 @@ export default function DropAlert() {
   };
 
   useEffect(() => {
+    let eventSource;
+    const fetchSse = () => {
+      eventSource = new EventSource(
+        SERVER + `members/${memberId}/notification`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+          heartbeatTimeout: 12000000,
+        }
+      );
+      eventSource.addEventListener("test", (event) => {
+        console.log(event);
+      });
+
+      eventSource.addEventListener("lastNotification", (event) => {
+        try {
+          console.log(JSON.parse(event.data));
+        } catch (e) {
+          console.log(e);
+        }
+      });
+
+      eventSource.addEventListener("notification", (event) => {
+        try {
+          console.log(JSON.parse(event.data));
+        } catch (e) {
+          console.log(e);
+        }
+      });
+
+      eventSource.onmessage = (event) => {
+        const res = event.data;
+        console.log(res);
+      };
+
+      eventSource.onerror = (event) => {
+        console.log(event);
+        eventSource.close();
+      };
+
+      eventSource.onerror = (event) => {
+        console.error(event);
+
+        // 연결이 닫혔다면 재연결 시도
+        if (eventSource.readyState === EventSource.CLOSED) {
+          console.log("알림 SSE 재연결 시도...");
+          setTimeout(fetchSse, 5000); // 5초 후에 재연결 시도
+        }
+      };
+    };
+    fetchSse();
+
     window.addEventListener("click", handleClickOutside);
     return () => {
       window.removeEventListener("click", handleClickOutside);
       // Reset showItems to 4 when the dropdown is closed
       setShowItems(4);
+      eventSource.close();
     };
   }, []);
 

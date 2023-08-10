@@ -66,8 +66,6 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
     // formData.append("member_id", member_id);
     // formData.append("content", text);
     files.forEach((file)=> formData.append("request_files", file))
-    
-    console.log(member_id) 
 
     formData.append(
       'request',

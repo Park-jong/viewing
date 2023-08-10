@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const CompanyContainer = styled.div`
   display: flex;
-  margin-top: 30px;
+  /* margin-top: 30px; */
 `;
 
 const CompanyTag = styled.div`

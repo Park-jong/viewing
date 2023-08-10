@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { BiVolumeMute } from "react-icons/bi";
 import UserProfile from "./../Common/UserProfile";
@@ -20,8 +20,8 @@ function CamBox({ streamManager }) {
 
   const Container = styled.div`
     position: relative;
-    width: 640px;
-    height: 360px;
+    width: auto;
+    height: auto;
     border: 1px solid black;
   `;
 

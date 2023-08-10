@@ -7,7 +7,7 @@ import {
   BiSolidHeart,
 } from "react-icons/bi";
 import UserProfile from "../Common/UserProfile";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { PiSirenLight } from "react-icons/pi";
 
 // import { data } from "../Layout/db";
@@ -96,6 +96,13 @@ const ButtonContainerContainer = styled.div`
   display: inline-block;
 `;
 
+const FileConatainer = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+`;
+
+const File = styled.a``;
+
 export default function ArticleDetail({ data, setData, count }) {
   // const boardType = useParams(); // Extract the boardType from the URL
   // console.log(boardType);
@@ -169,6 +176,7 @@ export default function ArticleDetail({ data, setData, count }) {
   // Assuming we have only one data in the data array for this example
   // const data = data[0];
 
+
   return (
     <ArticleContainer>
       <BoardType>
@@ -206,6 +214,24 @@ export default function ArticleDetail({ data, setData, count }) {
 
       <HorizontalLine />
 
+      {data.article_files && data.article_files.length > 0 ? (
+        <>
+          <h1>첨부파일</h1>
+          <FileConatainer>
+            {data.article_files.map((file, idx) => (
+              <File
+                href={`http://70.12.246.87:8080/boards/${data.board_type}/${data.article_id}/files/${file.fileId}`}
+                key={idx}
+              >
+                {file.name}
+              </File>
+            ))}
+          </FileConatainer>
+        </>
+      ) : (
+        <></>
+      )}
+
       <Content>{data.content}</Content>
 
       {boardTypeText(boardType) !== "공지사항" && <HorizontalLine />}
@@ -240,7 +266,10 @@ export default function ArticleDetail({ data, setData, count }) {
                     content="수정하기"
                     onClick={() => navigate(`update`)}
                   ></SubButton>
-                  <SubButton content="삭제하기" onClick={() => handleDelete()}></SubButton>
+                  <SubButton
+                    content="삭제하기"
+                    onClick={() => handleDelete()}
+                  ></SubButton>
                 </ButtonContainer>
               </ButtonContainerContainer>
             ) : (

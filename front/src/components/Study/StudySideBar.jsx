@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -58,6 +59,8 @@ export default function StudySideBar() {
 
   const location = useLocation();
 
+  const navigate = useNavigate();
+
   const member = useSelector((state) => state.UserReducer);
   const memberId = member.memberId;
   const studyId = location.pathname.split("/")[2];
@@ -82,11 +85,15 @@ export default function StudySideBar() {
 
   useEffect(() => {
     customAxios()
-      .get(`studies/${studyId}`)
+      .get(`studies/${studyId}/member`)
       .then(({ data }) => {
-        if (data.leader.member_id === memberId) {
+        if (data.is_leader) {
           setIsLeader(() => true);
         }
+      })
+      .catch((err) => {
+        alert("접근 권한이 없습니다.");
+        window.location.replace("/");
       });
   }, []);
 

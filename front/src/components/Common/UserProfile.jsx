@@ -4,6 +4,7 @@ import MiniMenuList from "./Organisms/MiniMenuList";
 
 const ProfileContainer = styled.div`
   display: flex;
+  position: relative;
   align-items: center;
 `;
 
@@ -17,14 +18,18 @@ const ProfileImg = styled.div`
   background-size: 70%;
   background-repeat: no-repeat;
   background-position: center;
-`
+`;
 
-const Username =styled.div`
-  
-`
+const Username = styled.div``;
 
-
-export default function UserProfile({ backgroundcolor, characterimg, nickname, width=32, height=32 }) {
+export default function UserProfile({
+  member_id,
+  backgroundcolor,
+  characterimg,
+  nickname,
+  width = 32,
+  height = 32,
+}) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const AlertRef = useRef(null);
@@ -44,18 +49,28 @@ export default function UserProfile({ backgroundcolor, characterimg, nickname, w
 
   const toggleMenu = (event) => {
     setIsMenuVisible(!isMenuVisible);
-    setMenuPosition({ x: event.clientX, y: event.clientY });
+    const rect = AlertRef.current.getBoundingClientRect();
+    const offsetX = event.clientX - rect.left;
+    const offsetY = event.clientY - rect.top;
+    setMenuPosition({ x: offsetX, y: offsetY });
+    console.log(menuPosition);
   };
 
+  return (
+    <ProfileContainer onClick={toggleMenu} ref={AlertRef}>
+      <ProfileImg
+        $backgroundcolor={backgroundcolor}
+        $characterimg={characterimg}
+      ></ProfileImg>
+      <Username>{nickname}</Username>
 
-  return <ProfileContainer onClick={toggleMenu} ref={AlertRef}>
-    <ProfileImg $backgroundcolor={backgroundcolor} $characterimg={characterimg}></ProfileImg>
-    <Username>{nickname}</Username>
-
-    <MiniMenuList
-      isVisible={isMenuVisible}
-      style={{ top: menuPosition.y, left: menuPosition.x }}
-    >
-    </MiniMenuList>
-  </ProfileContainer>
+      <MiniMenuList
+        to={nickname}
+        member_id={member_id}
+        isVisible={isMenuVisible}
+        top={menuPosition.y}
+        left={menuPosition.x}
+      ></MiniMenuList>
+    </ProfileContainer>
+  );
 }

@@ -12,7 +12,7 @@ function ConferencePage() {
     nickname: "nickname" + String(Math.ceil(Math.random() * 1000)),
     background: undefined,
     character: undefined,
-    image: "test.jpg",
+    image: "/test.jpg",
   };
 
   // 스터디 아이디  - 이거 pathvariable로 가져오거나 따로 불러오거나
@@ -280,7 +280,11 @@ function ConferencePage() {
 
   // 비디오 변경
   const changeVideo = (e) => {
-    if (recorder) {
+    if (
+      recorder &&
+      recorder.state !== LocalRecorderState.FINISHED &&
+      recorder.state !== LocalRecorderState.READY
+    ) {
       alert("녹화 중에는 기기 변경이 불가능합니다.");
       document.getElementById("choiceVideo").value =
         JSON.stringify(currentVideoDevice);
@@ -296,12 +300,12 @@ function ConferencePage() {
 
   // 오디오 변경
   const changeAudio = (e) => {
-    if (!!recorder && recorder.state !== LocalRecorderState.FINISHED) {
-      alert(
-        `녹화 중에는 기기 변경이 불가능합니다.${JSON.stringify(recorder)}${
-          recorder.state
-        }`
-      );
+    if (
+      recorder &&
+      recorder.state !== LocalRecorderState.FINISHED &&
+      recorder.state !== LocalRecorderState.READY
+    ) {
+      alert("녹화 중에는 기기 변경이 불가능합니다.");
       document.getElementById("choiceAudio").value =
         JSON.stringify(currentAudioDevice);
       return;
@@ -346,7 +350,12 @@ function ConferencePage() {
   const [recorder, setRecorder] = useState();
 
   useEffect(() => {
-    if (!currentVideoDevice || currentVideoDevice.deviceId === "noDevice") {
+    if (
+      !currentVideoDevice ||
+      currentVideoDevice.deviceId === "noDevice" ||
+      !currentAudioDevice ||
+      currentAudioDevice.deviceId === "noDevice"
+    ) {
       setRecorder(undefined);
     }
     if (!!publisher && !recorder) {
@@ -356,8 +365,12 @@ function ConferencePage() {
 
   // 녹화 시작
   const initRecord = () => {
-    if (!recorder || recorder.state !== LocalRecorderState.READY) {
-      alert("카메라가 없는 상태에서는 녹화를 할 수 없습니다.");
+    if (
+      !!!recorder ||
+      (recorder.state !== LocalRecorderState.READY &&
+        recorder.state !== LocalRecorderState.FINISHED)
+    ) {
+      alert("카메라와 마이크가 없는 상태에서는 녹화를 할 수 없습니다.");
       return;
     }
     recorder.clean();

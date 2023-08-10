@@ -7,11 +7,9 @@ import { useLocation } from "react-router-dom";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import { BiCaretUp, BiCaretDown } from "react-icons/bi";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
-  border: "2px solid black";
-  padding: "16px";
-
   width: 1000px;
   height: 500px;
 `;
@@ -71,7 +69,7 @@ export default function Chat() {
   const member = useSelector((state) => state.UserReducer);
   const [msg, setMsg] = useState("");
   const [msgList, setMsgList] = useState([]);
-  const sockJS = new SockJS("http://70.12.246.107:8080/studyChat");
+  const sockJS = new SockJS("https://i9a205.p.ssafy.io:8080/studyChat");
   const stompClient = stompjs.over(sockJS);
   const studyId = useLocation().pathname.split("/")[2];
   const [oldMsgState, setOldMsgState] = useState(true);
@@ -79,6 +77,7 @@ export default function Chat() {
   const [newPage, setNewPage] = useState(0);
   const [newMsgState, setNewMsgState] = useState(false);
   const maxLength = 5000;
+  const navigate = useNavigate();
 
   //메시지 전송
   const sendMsg = () => {
@@ -106,7 +105,8 @@ export default function Chat() {
         const oldMessage = data;
         setMsgList((arr) => [...oldMessage, ...arr]);
         scrollRef.current.scrollTop = 100;
-      });
+      })
+      .catch(() => {});
   };
 
   //메시지 입력 값 변경
@@ -152,11 +152,14 @@ export default function Chat() {
   //처음 접속 시
   useEffect(() => {
     customAxios()
-      .get(`studies/${studyId}/chats`) //유저가 스터디 멤버인지 체크 수정
+      .get(`studies/${studyId}/chats`)
       .then(({ data }) => {
         if (data.length < 100) setOldMsgState((prev) => false);
         const oldMessage = data;
         setMsgList((arr) => [...oldMessage, ...arr]);
+      })
+      .catch((err) => {
+        stompClient.disconnect();
       });
     stompClient.connect({}, () => {
       stompClient.subscribe("/topic/" + studyId, (data) => {
@@ -182,6 +185,7 @@ export default function Chat() {
       });
     });
     return () => {
+      stompClient.unsubscribe("/topic/" + studyId);
       stompClient.disconnect();
     };
   }, []);
@@ -224,11 +228,15 @@ export default function Chat() {
           return (
             <ChatBox key={m.chat_id}>
               <ChatProfile>
-                <UserProfile
-                  nickname={m.member.nickname}
-                  backgroundcolor={m.member.background}
-                  characterimg={m.member.character}
-                />
+                {m.member.nickname != null ? (
+                  <UserProfile
+                    nickname={m.member.nickname}
+                    backgroundcolor={m.member.background}
+                    characterimg={m.member.character}
+                  />
+                ) : (
+                  <UserProfile nickname={"알 수 없음"} />
+                )}
               </ChatProfile>
               <ChatText>{m.content}</ChatText>
               <ChatTime>{m.created_at}</ChatTime>

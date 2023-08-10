@@ -4,6 +4,15 @@ const Container = styled.div`
   border: 1px solid black;
 `;
 
-export default function FeedbackButton() {
-  return <Container>{"피드백"}</Container>;
+export default function FeedbackButton({ toggleSideBar, changeOption }) {
+  return (
+    <Container
+      onClick={() => {
+        toggleSideBar(false);
+        changeOption("feedback");
+      }}
+    >
+      {"피드백"}
+    </Container>
+  );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { css, keyframes } from "styled-components";
 
 const Container = styled.div`
@@ -72,17 +72,33 @@ const ToggleButton = styled.div`
     `}
 `;
 
-const Toggle = ({ onClick, isToggled, setIsToggled}) => {
-  // const [isToggled, setIsToggled] = useState(false);
+const StudyToggle = ({ state, setState }) => {
+  const [isToggled, setIsToggled] = useState(state);
+
+  const handleToggle = () => {
+    setIsToggled(() => !isToggled);
+  };
+
+  useEffect(() => {
+    setIsToggled(() => state);
+  }, []);
+
+  useEffect(() => {
+    setState(() => isToggled);
+  }, [isToggled]);
+
+  useEffect(() => {
+    setIsToggled(() => state);
+  }, [state]);
 
   return (
     <Container>
-      <H1 onClick={onClick}>모집 중만 보기</H1>
-      <ToggleContainer onClick={onClick} $isToggled={isToggled}>
+      <H1 onClick={handleToggle}>모집 중</H1>
+      <ToggleContainer onClick={handleToggle} $isToggled={isToggled}>
         <ToggleButton $isToggled={isToggled} />
       </ToggleContainer>
     </Container>
   );
 };
 
-export default Toggle;
+export default StudyToggle;

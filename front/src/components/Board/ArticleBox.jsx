@@ -65,7 +65,8 @@ export default function ArticleBox({
   url,
   viewCount,
   width,
-  is_like
+  is_like,
+  member_id
 }) {
   const location = useLocation();
   const isNotice = location.pathname === "/board/notice";
@@ -84,6 +85,7 @@ export default function ArticleBox({
             nickname={nickname}
             backgroundcolor={backgroundcolor}
             characterimg={character}
+            member_id={member_id}
           />
         )}
       </ProfileContainer>

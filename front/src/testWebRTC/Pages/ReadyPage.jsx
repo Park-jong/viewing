@@ -172,7 +172,7 @@ function ReadyPage() {
 
   return (
     <>
-      <img id="profileImage" src={"test.jpg"} alt="프로필이미지" hidden></img>
+      <img id="profileImage" src={"/test.jpg"} alt="프로필이미지" hidden></img>
       <button onClick={enterRoom}>
         <h1>입장</h1>
       </button>

@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import MainButton from "../Button/MainButton";
-import SubButton from "./../Button/SubButton";
 
 const Container = styled.div`
   border: 1px solid black;
@@ -12,12 +10,43 @@ const ButtonContainer = styled.div`
   border: 1px solid black;
 `;
 
-export default function MeetingTabBar() {
+const ExitContainer = styled.div`
+  position: absolute;
+  right: 0%;
+  border: 1px solid black;
+`;
+
+export default function MeetingTabBar({ changeOption, toggleSideBar }) {
   return (
     <Container>
-      <ButtonContainer>현재인원</ButtonContainer>
-      <ButtonContainer>채팅</ButtonContainer>
-      <ButtonContainer>피드백</ButtonContainer>
+      <ButtonContainer
+        onClick={() => {
+          changeOption("member");
+        }}
+      >
+        {"참여자"}
+      </ButtonContainer>
+      <ButtonContainer
+        onClick={() => {
+          changeOption("chat");
+        }}
+      >
+        {"채팅"}
+      </ButtonContainer>
+      <ButtonContainer
+        onClick={() => {
+          changeOption("feedback");
+        }}
+      >
+        {"피드백"}
+      </ButtonContainer>
+      <ExitContainer
+        onClick={() => {
+          toggleSideBar(true);
+        }}
+      >
+        X
+      </ExitContainer>
     </Container>
   );
 }

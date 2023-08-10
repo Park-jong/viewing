@@ -16,7 +16,7 @@ export function LoginGithub() {
   const GITHUB_URL = "https://github.com/login/oauth/authorize";
   const queries = {
     client_id: "849f92ca3e7a5a3a76da",
-    redirect_uri: process.env.REACT_APP_SERVER_URL + "/login/loading",
+    redirect_uri: process.env.REACT_APP_SERVER_URL + "login/loading",
     scope: "user",
   };
 

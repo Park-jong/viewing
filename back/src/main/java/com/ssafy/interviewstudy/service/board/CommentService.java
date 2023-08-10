@@ -66,7 +66,7 @@ public class CommentService {
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         ArticleComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
-
+        articleCommentRepository.save(comment);
         //대댓글이 달릴 댓글의 작성자에게 알림 보내기
         notificationService
                 .sendNotificationToMember(
@@ -80,7 +80,7 @@ public class CommentService {
                                 .build()
                 );
 
-        return articleCommentRepository.save(comment).getId();
+        return comment.getId();
     }
 
     // 게시글 댓글 조회

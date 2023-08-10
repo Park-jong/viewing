@@ -17,7 +17,7 @@ export function LoginKakao() {
   const queries = {
     response_type: "code",
     client_id: "2869d34ce0755e095b7d39e5eb3aeafb",
-    redirect_uri: process.env.REACT_APP_SERVER_URL + "/login/loading",
+    redirect_uri: process.env.REACT_APP_SERVER_URL + "login/loading",
   };
 
   const params = new URLSearchParams(queries).toString();

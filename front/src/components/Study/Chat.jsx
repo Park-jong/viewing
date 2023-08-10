@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import { BiCaretUp, BiCaretDown } from "react-icons/bi";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 1000px;
@@ -76,6 +77,7 @@ export default function Chat() {
   const [newPage, setNewPage] = useState(0);
   const [newMsgState, setNewMsgState] = useState(false);
   const maxLength = 5000;
+  const navigate = useNavigate();
 
   //메시지 전송
   const sendMsg = () => {
@@ -103,7 +105,8 @@ export default function Chat() {
         const oldMessage = data;
         setMsgList((arr) => [...oldMessage, ...arr]);
         scrollRef.current.scrollTop = 100;
-      });
+      })
+      .catch(() => {});
   };
 
   //메시지 입력 값 변경
@@ -149,11 +152,14 @@ export default function Chat() {
   //처음 접속 시
   useEffect(() => {
     customAxios()
-      .get(`studies/${studyId}/chats`) //유저가 스터디 멤버인지 체크 수정
+      .get(`studies/${studyId}/chats`)
       .then(({ data }) => {
         if (data.length < 100) setOldMsgState((prev) => false);
         const oldMessage = data;
         setMsgList((arr) => [...oldMessage, ...arr]);
+      })
+      .catch((err) => {
+        stompClient.disconnect();
       });
     stompClient.connect({}, () => {
       stompClient.subscribe("/topic/" + studyId, (data) => {
@@ -179,6 +185,7 @@ export default function Chat() {
       });
     });
     return () => {
+      stompClient.unsubscribe("/topic/" + studyId);
       stompClient.disconnect();
     };
   }, []);

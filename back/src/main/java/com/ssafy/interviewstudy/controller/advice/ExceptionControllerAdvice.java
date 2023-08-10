@@ -31,13 +31,11 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(updateFailException.class)
     public ResponseEntity<?> handleUpdateFailException(updateFailException e){
-        e.printStackTrace();
         return ResponseEntity.internalServerError().body(e.getTarget()+" 수정 실패");
     }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<?> handleIOException(IOException e){
-        e.printStackTrace();
-        return ResponseEntity.internalServerError().body("Sse 오류");
+        return ResponseEntity.internalServerError().body(e.getMessage());
     }
 }

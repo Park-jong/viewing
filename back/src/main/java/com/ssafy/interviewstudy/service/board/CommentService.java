@@ -42,7 +42,7 @@ public class CommentService {
     public Integer saveComment(Integer articleId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         ArticleComment comment = articleCommentRepository.save(commentDtoService.toEntity(commentRequest));
-        
+
         //댓글이 달릴 게시글 작성자에게 알림을 보내줘야함
        if(comment.getId()!=null) {
            notificationService.sendNotificationToMember(
@@ -70,8 +70,8 @@ public class CommentService {
                                 .builder()
                                 .memberId(commentRequest.getMemberId())
                                 .content("댓글에 대댓글이 달렸습니다.")
-                                .url(commentId.toString())
-                                .notificationType(NotificationType.StudyComment)
+                                .url(comment.getArticle().getId().toString()+" "+comment.getId().toString())
+                                .notificationType(NotificationType.BoardReply)
                                 .build()
                 );
 

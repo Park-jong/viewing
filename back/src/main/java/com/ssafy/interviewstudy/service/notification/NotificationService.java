@@ -1,12 +1,15 @@
 package com.ssafy.interviewstudy.service.notification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.notification.Notification;
 import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.domain.study.StudyMember;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.dto.notification.NotificationListDto;
 import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
 import com.ssafy.interviewstudy.dto.study.StudyMemberDto;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -33,7 +36,8 @@ import java.util.Map;
 public class NotificationService {
 
     //JSON화 시키는 Object Mapper
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
 
     //알림 CRUD 레포지토리 
     private final NotificationRepository notificationRepository;
@@ -70,7 +74,8 @@ public class NotificationService {
                         .memberId(1)
                         .build(),
                 timeIncludeId,
-                0
+                0,
+                "test"
         );
         if(lastEventId==null) lastEventId=0;
         sendMissingData(lastEventId,memberId,timeIncludeId,sseEmitter);
@@ -78,17 +83,19 @@ public class NotificationService {
 
     }
 
-    public void sendEventByEmitter(SseEmitter sseEmitter,  NotificationDto notificationDto, String emitterId, Integer eventId){
+    public void sendEventByEmitter(SseEmitter sseEmitter,Object notificationDto, String emitterId, Integer eventId,String eventName){
         try{
+            if(sseEmitter==null) return;
             sseEmitter.send(
                     SseEmitter
                             .event()
                             .id(eventId.toString())
-                            .name("notification")
+                            .name(eventName)
                             .data(objectMapper.writeValueAsString(notificationDto))
             );
         }
         catch(IOException e){
+            System.out.println("???????");
             emitterRepository.deleteSseEmitterById(emitterId);
         }
     }
@@ -106,7 +113,7 @@ public class NotificationService {
         String eventId = notificationDto.getMemberId()+"_"+System.currentTimeMillis();
         memberEmitters.forEach(
                 (emitterId,sseEmitter)->{
-                    sendEventByEmitter(sseEmitter,NotificationDto.fromEntity(notification),emitterId, notification.getId());
+                    sendEventByEmitter(sseEmitter,NotificationDto.fromEntity(notification),emitterId, notification.getId(),"notification");
                 }
         );
 
@@ -143,14 +150,12 @@ public class NotificationService {
     @Transactional
     public void sendMissingData(Integer lastEventId,Integer memberId,String emitterId,SseEmitter sseEmitter){
         List<Notification> missingNotificationList =
-                notificationRepository.findNotificationsByIdGreaterThanAndAuthorId(lastEventId,memberId);
-        for(Notification notification : missingNotificationList){
-            sendEventByEmitter(sseEmitter,
-                    NotificationDto.fromEntity(notification),
-                    emitterId,
-                    notification.getId()
-            );
-        }
+                notificationRepository.findTop20ByIdGreaterThanAndAuthorIdOrderByCreatedAtDesc(lastEventId,memberId);
+
+        NotificationListDto notificationListDto =
+                NotificationListDto.noticiationListDtoFromListNotification(missingNotificationList);
+
+        sendEventByEmitter(sseEmitter,notificationListDto,emitterId,lastEventId,"lastNotification");
     }
 
     @Transactional

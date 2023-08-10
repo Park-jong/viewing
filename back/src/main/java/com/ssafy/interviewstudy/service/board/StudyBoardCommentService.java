@@ -40,7 +40,7 @@ public class StudyBoardCommentService {
                                 .memberId(commentRequest.getMemberId())
                                 .content("스터디 게시판 게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
                                 .notificationType(NotificationType.StudyComment)
-                                .url(comment.getArticle().getStudy().getId()+" "+articleId.toString())
+                                .url(comment.getArticle().getStudy().getId().toString()+" "+articleId.toString())
                                 .build()
                 );
             }
@@ -59,7 +59,7 @@ public class StudyBoardCommentService {
                         .memberId(commentRequest.getMemberId())
                         .content("스터디 게시판 댓글에 답글이 달렸습니다")
                         .notificationType(NotificationType.StudyReply)
-                        .url(comment.getArticle().getStudy().getId()+" "+articleId.toString())
+                        .url(comment.getArticle().getStudy().getId().toString()+" "+articleId.toString())
                         .build()
         );
         return commentRepository.save(comment).getId();

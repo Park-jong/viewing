@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<Notification,Integer> {
 
-    List<Notification> findNotificationsByIdGreaterThanAndAuthorId(Integer lastEventId,Integer authorId);
+    List<Notification> findTop20ByIdGreaterThanAndAuthorIdOrderByCreatedAtDesc(Integer lastEventId,Integer authorId);
 
     List<Notification> findNotificationsByAuthorId(Integer authorId);
 

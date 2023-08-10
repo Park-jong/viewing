@@ -120,7 +120,7 @@ public class StudyBoardService {
                                                     .builder()
                                                     .memberId(boardRequest.getMemberId())
                                                     .content(article.getStudy().getTitle()+" 스터디에 게시글이 작성되었습니다.")
-                                                    .url(article.getStudy().getId().toString()+" "+article.getId())
+                                                    .url(article.getStudy().getId().toString()+" "+article.getId().toString())
                                                     .notificationType(NotificationType.StudyArticle)
                                                     .build()
                                     )

@@ -23,97 +23,97 @@ const tags = [
   "초보 환영",
 ];
 
-const data = [
-  {
-    content: [
-      {
-        study_id: 2,
-        title: "test2",
-        description: null,
-        applied_company: "삼성",
-        applied_job: "it",
-        capacity: 6, //전체 정원
-        head_count: 2, // 현재인원
-        created_at: "2023-07-26T15:17",
-        deadline: "2023-07-26T15:17", //마감날짜.
-        recruitment: true,
-        leader: {
-          member_id: 11,
-          nickname: "jiwoo",
-          background: "red",
-          character: "cow",
-        },
-        career_level: "ALL",
-        tags: ["tag1", "tag2", "a", "b", "c"],
-      },
-      {
-        study_id: 3,
-        title: "test2",
-        description: null,
-        applied_company: "삼성",
-        applied_job: "it",
-        capacity: 0, //전체 정원
-        head_count: 2, // 현재인원
-        created_at: "2023-07-26T15:17",
-        deadline: "2023-07-26T15:17", //마감날짜.
-        recruitment: true,
-        leader: {
-          member_id: 22,
-          nickname: "jiwoo",
-          background: "red",
-          character: "cow",
-        },
-        career_level: "ALL",
-        tags: ["tag1", "tag2"],
-      },
-      {
-        study_id: 4,
-        title: "test2",
-        description: null,
-        applied_company: "삼성",
-        applied_job: "it",
-        capacity: 0, //전체 정원
-        head_count: 2, // 현재인원
-        created_at: "2023-07-26T15:17",
-        deadline: "2023-07-26T15:17", //마감날짜.
-        recruitment: false,
-        leader: {
-          member_id: 33,
-          nickname: "jiwoo",
-          background: "red",
-          character: "cow",
-        },
-        career_level: "ALL",
-        tags: ["tag1", "tag2"],
-      },
-    ],
-    pageable: {
-      sort: {
-        sorted: false,
-        empty: true,
-        unsorted: true,
-      },
-      pageSize: 20,
-      pageNumber: 0,
-      offset: 0,
-      paged: true,
-      unpaged: false,
-    },
-    totalPages: 1, //20개씩 있는 페이지의 수
-    totalElements: 5, //전체 스터디 개수
-    last: true, //마지막페이지인지
-    number: 0, //현재페이지 넘버
-    size: 20, // 한페이지에 20개씩
-    numberOfElements: 5, //현재 페이지에 있는 스터디의 수
-    sort: {
-      sorted: false,
-      empty: true,
-      unsorted: true,
-    },
-    first: true, //첫페이지인지
-    empty: false, //검색결과가 없는지
-  },
-];
+// const data = [
+//   {
+//     content: [
+//       {
+//         study_id: 2,
+//         title: "test2",
+//         description: null,
+//         applied_company: "삼성",
+//         applied_job: "it",
+//         capacity: 6, //전체 정원
+//         head_count: 2, // 현재인원
+//         created_at: "2023-07-26T15:17",
+//         deadline: "2023-07-26T15:17", //마감날짜.
+//         recruitment: true,
+//         leader: {
+//           member_id: 11,
+//           nickname: "jiwoo",
+//           background: "red",
+//           character: "cow",
+//         },
+//         career_level: "ALL",
+//         tags: ["tag1", "tag2", "a", "b", "c"],
+//       },
+//       {
+//         study_id: 3,
+//         title: "test2",
+//         description: null,
+//         applied_company: "삼성",
+//         applied_job: "it",
+//         capacity: 0, //전체 정원
+//         head_count: 2, // 현재인원
+//         created_at: "2023-07-26T15:17",
+//         deadline: "2023-07-26T15:17", //마감날짜.
+//         recruitment: true,
+//         leader: {
+//           member_id: 22,
+//           nickname: "jiwoo",
+//           background: "red",
+//           character: "cow",
+//         },
+//         career_level: "ALL",
+//         tags: ["tag1", "tag2"],
+//       },
+//       {
+//         study_id: 4,
+//         title: "test2",
+//         description: null,
+//         applied_company: "삼성",
+//         applied_job: "it",
+//         capacity: 0, //전체 정원
+//         head_count: 2, // 현재인원
+//         created_at: "2023-07-26T15:17",
+//         deadline: "2023-07-26T15:17", //마감날짜.
+//         recruitment: false,
+//         leader: {
+//           member_id: 33,
+//           nickname: "jiwoo",
+//           background: "red",
+//           character: "cow",
+//         },
+//         career_level: "ALL",
+//         tags: ["tag1", "tag2"],
+//       },
+//     ],
+//     pageable: {
+//       sort: {
+//         sorted: false,
+//         empty: true,
+//         unsorted: true,
+//       },
+//       pageSize: 20,
+//       pageNumber: 0,
+//       offset: 0,
+//       paged: true,
+//       unpaged: false,
+//     },
+//     totalPages: 1, //20개씩 있는 페이지의 수
+//     totalElements: 5, //전체 스터디 개수
+//     last: true, //마지막페이지인지
+//     number: 0, //현재페이지 넘버
+//     size: 20, // 한페이지에 20개씩
+//     numberOfElements: 5, //현재 페이지에 있는 스터디의 수
+//     sort: {
+//       sorted: false,
+//       empty: true,
+//       unsorted: true,
+//     },
+//     first: true, //첫페이지인지
+//     empty: false, //검색결과가 없는지
+//   },
+// ];
 
 const Container = styled.div`
   display: flex;
@@ -152,6 +152,7 @@ const TagContainer = styled.div`
 const BodyContainer = styled.div`
   display: flex;
   justify-content: flex-start;
+  flex-wrap: wrap;
 `;
 
 ///studies?appliedCompany={지원회사(string)}&job={직무(String)}&careerLevel={신입/경력/무관(ALL, INTERN, NEWCOMER, EXPERIENCED)}&option=true&page=0&size=20&sort=id,desc&sort=username,desc
@@ -165,37 +166,40 @@ export default function Search() {
   const job = query.get("job");
   const careerLevel = query.get("careerLevel");
 
-  const [searchData, SetsearchData] = useState([]);
+  const [searchData, setSearchData] = useState({ content: [] });
 
   // console.log(searchData);
 
   //search 통신 보내기
-  // useEffect(() => {
-  //   customAxios()
-  //     .get(
-  //       `studies?appliedCompany=${appliedCompany}&job=${job}&careerLevel=${careerLevel}`
-  //     )
-  //     .then((res) => {
-  //       SetsearchData(res.data);
-  //     });
-  // }, []);
+  useEffect(() => {
+    customAxios()
+      .get(
+        `studies?${appliedCompany ? "appliedCompany=" + appliedCompany : ""}&${
+          job ? "job=" + job : ""
+        }&${careerLevel ? "careerLevel=" + careerLevel : ""}`
+      )
+      .then((res) => {
+        setSearchData(() => res.data);
+      });
+  }, []);
 
   const handleClick = () => {};
 
   //토글 로직
   const [isToggled, setIsToggled] = useState(false);
-  const [filteredData, setFilteredData] = useState(data[0].content);
-
-  console.log(data[0]);
-  console.log(data[0].content);
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     if (isToggled) {
-      setFilteredData(data[0].content.filter((study) => study.recruitment));
+      setFilteredData(searchData.content.filter((study) => study.recruitment));
     } else {
-      setFilteredData(data[0].content);
+      setFilteredData(searchData.content);
     }
   }, [isToggled]);
+
+  useEffect(() => {
+    setFilteredData(searchData.content);
+  }, [searchData]);
 
   // const handleToggle = () => {
   //   setIsToggled(!isToggled);

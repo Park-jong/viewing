@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 import HeaderBox from "./../components/Layout/HeaderBox";
 import Footer from "../components/Layout/Footer";
 import MainButton from "../components/Button/MainButton";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { OpenVidu } from "openvidu-browser";
 

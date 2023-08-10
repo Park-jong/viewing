@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import stompjs from "stompjs";
 import * as SockJS from "sockjs-client";
 import UserProfile from "../Common/UserProfile";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import { BiCaretUp, BiCaretDown } from "react-icons/bi";
 import { useSelector } from "react-redux";
@@ -71,7 +71,7 @@ export default function Chat() {
   const [msgList, setMsgList] = useState([]);
   const sockJS = new SockJS("https://i9a205.p.ssafy.io:8080/studyChat");
   const stompClient = stompjs.over(sockJS);
-  const studyId = useLocation().pathname.split("/")[2];
+  const studyId = useParams().studyPk;
   const [oldMsgState, setOldMsgState] = useState(true);
   const scrollRef = useRef();
   const [newPage, setNewPage] = useState(0);

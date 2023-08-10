@@ -2,11 +2,16 @@ import { styled } from "styled-components";
 import MainButton from "../components/Button/MainButton";
 import SubButton from "./../components/Button/SubButton";
 import SetProfileImage from "../components/MyPage/SetProfileImage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { customAxios } from "./../modules/Other/Axios/customAxios";
 import Error from "../components/Common/Error";
 import { useState } from "react";
+import {
+  ChangeNickname,
+  ChangeProfile,
+  Login,
+} from "../modules/UserReducer/Actions";
 
 const EditContainer = styled.div``;
 
@@ -102,15 +107,18 @@ const ButtonContainer = styled.div`
 
 export default function MypageEdit() {
   //
-  const [modifiedNickname, setModifiedNickname] = useState("");
 
   //유저정보
   const member_id = useSelector((state) => state.UserReducer.memberId);
-  const nickname = useSelector((state) => state.UserReducer.nickname);
-  const backgroundColor = useSelector(
-    (state) => state.UserReducer.backgroundColor
-  );
-  const backgroundImg = useSelector((state) => state.UserReducer.backgroundImg);
+  const nick = useSelector((state) => state.UserReducer.nickname);
+  const color = useSelector((state) => state.UserReducer.backgroundColor);
+  const img = useSelector((state) => state.UserReducer.backgroundImg);
+
+  const dispatch = useDispatch();
+  const [nickChecked, setNickChecked] = useState(false);
+  const [nickname, setNickname] = useState(nick);
+  const [selectedColor, setSelectedColor] = useState(color);
+  const [selectedImage, setSelectedImage] = useState(img);
 
   // react-hook-form에서 사용되는 함수
   const {
@@ -121,32 +129,59 @@ export default function MypageEdit() {
     formState: { isSubmitting },
   } = useForm();
 
+  const handleNickname = (e) => {
+    setNickname(e.target.value);
+    setNickChecked(false);
+  };
+
   const handleCheck = () => {
-    customAxios
-      .get(`/login/nickname/check/${nickname}`)
+    customAxios()
+      .get(`login/nickname/check/${nickname}`)
       .then((response) => {
         console.log(response.data);
-        if (response.status === 200) {
-          alert("사용 가능한 닉네임입니다.");
-        } else if (response.status === 400) {
-          alert("중복된 닉네임입니다.");
-        }
+        alert("사용 가능한 닉네임입니다.");
+        setNickChecked(true);
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        alert("중복된 닉네임입니다.");
       });
   };
 
-  const onSubmit = () => {
-    const data = {
-      member_id: member_id,
-      nickname: nickname,
+  const onSubmit = (type) => {
+    const data = () => {
+      if (type === "nickname") {
+        return { member_id: member_id, nickname: nickname };
+      } else if (type === "profile") {
+        return {
+          member_id: member_id,
+          background: selectedColor,
+          character: selectedImage,
+        };
+      }
     };
 
+    if (nickChecked === false && type === "nickname") {
+      return alert("중복확인해주세요.");
+    }
+
     customAxios()
-      .put(`/members/${member_id}/nickname`, data)
+      .put(`members/${member_id}/${type}`, data())
       .then(function (response) {
         console.log(response);
+
+        if (type === "nickname") {
+          setNickChecked(false);
+          dispatch(ChangeNickname(nickname));
+          alert("프로필 변경이 완료되었습니다.");
+        } else if (type === "profile") {
+          dispatch(
+            ChangeProfile({
+              backgroundImg: selectedImage,
+              backgroundColor: selectedColor,
+            })
+          );
+          alert("프로필 변경이 완료되었습니다.");
+        }
       })
       .catch((error) => {
         console.error("에러가 발생했습니다.:", error);
@@ -164,21 +199,11 @@ export default function MypageEdit() {
           <NicknameInput
             id="userId"
             defaultValue={nickname}
-            {...register("userId", {
-              required: " 필수 입력입니다.",
-              minLength: {
-                value: 2,
-                message: "닉네임은 2자 이상이어야 합니다.",
-              },
-              maxLength: {
-                value: 45,
-                message: "닉네임은 45자 이하여야 합니다.",
-              },
-            })}
+            onChange={handleNickname}
           />
           <Error>{errors?.userId?.message}</Error>
           <SubButton
-            onClick={handleCheck}
+            onClick={() => handleCheck()}
             width={50}
             height={20}
             content={"중복확인"}
@@ -189,12 +214,25 @@ export default function MypageEdit() {
               width={100}
               height={40}
               content={"저장하기"}
-              onClick={onSubmit}
+              onClick={() => onSubmit("nickname")}
             ></MainButton>
           </ButtonContainer>
         </form>
       </FlexContainer>
-      <SetProfileImage></SetProfileImage>
+      <SetProfileImage
+        selectedColor={selectedColor}
+        setSelectedColor={setSelectedColor}
+        selectedImage={selectedImage}
+        setSelectedImage={setSelectedImage}
+      ></SetProfileImage>
+      <ButtonContainer>
+        <MainButton
+          width={100}
+          height={40}
+          content={"저장하기"}
+          onClick={() => onSubmit("profile")}
+        ></MainButton>
+      </ButtonContainer>
     </EditContainer>
   );
 }

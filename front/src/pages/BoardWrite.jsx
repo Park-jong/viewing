@@ -99,7 +99,7 @@ export default function BoardWrite() {
 
   const SendRequest = (e) => {
     const formData = new FormData();
-    const request = { member_id, content, title, category };
+    const request = {member_id, content,title, board_type:board_type()}
     // formData.append("member_id", member_id);
     // formData.append("content", text);
     files.forEach((file) => formData.append("request_files", file));

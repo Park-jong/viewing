@@ -11,28 +11,41 @@ const Title = styled.div`
   margin-top: 20px;
 `
 
-export default function MypageLike() {
+export default function MypageArticles() {
   const member_id = useSelector((state) => state.UserReducer.memberId);
   const [free, setFree] = useState([]);
   const [interview, setInterview] = useState([]);
   const [qna, setQna] = useState([]);
+  const type = useLocation().pathname.split("/")[2]
+
+  console.log(type)
+  
   
   useEffect(()=> {
+    const query = () => {
+      if (type==="like") {
+        return "favor"
+      } else if (type === "myarticle"){
+        return "write"
+      } else {
+        return type
+      }
+    }
     customAxios()
-    .get(`members/${member_id}/article?board=general&searchType=favor`)
+    .get(`members/${member_id}/article?board=general&searchType=${query()}`)
     .then(res => setFree(res.data))
     .catch(err => console.log(err))
 
     customAxios()
-    .get(`members/${member_id}/article?board=review&searchType=favor`)
+    .get(`members/${member_id}/article?board=review&searchType=${query()}`)
     .then(res => setInterview(res.data))
     .catch(err => console.log(err))
 
     customAxios()
-    .get(`members/${member_id}/article?board=qna&searchType=favor`)
+    .get(`members/${member_id}/article?board=qna&searchType=${query()}`)
     .then(res => setQna(res.data))
     .catch(err => console.log(err))
-  }, [])
+  }, [type])
   return <>
     <Title>자유게시판</Title>
     <ArticleList data={free} width={800}></ArticleList>

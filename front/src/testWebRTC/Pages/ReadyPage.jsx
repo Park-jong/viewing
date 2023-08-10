@@ -166,8 +166,8 @@ function ReadyPage() {
       audio: audioDevice ? audioDevice : devices.audio[0],
     };
     localStorage.setItem("deviceInfo", JSON.stringify(deviceInfo));
-    window.open(`${CLIENT_URL}/test/main`);
-    window.location.replace(`${CLIENT_URL}/test`);
+    window.open(`/test/main`);
+    window.location.replace(`/test`);
   };
 
   return (

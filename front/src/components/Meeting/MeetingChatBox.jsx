@@ -6,6 +6,8 @@ const Container = styled.div`
 `;
 
 const MessageContainer = styled.div`
+  display: absolute;
+  width: 100%;
   border: 1px solid black;
 `;
 

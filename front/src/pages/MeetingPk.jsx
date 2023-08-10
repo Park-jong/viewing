@@ -4,11 +4,30 @@ import { styled } from "styled-components";
 import MeetingFooter from "../components/Meeting/Organisms/MeetingFooter";
 import MeetingMain from "../components/Meeting/Organisms/MeetingMain";
 import MeetingSideBar from "../components/Meeting/Organisms/MeetingSideBar";
+import BeforeExitModal from "../components/Meeting/BeforeExitModal";
 import { useEffect, useState } from "react";
 
 const Container = styled.div`
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  /* 웹킷 기반 브라우저 스크롤바 숨기기 */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* IE 및 Edge 스크롤바 숨기기 */
+  -ms-overflow-style: none;
+  /* Firefox 스크롤바 숨기기 */
+  scrollbar-width: none;
+`;
+
+const ModalContainer = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid black;
+  transform: translate(-50%, -50%);
+  z-index: 999;
 `;
 
 const HeaderContainer = styled.div`
@@ -18,7 +37,7 @@ const HeaderContainer = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 99.9%;
   height: 5%;
 `;
 
@@ -31,7 +50,7 @@ const MainContainer = styled.div`
   position: absolute;
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 99.9%;
   height: 90%;
   top: 5%;
   bottom: 5%;
@@ -49,7 +68,7 @@ const MeetingSideContainer = styled.div`
   position: absolute;
   border: 1px solid black;
   left: 80%;
-  width: 20%;
+  width: 19.9%;
   height: 100%;
 `;
 
@@ -70,8 +89,8 @@ const FooterContainer = styled.div`
   flex-direction: row;
   align-items: center;
   top: 95%;
-  width: 100%;
-  height: 5%;
+  width: 99.9%;
+  height: 4.8%;
 `;
 
 export default function MeetingPk() {
@@ -79,8 +98,8 @@ export default function MeetingPk() {
   const userData = {
     id: String(Math.ceil(Math.random() * 1000)),
     nickname: "nickname" + String(Math.ceil(Math.random() * 1000)),
-    background: undefined,
-    character: undefined,
+    background: "red",
+    character: "cow",
     image: "/test.jpg",
   };
 
@@ -105,7 +124,7 @@ export default function MeetingPk() {
 
   // 백엔드 통신을 통한 세션/토큰 발급
   const createSession = async () => {
-    let mURL = `${APPLICATION_SERVER_URL}/studies/${studyId}/conference`;
+    let mURL = `${APPLICATION_SERVER_URL}studies/${studyId}/conference`;
     await axios({
       url: mURL,
       method: "POST",
@@ -129,7 +148,7 @@ export default function MeetingPk() {
   };
 
   const createToken = async () => {
-    let mURL = `${APPLICATION_SERVER_URL}/studies/${studyId}/conferences/members`;
+    let mURL = `${APPLICATION_SERVER_URL}studies/${studyId}/conferences/members`;
     await axios({
       url: mURL,
       method: "POST",
@@ -228,8 +247,8 @@ export default function MeetingPk() {
         sender: event.from.data,
         message: event.data,
       };
-      newChatList.push(newChat);
-      setChat({ log: newChatList });
+      newChatList.unshift(newChat);
+      setChat((prev) => ({ ...prev, log: newChatList }));
     });
 
     // 피드백리스너
@@ -250,8 +269,8 @@ export default function MeetingPk() {
           JSON.parse(event.from.data).clientData.nickname
         } 님이 입장하셨습니다.`,
       };
-      newChatList.push(newJoin);
-      setChat({ log: newChatList });
+      newChatList.unshift(newJoin);
+      setChat((prev) => ({ ...prev, log: newChatList }));
     });
 
     //// 타인의 입장/퇴장 관리
@@ -299,6 +318,19 @@ export default function MeetingPk() {
 
   //// 세션 설정
 
+  const beforeUnloadListener = (e) => {
+    // eslint-disable-next-line no-restricted-globals
+    if (hideModdal) {
+      alert("지금 나가시면 더 이상 피드백 확인이 불가합니다.");
+    }
+    e.preventDefault();
+    return (e.returnValue = "나갈꺼야?");
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", beforeUnloadListener);
+  }, []);
+
   useEffect(() => {
     findDevice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -331,11 +363,11 @@ export default function MeetingPk() {
           ...devices,
           video: [
             ...videos,
-            { deviceId: "noDevice", kind: "videoinput", label: "noCAM" },
+            { deviceId: "noDevice", kind: "videoinput", label: "카메라끄기" },
           ],
           audio: [
             ...audios,
-            { deviceId: "noDevice", kind: "audioinput", label: "noMIC" },
+            { deviceId: "noDevice", kind: "audioinput", label: "마이크끄기" },
           ],
         });
       })
@@ -435,7 +467,7 @@ export default function MeetingPk() {
         recorder.state !== LocalRecorderState.FINISHED)
     ) {
       alert("카메라와 마이크가 없는 상태에서는 녹화를 할 수 없습니다.");
-      return;
+      return "err";
     }
     recorder.clean();
     recorder.record();
@@ -445,7 +477,7 @@ export default function MeetingPk() {
   const pauseRecord = () => {
     if (!recorder || recorder.state !== LocalRecorderState.RECORDING) {
       alert("녹화 중이 아닙니다.");
-      return;
+      return "err";
     }
     recorder.pause();
   };
@@ -454,7 +486,7 @@ export default function MeetingPk() {
   const resumeRecord = () => {
     if (!recorder || recorder.state !== LocalRecorderState.PAUSED) {
       alert("일시정지된 녹화가 없습니다.");
-      return;
+      return "err";
     }
     recorder.resume();
   };
@@ -467,7 +499,7 @@ export default function MeetingPk() {
         recorder.state !== LocalRecorderState.PAUSED)
     ) {
       alert("종료할 녹화가 없습니다.");
-      return;
+      return "err";
     }
     await recorder.stop().then(() => {
       let blob = recorder.getBlob();
@@ -523,13 +555,21 @@ export default function MeetingPk() {
   const [feedback, setFeedback] = useState({
     feedbacks: [],
   });
-  const [onScreen, setOnScreen] = useState(false);
+  const [hideModdal, setHideModal] = useState(true);
+
+  const openModal = () => {
+    setHideModal(false);
+  };
+
+  const closeModal = () => {
+    setHideModal(true);
+  };
 
   // 피드백 입력
-  const writeFeedback = (sub) => (event) => {
+  const writeFeedback = (sub, value) => {
     const data = JSON.stringify({
       writer: userData.nickname,
-      feed: event.target.value,
+      feed: value,
     });
     session
       .signal({
@@ -566,11 +606,6 @@ export default function MeetingPk() {
     link.remove();
   };
 
-  // 피드백 보기
-  const viewFeedback = () => {
-    setOnScreen(true);
-  };
-
   // 피드백 복사
   const copyFeedback = () => {
     document.getElementById("feedbackArea").select();
@@ -593,8 +628,17 @@ export default function MeetingPk() {
   return (
     // eslint-disable-next-line no-restricted-globals
     <Container>
+      <ModalContainer hidden={hideModdal}>
+        <BeforeExitModal
+          downloadFeedback={downloadFeedback}
+          copyFeedback={copyFeedback}
+          compFeedback={compFeedback}
+          closeModal={closeModal}
+          leaveSession={leaveSession}
+        ></BeforeExitModal>
+      </ModalContainer>
       <HeaderContainer>
-        <TitleContainer>스터디 제목</TitleContainer>
+        <TitleContainer>{"스터디 제목"}</TitleContainer>
         <ButtonContainer>
           <LayoutButton>보기1</LayoutButton>
           <LayoutButton>보기2</LayoutButton>
@@ -603,7 +647,10 @@ export default function MeetingPk() {
       </HeaderContainer>
       <MainContainer>
         <MeetingMainContainer right={closeSideBar ? 0 : 20}>
-          <MeetingMain></MeetingMain>
+          <MeetingMain
+            publisher={publisher}
+            subscribers={subscribers}
+          ></MeetingMain>
         </MeetingMainContainer>
         <MeetingSideContainer hidden={closeSideBar}>
           <MeetingSideBar
@@ -613,6 +660,9 @@ export default function MeetingPk() {
             chatData={chat.log}
             fnEnter={fnEnter}
             sendChat={sendChat}
+            subscribers={subscribers}
+            writeFeedback={writeFeedback}
+            userData={userData}
           ></MeetingSideBar>
         </MeetingSideContainer>
       </MainContainer>
@@ -624,6 +674,13 @@ export default function MeetingPk() {
           pauseRecord={pauseRecord}
           resumeRecord={resumeRecord}
           stopRecord={stopRecord}
+          openModal={openModal}
+          leaveSession={leaveSession}
+          devices={devices}
+          changeVideo={changeVideo}
+          changeAudio={changeAudio}
+          currentAudioDevice={currentAudioDevice}
+          currentVideoDevice={currentVideoDevice}
         ></MeetingFooter>
       </FooterContainer>
     </Container>

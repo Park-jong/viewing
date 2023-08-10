@@ -4,6 +4,16 @@ const Container = styled.div`
   border: 1px solid black;
 `;
 
-export default function MeetingFeedbackBox() {
-  return <Container>{"피드백내용"}</Container>;
+const WriteFeedbackTextarea = styled.textarea``;
+
+export default function MeetingFeedbackBox({ writeFeedback, subscriber }) {
+  return (
+    <Container>
+      <WriteFeedbackTextarea
+        onChange={(e) => {
+          writeFeedback(subscriber, e.target.value);
+        }}
+      ></WriteFeedbackTextarea>
+    </Container>
+  );
 }

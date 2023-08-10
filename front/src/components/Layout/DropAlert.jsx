@@ -146,10 +146,6 @@ export default function DropAlert() {
         }
       });
 
-      eventSource.onmessage = (event) => {
-        const res = event.data;
-        console.log(res);
-      };
 
       eventSource.onerror = (event) => {
         console.log(event);

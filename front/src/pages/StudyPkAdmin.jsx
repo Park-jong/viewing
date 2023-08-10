@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { customAxios } from "./../modules/Other/Axios/customAxios";
@@ -117,7 +117,7 @@ export default function StudyPkAdmin() {
 
   const navigate = useNavigate();
 
-  const studyId = location.pathname.split("/")[2];
+  const studyId = useParams().studyPk;
 
   const date = new Date();
   const minDate = date.toISOString().split("T")[0];

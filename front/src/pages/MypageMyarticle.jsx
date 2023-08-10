@@ -1,37 +1,14 @@
+import { useEffect, useState } from 'react';
 import ArticleList from '../components/Board/Organisms/ArticleList';
-
-const data = [
-  {
-    author: {
-      id: 1,
-      nickname: "배고파요",
-      hat: "모자",
-      character: "cow",
-      background: "#ff6767",
-    },
-    article_id: 123,
-    title: "제목입니다",
-    view_count: 123,
-    comment_count: 123,
-    like_count: 25,
-  },
-  {
-    author: {
-      id: 1,
-      nickname: "배고파요",
-      hat: "모자",
-      character: "cow",
-      background: "#ff6767",
-    },
-    article_id: 123,
-    title: "제목입니다",
-    view_count: 123,
-    comment_count: 123,
-    like_count: 25,
-  },
-];
+import { customAxios } from '../modules/Other/Axios/customAxios';
+import { useSelector } from 'react-redux';
 
 
 export default function MypageMyarticle() {
+  const member_id = useSelector((state) => state.UserReducer.memberId);
+  const [data, setData] = useState([]);
+
+  
+
   return <ArticleList data={data} width={800}></ArticleList>;
 }

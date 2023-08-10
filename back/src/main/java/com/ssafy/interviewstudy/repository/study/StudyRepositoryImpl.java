@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -34,13 +35,12 @@ import static com.ssafy.interviewstudy.domain.study.QStudyTagType.*;
 
 @Repository
 public class StudyRepositoryImpl implements StudyRepositoryCustom{
+    @PersistenceContext
+    private EntityManager em;
+    private JPAQueryFactory queryFactory;
 
-    private final EntityManager em;
-    private final JPAQueryFactory queryFactory;
-
-    @Autowired
-    public StudyRepositoryImpl(EntityManager em) {
-        this.em = em;
+    @PostConstruct
+    public void init(){
         queryFactory = new JPAQueryFactory(em);
     }
 

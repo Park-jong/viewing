@@ -37,7 +37,6 @@ CalendarController {
     @PostMapping
     public ResponseEntity<?> createCalendar(@Valid @RequestBody CalendarRetrieveRequest calendarDto, @PathVariable Integer memberId){
         calendarDto.setMemberId(memberId);
-        System.out.println("calendarDto : "+calendarDto);
         CalendarCreatedResponse calendarCreatedResponse = calendarService.createCalendar(calendarDto);
         return ResponseEntity
                 .created(URI.create("/"+calendarCreatedResponse.getCalendarId()))

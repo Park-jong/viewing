@@ -54,6 +54,7 @@ public class CommentService {
                            .content("게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
                            .notificationType(NotificationType.BoardComment)
                            .url(articleId.toString())
+                           .isRead(false)
                            .build()
            );
        }
@@ -75,6 +76,7 @@ public class CommentService {
                                 .content("댓글에 대댓글이 달렸습니다.")
                                 .url(comment.getArticle().getId().toString()+" "+comment.getId().toString())
                                 .notificationType(NotificationType.BoardReply)
+                                .isRead(false)
                                 .build()
                 );
 

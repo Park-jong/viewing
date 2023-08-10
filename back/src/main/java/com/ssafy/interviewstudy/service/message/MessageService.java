@@ -74,6 +74,7 @@ public class MessageService {
                         .content("메시지가 도착했습니다! "+message.getTitle())
                         .notificationType(NotificationType.Message)
                         .url(message.getId().toString())
+                        .isRead(false)
                         .build());
 
         return new MessageCreatedResponse(message.getId());

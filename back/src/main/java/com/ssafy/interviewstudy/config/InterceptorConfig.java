@@ -44,13 +44,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     private final MemberCommentLikeInterceptor memberCommentLikeInterceptor;
 
-    private final OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-
-        registry.addWebRequestInterceptor(openEntityManagerInViewInterceptor)
-                .addPathPatterns("/**").excludePathPatterns("/**notification**/");
 
         //jwt 인터셉터는 무조건 1번
         registry.addInterceptor(jwtRequestInterceptor).addPathPatterns("/**");

@@ -222,6 +222,7 @@ public class StudyService {
                             .content(study.getTitle()+" 스터디에 가입신청이 왔습니다.")
                             .memberId(study.getLeader().getId())
                             .url(study.getId().toString())
+                            .isRead(false)
                             .build()
             );
         }
@@ -294,6 +295,7 @@ public class StudyService {
                             .content(studyRequest.getStudy().getTitle()+" 스터디에 가입이 승인되었습니다! ")
                             .notificationType(NotificationType.StudyRequest)
                             .url(studyId.toString())
+                            .isRead(false)
                             .build()
             );
         }
@@ -314,6 +316,7 @@ public class StudyService {
                       .content(study.getTitle()+" 스터디에 가입신청이 거절 되었습니다.")
                       .notificationType(NotificationType.StudyRequest)
                       .memberId(memberId)
+                      .isRead(false)
                       .url(studyId.toString())
                       .build()
         );
@@ -357,6 +360,7 @@ public class StudyService {
                         .memberId(memberId)
                         .notificationType(NotificationType.StudyRequest)
                         .url(studyId.toString())
+                        .isRead(false)
                         .build()
         );
         return true;
@@ -388,6 +392,7 @@ public class StudyService {
                         .content(studyMember.getStudy().getTitle()+" 스터디의 리더가 되셨습니다!")
                         .memberId(memberId)
                         .url(studyId.toString())
+                        .isRead(false)
                         .build()
         );
 

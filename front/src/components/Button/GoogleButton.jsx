@@ -18,7 +18,7 @@ export function LoginGoogle() {
     response_type: "code",
     client_id:
       "249028033375-3q56vn82p2jku86es16u191kflqp6p1o.apps.googleusercontent.com",
-    redirect_uri: process.env.REACT_APP_SERVER_URL + "login/loading",
+    redirect_uri: process.env.REACT_APP_CLIENT_URL + "login/loading",
     scope: "email",
   };
 

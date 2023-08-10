@@ -59,6 +59,7 @@ public class OauthUriSupport {
     }
 
     public String getRedirectUri(SocialLoginType socialLoginType){
+        System.out.println(envRedirectUrl);
         return envRedirectUrl;
     }
 

@@ -1,6 +1,18 @@
 package com.ssafy.interviewstudy.support.member;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
 public class OauthUriSupport {
+
+    @Value("${oauth.redirectUri}")
+    private String envRedirectUrl;
+
+
     //소셜 로그인 화면 URI
     public static String getSocialLoginUri(SocialLoginType socialLoginType){
         if(socialLoginType==SocialLoginType.kakao){
@@ -46,8 +58,8 @@ public class OauthUriSupport {
         return "2869d34ce0755e095b7d39e5eb3aeafb";
     }
 
-    public static String getRedirectUri(SocialLoginType socialLoginType){
-        return "http://i9a205.q.ssafy.io:3000/login/loading";
+    public String getRedirectUri(SocialLoginType socialLoginType){
+        return envRedirectUrl;
     }
 
     public static String getClientSecret(SocialLoginType socialLoginType){

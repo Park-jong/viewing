@@ -18,8 +18,7 @@ public class AccessTokenSupport {
         this.socialLoginType = socialLoginType;
         this.authorizeCode = authorizeCode;
     }
-    public AccessTokenResult getAccessToken(){
-        //요청 헤더
+    public AccessTokenResult getAccessToken(OauthUriSupport oauthUriSupport){
 
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -29,10 +28,10 @@ public class AccessTokenSupport {
 
         MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
         bodyMap.add("grant_type", "authorization_code");
-        bodyMap.add("client_id", OauthUriSupport.getClientId(socialLoginType));
-        bodyMap.add("redirect_uri", OauthUriSupport.getRedirectUri(socialLoginType));
+        bodyMap.add("client_id", oauthUriSupport.getClientId(socialLoginType));
+        bodyMap.add("redirect_uri", oauthUriSupport.getRedirectUri(socialLoginType));
         bodyMap.add("code", authorizeCode);
-        bodyMap.add("client_secret", OauthUriSupport.getClientSecret(socialLoginType));
+        bodyMap.add("client_secret", oauthUriSupport.getClientSecret(socialLoginType));
 
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(bodyMap, httpHeaders);
         RestTemplate rt = new RestTemplate();
@@ -40,7 +39,7 @@ public class AccessTokenSupport {
 
         try {
             getTokenResponse = rt.exchange(
-                    OauthUriSupport.getSocialLoginTokenUri(socialLoginType),
+                    oauthUriSupport.getSocialLoginTokenUri(socialLoginType),
                     HttpMethod.POST,
                     httpEntity,
                     Map.class

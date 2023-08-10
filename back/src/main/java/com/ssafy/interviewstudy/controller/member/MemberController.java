@@ -30,14 +30,16 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    private final OauthUriSupport oauthUriSupport;
+
     @PostMapping("/login/{socialLoginType}")
     public ResponseEntity<?> login(@PathVariable SocialLoginType socialLoginType){
         HttpHeaders httpHeaders = new HttpHeaders();
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.
                         fromUriString(OauthUriSupport.getSocialLoginUri(socialLoginType)).
-                        queryParam("client_id",OauthUriSupport.getClientId(socialLoginType)).
-                        queryParam("redirect_uri",OauthUriSupport.getRedirectUri(socialLoginType)).
+                        queryParam("client_id",oauthUriSupport.getClientId(socialLoginType)).
+                        queryParam("redirect_uri",oauthUriSupport.getRedirectUri(socialLoginType)).
                         queryParam("response_type","code").
                         queryParam("prompt","login");
 
@@ -64,7 +66,7 @@ public class MemberController {
         //access Token 가져오기
         AccessTokenSupport accessTokenSupport =
                 new AccessTokenSupport(socialLoginType,authorizeCode);
-        AccessTokenResult accessTokenResult = accessTokenSupport.getAccessToken();
+        AccessTokenResult accessTokenResult = accessTokenSupport.getAccessToken(oauthUriSupport);
 
         if(!accessTokenResult.getIsSuccess()){
             //로그인 실패

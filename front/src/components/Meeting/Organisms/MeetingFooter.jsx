@@ -24,7 +24,14 @@ const GroupingContainer = styled.div`
   width: 20%;
 `;
 
-export default function MeetingFooter({ toggleSideBar, changeOption }) {
+export default function MeetingFooter({
+  toggleSideBar,
+  changeOption,
+  initRecord,
+  pauseRecord,
+  resumeRecord,
+  stopRecord,
+}) {
   return (
     <Container>
       <GroupingContainer>
@@ -33,7 +40,12 @@ export default function MeetingFooter({ toggleSideBar, changeOption }) {
       </GroupingContainer>
       <GroupingContainer>
         <TimerButton></TimerButton>
-        <RecordButton></RecordButton>
+        <RecordButton
+          initRecord={initRecord}
+          pauseRecord={pauseRecord}
+          resumeRecord={resumeRecord}
+          stopRecord={stopRecord}
+        ></RecordButton>
       </GroupingContainer>
       <GroupingContainer>
         <MembersButton

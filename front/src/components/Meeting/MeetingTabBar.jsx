@@ -12,7 +12,7 @@ const ButtonContainer = styled.div`
 
 const ExitContainer = styled.div`
   position: absolute;
-  right: 0;
+  right: 0%;
   border: 1px solid black;
 `;
 

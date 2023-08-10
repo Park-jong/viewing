@@ -26,6 +26,8 @@ public class StudyCalendarDtoResponse {
 
     private StudyMemberDto author;
 
+    Boolean isStudyCalendar = true;
+
     public StudyCalendarDtoResponse(StudyCalendar studyCalendar){
         this.calenderId = studyCalendar.getId();
         this.startedAt = studyCalendar.getStartedAt();

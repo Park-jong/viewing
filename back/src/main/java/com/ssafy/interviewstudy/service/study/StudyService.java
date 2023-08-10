@@ -1,10 +1,13 @@
 package com.ssafy.interviewstudy.service.study;
 
 import com.querydsl.core.Tuple;
+import com.ssafy.interviewstudy.domain.calendar.Calendar;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.notification.Notification;
 import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.domain.study.*;
+import com.ssafy.interviewstudy.dto.calendar.CalendarListResponse;
+import com.ssafy.interviewstudy.dto.calendar.CalendarRetrieveResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
@@ -438,9 +441,15 @@ public class StudyService {
         return startChatId == null ? studyChatRepository.findOldStudyChats(studyId, pageRequest) : studyChatRepository.findOldStudyChatsByStartId(studyId, startChatId, pageRequest);
     }
     //스터디 일정 조회
-    public List<StudyCalendarDtoResponse> findStudyCalendarsByStudy(Integer studyId){
+    public List<Object> findStudyCalendarsByStudy(Integer studyId){
         Study study = studyRepository.findById(studyId).get();
-        return studyCalendarRepository.findStudyCalendersByStudy(study);
+        List<Object> list = new ArrayList<>();
+        List<StudyCalendarDtoResponse> studyCalendar = studyCalendarRepository.findStudyCalendersByStudy(study);
+        list.addAll(studyCalendar);
+        List<Calendar> memberCalendarEntity = studyCalendarRepository.findMemberCalendarByStudyId(studyId);
+        List<CalendarRetrieveResponse> memberCalendar = CalendarListResponse.fromEntity(memberCalendarEntity).getData();
+        list.addAll(memberCalendar);
+        return list;
     }
 
     //일정 개별 조회

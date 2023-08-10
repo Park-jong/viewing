@@ -47,6 +47,7 @@ public class StudyController {
         return ResponseEntity.ok().body(page);
     }
 
+    //스터디 검색 시 단일
     @JWTRequired(required = true)
     @GetMapping("/{study_id}")
     public ResponseEntity<?> studyDetail(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") int studyId){
@@ -54,13 +55,28 @@ public class StudyController {
         return ResponseEntity.ok().body(study);
     }
 
+    //스터디원인지
     @JWTRequired(required = true)
+    @GetMapping("/{study_id}/member")
+    @Authority(authorityType = AuthorityType.Study_Member)
+    public ResponseEntity<?> studyMemberInfo(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") int studyId){
+        StudyMemberDto result = studyService.findStudyMember(memberInfo.getMemberId(), studyId);
+        if(result == null){
+            ResponseEntity.badRequest().body("잘못된 접근");
+        }
+        return ResponseEntity.ok().body(result);
+    }
+
+    //스터디원들이 정보 조회
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/detail")
     public ResponseEntity<?> studyInfoDetail(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") int studyId){
         StudyDetailDtoResponse study = studyService.findStudyDetailById(memberInfo, studyId);
         return ResponseEntity.ok().body(study);
     }
 
+    //스터디 생성
     @JWTRequired(required = true)
     @PostMapping
     public ResponseEntity<?> studySave(@Valid @RequestBody StudyDtoRequest study){
@@ -74,6 +90,7 @@ public class StudyController {
         return ResponseEntity.created(URI.create("/studies/"+madeStudy)).body(madeStudy);
     }
 
+    //스터디삭제
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Leader)
     @DeleteMapping("/{study_id}")
@@ -82,6 +99,7 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
+    //스터디 정보 변경
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Leader)
     @PutMapping("/{study_id}")
@@ -94,6 +112,7 @@ public class StudyController {
         return ResponseEntity.created(URI.create("/studies/"+studyId)).build();
     }
 
+    //스터디 신청
     @JWTRequired(required = true)
     @PostMapping("/{study_id}/requests")
     public ResponseEntity<?> studyRequestAdd(@PathVariable("study_id") Integer studyId, @RequestPart(value = "request", required = false) RequestDto request, @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
@@ -116,6 +135,7 @@ public class StudyController {
         return ResponseEntity.created(URI.create("/studies")).body(madeRequest);
     }
 
+    //스터디 신청 조회
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Leader)
     @GetMapping("/{study_id}/requests")
@@ -132,6 +152,7 @@ public class StudyController {
         return ResponseEntity.ok().body(response);
     }
 
+    //파일 다운로드
     @GetMapping("/{study_id}/requests/{request_id}/files/{file_id}")
     public ResponseEntity<?> studyRequestFile(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @PathVariable("file_id") Integer fileId){
         RequestFile file = studyService.requestFileDownload(studyId, requestId, fileId);
@@ -148,6 +169,7 @@ public class StudyController {
         return new ResponseEntity<>(file.getFileData(), httpHeaders, HttpStatus.OK);
     }
 
+    //신청 승인
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Leader)
     @PostMapping("/{study_id}/requests/{request_id}/approval")
@@ -158,6 +180,7 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
+    //신청 거절
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Leader)
     @PostMapping("/{study_id}/requests/{request_id}/denial")
@@ -168,6 +191,7 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
+    //신청 취소
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member_Study_Request)
     @DeleteMapping("/{study_id}/requests/{request_id}")
@@ -177,6 +201,7 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
+    //스터디원 추방
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Leader)
     @DeleteMapping("/{study_id}/members/{user_id}/ban")
@@ -187,6 +212,7 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
+    //스터디 탈퇴
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Study_Member)
     @DeleteMapping("/{study_id}/members/{user_id}/exit")
@@ -197,6 +223,7 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
+    //리더 위임
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Leader)
     @PutMapping("/{study_id}/members/leader")
@@ -212,6 +239,7 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
+    //멤버 리스트 조회
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/members")
@@ -219,6 +247,7 @@ public class StudyController {
         return ResponseEntity.ok().body(studyService.findStudyMembers(studyId));
     }
 
+    //채팅 입력
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Study_Member)
     @PostMapping("/{study_id}/chats")
@@ -227,8 +256,9 @@ public class StudyController {
         return ResponseEntity.ok().build();
     }
 
-    //@JWTRequired(required = true)
-    //@Authority(authorityType = AuthorityType.Study_Member)
+    //채팅 내역
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/chats")
     public ResponseEntity<?> studyChatList(@PathVariable("study_id") Integer studyId, @RequestParam(name = "startChatId", required = false) Integer startChatId){
         List<ChatResponse> oldStudyChats = studyService.findOldStudyChats(studyId, startChatId);

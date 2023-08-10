@@ -81,7 +81,6 @@ public class StudyService {
         return result;
     }
 
-
     //스터디 정보 조회
     public StudyDtoResponse findStudyById(JWTMemberInfo memberInfo, Integer id){
         Integer memberId = memberInfo.getMemberId();
@@ -236,7 +235,12 @@ public class StudyService {
 
         for (StudyRequest request : requests) {
             StudyMemberDto user = new StudyMemberDto(request.getApplicant());
-            RequestDtoResponse response = new RequestDtoResponse(request.getId(), user, request.getIntroduction(), request.getRequestedAt(), null);
+            List<StudyRequestFile> files = request.getStudyRequestFiles();
+            List<RequestFile> reponseFiles = new ArrayList<>();
+            for (StudyRequestFile file : files) {
+                reponseFiles.add(new RequestFile(file));
+            }
+            RequestDtoResponse response = new RequestDtoResponse(request.getId(), user, request.getIntroduction(), request.getRequestedAt(), reponseFiles);
             result.add(response);
         }
         return result;
@@ -502,6 +506,13 @@ public class StudyService {
         if(studyMemberOp.isEmpty())
             return false;
         return studyMemberOp.get().getIsLeader() == true ? true : false;
+    }
+
+    public StudyMemberDto findStudyMember(Integer studyId, Integer memberId){
+        Optional<StudyMember> studyMemberOp = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId);
+        if(studyMemberOp.isEmpty())
+            return null;
+        return new StudyMemberDto(studyMemberOp.get().getMember(), studyMemberOp.get().getIsLeader());
     }
 
     //스터디 요청 유효성 체크 반환

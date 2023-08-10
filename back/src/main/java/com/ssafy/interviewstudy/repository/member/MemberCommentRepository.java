@@ -11,6 +11,6 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public interface MemberCommentRepository extends JpaRepository<Board,Integer>{
-    @Query("select b from Board b inner join b.comments c where c.author.id=:id and b.boardType = :boardType")
+    @Query("select DISTINCT b from Board b inner join b.comments c where c.author.id=:id and b.boardType = :boardType")
     public List<Board> getCommentedBoardByMemberId(@Param("id") Integer memberId, @Param("boardType")BoardType boardType);
 }

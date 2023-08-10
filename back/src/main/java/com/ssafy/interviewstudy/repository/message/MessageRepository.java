@@ -10,11 +10,11 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Integer> {
 
     //보낸 쪽지함 조회
-    @Query("select m from Message m inner join fetch m.author ma where ma.id = :authorId")
+    @Query("select m from Message m inner join fetch m.author ma where ma.id = :authorId order by m.createdAt desc")
     List<Message> findMessagesByAuthorId(@Param("authorId") Integer authorId);
 
     //받은 쪽지함 조회
-    @Query("select m from Message m inner join fetch m.receiver mr where mr.id = :receiverId")
+    @Query("select m from Message m inner join fetch m.receiver mr where mr.id = :receiverId order by m.createdAt desc")
     List<Message> findMessagesByReceiverId(Integer receiverId);
 
     //특정 쪽지함 자세히 보기

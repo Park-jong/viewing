@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CommentService {
 
@@ -39,6 +40,7 @@ public class CommentService {
 
 
     // 게시글 댓글 저장
+    @Transactional
     public Integer saveComment(Integer articleId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         ArticleComment comment = articleCommentRepository.save(commentDtoService.toEntity(commentRequest));
@@ -59,6 +61,7 @@ public class CommentService {
     }
 
     // 대댓글 저장
+    @Transactional
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         ArticleComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
@@ -103,6 +106,7 @@ public class CommentService {
     }
 
     // (대)댓글 수정
+    @Transactional
     public CommentResponse modifyComment(Integer commentId, CommentRequest commentRequest){
 
         ArticleComment originComment = articleCommentRepository.findById(commentId).get();
@@ -114,6 +118,7 @@ public class CommentService {
     }
 
     // (대)댓글 삭제
+    @Transactional
     public void removeComment(Integer commentId){
         ArticleComment comment = articleCommentRepository.findById(commentId).get();
         comment.deleteComment();
@@ -121,6 +126,7 @@ public class CommentService {
     }
 
     // 댓글 좋아요
+    @Transactional
     public Integer saveCommentLike(Integer memberId, Integer commentId){
         Member member = memberRepository.findMemberById(memberId);
         ArticleComment comment = articleCommentRepository.findById(commentId).get();

@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CalendarService {
 
@@ -67,7 +68,6 @@ public class CalendarService {
     }
 
     //본인 일정이 맞는지 체크
-    @Transactional
     public Boolean checkOwnCalendar(Integer memberId,Integer calendarId){
         Calendar calendar = calendarRepository.findCalendarByAuthorIdAndId(memberId,calendarId);
         return calendar!=null;

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class StudyBoardService {
 
@@ -92,6 +93,7 @@ public class StudyBoardService {
     }
 
     // 글 저장
+    @Transactional
     public Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files){
         StudyBoard article = boardRepository.save(boardDtoService.toEntity(boardRequest));
 

@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MessageService {
     private final MessageRepository messageRepository;
@@ -35,7 +36,6 @@ public class MessageService {
 
 
     //쪽지 상세 조회
-    @Transactional
     public MessageDto getMessageDetail(Integer messageId) {
         Message message = messageRepository.findMessageById(messageId);
         if(message==null) throw new NotFoundException("쪽지");
@@ -44,14 +44,12 @@ public class MessageService {
     }
 
     //보낸 쪽지들 조회
-    @Transactional
     public MessageListResponse getSentMessages(Integer authorId) {
         List<Message> messageList = messageRepository.findMessagesByAuthorId(authorId);
         return MessageListResponse.fromEntityList(messageList);
     }
 
     //받은 쪽지들 조회
-    @Transactional
     public MessageListResponse getReceivedMessages(Integer receiverId) {
         List<Message> messageList = messageRepository.findMessagesByReceiverId(receiverId);
         return MessageListResponse.fromEntityList(messageList);
@@ -81,7 +79,6 @@ public class MessageService {
         return new MessageCreatedResponse(message.getId());
     }
 
-    @Transactional
     public Boolean checkMessageByMember(Integer messageId,Integer memberId){
         Member member = memberRepository.findMemberById(memberId);
         Message message = messageRepository.findMessageById(messageId);

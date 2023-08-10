@@ -12,11 +12,13 @@ import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
 import com.ssafy.interviewstudy.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StudyBoardCommentService {
 
@@ -26,6 +28,7 @@ public class StudyBoardCommentService {
     private final NotificationService notificationService;
 
     // 게시글 댓글 저장
+    @Transactional
     @JWTRequired
     public Integer saveComment(Integer articleId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
@@ -49,6 +52,7 @@ public class StudyBoardCommentService {
     }
 
     // 대댓글 저장
+    @Transactional
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         StudyBoardComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
@@ -86,6 +90,7 @@ public class StudyBoardCommentService {
     }
 
     // (대)댓글 수정
+    @Transactional
     public StudyBoardCommentResponse modifyComment(Integer commentId, CommentRequest commentRequest){
 
         StudyBoardComment originComment = commentRepository.findById(commentId).get();
@@ -97,6 +102,7 @@ public class StudyBoardCommentService {
     }
 
     // (대)댓글 삭제
+    @Transactional
     public void removeComment(Integer commentId){
         StudyBoardComment comment = commentRepository.findById(commentId).get();
         comment.deleteComment();

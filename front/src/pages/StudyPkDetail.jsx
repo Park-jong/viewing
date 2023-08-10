@@ -10,27 +10,6 @@ import ApplyModal from "../components/Modal/ApplyModal";
 import CompanyJobTag from "../components/Study/CompanyJobTag";
 import TagStyled from "../components/Study/TagStyled";
 
-const studyData = {
-  study_id: 1,
-  title: "스터디 제목입니다!",
-  description: "스터디 설명입니다.",
-  applied_company: "삼성",
-  applied_job: "개발",
-  capacity: 6,
-  head_count: 4,
-  created_at: "2023-07-26T15:17",
-  deadline: "2023-07-26",
-  recruitment: true,
-  leader: {
-    member_id: null,
-    nickname: "지우",
-    background: "red",
-    character: "cow",
-  },
-  career_level: "ALL",
-  tags: ["tag1", "tag2", "tag3"],
-};
-
 const Container = styled.div``;
 
 const Title = styled.div`
@@ -105,19 +84,40 @@ const DetailContent = styled.div`
 `;
 
 export default function StudyPkDetail() {
-  // const [studyData, SetstudyData] = useState([]);
+  const studyPk = useParams().studyPk;
 
-  // const studyPk = useParams().studyPk;
+  const emptyStudyData = {
+    study_id: studyPk,
+    title: "",
+    description: "",
+    applied_company: "",
+    applied_job: "",
+    capacity: 0,
+    head_count: 0,
+    created_at: "",
+    deadline: "",
+    recruitment: true,
+    leader: {
+      member_id: null,
+      nickname: "",
+      background: "",
+      character: "",
+    },
+    career_level: "ALL",
+    tags: [],
+  };
+  const [studyData, SetstudyData] = useState(emptyStudyData);
 
   // console.log(studyPk);
 
-  // useEffect(() => {
-  //   customAxios()
-  //     .get(`studies/${studyPk}`)
-  //     .then((res) => {
-  //       SetstudyData(res.data);
-  //     });
-  // }, []);
+  useEffect(() => {
+    customAxios()
+      .get(`studies/${studyPk}`)
+      .then((res) => {
+        SetstudyData(() => res.data);
+        console.log(res.data);
+      });
+  }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 

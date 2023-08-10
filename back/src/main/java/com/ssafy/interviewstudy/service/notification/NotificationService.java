@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class NotificationService {
 
@@ -54,15 +53,28 @@ public class NotificationService {
     //SSE 연결시간
     private final Long sseEmitterTimeOut= 3600L*60L*60L*24L;
 
+
     public SseEmitter connect(Integer memberId, Integer lastEventId){
         String timeIncludeId = memberId+"_"+System.currentTimeMillis();
         SseEmitter sseEmitter = emitterRepository.save(timeIncludeId,new SseEmitter(sseEmitterTimeOut));
 
         //연결 완료시 삭제 (연결 시간이 끝남)
-        sseEmitter.onCompletion(()->emitterRepository.deleteSseEmitterById(timeIncludeId));
+        sseEmitter.onCompletion(
+                ()->{
+                    emitterRepository.deleteSseEmitterById(timeIncludeId);
+                }
+        );
 
         //타임 아웃시 삭제 (데이터를 안보냄)
-        sseEmitter.onTimeout(()->emitterRepository.deleteSseEmitterById(timeIncludeId));
+        sseEmitter.onTimeout(
+                ()->{
+                    emitterRepository.deleteSseEmitterById(timeIncludeId);
+                }
+        );
+
+        sseEmitter.onError(
+                (e)-> emitterRepository.deleteSseEmitterById(timeIncludeId)
+        );
 
         //SSE는 초기에 메세지를 보내지 않으면 오류발생 (더미 이벤트 만들자)
         sendEventByEmitter(
@@ -86,7 +98,6 @@ public class NotificationService {
 
     public void sendEventByEmitter(SseEmitter sseEmitter,Object notificationDto, String emitterId, Integer eventId,String eventName){
         try{
-            if(sseEmitter==null) return;
             sseEmitter.send(
                     SseEmitter
                             .event()
@@ -96,13 +107,12 @@ public class NotificationService {
             );
         }
         catch(IOException e){
-            System.out.println("???????");
             emitterRepository.deleteSseEmitterById(emitterId);
         }
     }
 
-    //특정 멤버에게 이벤트 보내기
     @Transactional
+    //특정 멤버에게 이벤트 보내기
     public void sendNotificationToMember(NotificationDto notificationDto){
 
         Notification notification = dtoToEntity(notificationDto);
@@ -168,6 +178,7 @@ public class NotificationService {
     }
 
 
+    @Transactional
     public Boolean checkNotificationByMemberId(Integer memberId,Integer notificationId){
         return notificationRepository.findNotificationByAuthorIdAndId(memberId,notificationId) != null;
     }

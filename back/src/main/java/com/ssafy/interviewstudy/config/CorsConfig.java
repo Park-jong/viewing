@@ -18,4 +18,6 @@ public class CorsConfig implements WebMvcConfigurer {
                         HttpMethod.DELETE.name()
                 );
     }
+
+
 }

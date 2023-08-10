@@ -10,6 +10,7 @@ import com.ssafy.interviewstudy.service.study.StudyService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Component
+@Transactional
 @RequiredArgsConstructor
 public class MemberStudyArticleInterceptor implements HandlerInterceptor {
 

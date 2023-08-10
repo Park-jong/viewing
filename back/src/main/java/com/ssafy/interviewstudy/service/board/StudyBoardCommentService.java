@@ -63,6 +63,7 @@ public class StudyBoardCommentService {
                         .memberId(commentRequest.getMemberId())
                         .content("스터디 게시판 댓글에 답글이 달렸습니다")
                         .notificationType(NotificationType.StudyReply)
+                        .isRead(false)
                         .url(comment.getArticle().getStudy().getId().toString()+" "+articleId.toString())
                         .build()
         );

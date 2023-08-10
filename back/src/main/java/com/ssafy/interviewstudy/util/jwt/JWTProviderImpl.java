@@ -23,7 +23,6 @@ public class JWTProviderImpl implements JWTProvider{
     //토큰 유효성 검사
     @Override
     public JWTResponseType isValidToken(String token){
-        System.out.println("valid target token : "+token);
         try{
             Jws<Claims> jws = Jwts.parser()
                     .setSigningKey(secretKey.getBytes())
@@ -66,7 +65,6 @@ public class JWTProviderImpl implements JWTProvider{
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
 
-        System.out.println("JWTProvide 토큰 생성! " + retToken);
         return retToken;
     }
 

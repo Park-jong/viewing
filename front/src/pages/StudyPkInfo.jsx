@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { customAxios } from "./../modules/Other/Axios/customAxios";
@@ -76,7 +76,7 @@ const CareerLevel = styled.div``;
 export default function StudyPkInfo() {
   const location = useLocation();
 
-  const studyId = location.pathname.split("/")[2];
+  const studyId = useParams().studyPk;
 
   const [memberList, setMemberList] = useState([]);
   const [tagList, setTagList] = useState([]);

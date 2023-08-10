@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import Calendar from "./../Calendar";
+import Calendar from "../Calendar";
 import TimeBar from "../TimeBar";
 import { useState, useEffect } from "react";
 import { FakeData } from "../FakeData";
@@ -9,27 +9,28 @@ import moment from "moment";
 const Container = styled.div`
   display: ${(props) => {
     if (props.isFlex) {
-      return "flex"
+      return "flex";
     } else {
-      return "block"
+      return "block";
     }
   }};
   justify-content: center;
   align-items: center;
 `;
 
-export default function CalenderTemplate({isFlex}) {
+export default function CalendarTemplate({ isFlex }) {
   const [data, dataChange] = useState([]);
   const [value, onChange] = useState(new Date());
 
   useEffect(() => {
     dataChange(FakeData);
   }, []);
-  const data2 = data.filter(
-    (d) => {
-      return moment(value).format("YY.MM.DD") === moment(d.started_at).format("YY.MM.DD")
-    }
-  );
+  const data2 = data.filter((d) => {
+    return (
+      moment(value).format("YY.MM.DD") ===
+      moment(d.started_at).format("YY.MM.DD")
+    );
+  });
 
   return (
     <Container $isFlex={isFlex}>

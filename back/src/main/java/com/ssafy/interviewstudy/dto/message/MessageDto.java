@@ -48,6 +48,7 @@ public class MessageDto {
                         .memberId(message.getAuthor().getId())
                         .background(message.getAuthor().getMemberProfileBackground())
                         .character(message.getAuthor().getMemberProfileImage())
+                        .nickname(message.getAuthor().getNickname())
                         .build()
         );
         messageDetailResponse.setReceiver(
@@ -55,6 +56,7 @@ public class MessageDto {
                         .memberId(message.getReceiver().getId())
                         .background(message.getReceiver().getMemberProfileBackground())
                         .character(message.getReceiver().getMemberProfileImage())
+                        .nickname(message.getAuthor().getNickname())
                         .build()
         );
         return messageDetailResponse;

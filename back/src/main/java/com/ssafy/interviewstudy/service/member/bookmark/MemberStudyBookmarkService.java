@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 @Validated
+@Transactional(readOnly = true)
 @Service
 public class MemberStudyBookmarkService {
     private final MemberRepository memberRepository;

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class MemberArticleLikeService {
 
     private MemberArticleLikeRepository memberArticleLikeRepository;
@@ -27,7 +28,7 @@ public class MemberArticleLikeService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardResponse> getLikedArticleByMemberId(BoardRequest boardRequest, BoardType boardType){
         List<BoardResponse> boardResponses = new ArrayList<>();
         List<Board> boardList = new ArrayList<>();

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class BoardService {
 
@@ -112,6 +113,7 @@ public class BoardService {
     }
 
     // 글 저장
+    @Transactional
     public Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files) {
         Board article = boardRepository.save(boardDtoService.toEntity(boardRequest));
 
@@ -176,6 +178,7 @@ public class BoardService {
     }
 
     // 조회수+1
+    @Transactional
     public void modifyViewCount(Board article) {
         article.updateViewCount();
         boardRepository.save(article);

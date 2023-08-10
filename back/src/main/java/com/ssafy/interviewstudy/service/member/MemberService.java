@@ -7,11 +7,12 @@ import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
 
@@ -24,6 +25,7 @@ public class MemberService {
         return member;
     }
 
+    @Transactional
     public void register(Member member){
         memberRepository.save(member);
     }
@@ -39,7 +41,6 @@ public class MemberService {
     }
 
     //디버깅용
-    @Transactional
     public Member findMemberByMemberId(Integer memberId){
         return memberRepository.findMemberById(memberId);
     }
@@ -50,6 +51,7 @@ public class MemberService {
         em.flush();
     }
 
+    @Transactional(readOnly = true)
     public Member findByIdAndPlatform(String id, SocialLoginType socialLoginType){
         Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginType(id,socialLoginType);
         return member;

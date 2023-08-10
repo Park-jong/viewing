@@ -10,8 +10,10 @@ import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StudyBoardDtoService {
     private final MemberRepository memberRepository;

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class MemberCommentService {
 
     private MemberCommentRepository memberCommentRepository;
@@ -25,7 +26,7 @@ public class MemberCommentService {
         this.boardDtoService = boardDtoService;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardResponse> getCommentedArticle(BoardRequest boardRequest, BoardType boardType){
         List<BoardResponse> boardResponses = new ArrayList<>();
         List<Board> boardList = new ArrayList<>();

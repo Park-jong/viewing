@@ -15,6 +15,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+        e.printStackTrace();
         return ResponseEntity.badRequest().build();
     }
 
@@ -30,11 +31,13 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(updateFailException.class)
     public ResponseEntity<?> handleUpdateFailException(updateFailException e){
+        e.printStackTrace();
         return ResponseEntity.internalServerError().body(e.getTarget()+" 수정 실패");
     }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<?> handleIOException(IOException e){
+        e.printStackTrace();
         return ResponseEntity.internalServerError().body("Sse 오류");
     }
 }

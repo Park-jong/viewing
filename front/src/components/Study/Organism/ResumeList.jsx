@@ -2,82 +2,36 @@
 
 import styled from "styled-components";
 import ResumeBox from "../ResumeBox";
+import { useLocation } from "react-router";
 
 const Container = styled.div`
+  /* position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; */
 `;
 
-export default function ResumeList() {
-  const data = [
-    // Sample data
-    {
-      request_id: 12,
-      user: {
-        id: 1,
-        nickname: "123",
-        background: "#ff6767",
-        character: "cow",
-      },
-      content: "들어가고싶어요",
-      created_at: "2023-07-16",
-      request_files: [
-        {
-          filename: "합격인증",
-          fileContent: "파일바이너리",
-          fileType: "PNG",
-        },
-      ],
-    },
-    {
-      request_id: 13,
-      user: {
-        id: 1,
-        nickname: "123",
-        background: "#ff6767",
-        character: "cow",
-      },
-      content: "들어가고싶어요",
-      created_at: "2023-07-16",
-      request_files: [
-        {
-          filename: "합격인증",
-          fileContent: "파일바이너리",
-          fileType: "PNG",
-        },
-      ],
-    },
-    {
-      request_id: 13,
-      user: {
-        id: 1,
-        nickname: "123",
-        background: "#ff6767",
-        character: "cow",
-      },
-      content: "들어가고싶어요",
-      created_at: "2023-07-16",
-      request_files: [
-        {
-          filename: "합격인증",
-          fileContent: "파일바이너리",
-          fileType: "PNG",
-        },
-      ],
-    },
-  ];
+export default function ResumeList({ data, setData }) {
+  const dateFormat = (date) => {
+    let str = date.split("T");
+    return str[0] + " " + str[1];
+  };
+  const study_id = useLocation().pathname.split("/")[2];
 
   return (
     <Container>
       {data.map((resume) => (
         <ResumeBox
           key={resume.request_id}
+          study_id={study_id}
+          member_id={resume.user.member_id}
+          request_id={resume.request_id}
           backgroundcolor={resume.user.background}
           characterimg={resume.user.character}
           nickname={resume.user.nickname}
-          date={resume.created_at}
+          date={dateFormat(resume.created_at)}
           text={resume.content}
-          requestFiles={resume.request_files}
+          request_files={resume.request_files}
+          setList={setData}
         />
       ))}
     </Container>

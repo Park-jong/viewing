@@ -60,7 +60,7 @@ public class StudyController {
     @GetMapping("/{study_id}/member")
     @Authority(authorityType = AuthorityType.Study_Member)
     public ResponseEntity<?> studyMemberInfo(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") int studyId){
-        StudyMemberDto result = studyService.findStudyMember(memberInfo.getMemberId(), studyId);
+        StudyMemberDto result = studyService.findStudyMember(studyId, memberInfo.getMemberId());
         if(result == null){
             ResponseEntity.badRequest().body("잘못된 접근");
         }

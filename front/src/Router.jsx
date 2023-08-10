@@ -54,7 +54,7 @@ import ReadyPage from "./testWebRTC/Pages/ReadyPage";
 import StudyPage from "./testWebRTC/Pages/StudyPage";
 import BoardCommon from "./pages/BoardCommon";
 import BoardUpdate from "./pages/BoardUpdate";
-import MakeStudy from './pages/Makestudy';
+import MakeStudy from "./pages/Makestudy";
 import Message from "./pages/Message";
 
 const router = createBrowserRouter([
@@ -135,7 +135,7 @@ const router = createBrowserRouter([
           },
           {
             path: "admin",
-            element: <StudyPkAdmin />,
+            element: <StudyPk />,
           },
           {
             path: "applicant",
@@ -164,7 +164,7 @@ const router = createBrowserRouter([
 
           {
             path: "info",
-            element: <StudyPkInfo />,
+            element: <StudyPk />,
           },
           {
             path: "meeting",
@@ -286,7 +286,7 @@ const router = createBrowserRouter([
   {
     path: "message",
     element: <Message />,
-  }
+  },
 ]);
 
 export default router;

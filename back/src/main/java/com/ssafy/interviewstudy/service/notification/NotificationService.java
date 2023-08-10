@@ -1,11 +1,15 @@
 package com.ssafy.interviewstudy.service.notification;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.notification.Notification;
 import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.domain.study.StudyMember;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.dto.notification.NotificationListDto;
 import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
 import com.ssafy.interviewstudy.dto.study.StudyMemberDto;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -16,6 +20,7 @@ import com.ssafy.interviewstudy.repository.study.StudyRepository;
 import com.ssafy.interviewstudy.service.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +35,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class NotificationService {
 
-    //알림 CRUD 레포지토리
+    //JSON화 시키는 Object Mapper
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
+
+    //알림 CRUD 레포지토리 
     private final NotificationRepository notificationRepository;
 
     //SSE 연결 핸들러 레포지토리
@@ -42,7 +51,7 @@ public class NotificationService {
     private final StudyMemberRepository studyMemberRepository;
 
     //SSE 연결시간
-    private final Long sseEmitterTimeOut= 60L*60L*24L;
+    private final Long sseEmitterTimeOut= 3600L*60L*60L*24L;
 
     public SseEmitter connect(Integer memberId, Integer lastEventId){
         String timeIncludeId = memberId+"_"+System.currentTimeMillis();
@@ -65,33 +74,34 @@ public class NotificationService {
                         .memberId(1)
                         .build(),
                 timeIncludeId,
-                0
-
+                0,
+                "test"
         );
         if(lastEventId==null) lastEventId=0;
         sendMissingData(lastEventId,memberId,timeIncludeId,sseEmitter);
-
         return sseEmitter;
 
     }
 
-    public void sendEventByEmitter(SseEmitter sseEmitter,  NotificationDto notificationDto, String emitterId, Integer eventId){
+    public void sendEventByEmitter(SseEmitter sseEmitter,Object notificationDto, String emitterId, Integer eventId,String eventName){
         try{
+            if(sseEmitter==null) return;
             sseEmitter.send(
                     SseEmitter
                             .event()
                             .id(eventId.toString())
-                            .name("notification")
-                            .data(notificationDto)
+                            .name(eventName)
+                            .data(objectMapper.writeValueAsString(notificationDto))
             );
         }
         catch(IOException e){
+            System.out.println("???????");
             emitterRepository.deleteSseEmitterById(emitterId);
         }
     }
 
     //특정 멤버에게 이벤트 보내기
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void sendNotificationToMember(NotificationDto notificationDto){
 
         Notification notification = dtoToEntity(notificationDto);
@@ -103,13 +113,13 @@ public class NotificationService {
         String eventId = notificationDto.getMemberId()+"_"+System.currentTimeMillis();
         memberEmitters.forEach(
                 (emitterId,sseEmitter)->{
-                    sendEventByEmitter(sseEmitter,NotificationDto.fromEntity(notification),emitterId, notification.getId());
+                    sendEventByEmitter(sseEmitter,NotificationDto.fromEntity(notification),emitterId, notification.getId(),"notification");
                 }
         );
 
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void sendNotificationToStudyMember(NotificationStudyDto notificationStudyDto){
         List<StudyMember> studyMembers = studyMemberRepository.findMembersByStudyId(notificationStudyDto.getStudyId());
         NotificationDto notificationDto = notificationStudyDto.getNotificationDto();
@@ -140,14 +150,12 @@ public class NotificationService {
     @Transactional
     public void sendMissingData(Integer lastEventId,Integer memberId,String emitterId,SseEmitter sseEmitter){
         List<Notification> missingNotificationList =
-                notificationRepository.findNotificationsByIdGreaterThanAndAuthorId(lastEventId,memberId);
-        for(Notification notification : missingNotificationList){
-            sendEventByEmitter(sseEmitter,
-                    NotificationDto.fromEntity(notification),
-                    emitterId,
-                    notification.getId()
-            );
-        }
+                notificationRepository.findTop20ByIdGreaterThanAndAuthorIdOrderByCreatedAtDesc(lastEventId,memberId);
+
+        NotificationListDto notificationListDto =
+                NotificationListDto.noticiationListDtoFromListNotification(missingNotificationList);
+
+        sendEventByEmitter(sseEmitter,notificationListDto,emitterId,lastEventId,"lastNotification");
     }
 
     @Transactional
@@ -158,7 +166,7 @@ public class NotificationService {
         return true;
     }
 
-    @Transactional
+
     public Boolean checkNotificationByMemberId(Integer memberId,Integer notificationId){
         return notificationRepository.findNotificationByAuthorIdAndId(memberId,notificationId) != null;
     }

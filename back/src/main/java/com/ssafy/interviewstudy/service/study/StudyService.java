@@ -48,10 +48,10 @@ public class StudyService {
     private final StudyRequestFileRepository studyRequestFileRepository;
     private final StudyChatRepository studyChatRepository;
     private final StudyCalendarRepository studyCalendarRepository;
-    private  final StudyBookmarkRepository studyBookmarkRepository;
+    private final StudyBookmarkRepository studyBookmarkRepository;
     private final NotificationService notificationService;
 
-    private FileManager fm = FileManager.getInstance();
+    private  final FileManager fm;
 
     //내 스터디 조회
     public List<StudyDtoResponse> findMyStudies(Integer id){
@@ -81,11 +81,11 @@ public class StudyService {
         return result;
     }
 
-
     //스터디 정보 조회
     public StudyDtoResponse findStudyById(JWTMemberInfo memberInfo, Integer id){
         Integer memberId = memberInfo.getMemberId();
         Study study = studyRepository.findStudyById(id);
+        checkExist(study);
         long headCount = studyMemberRepository.countStudyMemberByStudy(study);
         StudyBookmark sb = studyBookmarkRepository.findStudyBookmarkByStudyIdAndMemberId(id, memberId);
         return new StudyDtoResponse(study, sb != null, headCount);
@@ -95,6 +95,7 @@ public class StudyService {
     public StudyDetailDtoResponse findStudyDetailById(JWTMemberInfo memberInfo, Integer id){
         Integer memberId = memberInfo.getMemberId();
         Study study = studyRepository.findStudyById(id);
+        checkExist(study);
         studyMemberRepository.findMembersByStudy(study);
         return new StudyDetailDtoResponse(study);
     }
@@ -145,6 +146,7 @@ public class StudyService {
     @Transactional
     public void removeStudy(Integer studyId){
         Study study = studyRepository.findById(studyId).get();
+        study.updateLeader(null);
         study.deleteStudy();
         studyMemberRepository.deleteStudyMemberByStudy(study);
     }
@@ -152,9 +154,11 @@ public class StudyService {
     //스터디 정보 수정
     @Transactional
     public void modifyStudy(Integer studyId, StudyDtoRequest studyDtoRequest){
-        Study study = studyRepository.findById(studyId).get();
+        Optional<Study> studyOp = studyRepository.findById(studyId);
 
-        if(study == null) throw new NotFoundException("스터디를 찾을 수 없습니다.");
+        if(studyOp == null) throw new NotFoundException("스터디를 찾을 수 없습니다.");
+
+        Study study = studyOp.get();
 
         study.updateStudy(studyDtoRequest);
 
@@ -214,6 +218,7 @@ public class StudyService {
                             .notificationType(NotificationType.StudyRequest)
                             .content(study.getTitle()+" 스터디에 가입신청이 왔습니다.")
                             .memberId(study.getLeader().getId())
+                            .url(study.getId().toString())
                             .build()
             );
         }
@@ -230,7 +235,12 @@ public class StudyService {
 
         for (StudyRequest request : requests) {
             StudyMemberDto user = new StudyMemberDto(request.getApplicant());
-            RequestDtoResponse response = new RequestDtoResponse(request.getId(), user, request.getIntroduction(), request.getRequestedAt(), null);
+            List<StudyRequestFile> files = request.getStudyRequestFiles();
+            List<RequestFile> reponseFiles = new ArrayList<>();
+            for (StudyRequestFile file : files) {
+                reponseFiles.add(new RequestFile(file));
+            }
+            RequestDtoResponse response = new RequestDtoResponse(request.getId(), user, request.getIntroduction(), request.getRequestedAt(), reponseFiles);
             result.add(response);
         }
         return result;
@@ -280,6 +290,7 @@ public class StudyService {
                             .memberId(memberId)
                             .content(studyRequest.getStudy().getTitle()+" 스터디에 가입이 승인되었습니다! ")
                             .notificationType(NotificationType.StudyRequest)
+                            .url(studyId.toString())
                             .build()
             );
         }
@@ -300,6 +311,7 @@ public class StudyService {
                       .content(study.getTitle()+" 스터디에 가입신청이 거절 되었습니다.")
                       .notificationType(NotificationType.StudyRequest)
                       .memberId(memberId)
+                      .url(studyId.toString())
                       .build()
         );
 
@@ -319,6 +331,7 @@ public class StudyService {
         if(study.getLeader().getId() == memberId){
             return false;
         }
+        studyChatRepository.deleteChatMemberByStudyIdAndAuthorId(studyId, memberId);
         studyMemberRepository.deleteStudyMemberByStudyIdAndMemberId(studyId, memberId);
         return true;
     }
@@ -330,6 +343,7 @@ public class StudyService {
         if(study.getLeader().getId() == memberId){
             return false;
         }
+        studyChatRepository.deleteChatMemberByStudyIdAndAuthorId(studyId, memberId);
         studyMemberRepository.deleteStudyMemberByStudyIdAndMemberId(studyId, memberId);
 
         //스터디에서 추방되었을때 추방된 당사자에게 알림
@@ -339,6 +353,7 @@ public class StudyService {
                         .content(study.getTitle()+" 스터디에서 추방되었습니다.")
                         .memberId(memberId)
                         .notificationType(NotificationType.StudyRequest)
+                        .url(studyId.toString())
                         .build()
         );
         return true;
@@ -369,6 +384,7 @@ public class StudyService {
                         .notificationType(NotificationType.Leader)
                         .content(studyMember.getStudy().getTitle()+" 스터디의 리더가 되셨습니다!")
                         .memberId(memberId)
+                        .url(studyId.toString())
                         .build()
         );
 
@@ -382,6 +398,7 @@ public class StudyService {
                                         .notificationType(NotificationType.Leader)
                                         .content(studyMember.getStudy().getTitle()+" 스터디의 리더가 변경되었습니다.")
                                         .memberId(memberId)
+                                        .url(studyId.toString())
                                         .build()
                         )
                         .studyId(studyId)
@@ -452,6 +469,7 @@ public class StudyService {
                                                     .notificationType(NotificationType.StudyCalendar)
                                                     .content(study.getTitle()+" 스터디에 일정이 등록되었습니다!")
                                                     .memberId(member.getId())
+                                                    .url(studyId.toString())
                                                     .build()
                                     )
                                     .studyId(studyId)
@@ -488,6 +506,13 @@ public class StudyService {
         if(studyMemberOp.isEmpty())
             return false;
         return studyMemberOp.get().getIsLeader() == true ? true : false;
+    }
+
+    public StudyMemberDto findStudyMember(Integer studyId, Integer memberId){
+        Optional<StudyMember> studyMemberOp = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId);
+        if(studyMemberOp.isEmpty())
+            return null;
+        return new StudyMemberDto(studyMemberOp.get().getMember(), studyMemberOp.get().getIsLeader());
     }
 
     //스터디 요청 유효성 체크 반환
@@ -527,5 +552,9 @@ public class StudyService {
             return null;
         }
         return studyRequestOp.get();
+    }
+
+    private void checkExist(Study study){
+        if(study == null || study.getIsDelete()) throw new NotFoundException("스터디를 찾을 수 없습니다.");
     }
 }

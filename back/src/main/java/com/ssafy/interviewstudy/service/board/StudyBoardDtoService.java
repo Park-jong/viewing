@@ -22,13 +22,11 @@ public class StudyBoardDtoService {
         Member author = memberRepository.findMemberById(boardRequest.getMemberId());
         Study study = studyRepository.findById(boardRequest.getStudyId()).get();
 
-        System.out.println(study.getId());
         StudyBoard article = StudyBoard.builder()
                 .study(study)
                 .title(boardRequest.getTitle())
                 .content(boardRequest.getContent())
                 .author(author)
-                .files(boardRequest.getFiles())
                 .build();
 
         return article;
@@ -52,7 +50,6 @@ public class StudyBoardDtoService {
         boardResponse.setContent(article.getContent());
         boardResponse.setCreatedAt(article.getCreatedAt());
         boardResponse.setUpdatedAt(article.getUpdatedAt());
-        boardResponse.setArticleFiles(article.getFiles());
 
         return boardResponse;
     }

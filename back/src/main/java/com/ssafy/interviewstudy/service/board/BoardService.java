@@ -1,34 +1,36 @@
 package com.ssafy.interviewstudy.service.board;
 
-import com.ssafy.interviewstudy.domain.board.ArticleLike;
+import com.ssafy.interviewstudy.domain.board.ArticleFile;
 import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.BoardType;
-import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.domain.study.StudyRequestFile;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
-import com.ssafy.interviewstudy.repository.board.ArticleLikeRepository;
+import com.ssafy.interviewstudy.dto.board.FileResponse;
+import com.ssafy.interviewstudy.dto.study.RequestFile;
+import com.ssafy.interviewstudy.repository.board.ArticleFileRepository;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
-import com.ssafy.interviewstudy.repository.member.MemberRepository;
+import com.ssafy.interviewstudy.support.file.FileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
 public class BoardService {
 
+    private final FileManager fm;
+
     private final BoardRepository boardRepository;
     private final BoardDtoService boardDtoService;
-    private final ArticleLikeRepository articleLikeRepository;
-    private final MemberRepository memberRepository;
-
-    @PersistenceContext
-    private EntityManager em;
+    private final ArticleFileRepository articleFileRepository;
 
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
 
@@ -47,101 +49,147 @@ public class BoardService {
     // 글 detail 조회
     public BoardResponse findArticle(Integer memberId, Integer articleId, BoardType boardType) {
         Board article = boardRepository.findById(articleId).get();
+        List<ArticleFile> files = article.getFiles();
+        List<FileResponse> fileResponses = new ArrayList<>();
 
-        if(article != null) modifyViewCount(article);
-        else System.out.println("null입니다...");
+        if (article != null) modifyViewCount(article);
+
+        for (ArticleFile file : files) {
+            fileResponses.add(new FileResponse(file));
+        }
 
         // Null이면 예외 발생 처리
         BoardResponse boardResponse = boardDtoService.fromEntity(memberId, article);
         boardResponse.setBoardType(boardType);
+        boardResponse.setArticleFiles(fileResponses);
 
         return boardResponse;
     }
 
     // 글 수정
-    public BoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest){
+    @Transactional
+    public BoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest, List<MultipartFile> files) {
         Board originArticle = boardRepository.findById(articleId).get();
         originArticle.modifyArticle(boardRequest);
         boardRepository.save(originArticle);
+
+        // 파일 저장
+        if (files != null) {
+            for (MultipartFile file : files) {
+                try {
+                    String saveFileName = boardRequest.getMemberId() + "_" + String.valueOf(System.currentTimeMillis());
+                    fm.upload(file.getInputStream(), saveFileName, file.getContentType(), file.getSize());
+                    ArticleFile articleFile = new ArticleFile(originArticle, file, saveFileName);
+                    articleFileRepository.save(articleFile);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
 
         return boardDtoService.fromEntity(boardRequest.getMemberId(), originArticle);
     }
 
     // 글 삭제
-    public Integer removeArticle(Integer articleId){
-        if(boardRepository.findById(articleId) == null){
+    @Transactional
+    public Integer removeArticle(Integer articleId) {
+        if (boardRepository.findById(articleId) == null) {
             return 0;
         }
 
+        removeFiles(articleId);
         boardRepository.deleteById(articleId);
         return articleId;
     }
 
+    @Transactional
+    public void removeFileList(List<FileResponse> files){
+        for (FileResponse f : files) {
+            ArticleFile file = articleFileRepository.findById(f.getFileId()).get();
+            fm.delete(file.getSaveFileName());
+            articleFileRepository.deleteById(file.getId());
+        }
+    }
+
     // 글 저장
-    public Integer saveBoard(BoardRequest boardRequest){
+    public Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files) {
         Board article = boardRepository.save(boardDtoService.toEntity(boardRequest));
+
+        // 파일 저장
+        if (files != null) {
+            for (MultipartFile file : files) {
+                try {
+                    String saveFileName = boardRequest.getMemberId() + "_" + String.valueOf(System.currentTimeMillis());
+                    fm.upload(file.getInputStream(), saveFileName, file.getContentType(), file.getSize());
+                    ArticleFile articleFile = new ArticleFile(article, file, saveFileName);
+                    articleFileRepository.save(articleFile);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
         return article.getId();
     }
 
     // 글 검색
-    public List<BoardResponse> findArticleByKeyword(String searchBy, String keyword, BoardType boardType, Pageable pageable){
+    public List<BoardResponse> findArticleByKeyword(String searchBy, String keyword, BoardType boardType, Pageable pageable) {
         List<Board> articles;
         List<BoardResponse> responseList = new ArrayList<>();
-        if(searchBy.equals("title")) articles = boardRepository.findByTitleContaining(keyword, boardType, pageable).getContent();
-        else if(searchBy.equals("content")) articles = boardRepository.findByTitleOrContent(keyword, boardType, pageable).getContent();
+        if (searchBy.equals("title"))
+            articles = boardRepository.findByTitleContaining(keyword, boardType, pageable).getContent();
+        else if (searchBy.equals("content"))
+            articles = boardRepository.findByTitleOrContent(keyword, boardType, pageable).getContent();
         else articles = boardRepository.findWithAuthor(keyword, boardType, pageable).getContent();
 
-        for (Board b: articles) {
+        for (Board b : articles) {
             responseList.add(boardDtoService.fromEntityWithoutContent(b));
         }
 
         return responseList;
     }
 
+    // 파일 삭제
+    @Transactional
+    public void removeFiles(Integer articleId){
+        List<ArticleFile> files = articleFileRepository.findByArticle_Id(articleId);
+
+        for (ArticleFile file : files) {
+            fm.delete(file.getSaveFileName());
+            articleFileRepository.deleteById(file.getId());
+        }
+    }
+
+    // 파일 다운로드
+    public FileResponse fileDownload(Integer fileId) {
+        ArticleFile articleFile = articleFileRepository.findById(fileId).get();
+        byte[] file = null;
+        FileResponse result = new FileResponse(articleFile);
+
+        try {
+            file = fm.download(articleFile.getSaveFileName());
+            result.setFileData(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
     // 조회수+1
-    public void modifyViewCount(Board article){
+    public void modifyViewCount(Board article) {
         article.updateViewCount();
         boardRepository.save(article);
     }
 
 
-    // 글 작성자가 본인인지 아닌지 체크
-    public Boolean checkAuthor(Integer articleId, Integer memberId){
+    /**
+     * 글 작성자가 본인인지 아닌지 체크
+     */
+    public Boolean checkAuthor(Integer articleId, Integer memberId) {
         Board article = boardRepository.findById(articleId).get();
 
         // 본인이면 true, 아니면 false
-        if(article.getAuthor().getId() == memberId) return true;
-        else return false;
-    }
-
-    // 좋아요 누르기
-    public Integer saveArticleLike(Integer memberId, Integer articleId){
-        Member member = memberRepository.findMemberById(memberId);
-        Board article = boardRepository.findById(articleId).get();
-
-        if(checkMemberLikeArticle(memberId, articleId)) return 0;
-
-        ArticleLike articleLike = articleLikeRepository.save(ArticleLike.builder()
-                .member(member)
-                .article(article)
-                .build());
-
-        return articleLike.getId();
-    }
-
-    // 좋아요 삭제
-    public void removeArticleLike(Integer memberId, Integer articleId){
-        Member member = memberRepository.findMemberById(memberId);
-        Board article = boardRepository.findById(articleId).get();
-
-        if(checkMemberLikeArticle(memberId, articleId)){
-            articleLikeRepository.removeByArticleAndMember(article, member);
-        }
-    }
-
-    // 유저가 좋아요를 한 상태면 true, 아니면 false
-    public Boolean checkMemberLikeArticle(Integer memberId, Integer articleId){
-        return articleLikeRepository.existsByMember_IdAndArticle_Id(memberId, articleId);
+        return Objects.equals(article.getAuthor().getId(), memberId);
     }
 
 }

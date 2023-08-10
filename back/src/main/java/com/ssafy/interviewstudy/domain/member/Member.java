@@ -4,6 +4,7 @@ import com.ssafy.interviewstudy.domain.board.*;
 import com.ssafy.interviewstudy.domain.calendar.Calendar;
 import com.ssafy.interviewstudy.domain.message.Message;
 import com.ssafy.interviewstudy.domain.study.*;
+import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -71,6 +72,13 @@ public class Member {
     //언제 탈퇴했는지 시간기록
     @Column(name = "inactive_at")
     private LocalDateTime inactiveAt;
+
+    //가입한 플랫폼 이름
+    @Enumerated(EnumType.STRING)
+    private SocialLoginType socialLoginType;
+
+    //소셜로그인에서 제공되는 PK
+    private String socialLoginId;
 
     @Column(name = "registration_status")
     @Enumerated(EnumType.STRING)
@@ -152,7 +160,7 @@ public class Member {
         this.memberProfileImage = memberProfileImage;
     }
     @Builder
-    public Member(Integer id, String email, String nickname, MemberProfileBackground memberProfileBackground, MemberProfileImage memberProfileImage, String accessToken, LocalDateTime created_at, LocalDateTime last_login, MemberStatus status, LocalDateTime inactiveAt, RegistrationStatus registrationStatus) {
+    public Member(Integer id, String email, String nickname, MemberProfileBackground memberProfileBackground, MemberProfileImage memberProfileImage, String accessToken, LocalDateTime created_at, LocalDateTime last_login, MemberStatus status, LocalDateTime inactiveAt, SocialLoginType socialLoginType, String socialLoginId, RegistrationStatus registrationStatus) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -163,6 +171,8 @@ public class Member {
         this.last_login = last_login;
         this.status = status;
         this.inactiveAt = inactiveAt;
+        this.socialLoginType = socialLoginType;
+        this.socialLoginId = socialLoginId;
         this.registrationStatus = registrationStatus;
     }
 }

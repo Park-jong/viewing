@@ -1,5 +1,7 @@
 package com.ssafy.interviewstudy.dto.notification;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.interviewstudy.domain.notification.Notification;
 import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import lombok.Builder;
@@ -36,6 +38,7 @@ public class NotificationDto {
     private Boolean isRead;
 
     //알림 생성일
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdAt;
 
     @Builder
@@ -55,6 +58,7 @@ public class NotificationDto {
                 .notificationType(notificationDto.getNotificationType())
                 .memberId(changeMemberId)
                 .content(notificationDto.getContent())
+                .url(notificationDto.getUrl())
                 .build();
     }
 

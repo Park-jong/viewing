@@ -9,6 +9,7 @@ import com.ssafy.interviewstudy.exception.message.CreationFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.calendar.CalendarRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,20 +18,11 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CalendarService {
-
-    private EntityManager em;
 
     private final MemberRepository memberRepository;
     private final CalendarRepository calendarRepository;
-
-    @Autowired
-    public CalendarService(EntityManager em, MemberRepository memberRepository, CalendarRepository calendarRepository) {
-        this.em = em;
-        this.memberRepository = memberRepository;
-        this.calendarRepository = calendarRepository;
-    }
-
 
     //나의 일정 조회
     @Transactional

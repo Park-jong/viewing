@@ -30,14 +30,16 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    private final OauthUriSupport oauthUriSupport;
+
     @PostMapping("/login/{socialLoginType}")
     public ResponseEntity<?> login(@PathVariable SocialLoginType socialLoginType){
         HttpHeaders httpHeaders = new HttpHeaders();
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.
                         fromUriString(OauthUriSupport.getSocialLoginUri(socialLoginType)).
-                        queryParam("client_id",OauthUriSupport.getClientId(socialLoginType)).
-                        queryParam("redirect_uri",OauthUriSupport.getRedirectUri(socialLoginType)).
+                        queryParam("client_id",oauthUriSupport.getClientId(socialLoginType)).
+                        queryParam("redirect_uri",oauthUriSupport.getRedirectUri(socialLoginType)).
                         queryParam("response_type","code").
                         queryParam("prompt","login");
 
@@ -64,7 +66,7 @@ public class MemberController {
         //access Token 가져오기
         AccessTokenSupport accessTokenSupport =
                 new AccessTokenSupport(socialLoginType,authorizeCode);
-        AccessTokenResult accessTokenResult = accessTokenSupport.getAccessToken();
+        AccessTokenResult accessTokenResult = accessTokenSupport.getAccessToken(oauthUriSupport);
 
         if(!accessTokenResult.getIsSuccess()){
             //로그인 실패
@@ -74,7 +76,7 @@ public class MemberController {
         String accessToken = accessTokenResult.getAccessToken();
 
         //accessToken으로 이메일 가져오기
-        MemberInfoSupport memberInfoSupport = new MemberEmailSupport();
+        MemberInfoSupport memberInfoSupport = new MemberIdPlatformSupport();
         MemberInfoResult memberInfoResult = memberInfoSupport.getMemberInfo(socialLoginType,accessToken);
 
         if(!memberInfoResult.getIsSucess()){
@@ -83,7 +85,11 @@ public class MemberController {
         }
 
         //이메일롷 현재 멤버 찾아보기
-        Member currentMember = memberService.findByEmail(memberInfoResult.getEmail());
+//        Member currentMember = memberService.findByEmail(memberInfoResult.getEmail());
+
+        //플랫폼과 고유 Id로 멤버 찾아보기
+        Member currentMember = memberService
+                .findByIdAndPlatform(memberInfoResult.getMemberId(),memberInfoResult.getSocialLoginType());
 
         //이미 가입한 유저일때 이 부분을 인터셉터로 확인해야함
         //그냥 JWT토큰 쥐어주고 리다이렉트 시키자
@@ -113,6 +119,8 @@ public class MemberController {
                 .status(MemberStatus.ACTIVE)
                 .registrationStatus(RegistrationStatus.SELECT_NICKNAME)
                 .email(memberInfoResult.getEmail())
+                .socialLoginId(memberInfoResult.getMemberId())
+                .socialLoginType(memberInfoResult.getSocialLoginType())
                 .nickname("user"+System.currentTimeMillis())
                 .memberProfileBackground(
                         MemberProfileBackground.values()[randomProfileBackground.intValue()]

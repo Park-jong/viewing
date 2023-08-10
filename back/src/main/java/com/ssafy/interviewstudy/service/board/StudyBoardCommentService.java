@@ -2,10 +2,14 @@ package com.ssafy.interviewstudy.service.board;
 
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.board.StudyBoardComment;
+import com.ssafy.interviewstudy.domain.notification.Notification;
+import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.StudyBoardCommentResponse;
+import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.repository.board.StudyBoardCommentRepository;
 import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
+import com.ssafy.interviewstudy.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +23,7 @@ public class StudyBoardCommentService {
     private final StudyBoardCommentRepository commentRepository;
     private final StudyBoardRepository boardRepository;
     private final StudyBoardCommentDtoService commentDtoService;
+    private final NotificationService notificationService;
 
     // 게시글 댓글 저장
     @JWTRequired
@@ -26,6 +31,20 @@ public class StudyBoardCommentService {
         commentRequest.setArticleId(articleId);
         StudyBoardComment comment = commentRepository.save(commentDtoService.toEntity(commentRequest));
 
+        //스터디 게시글에 댓글이 달릴 경우 알림을 보내줘야함
+        if(comment.getId()!=null){
+            if(comment.getId()!=null) {
+                notificationService.sendNotificationToMember(
+                        NotificationDto
+                                .builder()
+                                .memberId(commentRequest.getMemberId())
+                                .content("스터디 게시판 게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
+                                .notificationType(NotificationType.StudyComment)
+                                .url(comment.getArticle().getStudy().getId().toString()+" "+articleId.toString())
+                                .build()
+                );
+            }
+        }
         return comment.getId();
     }
 
@@ -33,7 +52,16 @@ public class StudyBoardCommentService {
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         StudyBoardComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
-
+        //스터디 게시판 댓글에 대댓글이 달림
+        notificationService.sendNotificationToMember(
+                NotificationDto
+                        .builder()
+                        .memberId(commentRequest.getMemberId())
+                        .content("스터디 게시판 댓글에 답글이 달렸습니다")
+                        .notificationType(NotificationType.StudyReply)
+                        .url(comment.getArticle().getStudy().getId().toString()+" "+articleId.toString())
+                        .build()
+        );
         return commentRepository.save(comment).getId();
     }
 

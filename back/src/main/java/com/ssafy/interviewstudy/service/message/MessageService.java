@@ -31,8 +31,6 @@ public class MessageService {
 
     private final MemberRepository memberRepository;
 
-    private final EntityManager em;
-
     private final NotificationService notificationService;
 
 
@@ -77,6 +75,7 @@ public class MessageService {
                         .memberId(messageSendRequest.getReceiverId())
                         .content("메시지가 도착했습니다! "+message.getTitle())
                         .notificationType(NotificationType.Message)
+                        .url(message.getId().toString())
                         .build());
 
         return new MessageCreatedResponse(message.getId());

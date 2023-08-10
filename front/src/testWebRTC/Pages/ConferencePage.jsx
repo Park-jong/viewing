@@ -36,7 +36,7 @@ function ConferencePage() {
 
   // 백엔드 통신을 통한 세션/토큰 발급
   const createSession = async () => {
-    let mURL = `${APPLICATION_SERVER_URL}/studies/${studyId}/conference`;
+    let mURL = `${APPLICATION_SERVER_URL}studies/${studyId}/conference`;
     await axios({
       url: mURL,
       method: "POST",
@@ -58,7 +58,7 @@ function ConferencePage() {
   };
 
   const createToken = async () => {
-    let mURL = `${APPLICATION_SERVER_URL}/studies/${studyId}/conferences/members`;
+    let mURL = `${APPLICATION_SERVER_URL}studies/${studyId}/conferences/members`;
     await axios({
       url: mURL,
       method: "POST",
@@ -117,13 +117,9 @@ function ConferencePage() {
   useEffect(() => {
     joinSession();
 
-    window.addEventListener("beforeunload", function (event) {
-      event.returnValue = "피드백을 다운받지 않으셨습니다.";
+    window.addEventListener("beforeunload", () => {
+      leaveSession();
     });
-    // window.addEventListener("beforeunload", leaveSession);
-    // return () => {
-    //   window.removeEventListener("beforeunload", leaveSession);
-    // };
   }, []);
   ///// 본인의 세션 입장/퇴장 관리
 
@@ -541,6 +537,7 @@ function ConferencePage() {
           onClick={leaveSession}
           value="나가기"
         />
+
         <select
           onChange={changeVideo}
           value={JSON.stringify(currentVideoDevice)}
@@ -570,6 +567,8 @@ function ConferencePage() {
             : undefined}
         </select>
       </div>
+
+      {/* 여기까지 이식 완료 */}
       <div>
         <h1>영상회의창</h1>
         <h4>내 화면</h4>

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { BiVolumeMute } from "react-icons/bi";
 import UserProfile from "./../Common/UserProfile";
@@ -6,22 +6,24 @@ import UserProfile from "./../Common/UserProfile";
 function CamBox({ streamManager }) {
   const videoRef = useRef();
 
-  // useEffect(() => {
-  //   if (streamManager && !!videoRef) {
-  //     streamManager.addVideoElement(videoRef.current);
-  //   }
-  // });
+  useEffect(() => {
+    if (streamManager && !!videoRef) {
+      streamManager.addVideoElement(videoRef.current);
+    }
+  });
 
   const getUserData = () => {
-    // const stringData = streamManager.stream.connection.data.toString();
-    // return JSON.parse(stringData);
-    return { background: "red", character: "cow", nickname: "tmp" };
+    const data = streamManager
+      ? streamManager.stream.connection.data
+      : undefined;
+    return data
+      ? JSON.parse(data).clientData
+      : { nickname: "로딩 중", background: "cow", character: "red" };
   };
 
   const Container = styled.div`
-    position: relative;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 100%;
     border: 1px solid black;
   `;
 
@@ -30,18 +32,15 @@ function CamBox({ streamManager }) {
     width: 100%;
     height: 100%;
     background-color: grey;
-    z-index: -990;
+    z-index: -100;
   `;
 
   const ProfileContainer = styled.div`
-    opacity: 50%;
-    &:hover {
-      opacity: 100%;
-    }
-
     position: absolute;
     width: 100%;
     height: 100%;
+    background-color: grey;
+    z-index: -100;
   `;
 
   const ProfileBox = styled.div`
@@ -54,12 +53,13 @@ function CamBox({ streamManager }) {
   return (
     <>
       <Container>
-        {/* {streamManager ? ( */}
-        <CamContainer autoPlay={true} ref={videoRef}></CamContainer>
-        {/* ) : null} */}
-        {/* <InfoContainer hidden={streamManager.stream.videoActive}> */}
-        <ProfileContainer>
-          <ProfileBox style={false ? { zIndex: "-999" } : { zIndex: "999" }}>
+        {streamManager ? (
+          <CamContainer autoPlay={true} ref={videoRef}></CamContainer>
+        ) : null}
+        <ProfileContainer
+          hidden={streamManager ? streamManager.stream.videoActive : false}
+        >
+          <ProfileBox>
             <UserProfile
               nickname={getUserData().nickname}
               backgroundcolor={getUserData().background}
@@ -67,8 +67,17 @@ function CamBox({ streamManager }) {
             />
           </ProfileBox>
         </ProfileContainer>
-        {/* <BiMicrophoneOff display={streamManager.stream.audioActive?"":"none"}> */}
-        <BiVolumeMute display={""} size={50} color="red"></BiVolumeMute>
+        <BiVolumeMute
+          display={
+            streamManager
+              ? streamManager.stream.audioActive
+                ? "none"
+                : ""
+              : "none"
+          }
+          size={50}
+          color="red"
+        ></BiVolumeMute>
       </Container>
     </>
   );

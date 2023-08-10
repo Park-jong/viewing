@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import MicButton from "../MicButton";
-import VideoButton from "../VideoButton";
+// import MicButton from "../MicButton";
+// import VideoButton from "../VideoButton";
 import MembersButton from "../MembersButton";
 import TimerButton from "../TimerButton";
 import RecordButton from "../RecordButton";
@@ -24,6 +24,12 @@ const GroupingContainer = styled.div`
   width: 20%;
 `;
 
+const SelectContainer = styled.select`
+  width: 50%;
+`;
+
+const OptionContainer = styled.option``;
+
 export default function MeetingFooter({
   toggleSideBar,
   changeOption,
@@ -31,12 +37,47 @@ export default function MeetingFooter({
   pauseRecord,
   resumeRecord,
   stopRecord,
+  openModal,
+  leaveSession,
+  devices,
+  changeVideo,
+  changeAudio,
+  currentVideoDevice,
+  currentAudioDevice,
 }) {
   return (
     <Container>
       <GroupingContainer>
-        <MicButton></MicButton>
-        <VideoButton></VideoButton>
+        <SelectContainer
+          onChange={changeVideo}
+          value={JSON.stringify(currentVideoDevice)}
+          title="비디오 선택"
+          id="choiceVideo"
+        >
+          {devices.video
+            ? devices.video.map((d) => (
+                <OptionContainer value={JSON.stringify(d)} key={d.deviceId}>
+                  {d.label}
+                </OptionContainer>
+              ))
+            : undefined}
+        </SelectContainer>
+        {/* <VideoButton></VideoButton> */}
+        <SelectContainer
+          onChange={changeAudio}
+          value={JSON.stringify(currentAudioDevice)}
+          title="오디오 선택"
+          id="choiceAudio"
+        >
+          {devices.audio
+            ? devices.audio.map((d) => (
+                <OptionContainer value={JSON.stringify(d)} key={d.deviceId}>
+                  {d.label}
+                </OptionContainer>
+              ))
+            : undefined}
+        </SelectContainer>
+        {/* <MicButton></MicButton> */}
       </GroupingContainer>
       <GroupingContainer>
         <TimerButton></TimerButton>
@@ -61,7 +102,10 @@ export default function MeetingFooter({
           changeOption={changeOption}
         ></FeedbackButton>
       </GroupingContainer>
-      <ExitButton></ExitButton>
+      <ExitButton
+        openModal={openModal}
+        leaveSession={leaveSession}
+      ></ExitButton>
     </Container>
   );
 }

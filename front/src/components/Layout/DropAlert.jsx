@@ -96,10 +96,10 @@ export default function DropAlert() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showItems, setShowItems] = useState(4); // Number of items to show initially
   const AlertRef = useRef(null);
-  const SERVER = "http://70.12.246.87:8080/";
+  const SERVER = "http://localhost:8080/";
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const token = localStorage.getItem("access_token");
-  
+
   // SSE
 
   const EventSource = EventSourcePolyfill;
@@ -123,8 +123,28 @@ export default function DropAlert() {
           headers: {
             Authorization: "Bearer " + token,
           },
+          heartbeatTimeout: 12000000,
         }
       );
+      eventSource.addEventListener("test", (event) => {
+        console.log(event);
+      });
+
+      eventSource.addEventListener("lastNotification", (event) => {
+        try {
+          console.log(JSON.parse(event.data));
+        } catch (e) {
+          console.log(e);
+        }
+      });
+
+      eventSource.addEventListener("notification", (event) => {
+        try {
+          console.log(JSON.parse(event.data));
+        } catch (e) {
+          console.log(e);
+        }
+      });
 
       eventSource.onmessage = (event) => {
         const res = event.data;
@@ -134,6 +154,16 @@ export default function DropAlert() {
       eventSource.onerror = (event) => {
         console.log(event);
         eventSource.close();
+      };
+
+      eventSource.onerror = (event) => {
+        console.error(event);
+
+        // 연결이 닫혔다면 재연결 시도
+        if (eventSource.readyState === EventSource.CLOSED) {
+          console.log("알림 SSE 재연결 시도...");
+          setTimeout(fetchSse, 5000); // 5초 후에 재연결 시도
+        }
       };
     };
     fetchSse();

@@ -60,7 +60,7 @@ public class StudyBoardCommentService {
         notificationService.sendNotificationToMember(
                 NotificationDto
                         .builder()
-                        .memberId(commentRequest.getMemberId())
+                        .memberId(comment.getAuthor().getId())
                         .content("스터디 게시판 댓글에 답글이 달렸습니다")
                         .notificationType(NotificationType.StudyReply)
                         .isRead(false)

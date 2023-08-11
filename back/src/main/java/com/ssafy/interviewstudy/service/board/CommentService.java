@@ -72,7 +72,7 @@ public class CommentService {
                 .sendNotificationToMember(
                         NotificationDto
                                 .builder()
-                                .memberId(commentRequest.getMemberId())
+                                .memberId(comment.getAuthor().getId())
                                 .content("댓글에 대댓글이 달렸습니다.")
                                 .url(comment.getArticle().getId().toString()+" "+comment.getId().toString())
                                 .notificationType(NotificationType.BoardReply)

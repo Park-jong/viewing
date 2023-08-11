@@ -36,12 +36,12 @@ public class ConferenceController {
     public ResponseEntity<String> initializeSession(@PathVariable(name="study_id") String studyId, @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
         
-//        Integer memberId = Integer.parseInt((String) params.get("user_id"));
-//        Integer istudyId = Integer.parseInt(studyId);
-//
-//        if (!studyService.checkStudyMember(istudyId, memberId)) {
-//            return new ResponseEntity<>("스터디 멤버가 아닙니다.", HttpStatus.UNAUTHORIZED);
-//        };
+       Integer memberId = Integer.parseInt((String) params.get("user_id"));
+       Integer istudyId = Integer.parseInt(studyId);
+
+       if (!studyService.checkStudyMember(istudyId, memberId)) {
+           return new ResponseEntity<>("스터디 멤버가 아닙니다.", HttpStatus.UNAUTHORIZED);
+       };
 
         SessionProperties properties = SessionProperties.fromJson(params).build();
         Session checkSession = openvidu.getActiveSession(studyId);
@@ -57,12 +57,12 @@ public class ConferenceController {
                                                    @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
 
-//        Integer memberId = Integer.parseInt((String) params.get("user_id"));
-//        Integer istudyId = Integer.parseInt(studyId);
-//
-//        if (!studyService.checkStudyMember(istudyId, memberId)) {
-//            return new ResponseEntity<>("스터디 멤버가 아닙니다.", HttpStatus.UNAUTHORIZED);
-//        };
+       Integer memberId = Integer.parseInt((String) params.get("user_id"));
+       Integer istudyId = Integer.parseInt(studyId);
+
+       if (!studyService.checkStudyMember(istudyId, memberId)) {
+           return new ResponseEntity<>("스터디 멤버가 아닙니다.", HttpStatus.UNAUTHORIZED);
+       };
 
         Session session = openvidu.getActiveSession(studyId);
         ConnectionProperties properties = ConnectionProperties.fromJson(params).build();

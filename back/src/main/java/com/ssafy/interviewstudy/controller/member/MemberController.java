@@ -169,15 +169,7 @@ public class MemberController {
     @PutMapping("/members/{memberId}/nickname")
     public ResponseEntity<?> selectNickname(@RequestBody(required = true)MemberNicknameChangeDto memberNicknameChangeDto,
                                             @PathVariable("memberId") Integer memberId){
-
-        //닉네임 중복체크
-        Member checkedMember = memberService.checkDuplicateNickname(memberNicknameChangeDto.getNickname());
-        if(checkedMember==null){
-            Member nowMember = memberService.findMemberByMemberId(
-                    memberId
-            );
-            memberService.nextRegistrationStatus(nowMember);
-            memberService.changeMemberNickname(nowMember,memberNicknameChangeDto.getNickname());
+        if(memberService.changeMemberNickname(memberId,memberNicknameChangeDto.getNickname())){
             return ResponseEntity.ok().build();
         }
         else{

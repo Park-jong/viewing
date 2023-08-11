@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 //https://velog.io/@miyoni/TIL39
 
 const careerOptions = ["전체", "신입", "경력", "인턴"];
+const valueOptions = ["ALL", "NEWCOMER", "EXPERIENCED", "INTERN"];
 
 const TAG_LIST = [
   { id: 0, tag_category: "자소서 제출 필수", color: "rgb(246, 246, 246)" },
@@ -231,7 +232,6 @@ const TagPick = styled.div`
 `;
 
 export default function MakeStudy() {
-
   const [appliedJob, setAppliedJob] = useState("");
   const [appliedCompany, setAppliedCompany] = useState("");
   const [career, setCareer] = useState("전체");
@@ -257,7 +257,6 @@ export default function MakeStudy() {
     setFilterTag(tagList.filter((tag) => tag.isChecked === true));
   }, [clickValue, tagList]);
 
-
   const tagAxios = filterTag.map((item) => item.id);
   console.log(tagAxios);
   //redux
@@ -266,13 +265,14 @@ export default function MakeStudy() {
 
   //axios
   const handleMake = () => {
+    console.log(deadline);
     const studyData = {
       title: studyName,
       applied_company: appliedCompany,
       capacity: capacity,
       description: studyDescription,
       career_level: career,
-      deadline: deadline,
+      deadline: `${deadline}T00:00:00 `,
       applied_job: appliedJob,
       tag: tagAxios,
       leader_id: leaderId,
@@ -316,8 +316,8 @@ export default function MakeStudy() {
             value={career}
             onChange={(e) => setCareer(e.target.value)}
           >
-            {careerOptions.map((option) => (
-              <option key={option} value={option}>
+            {careerOptions.map((option, idx) => (
+              <option key={option} value={valueOptions[idx]}>
                 {option}
               </option>
             ))}
@@ -332,7 +332,7 @@ export default function MakeStudy() {
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              min={currentDate} 
+              min={currentDate}
             />
             <DateIcon />
           </InputFieldWithIcon>

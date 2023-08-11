@@ -129,7 +129,7 @@ export default function MeetingPk() {
         "Content-Type": "application/json",
       },
       data: {
-        user_id: userData.userId,
+        user_id: userData.memberId,
         customSessionId: studyId,
       },
     })
@@ -153,7 +153,7 @@ export default function MeetingPk() {
         "Content-Type": "application/json",
       },
       data: {
-        user_id: userData.userId,
+        user_id: userData.memberId,
         customSessionId: studyId,
       },
     })

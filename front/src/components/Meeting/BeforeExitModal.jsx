@@ -64,6 +64,7 @@ export default function BeforeExitModal({
           id="feedbackArea"
           placeholder="입력된 피드백이 없습니다."
           value={compFeedback()}
+          readOnly
         ></ContentContainer>
       </MainContainer>
       <FooterContainer>

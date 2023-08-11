@@ -6,6 +6,8 @@ import MeetingMain from "../components/Meeting/Organisms/MeetingMain";
 import MeetingSideBar from "../components/Meeting/Organisms/MeetingSideBar";
 import BeforeExitModal from "../components/Meeting/BeforeExitModal";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -95,17 +97,11 @@ const FooterContainer = styled.div`
 
 export default function MeetingPk() {
   // 유저 데이터 - 나중에 redux를 통해 가져와야 함
-  const userData = {
-    id: String(Math.ceil(Math.random() * 1000)),
-    nickname: "nickname" + String(Math.ceil(Math.random() * 1000)),
-    background: "red",
-    character: "cow",
-    image: "/test.jpg",
-  };
+  const userData = useSelector((state) => state.UserReducer);
 
   // 스터디 아이디  - 이거 pathvariable로 가져오거나 따로 불러오거나
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함
-  const studyId = "1";
+  const studyId = useLocation().pathname.split("/")[2];
 
   // .env 파일에서 불러오는 Spring API 호출 주소
   const APPLICATION_SERVER_URL = process.env.REACT_APP_SERVER_URL;

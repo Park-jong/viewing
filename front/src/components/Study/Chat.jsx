@@ -70,26 +70,30 @@ export default function Chat() {
   const member = useSelector((state) => state.UserReducer);
   const [msg, setMsg] = useState("");
   const [msgList, setMsgList] = useState([]);
-  const sockJS = new SockJS(`${process.env.REACT_APP_SERVER_URL}/studyChat`);
+  const sockJS = new SockJS(`${process.env.REACT_APP_SERVER_URL}studyChat`);
   const stompClient = stompjs.over(sockJS);
+  stompClient.debug = null;
   const studyId = useParams().studyPk;
   const [oldMsgState, setOldMsgState] = useState(true);
   const scrollRef = useRef();
   const [newPage, setNewPage] = useState(0);
   const [newMsgState, setNewMsgState] = useState(false);
+  const [scrollState, setScrollState] = useState(true);
   const maxLength = 5000;
   const navigate = useNavigate();
 
   //메시지 전송
   const sendMsg = () => {
     try {
-      stompClient.send(
-        "/app/chats/studies/" + studyId,
-        {},
-        JSON.stringify({ member_id: member.memberId, content: msg })
-      );
-      moveEnd();
-      setMsg("");
+      if (sockJS.readyState === 1) {
+        stompClient.send(
+          "/app/chats/studies/" + studyId,
+          {},
+          JSON.stringify({ member_id: member.memberId, content: msg })
+        );
+        moveEnd();
+        setMsg("");
+      }
     } catch (error) {
       console.log("전송 실패");
     }
@@ -148,6 +152,9 @@ export default function Chat() {
       if (newMsgState) {
         setNewMsgState((prev) => false);
       }
+      setScrollState(() => true);
+    } else {
+      setScrollState(() => false);
     }
   };
 
@@ -187,6 +194,9 @@ export default function Chat() {
       });
     });
     return () => {
+      if (sockJS.readyState === 1) {
+        sockJS.close();
+      }
       stompClient.unsubscribe("/topic/" + studyId);
       stompClient.disconnect();
     };
@@ -207,14 +217,8 @@ export default function Chat() {
     );
 
     //스크롤이 높이 있는지
-    if (
-      Math.abs(
-        scrollRef.current.scrollHeight -
-          chatAreaHeight -
-          scrollRef.current.scrollTop
-      ) < 100
-    ) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (scrollState) {
+      moveEnd();
     }
   }, [msgList]);
 

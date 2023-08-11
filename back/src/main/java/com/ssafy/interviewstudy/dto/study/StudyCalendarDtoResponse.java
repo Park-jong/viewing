@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class StudyCalendarDtoResponse {
-    private Integer calenderId;
+    private Integer calendarId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startedAt;
@@ -29,7 +29,7 @@ public class StudyCalendarDtoResponse {
     Boolean isStudyCalendar = true;
 
     public StudyCalendarDtoResponse(StudyCalendar studyCalendar){
-        this.calenderId = studyCalendar.getId();
+        this.calendarId = studyCalendar.getId();
         this.startedAt = studyCalendar.getStartedAt();
         this.endedAt = studyCalendar.getEndedAt();
         this.description = studyCalendar.getDescription();

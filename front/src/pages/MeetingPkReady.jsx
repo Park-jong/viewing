@@ -4,6 +4,8 @@ import Footer from "../components/Layout/Footer";
 import MainButton from "../components/Button/MainButton";
 import { useEffect, useRef, useState } from "react";
 import { OpenVidu } from "openvidu-browser";
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 const Container = styled.div``;
 
@@ -76,20 +78,10 @@ const EntranceContainer = styled.div`
 `;
 
 export default function MeetingPkReady() {
-  // 스터디 정보
-  const [studyId, setStudy] = useState();
-
-  // 우선 스터디를 숫자 1로 임시로 설정
-  useEffect(() => {
-    setStudy(1);
-  }, []);
+  const studyId = useLocation().pathname.split("/")[2];
 
   // 임시 유저 데이터
-  const getUserData = () => {
-    // const stringData = streamManager.stream.connection.data.toString();
-    // return JSON.parse(stringData);
-    return { background: "red", character: "cow", nickname: "tmp" };
-  };
+  const userData = useSelector((state) => state.UserReducer);
 
   const OV = new OpenVidu();
 
@@ -187,7 +179,7 @@ export default function MeetingPkReady() {
       : devices.video[0];
     if (savedId === "noDevice") {
       const img = document.createElement("img");
-      img.src = `/profile/${getUserData().character}.png`;
+      img.src = `/profile/${userData.character}.png`;
       const canvas = document.createElement("canvas");
       canvas.width = img.width;
       canvas.height = img.height;
@@ -262,7 +254,7 @@ export default function MeetingPkReady() {
   return (
     <>
       <img
-        src={`/profile/${getUserData().character}.png`}
+        src={`/profile/${userData.character}.png`}
         alt="프로필이미지"
         hidden
       ></img>

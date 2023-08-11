@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import MainButton from "../components/Button/MainButton";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   position: absolute;
@@ -11,7 +10,7 @@ const Container = styled.div`
 `;
 
 export default function StudyPkMeeting() {
-  const [studyId, setStudy] = useState(1);
+  const studyId = useLocation().pathname.split("/")[2];
 
   const navigate = useNavigate();
 

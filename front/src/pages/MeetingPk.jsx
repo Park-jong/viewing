@@ -5,7 +5,9 @@ import MeetingFooter from "../components/Meeting/Organisms/MeetingFooter";
 import MeetingMain from "../components/Meeting/Organisms/MeetingMain";
 import MeetingSideBar from "../components/Meeting/Organisms/MeetingSideBar";
 import BeforeExitModal from "../components/Meeting/BeforeExitModal";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -60,7 +62,7 @@ const MeetingMainContainer = styled.div`
   position: absolute;
   border: 1px solid black;
   right: ${(props) => `${props.right}%`};
-  width: 100%;
+  width: 80%;
   height: 100%;
 `;
 
@@ -95,17 +97,11 @@ const FooterContainer = styled.div`
 
 export default function MeetingPk() {
   // 유저 데이터 - 나중에 redux를 통해 가져와야 함
-  const userData = {
-    id: String(Math.ceil(Math.random() * 1000)),
-    nickname: "nickname" + String(Math.ceil(Math.random() * 1000)),
-    background: "red",
-    character: "cow",
-    image: "/test.jpg",
-  };
+  const userData = useSelector((state) => state.UserReducer);
 
   // 스터디 아이디  - 이거 pathvariable로 가져오거나 따로 불러오거나
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함
-  const studyId = "1";
+  const studyId = useLocation().pathname.split("/")[2];
 
   // .env 파일에서 불러오는 Spring API 호출 주소
   const APPLICATION_SERVER_URL = process.env.REACT_APP_SERVER_URL;
@@ -193,17 +189,41 @@ export default function MeetingPk() {
 
   const leaveSession = async () => {
     if (!!!session) return;
+
     subscribers.subs.forEach((d) => session.unsubscribe(d));
     setSubscribers((prev) => ({
       ...prev,
       subs: [],
     }));
+
+    if (
+      recorder.state === LocalRecorderState.PAUSED ||
+      recorder.state === LocalRecorderState.RECORDING
+    ) {
+      await stopRecord();
+    }
+
     setPublisher(undefined);
     session.disconnect();
     setSession(undefined);
     localStorage.removeItem("sessionId");
     localStorage.removeItem("openviduToken");
     localStorage.removeItem("deviceInfo");
+    if (!checkDownload) {
+      if (
+        // eslint-disable-next-line no-restricted-globals
+        confirm(
+          "퇴장 후 작성된 피드백을 다시 확인할 수 없습니다. 다운로드받으시겠습니까?"
+        )
+      ) {
+        const wait = async () => {
+          setTimeout(() => {}, 500);
+        };
+        downloadFeedback();
+        await wait();
+      }
+    }
+
     window.close();
   };
 
@@ -317,19 +337,6 @@ export default function MeetingPk() {
   //// 토큰 생성 및 스트림 등록
 
   //// 세션 설정
-
-  const beforeUnloadListener = (e) => {
-    // eslint-disable-next-line no-restricted-globals
-    if (hideModdal) {
-      alert("지금 나가시면 더 이상 피드백 확인이 불가합니다.");
-    }
-    e.preventDefault();
-    return (e.returnValue = "나갈꺼야?");
-  };
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", beforeUnloadListener);
-  }, []);
 
   useEffect(() => {
     findDevice();
@@ -555,6 +562,9 @@ export default function MeetingPk() {
   const [feedback, setFeedback] = useState({
     feedbacks: [],
   });
+
+  const [checkDownload, setCheckDownload] = useState(false);
+
   const [hideModdal, setHideModal] = useState(true);
 
   const openModal = () => {
@@ -594,6 +604,7 @@ export default function MeetingPk() {
 
   // 피드백 다운로드
   const downloadFeedback = () => {
+    setCheckDownload(true);
     let text = compFeedback();
 
     const link = document.createElement("a");
@@ -608,6 +619,7 @@ export default function MeetingPk() {
 
   // 피드백 복사
   const copyFeedback = () => {
+    setCheckDownload(true);
     document.getElementById("feedbackArea").select();
     document.execCommand("copy");
   };

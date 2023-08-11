@@ -36,7 +36,7 @@ public class ConferenceController {
     public ResponseEntity<String> initializeSession(@PathVariable(name="study_id") String studyId, @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
         
-       Integer memberId = Integer.parseInt(params.get("user_id"));
+       Integer memberId = Integer.parseInt((String) params.get("user_id"));
        Integer istudyId = Integer.parseInt(studyId);
 
        if (!studyService.checkStudyMember(istudyId, memberId)) {
@@ -57,7 +57,7 @@ public class ConferenceController {
                                                    @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
 
-       Integer memberId = Integer.parseInt(params.get("user_id"));
+       Integer memberId = Integer.parseInt((String) params.get("user_id"));
        Integer istudyId = Integer.parseInt(studyId);
 
        if (!studyService.checkStudyMember(istudyId, memberId)) {

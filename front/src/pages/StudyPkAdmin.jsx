@@ -182,7 +182,10 @@ export default function StudyPkAdmin() {
   };
 
   const changeCapacity = (e) => {
-    setCapacity(() => e.target.value);
+    let value = e.target.value;
+    if (value > 6) value = 6;
+    else if (value < memberList.length) value = memberList.length;
+    setCapacity(() => value);
   };
 
   const changeDeadline = (e) => {

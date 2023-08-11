@@ -17,7 +17,8 @@ const Container = styled.div`
 const ChatArea = styled.div`
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow-x: auto;
+  word-wrap: break-word;
 `;
 
 const ChatBox = styled.div``;
@@ -69,7 +70,7 @@ export default function Chat() {
   const member = useSelector((state) => state.UserReducer);
   const [msg, setMsg] = useState("");
   const [msgList, setMsgList] = useState([]);
-  const sockJS = new SockJS("https://i9a205.p.ssafy.io:8080/studyChat");
+  const sockJS = new SockJS(`${process.env.REACT_APP_SERVER_URL}/studyChat`);
   const stompClient = stompjs.over(sockJS);
   const studyId = useParams().studyPk;
   const [oldMsgState, setOldMsgState] = useState(true);
@@ -126,6 +127,7 @@ export default function Chat() {
   //마지막으로 스크롤이동
   const moveEnd = () => {
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    setNewMsgState((prev) => false);
   };
 
   //스크롤 이동에 따른 이벤트
@@ -259,6 +261,9 @@ export default function Chat() {
         value={msg}
       ></MessageInputBox>
       <SendButton onClick={checkSendState}>전송</SendButton>
+      <div>
+        {msg.length}/{maxLength}
+      </div>
     </Container>
   );
 }

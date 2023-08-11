@@ -1,12 +1,17 @@
-import { data } from "./db";
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Alarm from "../../Icons/Alarm";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PiBellThin } from "react-icons/pi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { UserReducer } from "./../../modules/UserReducer/UserReducer";
 import { EventSourcePolyfill, NativeEventSource } from "event-source-polyfill";
+import {
+  GetAllAlarm,
+  GetOneAlarm,
+  HandleRead,
+} from "./../../modules/UserReducer/Actions";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
 
 const Container = styled.div`
   cursor: pointer;
@@ -15,6 +20,7 @@ const Container = styled.div`
 `;
 
 const AlarmIcon = styled.div`
+  position: relative;
   width: 24px;
   height: 24px;
   cursor: pointer;
@@ -35,7 +41,7 @@ const DropdownMenu = styled.div`
   z-index: 99;
 `;
 
-const CardContainer = styled(Link)`
+const CardContainer = styled.div`
   width: 400px;
   height: 100px;
   display: flex;
@@ -92,13 +98,27 @@ const BellIcon = styled(PiBellThin)`
   margin-right: 4px;
 `;
 
+const Dot = styled.div`
+  position: absolute;
+  top: 12px;
+  left: 13px;
+  height: 8px;
+  width: 8px;
+  background-color: #f87171;
+  border-radius: 50%;
+`;
+
 export default function DropAlert() {
+  const data = useSelector((state) => state.UserReducer.alarms);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showItems, setShowItems] = useState(4); // Number of items to show initially
   const AlertRef = useRef(null);
   const SERVER = process.env.REACT_APP_SERVER_URL;
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const token = localStorage.getItem("access_token");
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  let read = false;
 
   // SSE
 
@@ -132,7 +152,7 @@ export default function DropAlert() {
 
       eventSource.addEventListener("lastNotification", (event) => {
         try {
-          console.log(JSON.parse(event.data));
+          dispatch(GetAllAlarm(JSON.parse(event.data).notificationDtoList));
         } catch (e) {
           console.log(e);
         }
@@ -140,17 +160,14 @@ export default function DropAlert() {
 
       eventSource.addEventListener("notification", (event) => {
         try {
-          console.log(JSON.parse(event.data));
+          const temp = JSON.parse(event.data)
+          temp.isRead = false
+          console.log(temp)
+          dispatch(GetOneAlarm(temp));
         } catch (e) {
           console.log(e);
         }
       });
-
-
-      eventSource.onerror = (event) => {
-        console.log(event);
-        eventSource.close();
-      };
 
       eventSource.onerror = (event) => {
         console.error(event);
@@ -172,6 +189,15 @@ export default function DropAlert() {
       eventSource.close();
     };
   }, []);
+  
+  console.log(data)
+  for (let alarm of data) {
+    if (alarm.isRead === false) {
+      console.log(12341234132)
+      read = true;
+      break;
+    }
+  }
 
   const sortedAlertList = [...data].sort((a, b) =>
     a.is_read === b.is_read ? 0 : a.is_read ? 1 : -1
@@ -185,17 +211,64 @@ export default function DropAlert() {
     setShowItems((prevShowItems) => prevShowItems + 4);
   };
 
+  const handleRead = (alert) => {
+    customAxios()
+      .put(`members/${memberId}/notification/${alert.notificationId}`)
+      .then((res) => {
+        dispatch(HandleRead(alert));
+        console.log(res);
+        switch (alert.notificationType) {
+          case "Message":
+            navigate('mypage/get')
+            return
+          case "Approve":
+            return
+          case "Apply":
+            return
+          case "StudyArticle":
+            return
+          case "StudyMeeting":
+            return
+          case "StudyComment":
+            return
+          case "StudyReply":
+            return
+          case "BoardComment":
+            return
+          case "BoardReply":
+            return
+          case "Leader":
+            return
+          case "StudyCalendar":
+            return
+          case "Comment":
+            return
+          case "Reply":
+            return
+          default:
+            return
+        }
+
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <Container ref={AlertRef}>
       <AlarmIcon onClick={handleAlarmClick}>
         <BellIcon size={24} />
+        {read ? <Dot></Dot> : <></>}
       </AlarmIcon>
       <DropdownMenu open={menuOpen}>
         {sortedAlertList.slice(0, showItems).map((alert, index) => (
-          <CardContainer key={index} $isRead={alert.is_read}>
-            <CardTitle $isRead={alert.is_read}>{alert.message}</CardTitle>
+          <CardContainer
+            onClick={() => handleRead(alert)}
+            key={index}
+            $isRead={alert.isRead}
+          >
+            <CardTitle $isRead={alert.isRead}>{alert.content}</CardTitle>
             <br />
-            <CardDate $isRead={alert.is_read}>{alert.created_at}</CardDate>
+            <CardDate $isRead={alert.isRead}>{alert.createdAt}</CardDate>
           </CardContainer>
         ))}
         {sortedAlertList.length > showItems && (

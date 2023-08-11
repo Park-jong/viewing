@@ -10,7 +10,7 @@ const INITIAL_DATA = {
 export function UserReducer(state = INITIAL_DATA, action) {
   switch (action.type) {
     case "LOGIN":
-      return action.data;
+      return {...action.data, toggle:false, alarms:[]};
     case "LOGOUT":
       return { ...INITIAL_DATA, toggle: state.toggle };
     case "CHANGEPROFILE":
@@ -23,8 +23,19 @@ export function UserReducer(state = INITIAL_DATA, action) {
       return { ...state, nickname: action.nickname };
     case "CHANGETOGGLE":
       return { ...state, toggle: !state.toggle };
-    case "CHANGEALARMS":
+    case "GETALLALARM":
       return { ...state, alarms: action.alarms };
+    case "GETONEALARM":
+      return { ...state, alarms: [action.alarm, ...state.alarms] };
+    case "HANDLEREAD":
+      for (let alarm of state.alarms) {
+        if (alarm == action.alarm) {
+          alarm.isRead = true
+          break
+        }
+      }
+      return {...state}
+      
     default:
       return state;
   }

@@ -19,9 +19,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    @PersistenceContext
-    private EntityManager em;
-
     @Autowired
     public MemberService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
@@ -44,7 +41,6 @@ public class MemberService {
     @Transactional
     public void nextRegistrationStatus(Member member){
         member.nextRegistrationStatus();
-        em.flush();
     }
 
     //디버깅용
@@ -53,9 +49,11 @@ public class MemberService {
     }
 
     @Transactional
-    public void changeMemberNickname(Member member,String nickname){
-        member.changeNickname(nickname);
-        em.flush();
+    public Boolean changeMemberNickname(Integer memberId,String nickname){
+        Member curMember = memberRepository.findMemberById(memberId);
+        if(curMember==null) return false;
+        curMember.changeNickname(nickname);
+        return true;
     }
 
     @Transactional(readOnly = true)

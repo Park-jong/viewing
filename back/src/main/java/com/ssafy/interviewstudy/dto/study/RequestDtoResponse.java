@@ -17,7 +17,7 @@ public class RequestDtoResponse {
     private Integer requestId;
     private StudyMemberDto user;
     private String content;
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
     private List<RequestFile> requestFiles = new ArrayList<>();
 

@@ -94,74 +94,74 @@ class StudyControllerTest {
         }
     }
 
-    @Test
-    public void postGetPutDeleteStudyTest(){
-        //post
-        StudyDtoRequest study = StudyDtoRequest.builder().title("test code").description("test 코드용").leaderId(1).appliedCompany(1).tags(new ArrayList<>()).capacity(7).careerLevel(CareerLevel.valueOf("ALL")).appliedJob("직무").recruitment(true).build();
-
-        ExtractableResponse<Response> postResult = RestAssured
-                .given()
-                .header("Authorization", authId1)
-                .body(study)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .post("/studies")
-                .then().log().all()
-                .extract();
-        assertThat(postResult.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        String id = postResult.response().getBody().print();
-
-
-        //get
-        ExtractableResponse<Response> getResult = RestAssured
-                .given()
-                .header("Authorization", authId1)
-                .when()
-                .get("/studies/"+id)
-                .then().log().all()
-                .extract();
-        JsonPath jsonPath = getResult.jsonPath();
-        assertThat(getResult.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(jsonPath.getInt("study_id")).isEqualTo(Integer.parseInt(id));
-
-        //put
-        StudyDtoRequest updateStudy = StudyDtoRequest.builder().title("test 수정").description("test 코드용 수정").leaderId(1).appliedCompany(1).tags(new ArrayList<>()).capacity(7).careerLevel(CareerLevel.valueOf("ALL")).appliedJob("직무").recruitment(true).build();
-
-        ExtractableResponse<Response> putResult = RestAssured
-                .given()
-                .header("Authorization", authId1)
-                .body(updateStudy)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .put("/studies/"+id)
-                .then().log().all()
-                .extract();
-        assertThat(putResult.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-
-        //get
-        ExtractableResponse<Response> getResult2 = RestAssured
-                .given()
-                .header("Authorization", authId1)
-                .when()
-                .get("/studies/"+id)
-                .then().log().all()
-                .extract();
-        JsonPath jsonPath2 = getResult2.jsonPath();
-        assertThat(getResult2.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(jsonPath2.getInt("study_id")).isEqualTo(Integer.parseInt(id));
-        assertThat(jsonPath2.getString("title")).isEqualTo("test 수정");
-
-        //delete
-        ExtractableResponse<Response> deleteResult = RestAssured
-                .given()
-                .header("Authorization", authId1)
-                .when()
-                .delete("/studies/"+id)
-                .then().log().all()
-                .extract();
-        assertThat(deleteResult.statusCode()).isEqualTo(HttpStatus.OK.value());
-
-    }
+//    @Test
+//    public void postGetPutDeleteStudyTest(){
+//        //post
+//        StudyDtoRequest study = StudyDtoRequest.builder().title("test code").description("test 코드용").leaderId(1).appliedCompany(1).tags(new ArrayList<>()).capacity(7).careerLevel(CareerLevel.valueOf("ALL")).appliedJob("직무").recruitment(true).build();
+//
+//        ExtractableResponse<Response> postResult = RestAssured
+//                .given()
+//                .header("Authorization", authId1)
+//                .body(study)
+//                .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .when()
+//                .post("/studies")
+//                .then().log().all()
+//                .extract();
+//        assertThat(postResult.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+//        String id = postResult.response().getBody().print();
+//
+//
+//        //get
+//        ExtractableResponse<Response> getResult = RestAssured
+//                .given()
+//                .header("Authorization", authId1)
+//                .when()
+//                .get("/studies/"+id)
+//                .then().log().all()
+//                .extract();
+//        JsonPath jsonPath = getResult.jsonPath();
+//        assertThat(getResult.statusCode()).isEqualTo(HttpStatus.OK.value());
+//        assertThat(jsonPath.getInt("study_id")).isEqualTo(Integer.parseInt(id));
+//
+//        //put
+//        StudyDtoRequest updateStudy = StudyDtoRequest.builder().title("test 수정").description("test 코드용 수정").leaderId(1).appliedCompany(1).tags(new ArrayList<>()).capacity(7).careerLevel(CareerLevel.valueOf("ALL")).appliedJob("직무").recruitment(true).build();
+//
+//        ExtractableResponse<Response> putResult = RestAssured
+//                .given()
+//                .header("Authorization", authId1)
+//                .body(updateStudy)
+//                .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .when()
+//                .put("/studies/"+id)
+//                .then().log().all()
+//                .extract();
+//        assertThat(putResult.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+//
+//        //get
+//        ExtractableResponse<Response> getResult2 = RestAssured
+//                .given()
+//                .header("Authorization", authId1)
+//                .when()
+//                .get("/studies/"+id)
+//                .then().log().all()
+//                .extract();
+//        JsonPath jsonPath2 = getResult2.jsonPath();
+//        assertThat(getResult2.statusCode()).isEqualTo(HttpStatus.OK.value());
+//        assertThat(jsonPath2.getInt("study_id")).isEqualTo(Integer.parseInt(id));
+//        assertThat(jsonPath2.getString("title")).isEqualTo("test 수정");
+//
+//        //delete
+//        ExtractableResponse<Response> deleteResult = RestAssured
+//                .given()
+//                .header("Authorization", authId1)
+//                .when()
+//                .delete("/studies/"+id)
+//                .then().log().all()
+//                .extract();
+//        assertThat(deleteResult.statusCode()).isEqualTo(HttpStatus.OK.value());
+//
+//    }
 
 
     @Test

@@ -1,6 +1,7 @@
 package com.ssafy.interviewstudy.dto.message;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ssafy.interviewstudy.domain.message.Message;
 import com.ssafy.interviewstudy.dto.common.memberDto;
@@ -23,6 +24,7 @@ public class MessageDto {
     private String content;
     
     //메세지 생성일 (보낸 시간)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 
     //수신 여부

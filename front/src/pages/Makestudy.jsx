@@ -6,6 +6,7 @@ import StyledButton from "../components/Button/StyledButton";
 import Capacity from "./../Icons/capacity";
 import { customAxios } from "./../modules/Other/Axios/customAxios";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 //https://velog.io/@miyoni/TIL39
 
@@ -232,16 +233,17 @@ const TagPick = styled.div`
 `;
 
 export default function MakeStudy() {
+  const currentDate = new Date().toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
+  const navigate = useNavigate();
+
   const [appliedJob, setAppliedJob] = useState("");
   const [appliedCompany, setAppliedCompany] = useState("");
-  const [career, setCareer] = useState("전체");
+  const [career, setCareer] = useState("ALL");
   const [capacity, setCapacity] = useState("");
-  const [deadline, setDeadline] = useState("");
+  const [deadline, setDeadline] = useState(currentDate);
   const [studyName, setStudyName] = useState("");
   const [studyDescription, setStudyDescription] = useState("");
   const [tagList] = useState(TAG_LIST);
-
-  const currentDate = new Date().toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
 
   const [, setChoiceTagID] = useState(1);
   const [clickValue, setClickValue] = useState(false);
@@ -265,7 +267,6 @@ export default function MakeStudy() {
 
   //axios
   const handleMake = () => {
-    console.log(deadline);
     const studyData = {
       title: studyName,
       applied_company: appliedCompany,
@@ -277,13 +278,14 @@ export default function MakeStudy() {
       tag: tagAxios,
       leader_id: leaderId,
     };
-
     customAxios()
       .post(`studies`, studyData)
-      .then(function (response) {
-        console.log(response);
+      .then((response) => {
+        alert("생성되었습니다.");
+        navigate("/");
       })
       .catch((error) => {
+        alert("스터디 생성 중 에러가 발생했습니다.");
         console.error("에러가 발생했습니다.:", error);
       });
   };

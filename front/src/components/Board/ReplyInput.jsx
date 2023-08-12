@@ -56,17 +56,26 @@ const ButtonReply = styled.button`
   }
 `;
 
-export default function ReplyInput({commentId, setReply, value, update=false, setIsUpdating}) {
+export default function ReplyInput({
+  commentId,
+  setReply,
+  value,
+  update = false,
+  setIsUpdating,
+}) {
   const [text, setText] = useState("");
   const param = useLocation().pathname.split("/")[3];
-  const navigate = useNavigate()
-  const location = useLocation().pathname
 
+  const isStudy =
+    useLocation().pathname.split("/")[1] === "study" ? true : false;
+  const navigate = useNavigate();
+  const location = useLocation().pathname;
+  const study_id = useLocation().pathname.split("/")[2]; // 스터디일때만 사용
+  const article_id = useLocation().pathname.split("/")[4]; //스터디일때만
 
   useEffect(() => {
-    setText(value)
-  }, [])
-
+    setText(value);
+  }, []);
 
   const handleInput = (e) => {
     setText(e.target.value);
@@ -74,22 +83,52 @@ export default function ReplyInput({commentId, setReply, value, update=false, se
 
   const handleClick = () => {
     if (update) {
-      const url = `boards/${param}/comments/${commentId}/`
+      const url = isStudy
+        ? `/studies/${study_id}/boards/${article_id}/comments/${commentId}`
+        : `boards/${param}/comments/${commentId}/`;
       customAxios()
-        .put(url,{content : text})
+        .put(url, { content: text })
         .then((res) => {
-          CommentAxios(setReply, param)
-          setIsUpdating(false)
+          !isStudy
+            ? CommentAxios(setReply, param)
+            : customAxios()
+                .get(`studies/${study_id}/boards/${article_id}/comments`)
+                .then((response) => {
+                  setReply(response.data);
+                })
+                .catch((err) => console.log(err));
+          setIsUpdating(false);
         });
-
     } else {
-      const url = commentId ? `boards/${param}/comments/${commentId}/replies` : `boards/${param}/comments`
-      customAxios()
-        .post(url,{content : text})
-        .then((res) => {
-          CommentAxios(setReply, param)
-          setText("")
-        });
+      let url = "";
+      if (isStudy) {
+        url = commentId
+          ? `studies/${study_id}/boards/${article_id}/comments/${commentId}/replies`
+          : `studies/${study_id}/boards/${article_id}/comments`;
+
+        customAxios()
+          .post(url, { content: text })
+          .then((res) => {
+            customAxios()
+              .get(`studies/${study_id}/boards/${article_id}/comments`)
+              .then((response) => {
+                setReply(response.data);
+              })
+              .catch((err) => console.log(err));
+            setText("");
+          });
+      } else {
+        url = commentId
+          ? `boards/${param}/comments/${commentId}/replies`
+          : `boards/${param}/comments`;
+
+        customAxios()
+          .post(url, { content: text })
+          .then((res) => {
+            CommentAxios(setReply, param);
+            setText("");
+          });
+      }
     }
   };
 

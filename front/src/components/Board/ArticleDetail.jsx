@@ -62,6 +62,7 @@ const Content = styled.div`
   font-size: 16px;
   line-height: 1.6;
   color: #333;
+  white-space: pre-wrap;
 `;
 
 const HorizontalLine = styled.hr`
@@ -175,7 +176,6 @@ export default function ArticleDetail({ data, setData, count }) {
 
   // Assuming we have only one data in the data array for this example
   // const data = data[0];
-
 
   return (
     <ArticleContainer>

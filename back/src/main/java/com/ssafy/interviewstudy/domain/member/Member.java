@@ -148,6 +148,11 @@ public class Member {
         }
     }
 
+    public void withdrawl(){
+        this.status=MemberStatus.INACTIVE;
+        this.inactiveAt = LocalDateTime.now();
+    }
+
     public void changeNickname(String nickname){
         this.nickname = nickname;
     }

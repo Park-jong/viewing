@@ -6,29 +6,27 @@ import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
+import com.ssafy.interviewstudy.dto.study.StudyDtoResponse;
 import com.ssafy.interviewstudy.service.member.MemberArticleLikeService;
 import com.ssafy.interviewstudy.service.member.MemberCommentService;
+import com.ssafy.interviewstudy.service.study.StudyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class MypageController {
 
-    private MemberCommentService memberCommentService;
+    private final MemberCommentService memberCommentService;
 
-    private MemberArticleLikeService memberArticleLikeService;
+    private final StudyService studyService;
 
-    @Autowired
-    public MypageController(MemberCommentService memberCommentService, MemberArticleLikeService memberArticleLikeService) {
-        this.memberCommentService = memberCommentService;
-        this.memberArticleLikeService = memberArticleLikeService;
-    }
+    private final MemberArticleLikeService memberArticleLikeService;
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
@@ -41,7 +39,6 @@ public class MypageController {
 
     }
 
-
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
     @GetMapping(value="/members/{memberId}/article",params = "searchType=comment")
@@ -51,5 +48,20 @@ public class MypageController {
         List<BoardResponse> boardResponseList = memberCommentService.getCommentedArticle(boardRequest,boardType);
         return ResponseEntity.ok().body(boardResponseList);
 
+    }
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
+    @GetMapping(value="/members/{memberId}/studies")
+    public ResponseEntity<?> getMyStudies(@PathVariable("memberId") Integer memberId){
+        List<StudyDtoResponse> myStudies = studyService.findMyStudies(memberId);
+        return ResponseEntity.ok().body(myStudies);
+    }
+
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
+    @GetMapping(value="/members/{memberId}/bookmarks/studies")
+    public ResponseEntity<?> getMyBookmarkedStudies(@PathVariable("memberId") Integer memberId){
+        List<StudyDtoResponse> myStudies = studyService.findBookmarkStudies(memberId);
+        return ResponseEntity.ok().body(myStudies);
     }
 }

@@ -9,6 +9,8 @@ import { BiUser } from "react-icons/bi";
 import ApplyModal from "../components/Modal/ApplyModal";
 import CompanyJobTag from "../components/Study/CompanyJobTag";
 import TagStyled from "../components/Study/TagStyled";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div``;
 
@@ -87,6 +89,10 @@ const DetailContent = styled.div`
 export default function StudyPkDetail() {
   const studyPk = useParams().studyPk;
 
+  const loginMember = useSelector((state) => state.UserReducer);
+
+  const navigate = useNavigate();
+
   const emptyStudyData = {
     study_id: studyPk,
     title: "",
@@ -116,7 +122,11 @@ export default function StudyPkDetail() {
       .get(`studies/${studyPk}`)
       .then((res) => {
         SetstudyData(() => res.data);
-        console.log(res.data);
+      })
+      .catch((err) => {
+        if (!loginMember.memberId) {
+          navigate("/login");
+        }
       });
   }, []);
 

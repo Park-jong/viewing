@@ -7,16 +7,10 @@ import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.member.MemberStudyRepository;
-import com.ssafy.interviewstudy.repository.study.StudyMemberRepository;
-import com.ssafy.interviewstudy.repository.study.StudyRepository;
 import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +24,7 @@ public class MemberService {
     private final MemberStudyRepository memberStudyRepository;
 
     public Member findByEmail(String email){
-        Member member = memberRepository.findUserByEmail(email);
+        Member member = memberRepository.findUserByEmailAndStatusACTIVE(email);
         return member;
     }
 
@@ -40,7 +34,7 @@ public class MemberService {
     }
 
     public Member checkDuplicateNickname(String nickname){
-        Member member = memberRepository.findMemberByNickname(nickname);
+        Member member = memberRepository.findMemberByNicknameAndStatusACTIVE(nickname);
         if(member==null || member.getStatus()!=MemberStatus.ACTIVE) return null;
         return member;
     }
@@ -67,7 +61,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findByIdAndPlatform(String id, SocialLoginType socialLoginType){
-        Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginType(id,socialLoginType);
+        Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginTypeAndStatusACTIVE(id,socialLoginType);
         if(member == null || member.getStatus()!= MemberStatus.ACTIVE) return null;
         return member;
     }

@@ -48,7 +48,7 @@ export default function Message() {
   const nickname = new URLSearchParams(window.location.search).get(
     "nickname"
   );
-  const SERVER = "http://70.12.246.87:8080/messages";
+  const SERVER = process.env.REACT_APP_SERVER_URL + "messages";
 
   function handleContent(e) {
     setContent(e.target.value);

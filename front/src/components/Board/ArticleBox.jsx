@@ -2,8 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import UserProfile from "./../Common/UserProfile";
 import { Link, useLocation } from "react-router-dom";
-import { BiCommentDetail, BiHeart,BiSolidHeart } from "react-icons/bi";
-
+import { BiCommentDetail, BiHeart, BiSolidHeart } from "react-icons/bi";
 
 const Container = styled.div`
   width: ${(props) => `${props.$width}px`};
@@ -66,14 +65,14 @@ export default function ArticleBox({
   viewCount,
   width,
   is_like,
-  member_id
+  member_id,
 }) {
   const location = useLocation();
-  const isNotice = location.pathname === "/board/notice";
+  const study_id = useLocation().pathname.split("/")[2];
+  const isNotice = false;
+  const isStudyBoard = location.pathname === `/study/${study_id}/board`;
 
-  const handleLike = () => {
-
-  }
+  const handleLike = () => {};
 
   return (
     <Container $width={width}>
@@ -91,21 +90,19 @@ export default function ArticleBox({
       </ProfileContainer>
       <Title to={`${url}`}>{title}</Title>
 
-      {isNotice ? null : (
-        <MetaContainer>
-          <MetaItem>
-            {viewCount}
-          </MetaItem>
-          <MetaItem>
-            <BiCommentDetail size={14} />
-            {commentCount}
-          </MetaItem>
+      <MetaContainer>
+        {isStudyBoard ? null : <MetaItem>{viewCount}</MetaItem>}
+        <MetaItem>
+          <BiCommentDetail size={14} />
+          {commentCount}
+        </MetaItem>
+        {isStudyBoard ? null : (
           <MetaItem>
             {is_like ? <BiSolidHeart size={14} /> : <BiHeart size={14} />}
             {heartCount}
           </MetaItem>
-        </MetaContainer>
-      )}
+        )}
+      </MetaContainer>
     </Container>
   );
 }

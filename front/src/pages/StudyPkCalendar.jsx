@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import CalendarTemplate from "../components/Common/Organisms/CalendarTemplate";
+import StudyCalendarTemplate from "../components/Common/Organisms/StudyCalendarTemplate";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { customAxios } from "../modules/Other/Axios/customAxios";
@@ -13,7 +13,6 @@ export default function StudyPkCalendar() {
     customAxios()
       .get(`studies/${studyId}/calendars`)
       .then(({ data }) => {
-        console.log(data);
         setCalendarData((prev) => data);
       })
       .catch();
@@ -21,7 +20,11 @@ export default function StudyPkCalendar() {
 
   return (
     <Container>
-      <CalendarTemplate isFlex={true}></CalendarTemplate>
+      <StudyCalendarTemplate
+        isFlex={true}
+        data={calendarData}
+        dataChange={setCalendarData}
+      ></StudyCalendarTemplate>
     </Container>
   );
 }

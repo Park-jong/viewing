@@ -43,6 +43,7 @@ const Content = styled.div`
   margin: 20px 10px;
   font-size: 14px;
   color: var(--gray-600);
+  white-space: pre-wrap;
 
   ${(props) =>
     props.isNestedReply &&
@@ -114,12 +115,18 @@ export default function ReplyBox({
   isNestedReply,
   setReply,
   author,
+  isStudyBoard,
 }) {
   const [showInput, setShowInput] = useState(false); // Use parentheses instead of square brackets
   const toggleShowInput = () => setShowInput(!showInput);
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const param = useLocation().pathname.split("/")[3];
   const [isUpdating, setIsUpdating] = useState(false);
+  const study_id = useLocation().pathname.split("/")[2];
+  const article_id = useLocation().pathname.split("/")[4];
+  const deleteUrl = isStudyBoard
+    ? `/studies/${study_id}/boards/${article_id}/comments/${comment_id}`
+    : `boards/${param}/comments/${comment_id}`;
   const text = (isUpdating, isDelete, content) => {
     if (isDelete) {
       return "삭제된 메세지입니다.";
@@ -166,9 +173,18 @@ export default function ReplyBox({
 
   const handleDelete = () => {
     customAxios()
-      .delete(`boards/${param}/comments/${comment_id}`)
+      .delete(deleteUrl)
       .then((res) => {
-        CommentAxios(setReply, param);
+        isStudyBoard
+          ? customAxios()
+              .get(`/studies/${study_id}/boards/${article_id}/comments`)
+              .then((response) => {
+                setReply(response.data);
+              })
+              .catch((err) => {
+                console.log(err);
+              })
+          : CommentAxios(setReply, param);
       })
       .catch((err) => console.log(err));
   };
@@ -204,17 +220,21 @@ export default function ReplyBox({
 
         <BottomContainer isNestedReply={isNestedReply}>
           <CreatedAt> {created_at}</CreatedAt>
-          <LikeCount>
-            {isLike ? (
-              <SolidLikeIcon
-                onClick={() => handleDislike(isDelete)}
-                size={16}
-              />
-            ) : (
-              <LikeIcon onClick={() => handleLike(isDelete)} size={16} />
-            )}
-            {like_count}
-          </LikeCount>
+          {!isStudyBoard ? (
+            <LikeCount>
+              {isLike ? (
+                <SolidLikeIcon
+                  onClick={() => handleDislike(isDelete)}
+                  size={16}
+                />
+              ) : (
+                <LikeIcon onClick={() => handleLike(isDelete)} size={16} />
+              )}
+              {like_count}
+            </LikeCount>
+          ) : (
+            <></>
+          )}
           {!isNestedReply && (
             <ReplyCount onClick={toggleShowInput}>
               <CommentIcon size={16} />

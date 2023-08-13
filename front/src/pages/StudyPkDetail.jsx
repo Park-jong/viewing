@@ -42,6 +42,7 @@ const Description = styled.div`
   padding: 30px 0px;
   /* border: 1px solid var(--gray-200); */
   color: var(--gray-700);
+  white-space: pre-wrap;
 `;
 
 const ButtonContainer = styled.div`

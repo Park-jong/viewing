@@ -135,7 +135,7 @@ export default function StudyPkInfo() {
         setJob(() => data.applied_job);
         setCapacity(() => data.capacity);
         setCareerLevel(() => data.career_level);
-        setDeadline(() => data.deadline.split("T")[0]);
+        setDeadline(() => data.deadline.split(" ")[0]);
       });
   }, []);
 

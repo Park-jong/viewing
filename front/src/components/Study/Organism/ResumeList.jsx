@@ -11,10 +11,6 @@ const Container = styled.div`
 `;
 
 export default function ResumeList({ data, setData }) {
-  const dateFormat = (date) => {
-    let str = date.split("T");
-    return str[0] + " " + str[1];
-  };
   const study_id = useLocation().pathname.split("/")[2];
 
   return (
@@ -28,7 +24,7 @@ export default function ResumeList({ data, setData }) {
           backgroundcolor={resume.user.background}
           characterimg={resume.user.character}
           nickname={resume.user.nickname}
-          date={dateFormat(resume.created_at)}
+          date={resume.created_at}
           text={resume.content}
           request_files={resume.request_files}
           setList={setData}

@@ -104,7 +104,7 @@ export default function SideBar() {
     "내 캘린더",
     "내가 쓴 글",
     "내가 좋아요 한 글",
-    "내가 댓들 단 게시글",
+    "내가 댓글 단 게시글",
     "탈퇴하기",
   ];
   const linkList = [

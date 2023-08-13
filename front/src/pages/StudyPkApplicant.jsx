@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
-import ResumeList from "../components/Study/Organism/ResumeList";
-import ResumeBox from "../components/Study/ResumeBox";
-import StudySideBar from "../components/Study/StudySideBar";
-import { customAxios } from "../modules/Other/Axios/customAxios";
 import { useLocation } from "react-router-dom";
-import styled from "styled-components";
-import { useSelector } from "react-redux";
+import ResumeList from "../components/Study/Organism/ResumeList";
+import { customAxios } from "../modules/Other/Axios/customAxios";
 
 export default function StudyPkApplicant() {
   const param = useLocation().pathname.split("/")[2]; // studyId
@@ -22,8 +18,7 @@ export default function StudyPkApplicant() {
 
   return (
     <>
-      <ResumeList data={res}
-        setData={setRes} />
+      <ResumeList data={res} setData={setRes} />
     </>
   );
 }

@@ -19,6 +19,11 @@ const FlexContainer = styled.div`
   align-items: center;
 `;
 
+const FlexContainer2 = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 const Title = styled.div`
   font-size: 30px;
   font-weight: 700;
@@ -31,6 +36,14 @@ const HorizontalLine = styled.div`
   height: 3px;
   background-color: var(--gray-100);
   margin-bottom: 20px;
+`;
+
+const HorizontalLine2 = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: var(--gray-100);
+  margin-bottom: 10px;
+  margin-top: 20px;
 `;
 
 const MemberArea = styled.div``;
@@ -59,32 +72,95 @@ const TagArea = styled.div`
 const TagBox = styled.span``;
 
 const SelectedTagBox = styled.span`
-  background: blue;
+  background: #7952e2;
   display: inline-flex;
   align-items: center;
   margin: 5px;
+  padding: 8px;
+  border-radius: 15px;
   user-select: none;
+  color: white;
+  font-weight: 300;
 `;
 
 const UnselectedTagBox = styled.span`
-  background: gray;
+  background: #d7d7d7;
   display: inline-flex;
   align-items: center;
   margin: 5px;
+  padding: 8px;
+  border-radius: 15px;
   user-select: none;
+  font-weight: 300;
 `;
 
 const Description = styled.div``;
 
 const Category = styled.div`
   font-size: 20px;
+  font-weight: 700;
+  color: var(--gray-700);
+  margin-top: 30px;
+  margin-bottom: 8px;
 `;
 
-const BanButton = styled.button``;
+const BanButton = styled.button`
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  /* transition: background-color 0.3s, color 0.3s; */
 
-const DelegateButton = styled.button``;
+  &:hover {
+    background-color: var(--primary);
+  }
+`;
 
-const StudyTitleInputBox = styled.input``;
+const DelegateButton = styled.button`
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--primary);
+  }
+
+  margin-right: 12px;
+`;
+
+const StudyTitleInputBox = styled.input`
+  --border-height: 1px;
+  --border-before-color: rgba(221, 221, 221, 0.39);
+  --border-after-color: #5891ff;
+  --input-hovered-color: #4985e01f;
+  position: relative;
+  width: 200px;
+  color: #000000;
+  font-size: 0.9rem;
+  background-color: transparent;
+  box-sizing: border-box;
+  padding-inline: 0.5em;
+  padding-block: 0.7em;
+  border: none;
+  border-bottom: var(--border-height) solid var(--border-before-color);
+  padding-right: 28px;
+
+  &:hover {
+    background: var(--input-hovered-color);
+  }
+
+  &:focus {
+    outline: none;
+    border-bottom: var(--border-height) solid var(--border-after-color);
+  }
+`;
 
 const StudyDescInputBox = styled.input``;
 
@@ -110,7 +186,59 @@ const CareerLevel = styled.div``;
 
 const CareerLevelInputBox = styled.select``;
 
-const StudyJobInputBox = styled.input``;
+const StudyJobInputBox = styled.input`
+  --border-height: 1px;
+  --border-before-color: rgba(221, 221, 221, 0.39);
+  --border-after-color: #5891ff;
+  --input-hovered-color: #4985e01f;
+  position: relative;
+  width: 200px;
+  color: #000000;
+  font-size: 0.9rem;
+  background-color: transparent;
+  box-sizing: border-box;
+  padding-inline: 0.5em;
+  padding-block: 0.7em;
+  border: none;
+  border-bottom: var(--border-height) solid var(--border-before-color);
+  padding-right: 28px;
+
+  &:hover {
+    background: var(--input-hovered-color);
+  }
+
+  &:focus {
+    outline: none;
+    border-bottom: var(--border-height) solid var(--border-after-color);
+  }
+`;
+
+const TextArea = styled.textarea`
+  --border-height: 1px;
+  --border-before-color: rgba(221, 221, 221, 0.39);
+  --border-after-color: #5891ff;
+  --input-hovered-color: #4985e01f;
+  position: relative;
+  width: 500px;
+  color: #000000;
+  font-size: 0.9rem;
+  background-color: transparent;
+  box-sizing: border-box;
+  padding: 8px;
+  border: none;
+  border: var(--border-height) solid var(--border-before-color);
+  height: 300px;
+
+  font-family: Pretendard;
+
+  &:focus {
+    outline: none;
+
+    border: var(--border-height) solid var(--border-after-color);
+  }
+`;
+
+// const FlexContainer = styled.div``;
 
 export default function StudyPkAdmin() {
   const location = useLocation();
@@ -182,7 +310,10 @@ export default function StudyPkAdmin() {
   };
 
   const changeCapacity = (e) => {
-    setCapacity(() => e.target.value);
+    let value = e.target.value;
+    if (value > 6) value = 6;
+    else if (value < memberList.length) value = memberList.length;
+    setCapacity(() => value);
   };
 
   const changeDeadline = (e) => {
@@ -315,7 +446,7 @@ export default function StudyPkAdmin() {
         setStudy(() => data);
         setCapacity(() => data.capacity);
         setCareerLevel(() => data.career_level);
-        setDeadline(() => data.deadline.split("T")[0]);
+        setDeadline(() => data.deadline.split(" ")[0]);
       });
   }, []);
 
@@ -386,22 +517,58 @@ export default function StudyPkAdmin() {
 
   return (
     <Container>
-      <Title>스터디 관리</Title>
+      <Title>🔧스터디 관리</Title>
       <HorizontalLine></HorizontalLine>
+      <StudyToggle state={recruit} setState={setRecruit}></StudyToggle>
+
       <MemberArea>
-        <Category>회원 목록</Category>
+        <Category>🙋회원 목록</Category>
         {MemberListDoms}
       </MemberArea>
-      <Capacity>
-        <Category>최대 인원</Category>
-        <CapacityInputBox
-          type="number"
-          value={capacity}
-          min={memberList.length}
-          max={6}
-          onChange={changeCapacity}
-        ></CapacityInputBox>
-      </Capacity>
+      <HorizontalLine2></HorizontalLine2>
+
+      <FlexContainer2>
+        <Company>
+          <Category>지원 회사</Category>
+          {company}
+        </Company>
+        <Job>
+          <Category>지원 직무</Category>
+          <div type="text" onChange={changeJob}>
+            {job}
+          </div>
+        </Job>
+        <CareerLevel>
+          <Category>경력</Category>
+          <div>{careerLevel}</div>
+          {/* <CareerLevelInputBox value={careerLevel} onChange={changeCareerLevel}>
+            <CareerLevelType></CareerLevelType>
+          </CareerLevelInputBox> */}
+        </CareerLevel>
+      </FlexContainer2>
+      <FlexContainer>
+        <Capacity style={{ marginRight: "125px" }}>
+          <Category>최대 인원</Category>
+          <CapacityInputBox
+            type="number"
+            value={capacity}
+            min={memberList.length}
+            max={6}
+            onChange={changeCapacity}
+          ></CapacityInputBox>
+        </Capacity>
+        <DeadLine>
+          <Category>마감일</Category>
+          <DeadLineInputBox
+            value={deadline}
+            type="date"
+            onChange={changeDeadline}
+            min={minDate}
+          ></DeadLineInputBox>
+        </DeadLine>
+      </FlexContainer>
+
+      <HorizontalLine2></HorizontalLine2>
       <StudyName>
         <Category>스터디 제목</Category>
         <StudyTitleInputBox
@@ -410,48 +577,21 @@ export default function StudyPkAdmin() {
           onChange={changeTitle}
         ></StudyTitleInputBox>
       </StudyName>
-      <Company>
-        <Category>지원 회사</Category>
-        {company}
-      </Company>
-      <Job>
-        <Category>지원 직무</Category>
-        <StudyJobInputBox
+      <Description>
+        <Category>스터디 소개글</Category>
+        <TextArea
           type="text"
-          value={job}
-          onChange={changeJob}
-        ></StudyJobInputBox>
-      </Job>
+          value={studyDesc}
+          onChange={changeDesc}
+        ></TextArea>
+      </Description>
       <TagArea>
         <Category>태그 목록</Category>
         {TagListDoms}
       </TagArea>
-      <Description>
-        <Category>스터디 설명</Category>
-        <StudyDescInputBox
-          type="text"
-          value={studyDesc}
-          onChange={changeDesc}
-        ></StudyDescInputBox>
-      </Description>
-      <CareerLevel>
-        <Category>경력</Category>
-        <CareerLevelInputBox value={careerLevel} onChange={changeCareerLevel}>
-          <CareerLevelType></CareerLevelType>
-        </CareerLevelInputBox>
-      </CareerLevel>
-      <DeadLine>
-        <Category>마감일</Category>
-        <DeadLineInputBox
-          value={deadline}
-          type="date"
-          onChange={changeDeadline}
-          min={minDate}
-        ></DeadLineInputBox>
-      </DeadLine>
-      <StudyManage>
-        <StudyToggle state={recruit} setState={setRecruit}></StudyToggle>
 
+      <HorizontalLine2></HorizontalLine2>
+      <StudyManage>
         <FlexContainer>
           <MainButton
             width={120}

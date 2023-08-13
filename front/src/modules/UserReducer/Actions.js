@@ -2,8 +2,10 @@ export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";
 export const CHANGEPROFILE = "CHANGEPROFILE";
 export const CHANGETOGGLE = "CHANGETOGGLE";
-export const CHANGEALARMS = "CHANGEALARMS";
+export const GETALLALARM = "GETALLALARM";
 export const CHANGENICKNAME = "CHANGENICKNAME";
+export const GETONEALARM = "GETONEALARM"
+export const HANDLEREAD = "HANDLEREAD"
 
 export function Login(data) {
   return {
@@ -38,9 +40,23 @@ export function ChangeToggle() {
   };
 }
 
-export function ChangeAlarm(alarms) {
+export function GetAllAlarm(alarms) {
   return {
-    type: CHANGEALARMS,
+    type: GETALLALARM,
     alarms,
   };
 }
+export function GetOneAlarm(alarm) {
+  return {
+    type: GETONEALARM,
+    alarm,
+  };
+}
+
+export function HandleRead(alarm) {
+  return {
+    type: HANDLEREAD,
+    alarm
+  };
+}
+

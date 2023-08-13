@@ -1,9 +1,8 @@
-import styled from "styled-components";
-import UserProfile from "../Common/UserProfile";
-import MainButton from "../Button/MainButton";
-import { useSelector } from "react-redux";
-import { customAxios } from "../../modules/Other/Axios/customAxios";
 import { MdAttachFile } from "react-icons/md";
+import styled from "styled-components";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
+import MainButton from "../Button/MainButton";
+import UserProfile from "../Common/UserProfile";
 
 const Container = styled.div`
   width: 700px;
@@ -11,7 +10,6 @@ const Container = styled.div`
   border-radius: 36px;
   border: 2px solid var(--gray-200);
   position: relative;
-
   display: flex;
 
   margin: 7px;
@@ -54,14 +52,13 @@ const ButtonContainer = styled.div`
 
 const Icon = styled(MdAttachFile)`
   transform: rotate(45deg);
-`
+`;
 
 const File = styled.a``;
 
 const FileConatainer = styled.div`
   display: flex;
   position: absolute;
-  /* margin-bottom: 20px; */
   bottom: 50px;
   left: 45px;
 `;
@@ -112,7 +109,7 @@ export default function ResumeBox({
       .catch();
   };
 
-  const SERVER = process.env.REACT_APP_SERVER_URL
+  const SERVER = process.env.REACT_APP_SERVER_URL;
 
   return (
     <Container>
@@ -128,7 +125,7 @@ export default function ResumeBox({
       {request_files && request_files.length > 0 ? (
         <>
           <FileConatainer>
-            <Icon/>
+            <Icon />
             <h1>첨부파일 :&nbsp;</h1>
             {request_files.map((file, idx) => (
               <File

@@ -14,36 +14,56 @@ const Container = styled.div`
   align-items: center;
 `;
 
+const FlexContainer = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ButtonContainer = styled.div`
+  margin-right: 20px;
+`;
 export default function BoardCommon() {
   const [data, setData] = useState([]);
-  const navigate = useNavigate()
-  const type = useLocation().pathname.split('/')[2]
+  const navigate = useNavigate();
+  const type = useLocation().pathname.split("/")[2];
   const param = (type) => {
     if (type === "free") {
-      return "general"
+      return "general";
     } else if (type === "interview") {
-      return "review"
+      return "review";
     } else if (type === "question") {
-      return "qna"
+      return "qna";
     }
-  }
-  console.log(param(type))
+  };
+  console.log(param(type));
 
-  useEffect(()=>{
-    customAxios().get(`boards/${param(type)}`) // 페이지size, page
-    .then((res) => {
-      setData(res.data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  },[type])
+  useEffect(() => {
+    customAxios()
+      .get(`boards/${param(type)}`) // 페이지size, page
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [type]);
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} width={1000} type={type}/>
-      <SearchBoxBoard></SearchBoxBoard>
-      <MainButton content={"글쓰기"} width={80} height={35} onClick={() => navigate(`/board/write?type=${type}`)}></MainButton>
+      <ArticleList data={data} width={1000} type={type} />
+      <FlexContainer>
+        <ButtonContainer>
+          <MainButton
+            content={"글쓰기"}
+            width={80}
+            height={35}
+            onClick={() => navigate(`/board/write?type=${type}`)}
+          ></MainButton>
+        </ButtonContainer>
+        <SearchBoxBoard></SearchBoxBoard>
+      </FlexContainer>
     </Container>
   );
 }

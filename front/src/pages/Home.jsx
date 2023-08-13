@@ -205,11 +205,11 @@ export default function Home() {
 
   const x = useTransform(scrollYProgress, position, [0, carouselEndPosition]);
 
-  useEffect(() => {
-    window.addEventListener("scroll", () =>
-      console.log({ scrollYProgress: scrollYProgress.current })
-    );
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener("scroll", () =>
+  //     console.log({ scrollYProgress: scrollYProgress.current })
+  //   );
+  // }, []);
 
   useEffect(() => {
     if (!carouselRef || !carouselRef.current) return;

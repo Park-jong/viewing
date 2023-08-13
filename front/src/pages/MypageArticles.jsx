@@ -30,17 +30,21 @@ export default function MypageArticles() {
       }
     };
     customAxios()
-      .get(`members/${member_id}/article?board=general&searchType=${query()}`)
+      .get(`members/${member_id}/article?board=general&searchType=${query()}`+
+      `&page=0&size=5&sort=createdAt,desc`)
       .then((res) => setFree(res.data))
       .catch((err) => console.log(err));
 
     customAxios()
-      .get(`members/${member_id}/article?board=review&searchType=${query()}`)
+      .get(`members/${member_id}/`+
+      `article?board=review&searchType=${query()}`+
+      `&page=0&size=5&sort=createdAt,desc`)
       .then((res) => setInterview(res.data))
       .catch((err) => console.log(err));
 
     customAxios()
-      .get(`members/${member_id}/article?board=qna&searchType=${query()}`)
+      .get(`members/${member_id}/article?board=qna&searchType=${query()}`+
+      `&page=0&size=5&sort=createdAt,desc`)
       .then((res) => setQna(res.data))
       .catch((err) => console.log(err));
   }, [type]);

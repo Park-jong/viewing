@@ -94,6 +94,14 @@ export default function BoardUpdate() {
   };
 
   const SendRequest = () => {
+    if (!title) {
+      alert("제목을 입력하세요.")
+      return
+    } else if (!content) {
+      alert("내용을 입력하세요.")
+      return
+    }
+
     const formData = new FormData();
     const request = { member_id, content, title, files_deleted: deleted };
     console.log(request, files);

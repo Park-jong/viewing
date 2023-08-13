@@ -24,7 +24,15 @@ const NameContainer = styled.div`
   padding-left: 10px;
   color: #000000;
   font-weight: 300;
+  
 `;
+
+const Name = styled.div`
+  width: 150px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`
 
 const TitleContainer = styled(Link)`
   flex: 3;
@@ -34,6 +42,7 @@ const TitleContainer = styled(Link)`
   padding-left: 10px;
   color: #000000;
   font-weight: 300;
+  
 `;
 
 const DateContainer = styled.div`
@@ -61,7 +70,7 @@ export default function MessageBox({ message_id, name, title, date, deleted, set
   return (
     <Container>
       <Checkbox onChange={handleCheck} checked={deleted.includes(message_id)}/>
-      <NameContainer>{name}</NameContainer>
+      <NameContainer><Name>{name}</Name> </NameContainer>
       <TitleContainer to={`${message_id}`}>{title}</TitleContainer>
       <DateContainer>{date}</DateContainer>
     </Container>

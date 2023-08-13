@@ -98,6 +98,14 @@ export default function BoardWrite() {
   };
 
   const SendRequest = (e) => {
+    if (!title) {
+      alert("제목을 입력하세요.")
+      return
+    } else if (!content) {
+      alert("내용을 입력하세요.")
+      return
+    }
+
     const formData = new FormData();
     const request = {member_id, content,title, board_type:board_type()}
     // formData.append("member_id", member_id);

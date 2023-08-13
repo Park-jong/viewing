@@ -21,8 +21,7 @@ const ProfileImg = styled.div`
 `;
 
 const Username = styled.div`
-  width: 100px;
-  height: 13px;
+  max-width: ${ props => `${ props.$nicknameLength}px`};
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -35,6 +34,7 @@ export default function UserProfile({
   nickname,
   width = 32,
   height = 32,
+  nicknameLength = 100
 }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -68,7 +68,7 @@ export default function UserProfile({
         $backgroundcolor={backgroundcolor}
         $characterimg={characterimg}
       ></ProfileImg>
-      <Username>{nickname}</Username>
+      <Username $nicknameLength={nicknameLength} >{nickname}</Username>
 
       <MiniMenuList
         to={nickname}

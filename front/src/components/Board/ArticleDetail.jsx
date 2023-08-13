@@ -193,6 +193,7 @@ export default function ArticleDetail({ data, setData, count }) {
                 backgroundcolor={data.author.member_profile_background}
                 characterimg={data.author.member_profile_image}
                 nickname={data.author.nickname}
+                nicknameLength={500}
               />
             )
           )}

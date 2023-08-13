@@ -104,10 +104,10 @@ public class StudyService {
     }
 
     //스터디 검색 결과 조회
-    public Page<StudyDtoResponse> findStudiesBySearch(JWTMemberInfo memberInfo, Boolean option, String appliedCompany, String appliedJob, CareerLevel careerLevel, Pageable pageable){
+    public Page<StudyDtoResponse> findStudiesBySearch(JWTMemberInfo memberInfo, Boolean option, String appliedCompany, String appliedJob, CareerLevel careerLevel, Integer tag, Pageable pageable){
         Integer memberId = memberInfo != null ? memberInfo.getMemberId() : null;
         //검색 결과 (study_id, Study, 북마크여부, 인원)
-        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompany, appliedJob, careerLevel, memberId, pageable);
+        Page<Tuple> studies = studyRepository.findStudiesBySearch(option, appliedCompany, appliedJob, careerLevel, tag, pageable);
         List<StudyDtoResponse> result = new ArrayList<>();
         List<Integer> studyids = new ArrayList<>();
         for (Tuple study : studies) {
@@ -115,8 +115,10 @@ public class StudyService {
         }
         //태그들을 가져옴
         List<Study> byIds = studyRepository.findByIds(studyids);
-        for (Tuple study : studies) {
-            result.add(new StudyDtoResponse(study.get(1, Study.class), study.get(2, Boolean.class), study.get(3, Long.class)));
+        List<Tuple> etc = studyRepository.isBookmark(memberId, studyids);
+        List<Tuple> content = studies.getContent();
+        for (int i=0, size = content.size(); i<size; i++) {
+            result.add(new StudyDtoResponse(content.get(i).get(1, Study.class), etc.get(i).get(0, Boolean.class), etc.get(i).get(1, Long.class)));
         }
         return new PageImpl<>(result, pageable, studies.getTotalElements());
     }

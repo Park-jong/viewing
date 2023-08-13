@@ -13,10 +13,13 @@ import java.util.List;
 
 public interface StudyRepositoryCustom {
     //조건으로 조회
-    Page<Tuple> findStudiesBySearch(Boolean isRecruit, String appliedCompany, String appliedJob, CareerLevel careerLevel, Integer memberId, Pageable pageable);
+    Page<Tuple> findStudiesBySearch(Boolean isRecruit, String appliedCompany, String appliedJob, CareerLevel careerLevel, Integer tag, Pageable pageable);
 
     List<Tuple> findBookmarksMemberCountByMember(Member member);
 
     List<Tuple> findMyStudyMemberCountByMember(Member member);
 
-    }
+    List<Tuple> isBookmark(Integer memberId, List<Integer> studyIds);
+
+
+}

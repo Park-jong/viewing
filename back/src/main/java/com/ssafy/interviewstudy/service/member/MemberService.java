@@ -41,7 +41,7 @@ public class MemberService {
 
     public Member checkDuplicateNickname(String nickname){
         Member member = memberRepository.findMemberByNickname(nickname);
-        if(member.getStatus()!=MemberStatus.ACTIVE) return null;
+        if(member==null || member.getStatus()!=MemberStatus.ACTIVE) return null;
         return member;
     }
 
@@ -68,7 +68,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findByIdAndPlatform(String id, SocialLoginType socialLoginType){
         Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginType(id,socialLoginType);
-        if(member.getStatus()!= MemberStatus.ACTIVE) return null;
+        if(member == null || member.getStatus()!= MemberStatus.ACTIVE) return null;
         return member;
     }
 

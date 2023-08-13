@@ -45,8 +45,8 @@ public class StudyBoardController {
     @Authority(authorityType = AuthorityType.Study_Member)
     @PostMapping
     public ResponseEntity<?> articleAdd(@PathVariable Integer studyId, @MemberInfo JWTMemberInfo memberInfo,
-                                        @RequestBody BoardRequest boardRequest,
-                                        @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
+                                        @RequestPart(value = "request", required = false) BoardRequest boardRequest,
+                                        @RequestPart(value = "request_files", required = false) List<MultipartFile> requestFiles){
         boardRequest.setMemberId(memberInfo.getMemberId());
         System.out.println(studyId);
         boardRequest.setStudyId(studyId);
@@ -61,7 +61,7 @@ public class StudyBoardController {
     @PutMapping("/{articleId}")
     public ResponseEntity<?> articleModify(@PathVariable Integer studyId, @PathVariable Integer articleId,
                                            @MemberInfo JWTMemberInfo memberInfo,
-                                           @RequestBody BoardRequest boardRequest,
+                                           @RequestPart(value = "request", required = false) BoardRequest boardRequest,
                                            @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
         boardRequest.setMemberId(memberInfo.getMemberId());
         boardRequest.setStudyId(studyId);

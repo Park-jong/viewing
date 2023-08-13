@@ -50,8 +50,16 @@ public class StudyBoardService {
     // 글 detail 조회
     public StudyBoardResponse findArticle(Integer articleId) {
         StudyBoard article = boardRepository.findById(articleId).get();
+        List<ArticleFile> files = article.getFiles();
+
+        List<FileResponse> fileResponses = new ArrayList<>();
+
+        for (ArticleFile file : files) {
+            fileResponses.add(new FileResponse(file));
+        }
 
         StudyBoardResponse boardResponse = boardDtoService.fromEntity(article);
+        boardResponse.setArticleFiles(fileResponses);
 
         return boardResponse;
     }

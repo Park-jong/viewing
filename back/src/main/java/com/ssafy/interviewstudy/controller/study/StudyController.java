@@ -42,8 +42,8 @@ public class StudyController {
     //스터디 조회
     @JWTRequired
     @GetMapping
-    public ResponseEntity<?> studyList(@MemberInfo JWTMemberInfo memberInfo, @RequestParam(name = "option", required = false) Boolean option, @RequestParam(name = "appliedCompany", required = false) String appliedCompany, @RequestParam(name = "appliedJob", required = false) String appliedJob, @RequestParam(name = "careerLevel", required = false)CareerLevel careerLevel, @PageableDefault(size = 12)Pageable pageable){
-        Page<StudyDtoResponse> page = studyService.findStudiesBySearch(memberInfo, option, appliedCompany, appliedJob, careerLevel, pageable);
+    public ResponseEntity<?> studyList(@MemberInfo JWTMemberInfo memberInfo, @RequestParam(name = "option", required = false) Boolean option, @RequestParam(name = "appliedCompany", required = false) String appliedCompany, @RequestParam(name = "appliedJob", required = false) String appliedJob, @RequestParam(name = "careerLevel", required = false)CareerLevel careerLevel, @RequestParam(name = "tag", required = false) Integer tag, @PageableDefault(size = 12)Pageable pageable){
+        Page<StudyDtoResponse> page = studyService.findStudiesBySearch(memberInfo, option, appliedCompany, appliedJob, careerLevel, tag, pageable);
         return ResponseEntity.ok().body(page);
     }
 

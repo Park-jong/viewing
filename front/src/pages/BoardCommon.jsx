@@ -108,10 +108,10 @@ export default function BoardCommon() {
         <ArrowButton>
           <BiChevronLeft></BiChevronLeft>
         </ArrowButton>
-        <PageButton $now={page} $page={1} onClick={handlePage(1)}>
+        <PageButton $now={page} $page={1} onClick={() => handlePage(1)}>
           1
         </PageButton>
-        <PageButton $now={page} $page={2} onClick={handlePage(2)}>
+        <PageButton $now={page} $page={2} onClick={() => handlePage(2)}>
           2
         </PageButton>
         <ArrowButton>

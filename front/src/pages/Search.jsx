@@ -24,6 +24,8 @@ const tags = [
   "초보 환영",
 ];
 
+const page = [-2, -1, 0, 1, 2];
+
 // const data = [
 //   {
 //     content: [
@@ -162,6 +164,16 @@ const TagLabel = styled.label`
   cursor: pointer;
 `;
 
+const PageArea = styled.div`
+  text-align: center;
+`;
+
+const PageNum = styled.div`
+  display: inline-block;
+  margin: 5px;
+  width: 15px;
+`;
+
 ///studies?appliedCompany={지원회사(string)}&job={직무(String)}&careerLevel={신입/경력/무관(ALL, INTERN, NEWCOMER, EXPERIENCED)}&option=true&page=0&size=20&sort=id,desc&sort=username,desc
 
 export default function Search() {
@@ -172,6 +184,9 @@ export default function Search() {
   const appliedCompany = query.get("appliedCompany");
   const job = query.get("job");
   const careerLevel = query.get("careerLevel");
+
+  const [searchPage, setSearchPage] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
 
   const [searchData, setSearchData] = useState({ content: [] });
   const [searchTag, setSearchTag] = useState(null);
@@ -186,37 +201,45 @@ export default function Search() {
     }&${careerLevel ? "careerLevel=" + careerLevel : ""}&option=${isToggled}&${
       searchTag ? "tag=" + searchTag : ""
     }`;
-  // console.log(searchData);
 
-  //search 통신 보내기
-  useEffect(() => {
+  const newDataSearch = () => {
     customAxios()
       .get(getSearchUrl())
       .then((res) => {
         setSearchData(() => res.data);
+        setSearchPage(() => res.data.number);
+        setPageSize(() => res.data.totalPages);
       });
+  };
+
+  const pageMove = (n) => {
+    customAxios()
+      .get(getSearchUrl() + `&page=${n}`)
+      .then((res) => {
+        setSearchData(() => res.data);
+        setSearchPage(() => res.data.number);
+        setPageSize(() => res.data.totalPages);
+      });
+  };
+
+  //search 통신 보내기
+  useEffect(() => {
+    newDataSearch();
   }, []);
 
   const handleClick = () => {};
 
   useEffect(() => {
-    customAxios()
-      .get(getSearchUrl())
-      .then((res) => {
-        setSearchData(() => res.data);
-      });
+    newDataSearch();
   }, [isToggled]);
 
   useEffect(() => {
-    customAxios()
-      .get(getSearchUrl())
-      .then((res) => {
-        setSearchData(() => res.data);
-      });
+    newDataSearch();
   }, [searchTag]);
 
   useEffect(() => {
     setFilteredData(searchData.content);
+    console.log(searchData);
   }, [searchData]);
 
   // const handleToggle = () => {
@@ -257,7 +280,11 @@ export default function Search() {
               id={tag}
               name="tag"
               onClick={(e) => {
-                setSearchTag(() => e.target.value);
+                if (searchTag === e.target.value) {
+                  setSearchTag(() => null);
+                } else {
+                  setSearchTag(() => e.target.value);
+                }
               }}
               hidden
             ></TagRadio>
@@ -283,6 +310,23 @@ export default function Search() {
           <p>찾으시는 스터디가 없습니다.</p>
         )}
       </BodyContainer>
+      <PageArea>
+        {page.map((num, idx) => {
+          const n = num + searchPage + 1;
+          return n > 0 && n <= pageSize ? (
+            <PageNum
+              key={idx}
+              onClick={() => {
+                pageMove(n - 1);
+              }}
+            >
+              {n}
+            </PageNum>
+          ) : (
+            <></>
+          );
+        })}
+      </PageArea>
     </Container>
   );
 }

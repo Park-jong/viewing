@@ -19,7 +19,7 @@ public class ChatResponse {
     private Integer chatId;
     private StudyMemberDto member;
     private String content;
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 
     public ChatResponse(Integer chatId, Integer memberId, String memberNickname, MemberProfileBackground memberBg, MemberProfileImage memberCharcter, String content, LocalDateTime createdAt){

@@ -198,6 +198,14 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    @JWTRequired(required = true)
+    @Authority(authorityType = AuthorityType.Member)
+    @DeleteMapping("/members/{memberId}")
+    public ResponseEntity withdrawl(@PathVariable Integer memberId){
+        memberService.withdrawl(memberId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/members/createMemberTest")
     public ResponseEntity changeCharacter(@RequestParam("code") String code){
 

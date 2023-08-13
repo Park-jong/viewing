@@ -128,7 +128,10 @@ public class StudyService {
         Study study = requestToStudy(studyDtoRequest);
         Member leader = memberRepository.findById(studyDtoRequest.getLeaderId()).get();
         study.updateLeader(leader);
-        study.updateCompany(companyRepository.findById(studyDtoRequest.getAppliedCompany()).get());
+        Optional<Company> companyByName = companyRepository.findCompanyByName(studyDtoRequest.getAppliedCompany());
+        if(companyByName.isEmpty()) throw new NotFoundException("해당 정보를 찾을 수 없음");
+        Company company = companyByName.get();
+        study.updateCompany(company);
         studyRepository.save(study);
         //태그들 추가
         List<Integer> tags = studyDtoRequest.getTags();

@@ -20,7 +20,7 @@ public class StudyDtoRequest {
 
     private String description;
 
-    private Integer appliedCompany;
+    private String appliedCompany;
 
     private String appliedJob;
 

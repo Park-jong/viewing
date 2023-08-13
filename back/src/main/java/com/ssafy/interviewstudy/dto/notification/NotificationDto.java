@@ -38,7 +38,7 @@ public class NotificationDto {
     private Boolean isRead;
 
     //알림 생성일
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
 
     @Builder

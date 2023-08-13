@@ -1,9 +1,14 @@
 package com.ssafy.interviewstudy.service.member;
 
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.domain.member.MemberStatus;
 import com.ssafy.interviewstudy.dto.member.MemberProfileChangeDto;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
+import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
+import com.ssafy.interviewstudy.repository.member.MemberStudyRepository;
+import com.ssafy.interviewstudy.repository.study.StudyMemberRepository;
+import com.ssafy.interviewstudy.repository.study.StudyRepository;
 import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +19,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    @Autowired
-    public MemberService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
+    private final StudyBoardRepository studyBoardRepository;
+
+    private final MemberStudyRepository memberStudyRepository;
 
     public Member findByEmail(String email){
         Member member = memberRepository.findUserByEmail(email);
@@ -35,7 +40,9 @@ public class MemberService {
     }
 
     public Member checkDuplicateNickname(String nickname){
-        return memberRepository.findMemberByNickname(nickname);
+        Member member = memberRepository.findMemberByNickname(nickname);
+        if(member==null || member.getStatus()!=MemberStatus.ACTIVE) return null;
+        return member;
     }
 
     @Transactional
@@ -45,7 +52,9 @@ public class MemberService {
 
     //디버깅용
     public Member findMemberByMemberId(Integer memberId){
-        return memberRepository.findMemberById(memberId);
+        Member member = memberRepository.findMemberById(memberId);
+        if(member.getStatus()!=MemberStatus.ACTIVE) return null;
+        return member;
     }
 
     @Transactional
@@ -59,6 +68,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findByIdAndPlatform(String id, SocialLoginType socialLoginType){
         Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginType(id,socialLoginType);
+        if(member == null || member.getStatus()!= MemberStatus.ACTIVE) return null;
         return member;
     }
 
@@ -76,5 +86,17 @@ public class MemberService {
                     memberProfileChangeDto.getBackground()
             );
         }
+    }
+
+    @Transactional
+    public void withdrawl(Integer memberId){
+        if(memberId == null){
+            throw new NotFoundException("멤버 정보가 없습니다");
+        }
+        Member member = memberRepository.findMemberById(memberId);
+        if(member == null){
+            throw new NotFoundException("멤버 정보가 없습니다.");
+        }
+        member.withdrawl();
     }
 }

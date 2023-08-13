@@ -8,6 +8,7 @@ import { customAxios } from "../modules/Other/Axios/customAxios";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import TagStyled from "../components/Study/TagStyled";
+import TagStyledSelected from "../components/Study/TagStyledSelected";
 
 const tags = [
   "자소서 제출 필수",
@@ -149,10 +150,16 @@ const TagContainer = styled.div`
   padding-bottom: 20px;
 `;
 
+const TagRadio = styled.input``;
+
 const BodyContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+`;
+
+const TagLabel = styled.label`
+  cursor: pointer;
 `;
 
 ///studies?appliedCompany={지원회사(string)}&job={직무(String)}&careerLevel={신입/경력/무관(ALL, INTERN, NEWCOMER, EXPERIENCED)}&option=true&page=0&size=20&sort=id,desc&sort=username,desc
@@ -167,17 +174,24 @@ export default function Search() {
   const careerLevel = query.get("careerLevel");
 
   const [searchData, setSearchData] = useState({ content: [] });
+  const [searchTag, setSearchTag] = useState(null);
 
+  //토글 로직
+  const [isToggled, setIsToggled] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+
+  const getSearchUrl = () =>
+    `studies?${appliedCompany ? "appliedCompany=" + appliedCompany : ""}&${
+      job ? "job=" + job : ""
+    }&${careerLevel ? "careerLevel=" + careerLevel : ""}&option=${isToggled}&${
+      searchTag ? "tag=" + searchTag : ""
+    }`;
   // console.log(searchData);
 
   //search 통신 보내기
   useEffect(() => {
     customAxios()
-      .get(
-        `studies?${appliedCompany ? "appliedCompany=" + appliedCompany : ""}&${
-          job ? "job=" + job : ""
-        }&${careerLevel ? "careerLevel=" + careerLevel : ""}`
-      )
+      .get(getSearchUrl())
       .then((res) => {
         setSearchData(() => res.data);
       });
@@ -185,17 +199,21 @@ export default function Search() {
 
   const handleClick = () => {};
 
-  //토글 로직
-  const [isToggled, setIsToggled] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
+  useEffect(() => {
+    customAxios()
+      .get(getSearchUrl())
+      .then((res) => {
+        setSearchData(() => res.data);
+      });
+  }, [isToggled]);
 
   useEffect(() => {
-    if (isToggled) {
-      setFilteredData(searchData.content.filter((study) => study.recruitment));
-    } else {
-      setFilteredData(searchData.content);
-    }
-  }, [isToggled]);
+    customAxios()
+      .get(getSearchUrl())
+      .then((res) => {
+        setSearchData(() => res.data);
+      });
+  }, [searchTag]);
 
   useEffect(() => {
     setFilteredData(searchData.content);
@@ -232,7 +250,25 @@ export default function Search() {
 
       <TagContainer>
         {tags.map((tag, idx) => (
-          <TagStyled key={idx} content={tag} />
+          <>
+            <TagRadio
+              type="radio"
+              value={idx + 1}
+              id={tag}
+              name="tag"
+              onClick={(e) => {
+                setSearchTag(() => e.target.value);
+              }}
+              hidden
+            ></TagRadio>
+            <TagLabel for={tag}>
+              {tag === tags[searchTag - 1] ? (
+                <TagStyledSelected key={idx} content={tag} />
+              ) : (
+                <TagStyled key={idx} content={tag} />
+              )}
+            </TagLabel>
+          </>
         ))}
       </TagContainer>
 

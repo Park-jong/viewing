@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import MessageBox from "../MessageBox";
 
-export default function MessageList({messages}) {
-  console.log(messages)
+export default function MessageList({messages, deleted, setDeleted}) {
 
   return (
     <>
@@ -13,6 +12,8 @@ export default function MessageList({messages}) {
           name={message.author.nickname}
           title={message.title}
           date={message.created_at}
+          deleted={deleted}
+          setDeleted={setDeleted}
         ></MessageBox>
       ))
     : <>메세지가 없습니다...</>}

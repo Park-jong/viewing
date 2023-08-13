@@ -15,7 +15,6 @@ export default function MiniMenuList({ isVisible, left, top, to, member_id }) {
   return (
     <Container $isVisible={isVisible} $left={left} $top={top}>
       <MiniMenu content="쪽지 보내기" to={to} member_id={member_id}></MiniMenu>
-      <MiniMenu content="초대하기" to={to}></MiniMenu>
     </Container>
   );
 }

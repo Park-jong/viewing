@@ -1,16 +1,12 @@
 import React from "react";
-import styled from "styled-components";
 import { BiBullseye, BiCommentDetail } from "react-icons/bi";
-import UserProfile from "../Common/UserProfile";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { PiSirenLight } from "react-icons/pi";
-
-// import { data } from "../Layout/db";
-//import { data } from "./../Layout/db";
-import { customAxios } from "../../modules/Other/Axios/customAxios";
+import { useLocation, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import UserProfile from "../Common/UserProfile";
+import { MdAttachFile } from "react-icons/md";
 import { useSelector } from "react-redux";
-import { UserReducer } from "./../../modules/UserReducer/UserReducer";
-import ArticleAxios from "../../modules/Other/Axios/ArticleAxios";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
 import SubButton from "../Button/SubButton";
 
 const ArticleContainer = styled.div`
@@ -92,6 +88,10 @@ const FileConatainer = styled.div`
   margin-bottom: 20px;
 `;
 
+const Icon = styled(MdAttachFile)`
+  transform: rotate(45deg);
+`;
+
 const File = styled.a``;
 
 export default function StudyArticleDetail({ data, setData, count }) {
@@ -139,13 +139,19 @@ export default function StudyArticleDetail({ data, setData, count }) {
 
       <HorizontalLine />
 
+      <Content>{data.content}</Content>
+      <br></br>
       {data.article_files && data.article_files.length > 0 ? (
         <>
-          <h1>첨부파일</h1>
           <FileConatainer>
+            <Icon></Icon>
+            <h1>첨부파일 :&nbsp;</h1>
             {data.article_files.map((file, idx) => (
               <File
-                href={`http://70.12.246.87:8080/boards/${data.board_type}/${data.article_id}/files/${file.fileId}`}
+                href={
+                  process.env.REACT_APP_SERVER_URL +
+                  `studies/${param}/boards/${data.article_id}/files/${file.fileId}`
+                }
                 key={idx}
               >
                 {file.name}
@@ -156,8 +162,6 @@ export default function StudyArticleDetail({ data, setData, count }) {
       ) : (
         <></>
       )}
-
-      <Content>{data.content}</Content>
       <HorizontalLine />
       <BottomContainer>
         <CountInfo>

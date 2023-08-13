@@ -14,20 +14,39 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const FlexContainer = styled.div`
-  width: 100%;
+const BottomContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-`;
+`
 
-const ButtonContainer = styled.div`
-  margin-right: 20px;
-`;
+const MarginLeft = styled.div`
+  margin-left: 20px;
+`
+
+const PageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
+const BottomContainer = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const MarginLeft = styled.div`
+  margin-left: 20px;
+`
+
+const PageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
 export default function BoardCommon() {
   const [data, setData] = useState([]);
-  const navigate = useNavigate();
-  const type = useLocation().pathname.split("/")[2];
+  const [page, setPage] = useState(0)
+  const navigate = useNavigate()
+  const type = useLocation().pathname.split('/')[2]
   const param = (type) => {
     if (type === "free") {
       return "general";
@@ -36,34 +55,31 @@ export default function BoardCommon() {
     } else if (type === "question") {
       return "qna";
     }
-  };
-  console.log(param(type));
+  }
 
-  useEffect(() => {
-    customAxios()
-      .get(`boards/${param(type)}`) // 페이지size, page
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [type]);
+  useEffect(()=>{
+    setPage(0)
+    customAxios().get(`boards/${param(type)}?size=5&page=${page}`) // 페이지size, page
+    .then((res) => {
+      setData(res.data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  },[type])
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} width={1000} type={type} />
-      <FlexContainer>
-        <ButtonContainer>
-          <MainButton
-            content={"글쓰기"}
-            width={80}
-            height={35}
-            onClick={() => navigate(`/board/write?type=${type}`)}
-          ></MainButton>
-        </ButtonContainer>
+      <ArticleList data={data} width={1000} type={type}/>
+      <BottomContainer>
         <SearchBoxBoard></SearchBoxBoard>
-      </FlexContainer>
+        <MarginLeft>
+          <MainButton content={"글쓰기"} width={80} height={35} onClick={() => navigate(`/board/write?type=${type}`)}></MainButton>
+        </MarginLeft>
+      </BottomContainer>
+      <PageContainer>
+
+      </PageContainer>
     </Container>
   );
 }

@@ -117,7 +117,7 @@ export default function DropAlert() {
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const token = localStorage.getItem("access_token");
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   let read = false;
 
   // SSE
@@ -135,6 +135,7 @@ export default function DropAlert() {
   };
 
   useEffect(() => {
+    if(token==null) return;
     let eventSource;
     const fetchSse = () => {
       eventSource = new EventSource(
@@ -160,9 +161,8 @@ export default function DropAlert() {
 
       eventSource.addEventListener("notification", (event) => {
         try {
-          const temp = JSON.parse(event.data)
-          temp.isRead = false
-          console.log(temp)
+          const temp = JSON.parse(event.data);
+          temp.isRead = false;
           dispatch(GetOneAlarm(temp));
         } catch (e) {
           console.log(e);
@@ -189,18 +189,15 @@ export default function DropAlert() {
       eventSource.close();
     };
   }, []);
-  
-  console.log(data)
+
   if (data.length > 0) {
     for (let alarm of data) {
       if (alarm.isRead === false) {
-        console.log(12341234132)
         read = true;
         break;
       }
     }
   }
-  
 
   const sortedAlertList = [...data].sort((a, b) =>
     a.is_read === b.is_read ? 0 : a.is_read ? 1 : -1
@@ -219,39 +216,37 @@ export default function DropAlert() {
       .put(`members/${memberId}/notification/${alert.notificationId}`)
       .then((res) => {
         dispatch(HandleRead(alert));
-        console.log(res);
         switch (alert.notificationType) {
           case "Message":
-            navigate('mypage/get')
-            return
+            navigate("mypage/get");
+            return;
           case "Approve":
-            return
+            return;
           case "Apply":
-            return
+            return;
           case "StudyArticle":
-            return
+            return;
           case "StudyMeeting":
-            return
+            return;
           case "StudyComment":
-            return
+            return;
           case "StudyReply":
-            return
+            return;
           case "BoardComment":
-            return
+            return;
           case "BoardReply":
-            return
+            return;
           case "Leader":
-            return
+            return;
           case "StudyCalendar":
-            return
+            return;
           case "Comment":
-            return
+            return;
           case "Reply":
-            return
+            return;
           default:
-            return
+            return;
         }
-
       })
       .catch((err) => console.log(err));
   };

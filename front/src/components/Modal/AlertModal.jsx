@@ -2,6 +2,9 @@ import { styled } from "styled-components";
 import MainButton from "./../Button/MainButton";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { useState } from "react";
+import { useSelector} from 'react-redux';
+import { useNavigate} from "react-router-dom";
+import { customAxios } from '../../modules/Other/Axios/customAxios';
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -41,7 +44,7 @@ const XButtonContainer = styled.div`
   justify-content: right;
 `;
 
-export default function AlertModal({ isOpen, onClose, type }) {
+export default function AlertModal({ isOpen, onClose, type}) {
   let width = 600;
   let height = 400;
   let content = "";
@@ -49,6 +52,8 @@ export default function AlertModal({ isOpen, onClose, type }) {
   const [date, setDate] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const member_id = useSelector((state)=> state.UserReducer.memberId);
+  let navigate = useNavigate();
   switch (type) {
     case "withdraw":
       width = 300;
@@ -93,27 +98,47 @@ export default function AlertModal({ isOpen, onClose, type }) {
       break;
   }
 
-  return (
-    <>
-      {isOpen && (
-        <ModalOverlay>
-          <ModalContent $width={width} $height={height}>
-            <XButtonContainer onClick={() => onClose(false)}>
-              <AiOutlineCloseCircle />
-            </XButtonContainer>
-            {content}
-            <Buttons>
-              <MainButton
-                content={"확인"}
-                width={50}
-                height={30}
-                marginright={20}
-              ></MainButton>
-              <MainButton content={"취소"} width={50} height={30}></MainButton>
-            </Buttons>
-          </ModalContent>
-        </ModalOverlay>
-      )}
-    </>
-  );
+  //확인버튼 onclick 함수
+    function confirm({type}){
+      switch(type){
+        case "withdraw":
+          customAxios()
+          .delete(`/members/${member_id}`)
+          .then(()=>{
+            console.log("확인버튼 입력");
+            navigate(`/`);
+            localStorage.clear();
+          })
+          .catch();
+          break;
+      }
+      onClose(false);
+    }
+
+
+
+    return (
+      <>
+        {isOpen && (
+          <ModalOverlay>
+            <ModalContent $width={width} $height={height}>
+              <XButtonContainer onClick={() => onClose(false)}>
+                <AiOutlineCloseCircle />
+              </XButtonContainer>
+              {content}
+              <Buttons>
+                <MainButton
+                  content={"확인"}
+                  width={50}
+                  height={30}
+                  marginright={20}
+                  onClick={() => confirm({type})}
+                ></MainButton>
+                <MainButton content={"취소"} width={50} height={30}></MainButton>
+              </Buttons>
+            </ModalContent>
+          </ModalOverlay>
+        )}
+      </>
+    );
 }

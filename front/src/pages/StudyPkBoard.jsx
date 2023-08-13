@@ -42,7 +42,6 @@ export default function StudyPkBoard() {
 
   return (
     <Container>
-      <BoardNavBar />
       <ArticleList data={data} width={1000} type={study_id} />
       <FlexContainer>
         <ButtonContainer>

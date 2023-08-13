@@ -1,18 +1,13 @@
 import React from "react";
-import styled from "styled-components";
 import { BiBullseye, BiCommentDetail } from "react-icons/bi";
-import UserProfile from "../Common/UserProfile";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { PiSirenLight } from "react-icons/pi";
-
-// import { data } from "../Layout/db";
-//import { data } from "./../Layout/db";
-import { customAxios } from "../../modules/Other/Axios/customAxios";
-import { useSelector } from "react-redux";
-import { UserReducer } from "./../../modules/UserReducer/UserReducer";
-import ArticleAxios from "../../modules/Other/Axios/ArticleAxios";
-import SubButton from "../Button/SubButton";
+import { useLocation, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import UserProfile from "../Common/UserProfile";
 import { MdAttachFile } from "react-icons/md";
+import { useSelector } from "react-redux";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
+import SubButton from "../Button/SubButton";
 
 const ArticleContainer = styled.div`
   min-width: 800px;

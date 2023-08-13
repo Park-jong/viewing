@@ -7,6 +7,7 @@ import StudyCard from "./../Study/StudyCard";
 import CompanyJobTag from "../Study/CompanyJobTag";
 import { useSelector } from "react-redux";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
+import { useLocation } from "react-router-dom";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -54,7 +55,7 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
   const nickname = useSelector((state) => state.UserReducer.nickname);
   const member_id = useSelector((state) => state.UserReducer.memberId);
   const token = localStorage.getItem("access_token");
-  // const userId = useSelector((state) => state.UserReducer.)
+  const study_id = useLocation().pathname.split("/")[2];
 
   const handleInputChange = (event) => {
     setText(event.target.value);
@@ -62,18 +63,18 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
 
   const handleApply = () => {
     const formData = new FormData();
-    const request = {member_id, content:text,}
+    const request = { member_id, content: text };
     // formData.append("member_id", member_id);
     // formData.append("content", text);
-    files.forEach((file)=> formData.append("request_files", file))
+    files.forEach((file) => formData.append("request_files", file));
 
     formData.append(
-      'request',
-      new Blob([JSON.stringify(request)], { type: 'application/json' })
+      "request",
+      new Blob([JSON.stringify(request)], { type: "application/json" })
     );
 
     customAxios()
-      .post(`studies/1/requests`, formData, {
+      .post(`studies/${study_id}/requests`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: "Bearer " + token,

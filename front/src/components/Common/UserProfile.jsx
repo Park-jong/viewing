@@ -20,7 +20,13 @@ const ProfileImg = styled.div`
   background-position: center;
 `;
 
-const Username = styled.div``;
+const Username = styled.div`
+  width: 100px;
+  height: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+`;
 
 export default function UserProfile({
   member_id,

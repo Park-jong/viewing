@@ -46,10 +46,21 @@ const DateContainer = styled.div`
   font-weight: 100;
 `;
 
-export default function MessageBox({ message_id, name, title, date }) {
+export default function MessageBox({ message_id, name, title, date, deleted, setDeleted }) {
+
+  const handleCheck = () => {
+    if (deleted.includes(message_id)) {
+      const temp = deleted.filter(d => d !== message_id)
+      setDeleted(temp)
+    } else {
+      deleted.push(message_id)
+      setDeleted([...deleted])
+    }
+  }
+
   return (
     <Container>
-      <Checkbox />
+      <Checkbox onChange={handleCheck} checked={deleted.includes(message_id)}/>
       <NameContainer>{name}</NameContainer>
       <TitleContainer to={`${message_id}`}>{title}</TitleContainer>
       <DateContainer>{date}</DateContainer>

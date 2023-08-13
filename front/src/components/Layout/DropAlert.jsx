@@ -135,6 +135,7 @@ export default function DropAlert() {
   };
 
   useEffect(() => {
+    if(token==null) return;
     let eventSource;
     const fetchSse = () => {
       eventSource = new EventSource(

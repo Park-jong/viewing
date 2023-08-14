@@ -151,6 +151,13 @@ public class MemberController {
         return ResponseEntity.ok().body(jwtToken);
     }
 
+    @JWTRequired
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@MemberInfo JWTMemberInfo jwtMemberInfo){
+
+
+        return ResponseEntity.ok("로그아웃 성공");
+    }
 
     @GetMapping("/login/nickname/check/{nickname}")
     public ResponseEntity<?> checkDuplicateNickname(

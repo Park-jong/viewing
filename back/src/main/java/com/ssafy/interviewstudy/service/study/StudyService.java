@@ -14,6 +14,7 @@ import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
 import com.ssafy.interviewstudy.dto.study.*;
 import com.ssafy.interviewstudy.exception.calendar.updateFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
+import com.ssafy.interviewstudy.repository.calendar.CalendarRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.*;
 import com.ssafy.interviewstudy.service.notification.NotificationService;
@@ -53,7 +54,7 @@ public class StudyService {
     private final StudyCalendarRepository studyCalendarRepository;
     private final StudyBookmarkRepository studyBookmarkRepository;
     private final NotificationService notificationService;
-
+    private final CalendarRepository calendarRepository;
     private  final FileManager fm;
 
     //내 스터디 조회
@@ -457,6 +458,28 @@ public class StudyService {
         List<StudyCalendarDtoResponse> studyCalendar = studyCalendarRepository.findStudyCalendersByStudy(study);
         list.addAll(studyCalendar);
         List<Calendar> memberCalendarEntity = studyCalendarRepository.findMemberCalendarByStudyId(studyId);
+        List<CalendarRetrieveResponse> memberCalendar = CalendarListResponse.fromEntity(memberCalendarEntity).getData();
+        list.addAll(memberCalendar);
+        return list;
+    }
+
+    public List<Object> findStudyCalendarsByMemberId(Integer memberId){
+        Member member = memberRepository.findMemberById(memberId);
+        List<Object> list = new ArrayList<>();
+        List<StudyCalendarDtoResponse> studyCalendar = studyCalendarRepository.findStudyCalendersByMemberId(memberId);
+        list.add(studyCalendar);
+        List<Calendar> memberCalendarEntity = calendarRepository.findCalendarsByAuthorId(memberId);
+        List<CalendarRetrieveResponse> memberCalendar = CalendarListResponse.fromEntity(memberCalendarEntity).getData();
+        list.addAll(memberCalendar);
+        return list;
+   }
+
+    public List<Object> findStudyCalendarsByMemberIdStudyId(Integer memberId,Integer studyId){
+        Member member = memberRepository.findMemberById(memberId);
+        List<Object> list = new ArrayList<>();
+        List<StudyCalendarDtoResponse> studyCalendar = studyCalendarRepository.findStudyCalendersByMemberIdAndStudyId(memberId,studyId);
+        list.add(studyCalendar);
+        List<Calendar> memberCalendarEntity = calendarRepository.findCalendarsByAuthorId(memberId);
         List<CalendarRetrieveResponse> memberCalendar = CalendarListResponse.fromEntity(memberCalendarEntity).getData();
         list.addAll(memberCalendar);
         return list;

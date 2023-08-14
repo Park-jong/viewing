@@ -83,10 +83,12 @@ const SearchIcon = styled(Search)`
   width: 20px; /* Adjust the size of the Search icon */
 `;
 
-export default function SearchBox({ width }) {
-  const [input1, setInput1] = useState("");
-  const [input2, setInput2] = useState("");
-  const [selectedOption, setSelectedOption] = useState("ALL");
+export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
+  const [input1, setInput1] = useState(appliedCompany ? appliedCompany : "");
+  const [input2, setInput2] = useState(job ? job : "");
+  const [selectedOption, setSelectedOption] = useState(
+    careerLevel ? careerLevel : "ALL"
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

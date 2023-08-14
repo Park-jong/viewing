@@ -305,7 +305,12 @@ export default function Search() {
             onClick={handleClick}
           />
         </Link>
-        <SearchBox width={950} />
+        <SearchBox
+          width={950}
+          appliedCompany={appliedCompany}
+          job={job}
+          careerLevel={careerLevel}
+        />
       </SearchContainer>
 
       <HorizontalLine></HorizontalLine>

@@ -1,7 +1,13 @@
 import styled from "styled-components";
+import { BiSolidNote } from "react-icons/bi";
 
 const Container = styled.div`
-  border: 1px solid black;
+  border: 1px solid var(--gray-200);
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--gray-100);
 `;
 
 export default function FeedbackButton({ toggleSideBar, changeOption }) {
@@ -12,7 +18,8 @@ export default function FeedbackButton({ toggleSideBar, changeOption }) {
         changeOption("feedback");
       }}
     >
-      {"피드백"}
+      &nbsp; <BiSolidNote />
+      &nbsp;&nbsp; 피드백 &nbsp;&nbsp;
     </Container>
   );
 }

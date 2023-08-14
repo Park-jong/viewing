@@ -6,8 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import { OpenVidu } from "openvidu-browser";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { UserReducer } from "./../modules/UserReducer/UserReducer";
 
-const Container = styled.div``;
+const Container = styled.div`
+  background-color: var(--gray-100);
+`;
 
 const BeforePermit = styled.div`
   position: absolute;
@@ -19,19 +22,30 @@ const BeforePermit = styled.div`
 const AfterPermit = styled.div``;
 
 const BodyContainer = styled.div`
-  padding-left: 150px;
-  padding-right: 150px;
-  border: 1px solid black;
+  margin: 20px 150px;
+  background-color: white;
+  border-radius: 50px;
+  /* border: 1px solid black; */
+  padding: 5px;
+`;
+
+const SubTitle = styled.div`
+  margin-left: 50px;
+  /* margin-top: 50px; */
+  padding-top: 20px;
 `;
 
 const TitleContainer = styled.div`
-  border: 1px solid black;
-  text-align: center;
-  font-size: 30px;
+  /* border: 1px solid black; */
+  /* text-align: center; */
+  font-size: 25px;
+  font-weight: 700;
+  margin-left: 50px;
+  margin-top: 10px;
 `;
 
 const TestContainer = styled.div`
-  border: 1px solid black;
+  /* border: 1px solid black; */
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -44,6 +58,8 @@ const TestVideo = styled.video`
   height: 480px;
   margin-right: 5px;
   margin-right: 5px;
+  padding: 10px;
+  border-radius: 30px;
 `;
 
 const TestAudio = styled.div`
@@ -55,8 +71,36 @@ const TestAudio = styled.div`
   margin-top: auto;
 `;
 
+// const UtilContainer = styled.div`
+//   border: 1px solid black;
+//   padding: 10px;
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+// `;
+
+// const OptionContainer = styled.div`
+//   display: flex;
+//   align-items: center;
+// `;
+
+// const LabelContainer = styled.label`
+//   font-size: 15px;
+//   margin-right: 10px;
+// `;
+
+// const SelectContainer = styled.select`
+//   border: 1px solid black;
+//   font-size: 15px;
+// `;
+
+// const EntranceContainer = styled.div`
+//   display: inline;
+//   margin-right: 50px;
+// `;
+
 const UtilContainer = styled.div`
-  border: 1px solid black;
+  /* border: 1px solid black; */
   padding: 5px;
   width: auto;
   height: 50px;
@@ -66,12 +110,12 @@ const UtilContainer = styled.div`
 `;
 
 const SelectContainer = styled.select`
-  border: 1px solid black;
+  /* border: 1px solid black; */
   font-size: 15px;
 `;
 
 const OptionContainer = styled.option`
-  border: 1px solid black;
+  /* border: 1px solid black; */
 `;
 
 const LabelContainer = styled.label`
@@ -83,20 +127,27 @@ const LabelContainer = styled.label`
 const EntranceContainer = styled.div`
   display: inline;
   margin-left: auto;
-  border: 1px solid black;
+  margin-right: 30px;
+  /* border: 1px solid black; */
 `;
 
 export default function MeetingPkReady() {
   const studyId = useLocation().pathname.split("/")[2];
+  const user = useSelector((state) => state.UserReducer);
+
+  //userdata
+  const nickname = user.nickname;
+  const backgroundColor = user.backgroundColor;
+  const backgroundImg = user.backgroundImg;
 
   // 임시 유저 데이터
   // const userData = useSelector((state) => state.UserReducer);
-  const userData = {
-    memberId: "5",
-    nickname: `nick${Math.ceil(Math.random() * 1000)}`,
-    backgroundColor: "red",
-    backgroundImg: "cow",
-  };
+  // const userData = {
+  //   memberId: "5",
+  //   nickname: `nick${Math.ceil(Math.random() * 1000)}`,
+  //   backgroundColor: "red",
+  //   backgroundImg: "cow",
+  // };
 
   const OV = new OpenVidu();
 
@@ -202,7 +253,7 @@ export default function MeetingPkReady() {
       : devices.video[0];
     if (savedId === "noDevice") {
       const img = document.createElement("img");
-      img.src = `/profile/${userData.backgroundImg}.png`;
+      img.src = `/profile/${backgroundImg}.png`;
       const canvas = document.createElement("canvas");
       canvas.width = img.width;
       canvas.height = img.height;
@@ -281,7 +332,7 @@ export default function MeetingPkReady() {
   return (
     <>
       <img
-        src={`/profile/${userData.backgroundImg}.png`}
+        src={`/profile/${backgroundImg}.png`}
         alt="프로필이미지"
         hidden
       ></img>
@@ -291,8 +342,10 @@ export default function MeetingPkReady() {
         </BeforePermit>
         <AfterPermit hidden={!permit}>
           <HeaderBox></HeaderBox>
+
           <BodyContainer>
-            <TitleContainer>{"스터디 이름"}</TitleContainer>
+            <SubTitle>💻화상회의 참여 준비하기</SubTitle>
+            <TitleContainer>🙋{nickname}</TitleContainer>
             <TestContainer>
               <TestVideo id="videoTest" autoPlay={true}></TestVideo>
               <TestAudio height={volume}></TestAudio>
@@ -337,9 +390,9 @@ export default function MeetingPkReady() {
               <EntranceContainer>
                 <MainButton
                   content={"입장"}
-                  fontSize={30}
-                  height={50}
-                  width={80}
+                  fontSize={20}
+                  height={40}
+                  width={70}
                   onClick={goToConferencePage}
                 ></MainButton>
               </EntranceContainer>

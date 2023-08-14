@@ -7,7 +7,7 @@ import { useState } from "react";
 
 const Container = styled.div`
   /* position: relative; */
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 100%;
 `;
 
@@ -24,7 +24,7 @@ const MemberContainer = styled.div`
   top: 5%;
   width: 100%;
   height: 95%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   overflow-y: auto;
 `;
 
@@ -33,7 +33,7 @@ const ChatContainer = styled.div`
   top: 5%;
   width: 100%;
   height: 95%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
 `;
 
 const FeedbackContainer = styled.div`
@@ -41,7 +41,7 @@ const FeedbackContainer = styled.div`
   top: 5%;
   width: 100%;
   height: 95%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   overflow-y: auto;
 `;
 

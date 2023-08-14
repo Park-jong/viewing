@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { customAxios } from "./../modules/Other/Axios/customAxios";
 import UserProfile from "./../components/Common/UserProfile";
 import { BiCrown } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 500px;
@@ -75,6 +76,7 @@ const CareerLevel = styled.div``;
 
 export default function StudyPkInfo() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const studyId = useParams().studyPk;
 
@@ -136,6 +138,10 @@ export default function StudyPkInfo() {
         setCapacity(() => data.capacity);
         setCareerLevel(() => data.career_level);
         setDeadline(() => data.deadline.split(" ")[0]);
+      })
+      .catch(() => {
+        alert("오류가 발생했습니다.");
+        navigate("/");
       });
   }, []);
 

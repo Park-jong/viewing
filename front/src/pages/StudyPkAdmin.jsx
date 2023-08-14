@@ -447,6 +447,10 @@ export default function StudyPkAdmin() {
         setCapacity(() => data.capacity);
         setCareerLevel(() => data.career_level);
         setDeadline(() => data.deadline.split(" ")[0]);
+      })
+      .catch(() => {
+        alert("오류가 발생했습니다.");
+        navigate("/");
       });
   }, []);
 

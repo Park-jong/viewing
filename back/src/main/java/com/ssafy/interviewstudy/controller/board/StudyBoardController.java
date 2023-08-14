@@ -65,6 +65,8 @@ public class StudyBoardController {
                                            @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
         boardRequest.setMemberId(memberInfo.getMemberId());
         boardRequest.setStudyId(studyId);
+        // 삭제된 파일의 리스트를 받아서 서버와 db에서 삭제
+        if (boardRequest.getFilesDeleted()!= null) boardService.removeFileList(boardRequest.getFilesDeleted());
         StudyBoardResponse response = boardService.modifyArticle(articleId, boardRequest, requestFiles);
 
         return ResponseEntity.ok(response);

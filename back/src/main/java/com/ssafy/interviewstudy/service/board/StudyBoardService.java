@@ -165,6 +165,15 @@ public class StudyBoardService {
         else return false;
     }
 
+    @Transactional
+    public void removeFileList(List<FileResponse> files){
+        for (FileResponse f : files) {
+            ArticleFile file = articleFileRepository.findById(f.getFileId()).get();
+            fm.delete(file.getSaveFileName());
+            articleFileRepository.deleteById(file.getId());
+        }
+    }
+
     // 파일 삭제
     @Transactional
     public void removeFiles(Integer articleId){

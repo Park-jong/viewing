@@ -207,6 +207,13 @@ const ArrowPage = styled.div`
   }
 `;
 
+const NoneDiv = styled.div`
+  margin: 5px;
+  border-radius: 10px;
+  width: 16px;
+  height: 16px;
+`;
+
 ///studies?appliedCompany={지원회사(string)}&job={직무(String)}&careerLevel={신입/경력/무관(ALL, INTERN, NEWCOMER, EXPERIENCED)}&option=true&page=0&size=20&sort=id,desc&sort=username,desc
 
 export default function Search() {
@@ -363,8 +370,8 @@ export default function Search() {
           </>
         ) : (
           <>
-            <ArrowPage />
-            <ArrowPage />
+            <NoneDiv />
+            <NoneDiv />
           </>
         )}
         {page.map((num, idx) => {
@@ -383,7 +390,7 @@ export default function Search() {
               </PageNum>
             )
           ) : (
-            <PageNum></PageNum>
+            <NoneDiv />
           );
         })}
         {searchPage + 3 < pageSize ? (
@@ -405,8 +412,8 @@ export default function Search() {
           </>
         ) : (
           <>
-            <ArrowPage />
-            <ArrowPage />
+            <NoneDiv />
+            <NoneDiv />
           </>
         )}
       </PageArea>

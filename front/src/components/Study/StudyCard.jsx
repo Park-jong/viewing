@@ -5,6 +5,10 @@ import Bookmark from "../../Icons/bookmark";
 import { BiUser } from "react-icons/bi";
 import UserProfile from "../Common/UserProfile";
 import CompanyJobTag from "./CompanyJobTag";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled(Link)`
   width: 280px;
@@ -53,8 +57,6 @@ const CompanyContainer = styled.div`
 
   flex-wrap: wrap; /* Add this line to allow tags to wrap to multiple lines */
 `;
-
-
 
 const DateContainer = styled.div`
   position: absolute;
@@ -144,8 +146,25 @@ const CapacityContainer = styled.div`
 
 export default function StudyCard({ study }) {
   // console.log(study.tag);
+  const memberId = useSelector((state) => state.UserReducer.memberId);
+  const navigate = useNavigate();
+
+  const moveStudy = () => {
+    customAxios()
+      .get(`/studies/${study.study_id}/member`)
+      .then(() => {
+        navigate(`/study/${study.study_id}`);
+      })
+      .catch((error) => {
+        navigate(`/study/${study.study_id}/detail`);
+      });
+  };
   return (
-    <Container to={`/study/${study.study_id}/detail`}>
+    <Container
+      onClick={() => {
+        moveStudy();
+      }}
+    >
       <BookmarkContainer>
         <Bookmark />
       </BookmarkContainer>

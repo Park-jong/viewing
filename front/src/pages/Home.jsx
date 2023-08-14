@@ -74,7 +74,7 @@ const BodyContainer = styled.div`
   /* margin: 0 auto; */
 
   display: flex;
-  z-index: 99;
+  z-index: 9;
   overflow: hidden;
 
   /* flex-direction: column; */

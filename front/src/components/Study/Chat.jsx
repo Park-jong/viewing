@@ -15,31 +15,73 @@ const Container = styled.div`
 `;
 
 const ChatArea = styled.div`
-  width: 100%;
+  width: 90%;
   height: 100%;
   overflow-x: auto;
   word-wrap: break-word;
-`;
 
-const ChatBox = styled.div``;
+  margin-bottom: 20px;
+`;
+const ChatBox = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+`;
 
 const ChatProfile = styled.span`
-  //display: inline-block;
+  margin-right: 10px;
+  color: var(--gray-500);
+  font-weight: 300;
+
+  font-size: 12px;
 `;
 
-const ChatText = styled.span`
-  padding-left: 40px;
-  font-size: 16px;
-  color: var(--primary);
+const ChatText = styled.div`
+  /* flex-grow: conten; */
+  width: fit-content;
+  padding: 10px;
+  background-color: var(--gray-100);
+  border-radius: 5px;
+  font-size: 13px;
 `;
 
 const ChatTime = styled.span`
   font-size: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+
+  color: var(--gray-300);
+  font-weight: 300;
 `;
 
-const SendButton = styled.button``;
+const SendButton = styled.button`
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 20px;
+  font-size: 14px;
+  cursor: pointer;
 
-const MessageInputBox = styled.input``;
+  margin-left: 15px;
+
+  &:focus {
+    outline: black;
+  }
+`;
+
+const MessageInputBox = styled.input`
+  width: 80%;
+  padding: 10px;
+  border: 1px solid var(--gray-300);
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+
+  &:focus {
+    border-color: blue;
+  }
+`;
 
 const ShowOldBox = styled.div`
   background: var(--gray-50);
@@ -265,7 +307,7 @@ export default function Chat() {
         value={msg}
       ></MessageInputBox>
       <SendButton onClick={checkSendState}>전송</SendButton>
-      <div>
+      <div style={{ color: "gray", fontSize: "12px" }}>
         {msg.length}/{maxLength}
       </div>
     </Container>

@@ -87,6 +87,15 @@ export default function BoardWrite() {
   const member_id = useSelector((state) => state.UserReducer.memberId);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    customAxios()
+      .get(`members/${member_id}`)
+      .catch((err) => {
+        window.alert("로그인이 필요합니다.");
+        navigate(`/board/${param}`);
+      });
+  }, []);
+
   const handleCategory = (e) => {
     setCategory(e.target.value);
   };
@@ -98,8 +107,16 @@ export default function BoardWrite() {
   };
 
   const SendRequest = (e) => {
+    if (!title.trim()) {
+      alert("제목을 입력하세요.")
+      return
+    } else if (!content.trim()) {
+      alert("내용을 입력하세요.")
+      return
+    }
+
     const formData = new FormData();
-    const request = {member_id, content,title, board_type:board_type()}
+    const request = { member_id, content, title, board_type: board_type() };
     // formData.append("member_id", member_id);
     // formData.append("content", text);
     files.forEach((file) => formData.append("request_files", file));

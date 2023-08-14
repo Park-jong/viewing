@@ -5,13 +5,43 @@ import { useSelector } from "react-redux";
 import { customAxios } from "./../modules/Other/Axios/customAxios";
 import UserProfile from "./../components/Common/UserProfile";
 import { BiCrown } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 500px;
 `;
 
+const FlexContainer = styled.div`
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+`;
+
+const FlexContainer2 = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 const Title = styled.div`
   font-size: 30px;
+  font-weight: 700;
+
+  margin-bottom: 20px;
+`;
+
+const HorizontalLine = styled.div`
+  width: 100%;
+  height: 3px;
+  background-color: var(--gray-100);
+  margin-bottom: 20px;
+`;
+
+const HorizontalLine2 = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: var(--gray-100);
+  margin-bottom: 10px;
+  margin-top: 20px;
 `;
 
 const MemberArea = styled.div``;
@@ -40,32 +70,82 @@ const TagArea = styled.div`
 const TagBox = styled.span``;
 
 const SelectedTagBox = styled.span`
-  background: blue;
+  background: #7952e2;
   display: inline-flex;
   align-items: center;
   margin: 5px;
+  padding: 8px;
+  border-radius: 15px;
   user-select: none;
+  color: white;
+  font-weight: 300;
 `;
 
 const UnselectedTagBox = styled.span`
-  background: gray;
+  background: #d7d7d7;
   display: inline-flex;
   align-items: center;
   margin: 5px;
+  padding: 8px;
+  border-radius: 15px;
   user-select: none;
+  font-weight: 300;
+`;
+
+const StudyTitle = styled.div`
+  --border-height: 1px;
+  --border-before-color: rgba(221, 221, 221, 0.39);
+  --border-after-color: #5891ff;
+  --input-hovered-color: #4985e01f;
+  position: relative;
+  width: 200px;
+  color: #000000;
+  font-size: 0.9rem;
+  background-color: transparent;
+  box-sizing: border-box;
+  padding-inline: 0.5em;
+  padding-block: 0.7em;
+  border: none;
+  border-bottom: var(--border-height) solid var(--border-before-color);
+  padding-right: 28px;
+`;
+
+const StudyDescription = styled.div`
+  --border-height: 1px;
+  --border-before-color: rgba(221, 221, 221, 0.39);
+  --border-after-color: #5891ff;
+  --input-hovered-color: #4985e01f;
+  position: relative;
+  width: 500px;
+  color: #000000;
+  font-size: 0.9rem;
+  background-color: transparent;
+  box-sizing: border-box;
+  padding: 8px;
+  border: none;
+  border: var(--border-height) solid var(--border-before-color);
+  height: 300px;
+
+  font-family: Pretendard;
 `;
 
 const Description = styled.div``;
 
 const Category = styled.div`
   font-size: 20px;
+  font-weight: 700;
+  color: var(--gray-700);
+  margin-top: 30px;
+  margin-bottom: 8px;
 `;
 
 const Company = styled.div``;
 
 const Job = styled.div``;
 
-const DeadLine = styled.div``;
+const DeadLine = styled.div`
+  margin-left: 150px;
+`;
 
 const DeadLineInputBox = styled.input``;
 
@@ -75,6 +155,7 @@ const CareerLevel = styled.div``;
 
 export default function StudyPkInfo() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const studyId = useParams().studyPk;
 
@@ -136,6 +217,10 @@ export default function StudyPkInfo() {
         setCapacity(() => data.capacity);
         setCareerLevel(() => data.career_level);
         setDeadline(() => data.deadline.split(" ")[0]);
+      })
+      .catch(() => {
+        alert("오류가 발생했습니다.");
+        navigate("/");
       });
   }, []);
 
@@ -180,47 +265,58 @@ export default function StudyPkInfo() {
 
   return (
     <Container>
-      <Title>스터디 정보</Title>
+      <Title>🧾스터디 정보</Title>
+      <HorizontalLine></HorizontalLine>
+
       <MemberArea>
-        <Category>회원 목록</Category>
+        <Category>🙋회원 목록</Category>
         {MemberListDoms}
       </MemberArea>
-      <Capacity>
-        <Category>최대 인원</Category>
-        {capacity}
-      </Capacity>
+
+      <FlexContainer2>
+        <Company>
+          <Category>지원 회사</Category>
+          {company}
+        </Company>
+        <Job>
+          <Category>지원 직무</Category>
+          {job ? job : <div>없음</div>}
+        </Job>
+        <CareerLevel>
+          <Category>경력</Category>
+          {careerType[careerLevel]}
+        </CareerLevel>
+      </FlexContainer2>
+
+      <FlexContainer>
+        <Capacity>
+          <Category>최대 인원</Category>
+          {capacity}
+        </Capacity>
+        <DeadLine>
+          <Category>마감일</Category>
+          <DeadLineInputBox
+            value={deadline}
+            type="date"
+            readOnly
+          ></DeadLineInputBox>
+        </DeadLine>
+      </FlexContainer>
+
+      <HorizontalLine2></HorizontalLine2>
       <StudyName>
         <Category>스터디 제목</Category>
-        {studyTitle}
+        <StudyTitle>{studyTitle}</StudyTitle>
       </StudyName>
-      <Company>
-        <Category>지원 회사</Category>
-        {company}
-      </Company>
-      <Job>
-        <Category>지원 직무</Category>
-        {job}
-      </Job>
+      <Description>
+        <Category>스터디 설명</Category>
+        <StudyDescription>{studyDesc}</StudyDescription>
+      </Description>
       <TagArea>
         <Category>태그 목록</Category>
         {TagListDoms}
       </TagArea>
-      <Description>
-        <Category>스터디 설명</Category>
-        {studyDesc}
-      </Description>
-      <CareerLevel>
-        <Category>경력</Category>
-        {careerType[careerLevel]}
-      </CareerLevel>
-      <DeadLine>
-        <Category>마감일</Category>
-        <DeadLineInputBox
-          value={deadline}
-          type="date"
-          readOnly
-        ></DeadLineInputBox>
-      </DeadLine>
+      <HorizontalLine2></HorizontalLine2>
     </Container>
   );
 }

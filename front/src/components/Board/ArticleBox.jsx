@@ -72,8 +72,6 @@ export default function ArticleBox({
   const isNotice = false;
   const isStudyBoard = location.pathname === `/study/${study_id}/board`;
 
-  const handleLike = () => {};
-
   return (
     <Container $width={width}>
       <ProfileContainer>

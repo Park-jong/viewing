@@ -18,6 +18,7 @@ export function LoginKakao() {
     response_type: "code",
     client_id: "2869d34ce0755e095b7d39e5eb3aeafb",
     redirect_uri: process.env.REACT_APP_CLIENT_URL + "login/loading",
+    prompt: "login",
   };
 
   const params = new URLSearchParams(queries).toString();

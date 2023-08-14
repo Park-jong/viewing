@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import CamBox from "../CamBox";
+import React from "react";
 
 const Container = styled.div`
   border: 1px solid black;
@@ -19,7 +20,7 @@ const CamContainer = styled.div`
   height: 202.5px;
 `;
 
-export default function MeetingMain({ publisher, subscribers }) {
+function MeetingMain({ publisher, subscribers }) {
   return (
     <Container>
       <CamContainer>
@@ -35,3 +36,5 @@ export default function MeetingMain({ publisher, subscribers }) {
     </Container>
   );
 }
+
+export default React.memo(MeetingMain);

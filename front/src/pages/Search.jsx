@@ -9,6 +9,12 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import TagStyled from "../components/Study/TagStyled";
 import TagStyledSelected from "../components/Study/TagStyledSelected";
+import {
+  BiChevronLeft,
+  BiChevronRight,
+  BiChevronsLeft,
+  BiChevronsRight,
+} from "react-icons/bi";
 
 const tags = [
   "자소서 제출 필수",
@@ -23,6 +29,8 @@ const tags = [
   "피드백 필수",
   "초보 환영",
 ];
+
+const page = [-2, -1, 0, 1, 2];
 
 // const data = [
 //   {
@@ -162,6 +170,50 @@ const TagLabel = styled.label`
   cursor: pointer;
 `;
 
+const PageArea = styled.div`
+  text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const PageNum = styled.div`
+  margin: 5px;
+  border-radius: 10px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--gray-200);
+  }
+`;
+
+const CurrentNum = styled.div`
+  margin: 5px;
+  border-radius: 10px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--gray-200);
+`;
+
+const ArrowPage = styled.div`
+  margin: 5px;
+  border-radius: 10px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--gray-200);
+  }
+`;
+
+const NoneDiv = styled.div`
+  margin: 5px;
+  border-radius: 10px;
+  width: 16px;
+  height: 16px;
+`;
+
 ///studies?appliedCompany={지원회사(string)}&job={직무(String)}&careerLevel={신입/경력/무관(ALL, INTERN, NEWCOMER, EXPERIENCED)}&option=true&page=0&size=20&sort=id,desc&sort=username,desc
 
 export default function Search() {
@@ -172,6 +224,9 @@ export default function Search() {
   const appliedCompany = query.get("appliedCompany");
   const job = query.get("job");
   const careerLevel = query.get("careerLevel");
+
+  const [searchPage, setSearchPage] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
 
   const [searchData, setSearchData] = useState({ content: [] });
   const [searchTag, setSearchTag] = useState(null);
@@ -186,33 +241,40 @@ export default function Search() {
     }&${careerLevel ? "careerLevel=" + careerLevel : ""}&option=${isToggled}&${
       searchTag ? "tag=" + searchTag : ""
     }`;
-  // console.log(searchData);
 
-  //search 통신 보내기
-  useEffect(() => {
+  const newDataSearch = () => {
     customAxios()
       .get(getSearchUrl())
       .then((res) => {
         setSearchData(() => res.data);
+        setSearchPage(() => res.data.number);
+        setPageSize(() => res.data.totalPages);
       });
+  };
+
+  const pageMove = (n) => {
+    customAxios()
+      .get(getSearchUrl() + `&page=${n}`)
+      .then((res) => {
+        setSearchData(() => res.data);
+        setSearchPage(() => res.data.number);
+        setPageSize(() => res.data.totalPages);
+      });
+  };
+
+  //search 통신 보내기
+  useEffect(() => {
+    newDataSearch();
   }, []);
 
   const handleClick = () => {};
 
   useEffect(() => {
-    customAxios()
-      .get(getSearchUrl())
-      .then((res) => {
-        setSearchData(() => res.data);
-      });
+    newDataSearch();
   }, [isToggled]);
 
   useEffect(() => {
-    customAxios()
-      .get(getSearchUrl())
-      .then((res) => {
-        setSearchData(() => res.data);
-      });
+    newDataSearch();
   }, [searchTag]);
 
   useEffect(() => {
@@ -243,7 +305,12 @@ export default function Search() {
             onClick={handleClick}
           />
         </Link>
-        <SearchBox width={950} />
+        <SearchBox
+          width={950}
+          appliedCompany={appliedCompany}
+          job={job}
+          careerLevel={careerLevel}
+        />
       </SearchContainer>
 
       <HorizontalLine></HorizontalLine>
@@ -257,7 +324,11 @@ export default function Search() {
               id={tag}
               name="tag"
               onClick={(e) => {
-                setSearchTag(() => e.target.value);
+                if (searchTag === e.target.value) {
+                  setSearchTag(() => null);
+                } else {
+                  setSearchTag(() => e.target.value);
+                }
               }}
               hidden
             ></TagRadio>
@@ -283,6 +354,73 @@ export default function Search() {
           <p>찾으시는 스터디가 없습니다.</p>
         )}
       </BodyContainer>
+      <PageArea>
+        {searchPage - 3 >= 0 ? (
+          <>
+            <ArrowPage
+              onClick={() => {
+                pageMove(0);
+              }}
+            >
+              <BiChevronsLeft />
+            </ArrowPage>
+            <ArrowPage
+              onClick={() => {
+                pageMove(searchPage - 3);
+              }}
+            >
+              <BiChevronLeft />
+            </ArrowPage>
+          </>
+        ) : (
+          <>
+            <NoneDiv />
+            <NoneDiv />
+          </>
+        )}
+        {page.map((num, idx) => {
+          const n = num + searchPage + 1;
+          return n > 0 && n <= pageSize ? (
+            num === 0 ? (
+              <CurrentNum key={idx}>{n}</CurrentNum>
+            ) : (
+              <PageNum
+                key={idx}
+                onClick={() => {
+                  pageMove(n - 1);
+                }}
+              >
+                {n}
+              </PageNum>
+            )
+          ) : (
+            <NoneDiv />
+          );
+        })}
+        {searchPage + 3 < pageSize ? (
+          <>
+            <ArrowPage
+              onClick={() => {
+                pageMove(searchPage + 3);
+              }}
+            >
+              <BiChevronRight />
+            </ArrowPage>
+            <ArrowPage
+              onClick={() => {
+                pageMove(pageSize - 1);
+              }}
+            >
+              <BiChevronsRight />
+            </ArrowPage>
+          </>
+        ) : (
+          <>
+            <NoneDiv />
+            <NoneDiv />
+          </>
+        )}
+      </PageArea>
     </Container>
   );
 }

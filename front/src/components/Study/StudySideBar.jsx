@@ -65,23 +65,22 @@ export default function StudySideBar() {
   const memberId = member.memberId;
   const studyId = location.pathname.split("/")[2];
   const [isLeader, setIsLeader] = useState(false);
-  const [manageMenu, setManageMenu] = useState("스터디 정보");
-  const menuList = [
+  const [menuListDoms, setMenuListDoms] = useState([]);
+  const [menuList, setMenuList] = useState([
     "스터디 캘린더",
     "스터디 게시판",
     "스터디 채팅",
     "영상회의 참여",
-    "참여신청관리",
     "탈퇴하기",
-  ];
-  const linkList = [
+  ]);
+  const [linkList, setLinkList] = useState([
     `/study/${studyId}/calendar`,
     `/study/${studyId}/board`,
     `/study/${studyId}/chat`,
     `/study/${studyId}/meeting`,
-    `/study/${studyId}/applicant`,
     `/study/${studyId}/withdraw`,
-  ];
+  ]);
+  const [manageMenu, setManageMenu] = useState("스터디 정보");
 
   useEffect(() => {
     customAxios()
@@ -99,8 +98,20 @@ export default function StudySideBar() {
 
   useEffect(() => {
     if (isLeader) {
+      console.log("리더 데스");
       setManageMenu(() => "스터디 관리");
+      setLinkList((prevList) => [
+        ...prevList.slice(0, 3),
+        `/study/${studyId}/applicant`,
+        ...prevList.slice(4),
+      ]);
+      setMenuList((prevList) => [
+        ...prevList.slice(0, 3),
+        "참여신청 관리",
+        ...prevList.slice(4),
+      ]);
     } else {
+      console.log("리더쟈 나이데스");
       setManageMenu(() => "스터디 정보");
     }
   }, [isLeader]);
@@ -108,18 +119,20 @@ export default function StudySideBar() {
   function handleClick(menu) {
     setClicked(menu);
   }
-
-  const menuListDoms = menuList.map((menu, idx) => {
-    return (
-      <StyledLink
-        to={linkList[idx]}
-        onClick={() => handleClick(menu)}
-        key={idx}
-      >
-        <Menu $active={clicked === menu}>{menu}</Menu>
-      </StyledLink>
-    );
-  });
+  useEffect(() => {
+    const doms = menuList.map((menu, idx) => {
+      return (
+        <StyledLink
+          to={linkList[idx]}
+          onClick={() => handleClick(menu)}
+          key={idx}
+        >
+          <Menu $active={clicked === menu}>{menu}</Menu>
+        </StyledLink>
+      );
+    });
+    setMenuListDoms(doms);
+  }, [menuList]);
 
   return (
     <Container>

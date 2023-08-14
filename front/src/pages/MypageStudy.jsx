@@ -55,7 +55,8 @@ export default function MypageStudy() {
     )
     .then((res)=>{
       setStudyData(()=>res.data)
-    });
+    })
+    .catch(err => console.log(err));
   },[]);
 
 

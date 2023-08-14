@@ -6,7 +6,12 @@ import { useEffect, useState } from "react";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import MainButton from "../components/Button/MainButton";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BiChevronLeft, BiChevronRight, BiChevronsLeft, BiChevronsRight } from "react-icons/bi";
+import {
+  BiChevronLeft,
+  BiChevronRight,
+  BiChevronsLeft,
+  BiChevronsRight,
+} from "react-icons/bi";
 
 const Container = styled.div`
   display: flex;
@@ -30,7 +35,6 @@ const PageContainer = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
 
 const PageButton = styled.div`
   padding: 5px;
@@ -58,6 +62,7 @@ const ArrowButton = styled.div`
 export default function BoardCommon() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
+  const [maxPage, setMaxPage] = useState(1);
   const navigate = useNavigate();
   const type = useLocation().pathname.split("/")[2];
   const param = (type) => {
@@ -73,8 +78,10 @@ export default function BoardCommon() {
   useEffect(() => {
     setPage(0);
     customAxios()
-      .get(`boards/${param(type)}?size=5&page=${page}`) // 페이지size, page
+      .get(`boards/${param(type)}?size=20&page=${0}`) // 페이지size, page
       .then((res) => {
+        console.log(res.data);
+        console.log(res.data.content);
         setData(res.data);
       })
       .catch((err) => {
@@ -83,13 +90,30 @@ export default function BoardCommon() {
   }, [type]);
 
   const handlePage = (e) => {
-    setPage(e - 1)
-  }
+    if (e < 0) {
+      e = 0;
+    } else if (e > maxPage) {
+      e = maxPage;
+    }
+    setPage(e);
+    customAxios()
+      .get(`boards/${param(type)}?size=20&page=${e}`) // 페이지size, page
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} width={1000} type={type} />
+      {data.content ? (
+        <ArticleList data={data.content} width={1000} type={type} />
+      ) : (
+        <></>
+      )}
       <BottomContainer>
         <SearchBoxBoard></SearchBoxBoard>
         <MarginLeft>
@@ -103,22 +127,24 @@ export default function BoardCommon() {
       </BottomContainer>
       <PageContainer>
         <ArrowButton>
-          <BiChevronsLeft></BiChevronsLeft>
+          <BiChevronsLeft onClick={() => handlePage(0)}></BiChevronsLeft>
         </ArrowButton>
         <ArrowButton>
-          <BiChevronLeft></BiChevronLeft>
+          <BiChevronLeft onClick={() => handlePage(page - 1)}></BiChevronLeft>
         </ArrowButton>
-        <PageButton $now={page} $page={1} onClick={() => handlePage(1)}>
+        <PageButton $now={page} $page={0} onClick={() => handlePage(0)}>
           1
         </PageButton>
-        <PageButton $now={page} $page={2} onClick={() => handlePage(2)}>
+        <PageButton $now={page} $page={1} onClick={() => handlePage(1)}>
           2
         </PageButton>
         <ArrowButton>
-          <BiChevronRight></BiChevronRight>
+          <BiChevronRight onClick={() => handlePage(page + 1)}></BiChevronRight>
         </ArrowButton>
         <ArrowButton>
-          <BiChevronsRight></BiChevronsRight>
+          <BiChevronsRight
+            onClick={() => handlePage(maxPage)}
+          ></BiChevronsRight>
         </ArrowButton>
       </PageContainer>
     </Container>

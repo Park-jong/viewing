@@ -62,7 +62,7 @@ const MeetingMainContainer = styled.div`
   position: absolute;
   border: 1px solid black;
   right: ${(props) => `${props.right}%`};
-  width: 80%;
+  width: ${(props) => `${100 - props.right}%`};
   height: 100%;
 `;
 
@@ -97,7 +97,13 @@ const FooterContainer = styled.div`
 
 export default function MeetingPk() {
   // 유저 데이터 - 나중에 redux를 통해 가져와야 함
-  const userData = useSelector((state) => state.UserReducer);
+  // const userData = useSelector((state) => state.UserReducer);
+  const userData = {
+    memberId: "5",
+    nickname: `nick${Math.ceil(Math.random() * 1000)}`,
+    backgroundColor: "red",
+    backgroundImg: "cow",
+  };
 
   // 스터디 아이디  - 이거 pathvariable로 가져오거나 따로 불러오거나
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함
@@ -109,14 +115,22 @@ export default function MeetingPk() {
   const OV = new OpenVidu();
 
   // 설정창에서 받아온 사용기기 정보
-  let deviceInfo = undefined;
-  let currentVideoDevice = undefined;
-  let currentAudioDevice = undefined;
+  const [deviceInfo, setDeviceInfo] = useState(undefined);
+  const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
+  const [currentAudioDevice, setCurrentAudioDevice] = useState(undefined);
   useEffect(() => {
-    deviceInfo = JSON.parse(localStorage.getItem("deviceInfo"));
-    currentVideoDevice = deviceInfo ? deviceInfo.video : undefined;
-    currentAudioDevice = deviceInfo ? deviceInfo.audio : undefined;
-  });
+    setDeviceInfo(JSON.parse(sessionStorage.getItem("deviceInfo")));
+    setCurrentVideoDevice(
+      sessionStorage.getItem("deviceInfo")
+        ? JSON.parse(sessionStorage.getItem("deviceInfo")).video
+        : undefined
+    );
+    setCurrentAudioDevice(
+      sessionStorage.getItem("deviceInfo")
+        ? JSON.parse(sessionStorage.getItem("deviceInfo")).audio
+        : undefined
+    );
+  }, []);
 
   // 백엔드 통신을 통한 세션/토큰 발급
   const createSession = async () => {
@@ -134,9 +148,9 @@ export default function MeetingPk() {
       },
     })
       .then((res) => {
-        localStorage.setItem("sessionId", res.data);
+        sessionStorage.setItem("sessionId", res.data);
       })
-      .catch(() => {
+      .catch((err) => {
         console.log("세션 생성 실패");
         alert("오류가 발생했습니다. 다시 시도해보세요.");
         window.close();
@@ -158,7 +172,7 @@ export default function MeetingPk() {
       },
     })
       .then((res) => {
-        localStorage.setItem("openviduToken", res.data);
+        sessionStorage.setItem("openviduToken", res.data);
       })
       .catch(() => {
         console.log("토큰 발급 실패");
@@ -206,9 +220,9 @@ export default function MeetingPk() {
     setPublisher(undefined);
     session.disconnect();
     setSession(undefined);
-    localStorage.removeItem("sessionId");
-    localStorage.removeItem("openviduToken");
-    localStorage.removeItem("deviceInfo");
+    sessionStorage.removeItem("sessionId");
+    sessionStorage.removeItem("openviduToken");
+    sessionStorage.removeItem("deviceInfo");
     if (!checkDownload) {
       if (
         // eslint-disable-next-line no-restricted-globals
@@ -298,21 +312,29 @@ export default function MeetingPk() {
     // 토큰 생성 및 스트림 등록
     getToken().then(() => {
       session
-        .connect(localStorage.getItem("openviduToken"), {
+        .connect(sessionStorage.getItem("openviduToken"), {
           clientData: userData,
         })
         .then(async () => {
+          let audiodevice = JSON.parse(
+            sessionStorage.getItem("deviceInfo")
+          ).audio;
+          let videodevice = JSON.parse(
+            sessionStorage.getItem("deviceInfo")
+          ).video;
+          console.log(audiodevice);
+          console.log(videodevice);
           let newPublisher = await OV.initPublisherAsync(undefined, {
             audioSource:
-              currentAudioDevice.deviceId === "noDevice"
+              audiodevice.deviceId === "noDevice"
                 ? undefined
-                : currentAudioDevice.deviceId,
+                : audiodevice.deviceId,
             videoSource:
-              currentVideoDevice.deviceId === "noDevice"
+              videodevice.deviceId === "noDevice"
                 ? undefined
-                : currentVideoDevice.deviceId,
-            publishAudio: !(currentAudioDevice.deviceId === "noDevice"),
-            publishVideo: !(currentVideoDevice.deviceId === "noDevice"),
+                : videodevice.deviceId,
+            publishAudio: !(audiodevice.deviceId === "noDevice"),
+            publishVideo: !(videodevice.deviceId === "noDevice"),
             resolution: "1280x720",
             frameRate: 30,
             insertMode: "APPEND",
@@ -399,7 +421,8 @@ export default function MeetingPk() {
       video: JSON.parse(e.target.value),
       audio: currentAudioDevice,
     };
-    localStorage.setItem("deviceInfo", JSON.stringify(newDeviceInfo));
+    sessionStorage.setItem("deviceInfo", JSON.stringify(newDeviceInfo));
+    setDeviceInfo(newDeviceInfo);
     changeDevice();
   };
 
@@ -419,13 +442,14 @@ export default function MeetingPk() {
       video: currentVideoDevice,
       audio: JSON.parse(e.target.value),
     };
-    localStorage.setItem("deviceInfo", JSON.stringify(newDeviceInfo));
+    sessionStorage.setItem("deviceInfo", JSON.stringify(newDeviceInfo));
+    setDeviceInfo(newDeviceInfo);
     changeDevice();
   };
 
   // 비디오/오디오 변경사항 적용
   const changeDevice = async () => {
-    const newDeviceInfo = JSON.parse(localStorage.getItem("deviceInfo"));
+    const newDeviceInfo = JSON.parse(sessionStorage.getItem("deviceInfo"));
     const newPublisher = await OV.initPublisherAsync(undefined, {
       audioSource:
         newDeviceInfo.audio.deviceId === "noDevice"
@@ -447,6 +471,7 @@ export default function MeetingPk() {
       setPublisher(newPublisher);
     });
   };
+
   //// 세션 설정
 
   // 녹화 객체 생성
@@ -530,7 +555,7 @@ export default function MeetingPk() {
 
   // 채팅
 
-  // 채팅 객체
+  // 채팅 객체 => 이거 아래로 빼고
   const [chat, setChat] = useState({
     log: [],
   });
@@ -558,7 +583,7 @@ export default function MeetingPk() {
 
   // 피드백
 
-  // 피드백 객체
+  // 피드백 객체 => 이것도 아래로 빼고
   const [feedback, setFeedback] = useState({
     feedbacks: [],
   });
@@ -626,7 +651,7 @@ export default function MeetingPk() {
 
   //// 피드백
 
-  // 사이드바
+  // 사이드바 => 이것도 아래로 빼고
   const [closeSideBar, setCloseSideBar] = useState(false);
   const [option, setOption] = useState("member");
   const changeOption = (value) => {

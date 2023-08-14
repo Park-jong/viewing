@@ -83,10 +83,12 @@ const SearchIcon = styled(Search)`
   width: 20px; /* Adjust the size of the Search icon */
 `;
 
-export default function SearchBox({ width }) {
-  const [input1, setInput1] = useState("");
-  const [input2, setInput2] = useState("");
-  const [selectedOption, setSelectedOption] = useState("ALL");
+export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
+  const [input1, setInput1] = useState(appliedCompany ? appliedCompany : "");
+  const [input2, setInput2] = useState(job ? job : "");
+  const [selectedOption, setSelectedOption] = useState(
+    careerLevel ? careerLevel : "ALL"
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -115,9 +117,6 @@ export default function SearchBox({ width }) {
     window.location.href = queryString;
   };
 
-  // Disable the search button if input1 is empty
-  const isInput1Empty = input1.trim() === "";
-
   return (
     <SearchContainer $width={width}>
       <SearchInput
@@ -126,6 +125,11 @@ export default function SearchBox({ width }) {
         value={input1}
         onChange={handleInputChange}
         placeholder="회사명을 입력하세요 (필수)"
+        onKeyUp={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
       />
       <VerticalLine />
       <SearchInput
@@ -134,6 +138,11 @@ export default function SearchBox({ width }) {
         value={input2}
         onChange={handleInputChange}
         placeholder="직무를 입력하세요 (선택)"
+        onKeyUp={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
       />
       <VerticalLine />
 
@@ -144,7 +153,11 @@ export default function SearchBox({ width }) {
         <option value="INTERN">인턴</option>
       </Dropdown>
       <ButtonContainer>
-        <SearchButton onClick={handleSearch} disabled={isInput1Empty}>
+        <SearchButton
+          onClick={() => {
+            handleSearch();
+          }}
+        >
           <SearchIcon />
         </SearchButton>
       </ButtonContainer>

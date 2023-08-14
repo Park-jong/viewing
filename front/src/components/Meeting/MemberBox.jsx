@@ -5,14 +5,14 @@ const Container = styled.div`
   border: 1px solid black;
 `;
 
-export default function MemberBox({data}) {
+export default function MemberBox({ data }) {
   return (
-  <Container>
-    <UserProfile
-      nickname={data.nickname}
-      backgroundcolor={data.background}
-      characterimg={data.character}
-    ></UserProfile>
-  </Container>
+    <Container>
+      <UserProfile
+        nickname={data.nickname}
+        backgroundcolor={data.backgroundColor}
+        characterimg={data.backgroundImg}
+      ></UserProfile>
+    </Container>
   );
 }

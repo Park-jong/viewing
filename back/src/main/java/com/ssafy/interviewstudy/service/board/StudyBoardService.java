@@ -13,6 +13,8 @@ import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
 import com.ssafy.interviewstudy.service.notification.NotificationService;
 import com.ssafy.interviewstudy.support.file.FileManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,15 +38,16 @@ public class StudyBoardService {
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
 
     //글 목록 조회
-    public List<StudyBoardResponse> findBoardList(Integer studyId, Pageable pageable) {
-        List<StudyBoard> boardList = boardRepository.findByStudy_Id(studyId, pageable).getContent();
+    public Page<StudyBoardResponse> findBoardList(Integer studyId, Pageable pageable) {
+        Page<StudyBoard> content= boardRepository.findByStudy_Id(studyId, pageable);
+        List<StudyBoard> boardList = content.getContent();
         List<StudyBoardResponse> responseList = new ArrayList<>();
 
         for (StudyBoard b : boardList) {
             responseList.add(boardDtoService.fromEntityWithoutContent(b));
         }
 
-        return responseList;
+        return new PageImpl<>(responseList, pageable, content.getTotalElements());
     }
 
     // 글 detail 조회
@@ -142,18 +145,18 @@ public class StudyBoardService {
     }
 
     // 글 검색
-    public List<StudyBoardResponse> findArticleByKeyword(Integer studyId, String searchBy, String keyword, Pageable pageable){
-        List<StudyBoard> articles;
+    public Page<StudyBoardResponse> findArticleByKeyword(Integer studyId, String searchBy, String keyword, Pageable pageable){
+        Page<StudyBoard> articles;
         List<StudyBoardResponse> responseList = new ArrayList<>();
-        if(searchBy.equals("title")) articles = boardRepository.findByTitleContaining(studyId, keyword, pageable).getContent();
-        else if(searchBy.equals("content")) articles = boardRepository.findByTitleOrContent(studyId, keyword, pageable).getContent();
-        else articles = boardRepository.findWithAuthor(studyId, keyword, pageable).getContent();
+        if(searchBy.equals("title")) articles = boardRepository.findByTitleContaining(studyId, keyword, pageable);
+        else if(searchBy.equals("content")) articles = boardRepository.findByTitleOrContent(studyId, keyword, pageable);
+        else articles = boardRepository.findWithAuthor(studyId, keyword, pageable);
 
-        for (StudyBoard b: articles) {
+        for (StudyBoard b: articles.getContent()) {
             responseList.add(boardDtoService.fromEntityWithoutContent(b));
         }
 
-        return responseList;
+        return new PageImpl<>(responseList, pageable, articles.getTotalElements());
     }
 
     // 글 작성자가 본인인지 아닌지 체크

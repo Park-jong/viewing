@@ -17,6 +17,7 @@ public interface MemberRepository extends JpaRepository<Member,Integer> {
     Member findMemberByNicknameAndStatusACTIVE(String nickname);
 
     //디버깅용
+    @Query("select m from Member m where m.id = :memberId and m.status='ACTIVE'")
     Member findMemberById(Integer memberId);
 
 }

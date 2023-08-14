@@ -56,13 +56,13 @@ public class StudyController {
     }
 
     //스터디원인지
-    @JWTRequired(required = true)
+    @JWTRequired
     @GetMapping("/{study_id}/member")
-    @Authority(authorityType = AuthorityType.Study_Member)
     public ResponseEntity<?> studyMemberInfo(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") int studyId){
+        if(memberInfo == null) return ResponseEntity.badRequest().body("로그인 정보 없음");
         StudyMemberDto result = studyService.findStudyMember(studyId, memberInfo.getMemberId());
         if(result == null){
-            ResponseEntity.badRequest().body("잘못된 접근");
+            return ResponseEntity.badRequest().body("잘못된 접근");
         }
         return ResponseEntity.ok().body(result);
     }

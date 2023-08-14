@@ -6,30 +6,42 @@ import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.dto.calendar.CalendarCreatedResponse;
 import com.ssafy.interviewstudy.dto.calendar.CalendarRetrieveRequest;
 import com.ssafy.interviewstudy.service.calendar.CalendarService;
+import com.ssafy.interviewstudy.service.study.StudyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequestMapping(value = {"/members/{memberId}/calendars"})
 @RestController
+@RequiredArgsConstructor
 public class
 CalendarController {
 
     private final CalendarService calendarService;
 
-    @Autowired
-    public CalendarController(CalendarService calendarService) {
-        this.calendarService = calendarService;
-    }
+    private final StudyService studyService;
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
     @GetMapping
-    public ResponseEntity<?> getCalendars(@PathVariable Integer memberId){
-        return ResponseEntity.ok().body(calendarService.getCalendarList(memberId));
+    public ResponseEntity<?> getCalendars(
+            @PathVariable Integer memberId,
+            @RequestParam(value = "study_id",required = false) Integer studyId
+    ){
+        List<Object> studyCalendarsByMemberId = new ArrayList<>();
+        if(studyId==null){
+            studyCalendarsByMemberId = studyService.findStudyCalendarsByMemberId(memberId);
+        }
+        else{
+            studyCalendarsByMemberId = studyService.findStudyCalendarsByMemberIdStudyId(memberId,studyId);
+        }
+        return ResponseEntity.ok().body(studyCalendarsByMemberId);
     }
 
     @JWTRequired(required = true)

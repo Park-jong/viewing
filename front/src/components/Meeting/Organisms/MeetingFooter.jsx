@@ -50,7 +50,9 @@ export default function MeetingFooter({
       <GroupingContainer>
         <SelectContainer
           onChange={changeVideo}
-          value={JSON.stringify(currentVideoDevice)}
+          value={JSON.stringify(
+            JSON.parse(sessionStorage.getItem("deviceInfo")).video
+          )}
           title="비디오 선택"
           id="choiceVideo"
         >
@@ -65,7 +67,9 @@ export default function MeetingFooter({
         {/* <VideoButton></VideoButton> */}
         <SelectContainer
           onChange={changeAudio}
-          value={JSON.stringify(currentAudioDevice)}
+          value={JSON.stringify(
+            JSON.parse(sessionStorage.getItem("deviceInfo")).audio
+          )}
           title="오디오 선택"
           id="choiceAudio"
         >

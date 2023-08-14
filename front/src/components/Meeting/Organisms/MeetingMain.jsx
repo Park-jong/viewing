@@ -20,16 +20,16 @@ const CamContainer = styled.div`
   height: 202.5px;
 `;
 
-function MeetingMain({ publisher, subscribers, getActive }) {
+function MeetingMain({ publisher, subscribers }) {
   return (
     <Container>
       <CamContainer>
-        <CamBox streamManager={publisher} getActive={getActive}></CamBox>
+        <CamBox streamManager={publisher}></CamBox>
       </CamContainer>
       {subscribers.subs.map((sub, i) => {
         return (
           <CamContainer>
-            <CamBox streamManager={sub} key={i} getActive={getActive}></CamBox>
+            <CamBox streamManager={sub} key={i}></CamBox>
           </CamContainer>
         );
       })}

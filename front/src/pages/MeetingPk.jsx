@@ -115,14 +115,22 @@ export default function MeetingPk() {
   const OV = new OpenVidu();
 
   // 설정창에서 받아온 사용기기 정보
-  let deviceInfo = undefined;
-  let currentVideoDevice = undefined;
-  let currentAudioDevice = undefined;
+  const [deviceInfo, setDeviceInfo] = useState(undefined);
+  const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
+  const [currentAudioDevice, setCurrentAudioDevice] = useState(undefined);
   useEffect(() => {
-    deviceInfo = JSON.parse(sessionStorage.getItem("deviceInfo"));
-    currentVideoDevice = deviceInfo ? deviceInfo.video : undefined;
-    currentAudioDevice = deviceInfo ? deviceInfo.audio : undefined;
-  });
+    setDeviceInfo(JSON.parse(sessionStorage.getItem("deviceInfo")));
+    setCurrentVideoDevice(
+      sessionStorage.getItem("deviceInfo")
+        ? JSON.parse(sessionStorage.getItem("deviceInfo")).video
+        : undefined
+    );
+    setCurrentAudioDevice(
+      sessionStorage.getItem("deviceInfo")
+        ? JSON.parse(sessionStorage.getItem("deviceInfo")).audio
+        : undefined
+    );
+  }, []);
 
   // 백엔드 통신을 통한 세션/토큰 발급
   const createSession = async () => {
@@ -308,17 +316,25 @@ export default function MeetingPk() {
           clientData: userData,
         })
         .then(async () => {
+          let audiodevice = JSON.parse(
+            sessionStorage.getItem("deviceInfo")
+          ).audio;
+          let videodevice = JSON.parse(
+            sessionStorage.getItem("deviceInfo")
+          ).video;
+          console.log(audiodevice);
+          console.log(videodevice);
           let newPublisher = await OV.initPublisherAsync(undefined, {
             audioSource:
-              currentAudioDevice.deviceId === "noDevice"
+              audiodevice.deviceId === "noDevice"
                 ? undefined
-                : currentAudioDevice.deviceId,
+                : audiodevice.deviceId,
             videoSource:
-              currentVideoDevice.deviceId === "noDevice"
+              videodevice.deviceId === "noDevice"
                 ? undefined
-                : currentVideoDevice.deviceId,
-            publishAudio: !(currentAudioDevice.deviceId === "noDevice"),
-            publishVideo: !(currentVideoDevice.deviceId === "noDevice"),
+                : videodevice.deviceId,
+            publishAudio: !(audiodevice.deviceId === "noDevice"),
+            publishVideo: !(videodevice.deviceId === "noDevice"),
             resolution: "1280x720",
             frameRate: 30,
             insertMode: "APPEND",
@@ -406,7 +422,8 @@ export default function MeetingPk() {
       audio: currentAudioDevice,
     };
     sessionStorage.setItem("deviceInfo", JSON.stringify(newDeviceInfo));
-    changeVideoUtil();
+    setDeviceInfo(newDeviceInfo);
+    changeDevice();
   };
 
   // 오디오 변경
@@ -426,70 +443,34 @@ export default function MeetingPk() {
       audio: JSON.parse(e.target.value),
     };
     sessionStorage.setItem("deviceInfo", JSON.stringify(newDeviceInfo));
-    changeAudioUtil();
+    setDeviceInfo(newDeviceInfo);
+    changeDevice();
   };
 
-  // 비디오 변경사항 적용
-  const changeVideoUtil = async () => {
-    const newDeviceInfo = await JSON.parse(
-      sessionStorage.getItem("deviceInfo")
-    );
-    const newStream = await OV.getUserMedia({
+  // 비디오/오디오 변경사항 적용
+  const changeDevice = async () => {
+    const newDeviceInfo = JSON.parse(sessionStorage.getItem("deviceInfo"));
+    const newPublisher = await OV.initPublisherAsync(undefined, {
+      audioSource:
+        newDeviceInfo.audio.deviceId === "noDevice"
+          ? undefined
+          : newDeviceInfo.audio.deviceId,
       videoSource:
         newDeviceInfo.video.deviceId === "noDevice"
           ? undefined
           : newDeviceInfo.video.deviceId,
+      publishAudio: !!!(newDeviceInfo.audio.deviceId === "noDevice"),
       publishVideo: !!!(newDeviceInfo.video.deviceId === "noDevice"),
       resolution: "1280x720",
       frameRate: 30,
       insertMode: "APPEND",
       mirror: false,
     });
-    if (newDeviceInfo.video.deviceId === "noDevice") {
-      publisher.publishVideo(false);
-      return;
-    }
-    if (!publisher.stream.videoActive) {
-      publisher.publishVideo(true);
-    }
-    const newTrack = newStream.getVideoTracks()[0];
-    publisher.replaceTrack(newTrack);
-  };
-
-  // 오디오 변경사항 적용
-  const changeAudioUtil = async () => {
-    const newDeviceInfo = await JSON.parse(
-      sessionStorage.getItem("deviceInfo")
-    );
-    const newStream = await OV.getUserMedia({
-      audioSource:
-        newDeviceInfo.audio.deviceId === "noDevice"
-          ? undefined
-          : newDeviceInfo.audio.deviceId,
-      publishAudio: !!!(newDeviceInfo.audio.deviceId === "noDevice"),
+    await session.unpublish(publisher).then(() => {
+      session.publish(newPublisher);
+      setPublisher(newPublisher);
     });
-    if (newDeviceInfo.audio.deviceId === "noDevice") {
-      publisher.publishAudio(false);
-      return;
-    }
-    if (!publisher.stream.audioActive) {
-      publisher.publishAudio(true);
-    }
-    const newTrack = newStream.getAudioTracks()[0];
-    publisher.replaceTrack(newTrack);
   };
-
-  function getActive(streamId) {
-    const streams = [...subscribers.subs, publisher];
-    streams.forEach((s) => {
-      if (streamId === s.stream.streamId) {
-        return {
-          videoActive: s.stream.videoActive,
-          audioActive: s.stream.audioActive,
-        };
-      }
-    });
-  }
 
   //// 세션 설정
 
@@ -706,7 +687,6 @@ export default function MeetingPk() {
           <MeetingMain
             publisher={publisher}
             subscribers={subscribers}
-            getActive={getActive}
           ></MeetingMain>
         </MeetingMainContainer>
         <MeetingSideContainer hidden={closeSideBar}>

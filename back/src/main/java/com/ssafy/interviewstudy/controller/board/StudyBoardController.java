@@ -11,6 +11,7 @@ import com.ssafy.interviewstudy.dto.board.StudyBoardResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.board.StudyBoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -91,7 +92,7 @@ public class StudyBoardController {
     @GetMapping
     public ResponseEntity<?> articleList(@PathVariable Integer studyId, @RequestParam(value = "searchBy", required = false) String searchBy,
                                          @RequestParam(value = "keyword", required = false) String keyword, Pageable pageable){
-        List<StudyBoardResponse> boardResponses;
+        Page<StudyBoardResponse> boardResponses;
         if(StringUtils.hasText(keyword))
             boardResponses = boardService.findArticleByKeyword(studyId, searchBy, keyword, pageable);
         else boardResponses = boardService.findBoardList(studyId, pageable);

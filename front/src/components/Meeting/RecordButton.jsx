@@ -1,29 +1,57 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { BiVideoRecording, BiStopCircle } from "react-icons/bi";
+import { AiOutlinePauseCircle, AiFillPlayCircle } from "react-icons/ai";
 
 const Container = styled.div`
-  border: 1px solid black;
+  /* border: 1px solid black; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const ReadyState = styled.div``;
-const PauseState = styled.div``;
-const RecordState = styled.div``;
+const ReadyState = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const PauseState = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const RecordState = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const RecordingButton = styled.div`
-  border: 1px solid black;
-  display: inline;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--gray-100);
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  margin-right: 15px;
 `;
+
 const PauseButton = styled.div`
-  border: 1px solid black;
-  display: inline;
+  /* background-color: var(--gray-100);
+  border-radius: 10px;
+  border: 1px solid var(--gray-200); */
 `;
+
 const ResumeButton = styled.div`
-  border: 1px solid black;
+  /* border: 1px solid black; */
   display: inline;
 `;
 const StopButton = styled.div`
-  border: 1px solid black;
-  display: inline;
+  /* background-color: var(--gray-100);
+  /* border-radius: 10px;
+  border: 1px solid var(--gray-200); */
+  margin-right: 15px;
+`;
+
+const IconBiVideoRecording = styled(BiVideoRecording)`
+  font-size: 2rem;
 `;
 
 export default function RecordButton({
@@ -45,7 +73,7 @@ export default function RecordButton({
             }
           }}
         >
-          {"녹화"}
+          <IconBiVideoRecording /> &nbsp;녹화&nbsp;
         </RecordingButton>
       </ReadyState>
 
@@ -57,8 +85,9 @@ export default function RecordButton({
               setRecordState("record");
             }
           }}
+          style={{ marginRight: "17px" }}
         >
-          {"재개"}
+          <AiFillPlayCircle />
         </ResumeButton>
         <StopButton
           onClick={() => {
@@ -68,7 +97,7 @@ export default function RecordButton({
             }
           }}
         >
-          {"종료"}
+          <BiStopCircle />
         </StopButton>
       </PauseState>
 
@@ -81,9 +110,9 @@ export default function RecordButton({
             }
           }}
         >
-          {"중지"}
+          <AiOutlinePauseCircle />
         </PauseButton>
-        <StopButton
+        {/* <StopButton
           onClick={() => {
             const res = stopRecord();
             if (res !== "err") {
@@ -91,8 +120,8 @@ export default function RecordButton({
             }
           }}
         >
-          {"종료"}
-        </StopButton>
+          <BiStopCircle />
+        </StopButton> */}
       </RecordState>
     </Container>
   );

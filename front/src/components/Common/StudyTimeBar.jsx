@@ -93,7 +93,7 @@ export function involve(schedule, object) {
   return false;
 }
 
-export default function TimeBar(props) {
+export default function StudyTimeBar(props) {
   const studySchedules = [];
   const personalSchedules = {};
   // personalSchedules 안에 들어갈 형식은 다음과 같다.

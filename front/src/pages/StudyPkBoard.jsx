@@ -31,9 +31,10 @@ export default function StudyPkBoard() {
 
   useEffect(() => {
     customAxios()
-      .get(`/studies/${study_id}/boards`)
+      .get(`/studies/${study_id}/boards?size=20&page${0}`)
       .then((res) => {
         setData(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -42,7 +43,11 @@ export default function StudyPkBoard() {
 
   return (
     <Container>
-      <ArticleList data={data} width={1000} type={study_id} />
+      {data.content ? (
+        <ArticleList data={data.content} width={1000} type={study_id} />
+      ) : (
+        <></>
+      )}
       <FlexContainer>
         <ButtonContainer>
           <MainButton

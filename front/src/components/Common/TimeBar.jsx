@@ -85,7 +85,7 @@ export function FromMidnightPercent(inputString) {
 export function involve(schedule, object) {
   const keyList = Object.keys(object);
   for (let i = 0; i < keyList.length; i++) {
-    if (keyList[i] === String(schedule.author.nickname)) {
+    if (keyList[i] === String(schedule.description)) {
       return true;
     }
   }
@@ -108,11 +108,11 @@ export default function TimeBar(props) {
       );
     } else {
       if (involve(schedule, personalSchedules)) {
-        personalSchedules[schedule.author.nickname].push(
+        personalSchedules[schedule.description].push(
           <Schedule start={start} end={end} key={index}></Schedule>
         );
       } else {
-        personalSchedules[schedule.author.nickname] = [
+        personalSchedules[schedule.description] = [
           <Schedule start={start} end={end} key={index}></Schedule>,
         ];
       }
@@ -136,13 +136,13 @@ export default function TimeBar(props) {
   if (data.length) {
     res = (
       <BigContainer>
-        <Container $isflex={props.isFlex}>
+        { studySchedules.length>0 ? <Container $isflex={props.isFlex}>
           <NickName>Study</NickName>
           <BarContainer>
             <Bar></Bar>
             {studySchedules}
           </BarContainer>
-        </Container>
+        </Container> : <></>}
         {finalSchedules}
       </BigContainer>
     );

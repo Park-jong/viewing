@@ -1,44 +1,76 @@
 import styled from "styled-components";
+import { PiUsersThreeFill } from "react-icons/pi";
+import { BsFillChatFill } from "react-icons/bs";
+import { BiSolidNote } from "react-icons/bi";
 
 const Container = styled.div`
-  border: 1px solid black;
+  /* border: 1px solid black; */
   display: flex;
   flex-direction: row;
 `;
 
 const ButtonContainer = styled.div`
-  border: 1px solid black;
+  border: 0.5px solid var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: var(--secondary);
+  }
+
+  ${(props) =>
+    props.active &&
+    `
+    background-color: var(--primary);
+    color: white;
+  `}
 `;
 
 const ExitContainer = styled.div`
   position: absolute;
   right: 0%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
+  cursor: pointer;
 `;
 
-export default function MeetingTabBar({ changeOption, toggleSideBar }) {
+export default function MeetingTabBar({
+  currentOption,
+  changeOption,
+  toggleSideBar,
+}) {
   return (
     <Container>
       <ButtonContainer
+        active={currentOption === "member"}
         onClick={() => {
           changeOption("member");
         }}
       >
-        {"참여자"}
+        &nbsp; <PiUsersThreeFill />
+        &nbsp; &nbsp;참여자&nbsp;&nbsp;
       </ButtonContainer>
       <ButtonContainer
+        active={currentOption === "chat"}
         onClick={() => {
           changeOption("chat");
         }}
       >
-        {"채팅"}
+        &nbsp;
+        <BsFillChatFill />
+        &nbsp;&nbsp;채팅&nbsp;&nbsp;
       </ButtonContainer>
       <ButtonContainer
+        active={currentOption === "feedback"}
         onClick={() => {
           changeOption("feedback");
         }}
       >
-        {"피드백"}
+        &nbsp; <BiSolidNote />
+        &nbsp;&nbsp; 피드백 &nbsp;&nbsp;
       </ButtonContainer>
       <ExitContainer
         onClick={() => {

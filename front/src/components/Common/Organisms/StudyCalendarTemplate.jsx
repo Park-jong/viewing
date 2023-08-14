@@ -9,6 +9,8 @@ import StudyCalendarModal from "../../Modal/StudyCalendarModal";
 import { customAxios } from "../../../modules/Other/Axios/customAxios";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import StudyCalendar from './../StudyCalendar';
+import StudyTimeBar from "../StudyTimeBar";
 
 const empty = {
   author: {
@@ -133,13 +135,13 @@ export default function StudyCalendarTemplate({ isFlex, data, dataChange }) {
       >
         일정 추가
       </AddButton>
-      <Calendar
+      <StudyCalendar
         dataChange={dataChange}
         data={data}
         value={value}
         onChange={onChange}
-      ></Calendar>
-      <TimeBar data={data2} isFlex={isFlex} showDetail={showDetail}></TimeBar>
+      ></StudyCalendar>
+      <StudyTimeBar data={data2} isFlex={isFlex} showDetail={showDetail}></StudyTimeBar>
       <StudyCalendarModal
         isOpen={isOpen}
         type={type}

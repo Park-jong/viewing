@@ -187,7 +187,7 @@ const StudyDot = styled.div`
   margin-left: 1px;
 `;
 
-export default function Calendar(props) {
+export default function StudyCalendar(props) {
   // const [value, onChange] = useState(new Date());
   // const [data, dataChange] = useState([]);
   const data = props.data
@@ -209,6 +209,7 @@ export default function Calendar(props) {
         calendarType="gregory"
         tileContent={({ activeStartDate, date, view }) => {
           const NewDots = [];
+          const People = [];
 
           for (let i = 0; i < data.length; i++) {
             const schedule = data[i];
@@ -220,8 +221,9 @@ export default function Calendar(props) {
             if (dataReformatted === dateReformatted) {
               if (schedule.is_study_calendar) {
                 NewDots.push(<StudyDot key={i}></StudyDot>);
-              } else {
+              } else if (!People.includes(schedule.author.member_id)) {
                 NewDots.push(<Dot key={i}></Dot>);
+                People.push(schedule.author.member_id);
               }
             }
           }

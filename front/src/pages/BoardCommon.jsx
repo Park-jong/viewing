@@ -60,6 +60,11 @@ const ArrowButton = styled.div`
 `;
 
 export default function BoardCommon() {
+  const url = new URL(document.URL);
+  const query = url.searchParams;
+  const searchBy = query.get("searchBy");
+  const keyword = query.get("keyword");
+
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [maxPage, setMaxPage] = useState(1);
@@ -75,13 +80,16 @@ export default function BoardCommon() {
     }
   };
 
+  const getSearchUrl = () =>
+    `boards/${param(type)}?${searchBy ? "searchBy=" + searchBy : ""}&${
+      keyword ? "keyword=" + keyword : ""
+    }`;
+
   useEffect(() => {
     setPage(0);
     customAxios()
-      .get(`boards/${param(type)}?size=20&page=${0}`) // 페이지size, page
+      .get(getSearchUrl() + `&size=20&page=${0}`) // 페이지size, page
       .then((res) => {
-        console.log(res.data);
-        console.log(res.data.content);
         setData(res.data);
       })
       .catch((err) => {
@@ -97,7 +105,7 @@ export default function BoardCommon() {
     }
     setPage(e);
     customAxios()
-      .get(`boards/${param(type)}?size=20&page=${e}`) // 페이지size, page
+      .get(getSearchUrl() + `&size=20&page=${e}`) // 페이지size, page
       .then((res) => {
         setData(res.data);
       })

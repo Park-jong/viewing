@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Search from "../../Icons/Search";
 import { Link } from "react-router-dom";
+import { companyList } from "../Common/CompanyList";
 
 const SearchContainer = styled.div`
+  position: relative;
+
   width: ${(props) => `${props.$width}px`};
   height: 30px;
   display: flex;
@@ -83,9 +86,28 @@ const SearchIcon = styled(Search)`
   width: 20px; /* Adjust the size of the Search icon */
 `;
 
+const Suggestions = styled.div`
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  width: 100%;
+  max-height: 100px;
+  position: absolute;
+  top: 100%; /* 입력 필드 아래에 위치 */
+  left: 20px;
+  overflow: auto;
+  word-wrap: break-word;
+  z-index: 10; /* 다른 요소들보다 위에 위치 */
+  display: ${(props) => (props.visible ? "block" : "none")};
+`;
+
+const SuggestionValue = styled.div``;
+
 export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   const [input1, setInput1] = useState(appliedCompany ? appliedCompany : "");
   const [input2, setInput2] = useState(job ? job : "");
+  const [suggestion, setSuggestion] = useState([]);
+  const [isVisible, setIsVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(
     careerLevel ? careerLevel : "ALL"
   );
@@ -117,13 +139,35 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
     window.location.href = queryString;
   };
 
+  const clickSuggestion = (suggestion) => {
+    setInput1(suggestion);
+    setIsVisible(false);
+  };
+
+  useEffect(() => {
+    if (input1.length > 0) {
+      const arr = companyList.filter((company) => company.includes(input1));
+      setSuggestion((prev) => {
+        return arr;
+      });
+      setIsVisible(true);
+    } else {
+      const arr = [];
+      setSuggestion((prev) => {
+        return arr;
+      });
+      setIsVisible(false);
+    }
+  }, [input1]);
   return (
     <SearchContainer $width={width}>
       <SearchInput
         type="text"
         name="input1"
         value={input1}
-        onChange={handleInputChange}
+        onChange={(e) => {
+          handleInputChange(e);
+        }}
         placeholder="회사명을 입력하세요 (필수)"
         onKeyUp={(e) => {
           if (e.key === "Enter") {
@@ -136,7 +180,9 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
         type="text"
         name="input2"
         value={input2}
-        onChange={handleInputChange}
+        onChange={(e) => {
+          handleInputChange(e);
+        }}
         placeholder="직무를 입력하세요 (선택)"
         onKeyUp={(e) => {
           if (e.key === "Enter") {
@@ -146,7 +192,12 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
       />
       <VerticalLine />
 
-      <Dropdown value={selectedOption} onChange={handleDropdownChange}>
+      <Dropdown
+        value={selectedOption}
+        onChange={(e) => {
+          handleDropdownChange(e);
+        }}
+      >
         <option value="ALL">전체</option>
         <option value="NEWCOMER">신입</option>
         <option value="EXPERIENCED">경력</option>
@@ -161,6 +212,20 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
           <SearchIcon />
         </SearchButton>
       </ButtonContainer>
+      <Suggestions visible={isVisible}>
+        {suggestion.map((s, idx) => {
+          return (
+            <SuggestionValue
+              key={idx}
+              onClick={() => {
+                clickSuggestion(s);
+              }}
+            >
+              {s}
+            </SuggestionValue>
+          );
+        })}
+      </Suggestions>
     </SearchContainer>
   );
 }

@@ -11,7 +11,9 @@ import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
+  max-height: 100vh;
+  height: 100vh;
+  /* height: 100s%; */
   overflow: hidden;
   /* 웹킷 기반 브라우저 스크롤바 숨기기 */
   &::-webkit-scrollbar {
@@ -27,14 +29,14 @@ const ModalContainer = styled.div`
   position: absolute;
   left: 50%;
   top: 50%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   transform: translate(-50%, -50%);
   z-index: 999;
 `;
 
 const HeaderContainer = styled.div`
   position: absolute;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -44,7 +46,7 @@ const HeaderContainer = styled.div`
 `;
 
 const TitleContainer = styled.div`
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin-left: auto;
 `;
 
@@ -53,14 +55,14 @@ const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 99.9%;
-  height: 90%;
+  height: 89%;
   top: 5%;
   bottom: 5%;
 `;
 
 const MeetingMainContainer = styled.div`
   position: absolute;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   right: ${(props) => `${props.right}%`};
   width: ${(props) => `${100 - props.right}%`};
   height: 100%;
@@ -68,31 +70,37 @@ const MeetingMainContainer = styled.div`
 
 const MeetingSideContainer = styled.div`
   position: absolute;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   left: 80%;
   width: 19.9%;
   height: 100%;
 `;
 
 const ButtonContainer = styled.div`
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin-left: auto;
 `;
 
 const LayoutButton = styled.button`
-  border: 1px solid black;
-  margin: 1px;
+  padding: 5px 20px;
+  margin: 5px; 
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
 `;
 
 const FooterContainer = styled.div`
   position: absolute;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   display: flex;
   flex-direction: row;
   align-items: center;
   top: 95%;
   width: 99.9%;
-  height: 4.8%;
+  height: 5%;
 `;
 
 export default function MeetingPk() {
@@ -338,7 +346,7 @@ export default function MeetingPk() {
             resolution: "1280x720",
             frameRate: 30,
             insertMode: "APPEND",
-            mirror: false,
+            mirror: true,
           });
           session.publish(newPublisher);
           setPublisher(newPublisher);
@@ -464,7 +472,7 @@ export default function MeetingPk() {
       resolution: "1280x720",
       frameRate: 30,
       insertMode: "APPEND",
-      mirror: false,
+      mirror: true,
     });
     await session.unpublish(publisher).then(() => {
       session.publish(newPublisher);
@@ -493,12 +501,15 @@ export default function MeetingPk() {
 
   // 녹화 시작
   const initRecord = () => {
-    if (
-      !!!recorder ||
-      (recorder.state !== LocalRecorderState.READY &&
-        recorder.state !== LocalRecorderState.FINISHED)
-    ) {
+    if (!!!recorder) {
       alert("카메라와 마이크가 없는 상태에서는 녹화를 할 수 없습니다.");
+      return "err";
+    }
+    if (
+      recorder.state !== LocalRecorderState.READY &&
+      recorder.state !== LocalRecorderState.FINISHED
+    ) {
+      alert("이미 녹화중인 상태입니다.");
       return "err";
     }
     recorder.clean();
@@ -662,6 +673,9 @@ export default function MeetingPk() {
   };
   //// 사이드바
 
+  //보기형식 state  1: 레이아웃  2: 발표자보기
+  const [view, setView] = useState("layout");
+
   return (
     // eslint-disable-next-line no-restricted-globals
     <Container>
@@ -677,9 +691,13 @@ export default function MeetingPk() {
       <HeaderContainer>
         <TitleContainer>{"스터디 제목"}</TitleContainer>
         <ButtonContainer>
-          <LayoutButton>보기1</LayoutButton>
-          <LayoutButton>보기2</LayoutButton>
-          <LayoutButton>보기3</LayoutButton>
+          <LayoutButton onClick={() => setView("layout")}>
+            레이아웃보기
+          </LayoutButton>
+          <LayoutButton onClick={() => setView("me")}>
+            나 중심 보기
+          </LayoutButton>
+          {/* <LayoutButton>보기3</LayoutButton> */}
         </ButtonContainer>
       </HeaderContainer>
       <MainContainer>
@@ -687,6 +705,7 @@ export default function MeetingPk() {
           <MeetingMain
             publisher={publisher}
             subscribers={subscribers}
+            view={view}
           ></MeetingMain>
         </MeetingMainContainer>
         <MeetingSideContainer hidden={closeSideBar}>

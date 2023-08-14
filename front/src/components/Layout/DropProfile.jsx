@@ -53,6 +53,8 @@ export default function DropProfile({ member }) {
   const profileImgRef = useRef(null);
   const dispatch = useDispatch();
   const socialLoginType = useSelector((state) => state.UserReducer.web);
+
+  let navigate = useNavigate();
   const handleProfileImgClick = () => {
     setMenuOpen(!menuOpen);
   };
@@ -91,6 +93,8 @@ export default function DropProfile({ member }) {
       localStorage.removeItem("access_token");
       dispatch(Logout());
     }
+    window.alert("로그아웃 되엇습니다");
+    navigate("/");
   };
 
   useEffect(() => {

@@ -14,7 +14,7 @@ const Container = styled.button`
   box-shadow: 0.1em 0.1em;
 
   font-size: ${(props) => `${props.fontSize}px`};
-  margin-right: ${(props) => `${props.marginright}px`};
+  margin-right: ${(props) => `${props.$marginright}px`};
 
   /* Add styles for :hover state */
   &:hover {
@@ -44,7 +44,7 @@ export default function StyledButton({
   return (
     <Container
       onClick={onClick}
-      marginright={marginright}
+      $marginright={marginright}
       width={width}
       height={height}
       fontSize={fontSize}

@@ -103,12 +103,12 @@ export default function StudySideBar() {
       setLinkList((prevList) => [
         ...prevList.slice(0, 3),
         `/study/${studyId}/applicant`,
-        ...prevList.slice(4),
+        ...prevList.slice(3),
       ]);
       setMenuList((prevList) => [
         ...prevList.slice(0, 3),
         "참여신청 관리",
-        ...prevList.slice(4),
+        ...prevList.slice(3),
       ]);
     } else {
       console.log("리더쟈 나이데스");

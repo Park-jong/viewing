@@ -12,8 +12,8 @@ export default function LoginLoading() {
   let code = params.get("code");
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  const web = localStorage.getItem("web")
-  localStorage.removeItem("web")
+  const web = localStorage.getItem("web");
+  localStorage.removeItem("web");
 
   useEffect(() => {
     customAxios()
@@ -21,12 +21,12 @@ export default function LoginLoading() {
       .then((res) => {
         const access_token = res.data.access_token;
         localStorage.setItem("access_token", access_token);
-
         const payload = JWTDecoder(access_token).payload; //복호화 email, 만료시간, userId
 
         customAxios()
           .get(`members/${payload.memberId}/`)
           .then((res) => {
+            res.data.web = web;
             dispatch(Login(res.data)); // 리덕스에 적용
             console.log(res.data);
           })

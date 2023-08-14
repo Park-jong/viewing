@@ -174,7 +174,9 @@ const DeleteButton = styled.button``;
 
 const UpdateButton = styled.button``;
 
-const DeadLine = styled.div``;
+const DeadLine = styled.div`
+  margin-left: 35px;
+`;
 
 const DeadLineInputBox = styled.input``;
 
@@ -539,7 +541,7 @@ export default function StudyPkAdmin() {
         <Job>
           <Category>지원 직무</Category>
           <div type="text" onChange={changeJob}>
-            {job}
+            {job ? job : <div>없음</div>}
           </div>
         </Job>
         <CareerLevel>
@@ -550,6 +552,7 @@ export default function StudyPkAdmin() {
           </CareerLevelInputBox> */}
         </CareerLevel>
       </FlexContainer2>
+
       <FlexContainer>
         <Capacity style={{ marginRight: "125px" }}>
           <Category>최대 인원</Category>

@@ -78,8 +78,10 @@ export default function BoardCommon() {
   useEffect(() => {
     setPage(0);
     customAxios()
-      .get(`boards/${param(type)}?size=5&page=${page}`) // 페이지size, page
+      .get(`boards/${param(type)}?size=20&page=${0}`) // 페이지size, page
       .then((res) => {
+        console.log(res.data);
+        console.log(res.data.content);
         setData(res.data);
       })
       .catch((err) => {
@@ -88,14 +90,14 @@ export default function BoardCommon() {
   }, [type]);
 
   const handlePage = (e) => {
-    if(e < 0) {
-      e = 0
-    } else if (e >maxPage) {
-      e = maxPage
+    if (e < 0) {
+      e = 0;
+    } else if (e > maxPage) {
+      e = maxPage;
     }
     setPage(e);
     customAxios()
-      .get(`boards/${param(type)}?size=5&page=${e}`) // 페이지size, page
+      .get(`boards/${param(type)}?size=20&page=${e}`) // 페이지size, page
       .then((res) => {
         setData(res.data);
       })
@@ -107,7 +109,11 @@ export default function BoardCommon() {
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} width={1000} type={type} />
+      {data.content ? (
+        <ArticleList data={data.content} width={1000} type={type} />
+      ) : (
+        <></>
+      )}
       <BottomContainer>
         <SearchBoxBoard></SearchBoxBoard>
         <MarginLeft>
@@ -121,10 +127,10 @@ export default function BoardCommon() {
       </BottomContainer>
       <PageContainer>
         <ArrowButton>
-          <BiChevronsLeft onClick={() => handlePage(0)} ></BiChevronsLeft>
+          <BiChevronsLeft onClick={() => handlePage(0)}></BiChevronsLeft>
         </ArrowButton>
         <ArrowButton>
-          <BiChevronLeft onClick={() => handlePage(page-1)} ></BiChevronLeft>
+          <BiChevronLeft onClick={() => handlePage(page - 1)}></BiChevronLeft>
         </ArrowButton>
         <PageButton $now={page} $page={0} onClick={() => handlePage(0)}>
           1
@@ -133,10 +139,12 @@ export default function BoardCommon() {
           2
         </PageButton>
         <ArrowButton>
-          <BiChevronRight onClick={() => handlePage(page+1)} ></BiChevronRight>
+          <BiChevronRight onClick={() => handlePage(page + 1)}></BiChevronRight>
         </ArrowButton>
         <ArrowButton>
-          <BiChevronsRight onClick={() => handlePage(maxPage)} ></BiChevronsRight>
+          <BiChevronsRight
+            onClick={() => handlePage(maxPage)}
+          ></BiChevronsRight>
         </ArrowButton>
       </PageContainer>
     </Container>

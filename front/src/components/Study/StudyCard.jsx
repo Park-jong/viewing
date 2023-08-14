@@ -8,6 +8,8 @@ import CompanyJobTag from "./CompanyJobTag";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
+import { useNavigate } from "react-router-dom";
+
 const Container = styled(Link)`
   width: 280px;
   height: 320px;
@@ -144,21 +146,25 @@ const CapacityContainer = styled.div`
 
 export default function StudyCard({ study }) {
   // console.log(study.tag);
-  const [studyCardLink, setStudyCardLink] = useState("");
   const memberId = useSelector((state) => state.UserReducer.memberId);
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  const moveStudy = () => {
     customAxios()
       .get(`/studies/${study.study_id}/member`)
       .then(() => {
-        setStudyCardLink(`/study/${study.study_id}`);
+        navigate(`/study/${study.study_id}`);
       })
       .catch((error) => {
-        setStudyCardLink(`/study/${study.study_id}/detail`);
+        navigate(`/study/${study.study_id}/detail`);
       });
-  });
+  };
   return (
-    <Container to={`${studyCardLink}`}>
+    <Container
+      onClick={() => {
+        moveStudy();
+      }}
+    >
       <BookmarkContainer>
         <Bookmark />
       </BookmarkContainer>

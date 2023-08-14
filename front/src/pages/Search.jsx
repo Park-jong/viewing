@@ -279,7 +279,6 @@ export default function Search() {
 
   useEffect(() => {
     setFilteredData(searchData.content);
-    console.log(searchData);
   }, [searchData]);
 
   // const handleToggle = () => {

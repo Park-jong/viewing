@@ -1,10 +1,10 @@
-export default function Bookmark() {
+export default function Bookmark({ fill }) {
   return (
     <svg
       width="16"
       height="20"
       viewBox="0 0 16 20"
-      fill="none"
+      fill={fill}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

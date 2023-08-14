@@ -239,7 +239,7 @@ export default function MakeStudy() {
   const [appliedJob, setAppliedJob] = useState("");
   const [appliedCompany, setAppliedCompany] = useState("");
   const [career, setCareer] = useState("ALL");
-  const [capacity, setCapacity] = useState("");
+  const [capacity, setCapacity] = useState(1);
   const [deadline, setDeadline] = useState(currentDate);
   const [studyName, setStudyName] = useState("");
   const [studyDescription, setStudyDescription] = useState("");

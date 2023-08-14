@@ -9,6 +9,12 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import TagStyled from "../components/Study/TagStyled";
 import TagStyledSelected from "../components/Study/TagStyledSelected";
+import {
+  BiChevronLeft,
+  BiChevronRight,
+  BiChevronsLeft,
+  BiChevronsRight,
+} from "react-icons/bi";
 
 const tags = [
   "자소서 제출 필수",
@@ -166,12 +172,39 @@ const TagLabel = styled.label`
 
 const PageArea = styled.div`
   text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const PageNum = styled.div`
-  display: inline-block;
   margin: 5px;
-  width: 15px;
+  border-radius: 10px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--gray-200);
+  }
+`;
+
+const CurrentNum = styled.div`
+  margin: 5px;
+  border-radius: 10px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--gray-200);
+`;
+
+const ArrowPage = styled.div`
+  margin: 5px;
+  border-radius: 10px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--gray-200);
+  }
 `;
 
 ///studies?appliedCompany={지원회사(string)}&job={직무(String)}&careerLevel={신입/경력/무관(ALL, INTERN, NEWCOMER, EXPERIENCED)}&option=true&page=0&size=20&sort=id,desc&sort=username,desc
@@ -311,21 +344,71 @@ export default function Search() {
         )}
       </BodyContainer>
       <PageArea>
+        {searchPage - 3 >= 0 ? (
+          <>
+            <ArrowPage
+              onClick={() => {
+                pageMove(0);
+              }}
+            >
+              <BiChevronsLeft />
+            </ArrowPage>
+            <ArrowPage
+              onClick={() => {
+                pageMove(searchPage - 3);
+              }}
+            >
+              <BiChevronLeft />
+            </ArrowPage>
+          </>
+        ) : (
+          <>
+            <ArrowPage />
+            <ArrowPage />
+          </>
+        )}
         {page.map((num, idx) => {
           const n = num + searchPage + 1;
           return n > 0 && n <= pageSize ? (
-            <PageNum
-              key={idx}
-              onClick={() => {
-                pageMove(n - 1);
-              }}
-            >
-              {n}
-            </PageNum>
+            num === 0 ? (
+              <CurrentNum key={idx}>{n}</CurrentNum>
+            ) : (
+              <PageNum
+                key={idx}
+                onClick={() => {
+                  pageMove(n - 1);
+                }}
+              >
+                {n}
+              </PageNum>
+            )
           ) : (
-            <></>
+            <PageNum></PageNum>
           );
         })}
+        {searchPage + 3 < pageSize ? (
+          <>
+            <ArrowPage
+              onClick={() => {
+                pageMove(searchPage + 3);
+              }}
+            >
+              <BiChevronRight />
+            </ArrowPage>
+            <ArrowPage
+              onClick={() => {
+                pageMove(pageSize - 1);
+              }}
+            >
+              <BiChevronsRight />
+            </ArrowPage>
+          </>
+        ) : (
+          <>
+            <ArrowPage />
+            <ArrowPage />
+          </>
+        )}
       </PageArea>
     </Container>
   );

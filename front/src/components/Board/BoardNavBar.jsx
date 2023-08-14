@@ -33,9 +33,6 @@ const NavItem = styled(NavLink)`
 export default function BoardNavBar() {
   return (
     <NavbarContainer>
-      <NavItem to="/board/notice" activeClassName="active">
-        공지사항
-      </NavItem>
       <NavItem to="/board/free" activeClassName="active">
         자유게시판
       </NavItem>

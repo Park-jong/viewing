@@ -28,8 +28,6 @@ import BoardFree from "./pages/BoardFree";
 import BoardFreePk from "./pages/BoardFreePk";
 import BoardInterview from "./pages/BoardInterview";
 import BoardInterviewPk from "./pages/BoardInterviewPk";
-import BoardNotice from "./pages/BoardNotice";
-import BoardNoticePk from "./pages/BoardNoticePk";
 import BoardQuestion from "./pages/BoardQuestion";
 import BoardQuestionPk from "./pages/BoardQuestionPk";
 import BoardWrite from "./pages/BoardWrite";
@@ -211,14 +209,6 @@ const router = createBrowserRouter([
       {
         path: "board/interview/:articlePk/update",
         element: <BoardUpdate />,
-      },
-      {
-        path: "board/notice",
-        element: <BoardNotice />,
-      },
-      {
-        path: "board/notice/:articlePk",
-        element: <BoardPk />,
       },
       {
         path: "board/question",

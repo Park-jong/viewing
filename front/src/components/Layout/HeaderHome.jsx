@@ -84,7 +84,7 @@ const MarginRight = styled.div`
 
 export default function HeaderHome() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const member = useSelector((state) => state.UserReducer)
+  const member = useSelector((state) => state.UserReducer);
 
   // Handle scroll event and update isScrolled state
   const handleScroll = () => {
@@ -115,7 +115,7 @@ export default function HeaderHome() {
       </FirstContainer>
       <SecondContainer>
         <MenuItem to="/search">스터디</MenuItem>
-        <MenuItem to="/board/notice">커뮤니티</MenuItem>
+        <MenuItem to="/board/free">커뮤니티</MenuItem>
       </SecondContainer>
       {/* 로그인 상태에 따라 알맞은 내용 표시 */}
       {isSocialLogin ? (
@@ -124,7 +124,7 @@ export default function HeaderHome() {
             <MarginRight>
               <DropAlert />
             </MarginRight>
-            <DropProfile member={member}/>
+            <DropProfile member={member} />
           </RightMenu>
         </ForthContainer>
       ) : (

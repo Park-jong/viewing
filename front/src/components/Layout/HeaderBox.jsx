@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import DropProfile from "./DropProfile";
 import DropAlert from "./DropAlert";
 import { useSelector } from "react-redux";
-import { UserReducer } from './../../modules/UserReducer/UserReducer';
+import { UserReducer } from "./../../modules/UserReducer/UserReducer";
 
 const HeaderStyle = styled.div`
   display: flex;
@@ -15,7 +15,7 @@ const HeaderStyle = styled.div`
   width: 100%;
   height: 64px;
   background-color: white; /* Optional: Add a background color for the header */
-border-bottom: 0.5px var(--gray-200) solid;
+  border-bottom: 0.5px var(--gray-200) solid;
 `;
 
 const FirstContainer = styled(Link)`
@@ -72,7 +72,7 @@ const MarginRight = styled.div`
 `;
 
 export default function HeaderBox() {
-  const member = useSelector((state) => state.UserReducer)
+  const member = useSelector((state) => state.UserReducer);
   const isSocialLogin = member.memberId;
 
   return (
@@ -83,7 +83,7 @@ export default function HeaderBox() {
       </FirstContainer>
       <SecondContainer>
         <MenuItem to="/search">스터디</MenuItem>
-        <MenuItem to="/board/notice">커뮤니티</MenuItem>
+        <MenuItem to="/board/free">커뮤니티</MenuItem>
       </SecondContainer>
       {/* 로그인 상태에 따라 알맞은 내용 표시 */}
       {isSocialLogin ? (
@@ -92,7 +92,7 @@ export default function HeaderBox() {
             <MarginRight>
               <DropAlert />
             </MarginRight>
-            <DropProfile member={member}/>
+            <DropProfile member={member} />
           </RightMenu>
         </ForthContainer>
       ) : (

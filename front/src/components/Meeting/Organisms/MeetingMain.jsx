@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import CamBox from "../CamBox";
+import React from "react";
 
 const Container = styled.div`
   border: 1px solid black;
@@ -19,19 +20,21 @@ const CamContainer = styled.div`
   height: 202.5px;
 `;
 
-export default function MeetingMain({ publisher, subscribers }) {
+function MeetingMain({ publisher, subscribers, getActive }) {
   return (
     <Container>
       <CamContainer>
-        <CamBox streamManager={publisher}></CamBox>
+        <CamBox streamManager={publisher} getActive={getActive}></CamBox>
       </CamContainer>
       {subscribers.subs.map((sub, i) => {
         return (
           <CamContainer>
-            <CamBox streamManager={sub} key={i}></CamBox>
+            <CamBox streamManager={sub} key={i} getActive={getActive}></CamBox>
           </CamContainer>
         );
       })}
     </Container>
   );
 }
+
+export default React.memo(MeetingMain);

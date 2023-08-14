@@ -19,8 +19,8 @@ export default function MeetingChatBox({ data }) {
       ) : (
         <UserProfile
           nickname={JSON.parse(data.sender).clientData.nickname}
-          backgroundcolor={JSON.parse(data.sender).clientData.background}
-          characterimg={JSON.parse(data.sender).clientData.character}
+          backgroundcolor={JSON.parse(data.sender).clientData.backgroundColor}
+          characterimg={JSON.parse(data.sender).clientData.backgroundImg}
         ></UserProfile>
       )}
       <MessageContainer>{data.message}</MessageContainer>

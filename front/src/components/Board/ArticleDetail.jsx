@@ -8,7 +8,7 @@ import {
 } from "react-icons/bi";
 import UserProfile from "../Common/UserProfile";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { PiSirenLight } from "react-icons/pi";
+import { PiAddressBook, PiAddressBookBold, PiSirenLight } from "react-icons/pi";
 
 // import { data } from "../Layout/db";
 //import { data } from "./../Layout/db";
@@ -26,16 +26,21 @@ const ArticleContainer = styled.div`
   /* background-color: #f2f2f2; */
   /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 `;
-
-const BoardType = styled.div`
+const BoardTopContianer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+const BoardType = styled.span`
   font-size: 14px;
   color: #666666;
 `;
-
+const BoardListButton = styled.span`
+  margin-right: 10px;
+`;
 const Title = styled.div`
   font-size: 28px;
   font-weight: bold;
-  margin: 30px 0px;
+  margin: 15px 0px;
 `;
 
 const AuthorDateContainer = styled.div`
@@ -179,9 +184,17 @@ export default function ArticleDetail({ data, setData, count }) {
 
   return (
     <ArticleContainer>
-      <BoardType>
-        <span>{boardTypeText(boardType)}</span>
-      </BoardType>
+      <BoardTopContianer>
+        <BoardType>
+          <span>{boardTypeText(boardType)}</span>
+        </BoardType>
+        <BoardListButton>
+          <SubButton
+            content="목록"
+            onClick={() => navigate(`/board/${boardType}`)}
+          ></SubButton>
+        </BoardListButton>
+      </BoardTopContianer>
       <Title>{data.title}</Title>
       <AuthorDateContainer>
         <AuthorInfo>

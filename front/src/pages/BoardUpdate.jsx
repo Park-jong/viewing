@@ -94,17 +94,17 @@ export default function BoardUpdate() {
   };
 
   const SendRequest = () => {
-    if (!title) {
+    if (!title.trim()) {
       alert("제목을 입력하세요.")
       return
-    } else if (!content) {
+    } else if (!content.trim()) {
       alert("내용을 입력하세요.")
       return
     }
 
     const formData = new FormData();
     const request = { member_id, content, title, files_deleted: deleted };
-    console.log(request, files);
+
     // formData.append("member_id", member_id);
     // formData.append("content", text);
     files.forEach((file) => formData.append("request_files", file));

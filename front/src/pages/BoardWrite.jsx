@@ -98,10 +98,10 @@ export default function BoardWrite() {
   };
 
   const SendRequest = (e) => {
-    if (!title) {
+    if (!title.trim()) {
       alert("제목을 입력하세요.")
       return
-    } else if (!content) {
+    } else if (!content.trim()) {
       alert("내용을 입력하세요.")
       return
     }

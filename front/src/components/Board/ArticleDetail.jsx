@@ -221,7 +221,7 @@ export default function ArticleDetail({ data, setData, count }) {
           <FileConatainer>
             {data.article_files.map((file, idx) => (
               <File
-                href={`http://70.12.246.87:8080/boards/${data.board_type}/${data.article_id}/files/${file.fileId}`}
+                href={`${process.env.REACT_APP_SERVER_URL}boards/${data.board_type}/${data.article_id}/files/${file.fileId}`}
                 key={idx}
               >
                 {file.name}

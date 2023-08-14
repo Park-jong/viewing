@@ -64,10 +64,10 @@ export default function Message() {
   }
 
   function handleSubmit() {
-    if (!title) {
+    if (!title.trim()) {
       alert("제목을 입력해주세요.")
       return
-    } else if (!content) {
+    } else if (!content.trim()) {
       alert("내용을 입력해주세요.")
       return
     }
@@ -83,7 +83,7 @@ export default function Message() {
 
   return (
     <Container>
-      <H1><Nickname>{nickname}zzzzzzzzzzz</Nickname>에게 쪽지 보내기</H1>
+      <H1><Nickname>{nickname}</Nickname>에게 쪽지 보내기</H1>
       <TitleContainer>
         <Title>제목 :</Title>
         <InputBox setText={setTitle} height={20} width={200} />

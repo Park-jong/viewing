@@ -50,8 +50,16 @@ public class StudyBoardService {
     // 글 detail 조회
     public StudyBoardResponse findArticle(Integer articleId) {
         StudyBoard article = boardRepository.findById(articleId).get();
+        List<ArticleFile> files = article.getFiles();
+
+        List<FileResponse> fileResponses = new ArrayList<>();
+
+        for (ArticleFile file : files) {
+            fileResponses.add(new FileResponse(file));
+        }
 
         StudyBoardResponse boardResponse = boardDtoService.fromEntity(article);
+        boardResponse.setArticleFiles(fileResponses);
 
         return boardResponse;
     }
@@ -155,6 +163,15 @@ public class StudyBoardService {
         // 본인이면 true, 아니면 false
         if(article.getAuthor().getId() == memberId) return true;
         else return false;
+    }
+
+    @Transactional
+    public void removeFileList(List<FileResponse> files){
+        for (FileResponse f : files) {
+            ArticleFile file = articleFileRepository.findById(f.getFileId()).get();
+            fm.delete(file.getSaveFileName());
+            articleFileRepository.deleteById(file.getId());
+        }
     }
 
     // 파일 삭제

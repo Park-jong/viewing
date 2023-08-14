@@ -12,6 +12,8 @@ import com.ssafy.interviewstudy.repository.board.ArticleFileRepository;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import com.ssafy.interviewstudy.support.file.FileManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,16 +37,34 @@ public class BoardService {
 
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
 
+
+    // 글 검색
+    public Page<BoardResponse> findArticleByKeyword(String searchBy, String keyword, BoardType boardType, Pageable pageable) {
+        Page<Board> articles;
+        List<BoardResponse> responseList = new ArrayList<>();
+        if (searchBy.equals("title"))
+            articles = boardRepository.findByTitleContaining(keyword, boardType, pageable);
+        else if (searchBy.equals("content"))
+            articles = boardRepository.findByTitleOrContent(keyword, boardType, pageable);
+        else articles = boardRepository.findWithAuthor(keyword, boardType, pageable);
+
+        for (Board b : articles.getContent()) {
+            responseList.add(boardDtoService.fromEntityWithoutContent(b));
+        }
+
+        return new PageImpl<>(responseList, pageable, articles.getTotalElements());
+    }
     //글 목록 조회
-    public List<BoardResponse> findBoardList(BoardType boardType, Pageable pageable) {
-        List<Board> boardList = boardRepository.findByType(boardType, pageable).getContent();
+    public Page<BoardResponse> findBoardList(BoardType boardType, Pageable pageable) {
+        Page<Board> content = boardRepository.findByType(boardType, pageable);
+        List<Board> boardList = content.getContent();
         List<BoardResponse> responseList = new ArrayList<>();
 
         for (Board b : boardList) {
             responseList.add(boardDtoService.fromEntityWithoutContent(b));
         }
 
-        return responseList;
+        return new PageImpl<>(responseList, pageable, content.getTotalElements());
     }
 
     // 글 detail 조회
@@ -132,23 +152,6 @@ public class BoardService {
         }
 
         return article.getId();
-    }
-
-    // 글 검색
-    public List<BoardResponse> findArticleByKeyword(String searchBy, String keyword, BoardType boardType, Pageable pageable) {
-        List<Board> articles;
-        List<BoardResponse> responseList = new ArrayList<>();
-        if (searchBy.equals("title"))
-            articles = boardRepository.findByTitleContaining(keyword, boardType, pageable).getContent();
-        else if (searchBy.equals("content"))
-            articles = boardRepository.findByTitleOrContent(keyword, boardType, pageable).getContent();
-        else articles = boardRepository.findWithAuthor(keyword, boardType, pageable).getContent();
-
-        for (Board b : articles) {
-            responseList.add(boardDtoService.fromEntityWithoutContent(b));
-        }
-
-        return responseList;
     }
 
     // 파일 삭제

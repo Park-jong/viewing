@@ -64,17 +64,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long count = queryFactory
-                .select(study.count()).distinct()
-                .from(study)
-                .leftJoin(study.studyTags, studyTag)
-                .where(isRecruitTrue(isRecruit),
-                        study.isDelete.eq(false),
-                        appliedCompanyLike(appliedCompany),
-                        appliedJobLike(appliedJob),
-                        careerLevelEq(careerLevel),
-                        tagEq(tag))
-                .fetchOne();
+        Long count = studyCount(isRecruit, appliedCompany, appliedJob, careerLevel, tag);
         return new PageImpl<>(result, pageable, count);
     }
 
@@ -117,6 +107,34 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
         return result;
     }
 
+    private Long studyCount(Boolean isRecruit, String appliedCompany, String appliedJob, CareerLevel careerLevel, Integer tag){
+        Long count = 0L;
+        if(tag == null){
+            count = queryFactory
+                    .select(study.count())
+                    .from(study)
+                    .where(isRecruitTrue(isRecruit),
+                            study.isDelete.eq(false),
+                            appliedCompanyLike(appliedCompany),
+                            appliedJobLike(appliedJob),
+                            careerLevelEq(careerLevel))
+                    .fetchOne();
+        }
+        else {
+            count = queryFactory
+                    .select(study.count())
+                    .from(study)
+                    .leftJoin(study.studyTags, studyTag)
+                    .where(isRecruitTrue(isRecruit),
+                            study.isDelete.eq(false),
+                            appliedCompanyLike(appliedCompany),
+                            appliedJobLike(appliedJob),
+                            careerLevelEq(careerLevel),
+                            tagEq(tag))
+                    .fetchOne();
+        }
+        return count;
+    }
 
     private BooleanExpression appliedCompanyLike(String appliedCompany){
         return StringUtils.hasText(appliedCompany) ? study.appliedCompany.name.like("%" + appliedCompany + "%") : null;

@@ -12,6 +12,7 @@ import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.study.RequestFile;
 import com.ssafy.interviewstudy.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -92,7 +93,7 @@ public class BoardController {
     public ResponseEntity<?> articleList(@RequestParam(value = "searchBy", required = false) String searchBy,
                                          @RequestParam(value = "keyword", required = false) String keyword,
                                          @PathVariable BoardType boardType, Pageable pageable) {
-        List<BoardResponse> boardResponses;
+        Page<BoardResponse> boardResponses;
         if (StringUtils.hasText(keyword))
             boardResponses = boardService.findArticleByKeyword(searchBy, keyword, boardType, pageable);
         else boardResponses = boardService.findBoardList(boardType, pageable);

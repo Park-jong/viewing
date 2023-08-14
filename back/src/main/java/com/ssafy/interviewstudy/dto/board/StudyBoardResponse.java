@@ -29,10 +29,10 @@ public class StudyBoardResponse{
 
     private Integer commentCount;
 
-    private List<ArticleFile> articleFiles;
+    private List<FileResponse> articleFiles;
 
     @Builder
-    public StudyBoardResponse(Integer articleId, Integer studyId, Author author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer commentCount, List<ArticleFile> articleFiles) {
+    public StudyBoardResponse(Integer articleId, Integer studyId, Author author, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Integer commentCount, List<FileResponse> articleFiles) {
         this.articleId = articleId;
         this.studyId = studyId;
         this.author = author;

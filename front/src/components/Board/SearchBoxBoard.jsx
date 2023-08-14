@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Search from "../../Icons/Search";
-import { Link } from "react-router-dom";
-import MainButton from './../Button/MainButton';
+import { Link, useLocation } from "react-router-dom";
+import MainButton from "./../Button/MainButton";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
 
 const SearchContainer = styled.div`
   width: 762px;
@@ -79,7 +80,9 @@ const SearchIcon = styled(Search)`
 
 export default function SearchBoxBoard() {
   const [input, setInput] = useState("");
-  const [selectedOption, setSelectedOption] = useState("option1");
+  const [selectedOption, setSelectedOption] = useState("title");
+  const param = useLocation().pathname.split("/");
+  const isStudy = param[1] === "study" ? true : false;
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -95,15 +98,16 @@ export default function SearchBoxBoard() {
       return;
     }
 
-    // Construct the query string
-    const queryString = `/search?appliedCompany=${encodeURIComponent(
-      input
-    )}&careerLevel=${selectedOption}`;
-    // Navigate to the search results page with the query string
+    const queryString = isStudy
+      ? `study/${
+          param[2]
+        }/board?searchBy=${selectedOption}&keyword=${encodeURIComponent(input)}`
+      : `/board/${
+          param[2]
+        }?searchBy=${selectedOption}&keyword=${encodeURIComponent(input)}`;
     window.location.href = queryString;
   };
 
-  // Disable the search button if input is empty
   const isInputEmpty = input.trim() === "";
 
   return (
@@ -117,9 +121,9 @@ export default function SearchBoxBoard() {
       <VerticalLine />
 
       <Dropdown value={selectedOption} onChange={handleDropdownChange}>
-        <option value="option1">제목</option>
-        <option value="option2">제목+내용</option>
-        <option value="option3">작성자</option>
+        <option value="title">제목</option>
+        <option value="content">제목+내용</option>
+        <option value="author">작성자</option>
       </Dropdown>
       <ButtonContainer>
         <SearchButton onClick={handleSearch} disabled={isInputEmpty}>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import { styled } from "styled-components";
 import { useLocation } from "react-router-dom";
+import Pagination from "../components/Common/Pagination";
 
 
 const Title = styled.div`
@@ -18,6 +19,15 @@ export default function MypageArticles() {
   const [interview, setInterview] = useState([]);
   const [qna, setQna] = useState([]);
   const type = useLocation().pathname.split("/")[2];
+
+  //페이지네이션 재료
+  const [freePage, setFreePage] = useState(0)
+  const [interviewPage, setInterviewPage] = useState(0)
+  const [qnaPage, setQnaPage] = useState(0)
+
+  const maxFree = parseInt(free.length/10)
+  const maxInterview = parseInt(interview.length/10)
+  const maxQna = parseInt(qna.length/10)
 
   useEffect(() => {
     const query = () => {
@@ -52,11 +62,15 @@ export default function MypageArticles() {
   return (
     <>
       <Title>자유게시판</Title>
-      <ArticleList data={free} width={800} type={"free"}></ArticleList>
+      <ArticleList data={free.slice(10*freePage, 10*freePage + 10)} width={800}></ArticleList>
+      {free.length === 0 ? <>글이 없습니다.</> : <Pagination page={freePage} setPage={setFreePage} maxPage={maxFree} handleData={()=>{}}></Pagination> }
+      
       <Title>면접게시판</Title>
-      <ArticleList data={interview} width={800} type={"interview"}></ArticleList>
+      <ArticleList data={interview.slice(10*interviewPage, 10*interviewPage + 10)} width={800}></ArticleList>
+      {interview.length === 0 ? <>글이 없습니다.</> : <Pagination page={interviewPage} setPage={setInterviewPage} maxPage={maxInterview} handleData={()=>{}}></Pagination>}
       <Title>질문게시판</Title>
-      <ArticleList data={qna} width={800} type={"question"}></ArticleList>
+      <ArticleList data={qna.slice(10*qnaPage, 10*qnaPage + 10)} width={800}></ArticleList>
+      {qna.length === 0 ? <>글이 없습니다.</> : <Pagination page={qnaPage} setPage={setQnaPage} maxPage={maxQna} handleData={()=>{}}></Pagination>}
     </>
   );
 }

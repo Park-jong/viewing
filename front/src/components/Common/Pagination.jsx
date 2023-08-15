@@ -47,17 +47,7 @@ const ArrowButton = styled.div`
   }
 `;
 
-export default function Pagination({ setData, page, setPage, maxPage }) {
-  const type = useLocation().pathname.split("/")[2];
-  const param = (type) => {
-    if (type === "free") {
-      return "general";
-    } else if (type === "interview") {
-      return "review";
-    } else if (type === "question") {
-      return "qna";
-    }
-  };
+export default function Pagination({ page, setPage, maxPage, handleData }) {
 
   const handlePage = (e) => {
     if (e < 0) {
@@ -66,14 +56,7 @@ export default function Pagination({ setData, page, setPage, maxPage }) {
       e = maxPage;
     }
     setPage(e);
-    customAxios()
-      .get(`boards/${param(type)}?size=20&page=${e}`) // 페이지size, page
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    handleData(e)
   };
 
   const a = [page];

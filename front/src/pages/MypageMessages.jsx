@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
 import MainButton from "./../components/Button/MainButton";
+import Pagination from "../components/Common/Pagination";
 
 const TitleContainer = styled.div`
   display: flex;
@@ -34,11 +35,18 @@ export default function MypageMessages() {
     return "send";
   };
 
+  // 페이지네이션 재료
+  const [page, setPage] = useState(0)
+  const maxPage = parseInt(data.length /10)
+  function handleData () {
+    console.log("nothing")
+  }
+
   const handleDelete = async () => {
     await deleted.forEach((d) => {
       customAxios()
         .delete(`messages/${d}`)
-        .then((res) => console.log(res))
+        .then((res) => res)
         .catch((err) => alert(`${d}번 쪽지를 삭제하는데 실패했습니다.`));
     });
     alert("삭제완료했습니다.");
@@ -100,7 +108,8 @@ export default function MypageMessages() {
         <></>
       )}
 
-      <MessageList messages={data} deleted={deleted} setDeleted={setDeleted} />
+      <MessageList messages={data.slice(10 * page, 10*page + 10)} deleted={deleted} setDeleted={setDeleted} />
+      <Pagination page={page} setPage={setPage} maxPage={maxPage} handleData={handleData}></Pagination>
     </>
   );
 }

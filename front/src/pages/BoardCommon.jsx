@@ -60,6 +60,11 @@ export default function BoardCommon() {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  useEffect(() => {
+    setPage(0);
+    handleData(0)
   }, [type]);
 
   return (
@@ -81,7 +86,7 @@ export default function BoardCommon() {
           ></MainButton>
         </MarginLeft>
       </BottomContainer>
-      <Pagination setData={setData} page={page} setPage={setPage} maxPage={data.totalPages - 1}></Pagination>
+      <Pagination handleData={handleData} page={page} setPage={setPage} maxPage={data.totalPages - 1}></Pagination>
     </Container>
   );
 }

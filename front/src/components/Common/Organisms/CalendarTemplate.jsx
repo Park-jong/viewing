@@ -28,7 +28,6 @@ export default function CalendarTemplate({ isFlex, value, onChange, modal }) {
     customAxios()
       .get(`members/${memberId}/calendars`)
       .then((res) => {
-        console.log(res.data.data);
         dataChange(res.data.data)
       })
       .catch((err) => console.log(err));
@@ -48,7 +47,7 @@ export default function CalendarTemplate({ isFlex, value, onChange, modal }) {
         value={value}
         onChange={onChange}
       ></Calendar>
-      <TimeBar data={data2} isFlex={isFlex}></TimeBar>
+      <TimeBar data={data2} isFlex={isFlex} dataChange={dataChange}></TimeBar>
     </Container>
   );
 }

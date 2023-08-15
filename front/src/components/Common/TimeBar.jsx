@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import { FakeData2 } from "./FakeData2";
 import moment, { months } from "moment";
+import SubButton from './../Button/SubButton';
+import { customAxios } from './../../modules/Other/Axios/customAxios';
+import { useSelector } from 'react-redux';
+import { UserReducer } from './../../modules/UserReducer/UserReducer';
 
 const BigContainer = styled.div`
   margin-top : ${(props) => {
@@ -93,8 +97,10 @@ export function involve(schedule, object) {
 }
 
 export default function TimeBar(props) {
+  const memberId = useSelector(state => state.UserReducer.memberId)
   const studySchedules = [];
   const personalSchedules = {};
+  const personalScheduleNums = {}
   // personalSchedules 안에 들어갈 형식은 다음과 같다.
   // {'personalId' : []}   personalId에 <Schedule> 넣기
 
@@ -111,13 +117,30 @@ export default function TimeBar(props) {
         personalSchedules[schedule.description].push(
           <Schedule start={start} end={end} key={index}></Schedule>
         );
+        personalScheduleNums[schedule.description].push(schedule.id)
       } else {
         personalSchedules[schedule.description] = [
           <Schedule start={start} end={end} key={index}></Schedule>,
         ];
+        personalScheduleNums[schedule.description]= [schedule.id]
       }
     }
   });
+
+  const handleDelete = async (nums) => {
+    for (let i of nums) {
+      await customAxios()
+      .delete(`members/${memberId}/calendars/${i}`)
+      .then(res => console.log(res))
+      .catch(err => alert("오류가 발생했습니다."))
+    }
+    customAxios()
+      .get(`members/${memberId}/calendars`)
+      .then((res) => {
+        props.dataChange(res.data.data)
+      })
+      .catch((err) => console.log(err));
+  }
 
   const finalSchedules = [];
 
@@ -129,6 +152,8 @@ export default function TimeBar(props) {
           <Bar></Bar>
           {personalSchedules[i]}
         </BarContainer>
+        <SubButton content={"수정하기"}></SubButton>
+        <SubButton content={"삭제하기"} onClick={() => handleDelete(personalScheduleNums[i])}></SubButton>
       </Container>
     );
   }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Search from "../../Icons/Search";
 import { Link } from "react-router-dom";
-import { companyList } from "../Common/CompanyList";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
 
 const SearchContainer = styled.div`
   position: relative;
@@ -98,7 +98,7 @@ const Suggestions = styled.div`
   overflow: auto;
   word-wrap: break-word;
   z-index: 10; /* 다른 요소들보다 위에 위치 */
-  display: ${(props) => (props.visible ? "block" : "none")};
+  display: ${(props) => (props.$visible)};
 `;
 
 const SuggestionValue = styled.div``;
@@ -141,22 +141,28 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
 
   const clickSuggestion = (suggestion) => {
     setInput1(suggestion);
-    setIsVisible(false);
   };
+
+  useEffect(()=>{
+    if(suggestion.length === 0)setIsVisible(false);
+    else if(suggestion.length === 1 && input1===suggestion[0]) setIsVisible(false);
+    else setIsVisible(true);
+  }, [suggestion])
 
   useEffect(() => {
     if (input1.length > 0) {
-      const arr = companyList.filter((company) => company.includes(input1));
-      setSuggestion((prev) => {
-        return arr;
+      customAxios()
+        .get(`companies/${input1}`)
+        .then(({ data }) => {
+          setSuggestion((prev) => {
+            return [...data];
+          })
       });
-      setIsVisible(true);
     } else {
       const arr = [];
       setSuggestion((prev) => {
         return arr;
       });
-      setIsVisible(false);
     }
   }, [input1]);
   return (
@@ -212,7 +218,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
           <SearchIcon />
         </SearchButton>
       </ButtonContainer>
-      <Suggestions visible={isVisible}>
+      <Suggestions $visible={isVisible?"block":"none"}>
         {suggestion.map((s, idx) => {
           return (
             <SuggestionValue

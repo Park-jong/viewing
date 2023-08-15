@@ -83,7 +83,7 @@ const ButtonContainer = styled.div`
 
 const LayoutButton = styled.button`
   padding: 5px 20px;
-  margin: 5px; 
+  margin: 5px;
   background-color: var(--primary);
   color: white;
   border: none;
@@ -105,13 +105,13 @@ const FooterContainer = styled.div`
 
 export default function MeetingPk() {
   // 유저 데이터 - 나중에 redux를 통해 가져와야 함
-  // const userData = useSelector((state) => state.UserReducer);
-  const userData = {
-    memberId: "5",
-    nickname: `nick${Math.ceil(Math.random() * 1000)}`,
-    backgroundColor: "red",
-    backgroundImg: "cow",
-  };
+  const userData = useSelector((state) => state.UserReducer);
+  // const userData = {
+  //   memberId: "5",
+  //   nickname: `nick${Math.ceil(Math.random() * 1000)}`,
+  //   backgroundColor: "red",
+  //   backgroundImg: "cow",
+  // };
 
   // 스터디 아이디  - 이거 pathvariable로 가져오거나 따로 불러오거나
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함
@@ -139,6 +139,13 @@ export default function MeetingPk() {
         : undefined
     );
   }, []);
+
+  useEffect(() => {
+    if (deviceInfo) {
+      setCurrentVideoDevice(deviceInfo.video);
+      setCurrentAudioDevice(deviceInfo.audio);
+    }
+  }, [deviceInfo]);
 
   // 백엔드 통신을 통한 세션/토큰 발급
   const createSession = async () => {

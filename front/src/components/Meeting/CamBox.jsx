@@ -23,7 +23,7 @@ const ProfileContainer = styled.div`
   width: 100%;
   height: 100%;
   background-color: grey;
-  z-index: 50;
+  z-index: -100;
 `;
 
 const ProfileBox = styled.div`

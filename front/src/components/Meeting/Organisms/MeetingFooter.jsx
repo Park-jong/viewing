@@ -7,6 +7,7 @@ import RecordButton from "../RecordButton";
 import ExitButton from "../ExitButton";
 import ChatButton from "../ChatButton";
 import FeedbackButton from "../FeedbackButton";
+import { useState } from "react";
 
 const Container = styled.div`
   /* border: 1px solid black; */
@@ -46,14 +47,17 @@ export default function MeetingFooter({
   currentVideoDevice,
   currentAudioDevice,
 }) {
+  const [currVideo, setCurrVideo] = useState(currentVideoDevice);
+  const [currAudio, setCurrAudio] = useState(currentAudioDevice);
+
   return (
     <Container>
       <GroupingContainer>
         <SelectContainer
-          onChange={changeVideo}
-          value={JSON.stringify(
-            JSON.parse(sessionStorage.getItem("deviceInfo")).video
-          )}
+          onChange={(e) => {
+            changeVideo(e);
+          }}
+          value={JSON.stringify(currVideo)}
           title="비디오 선택"
           id="choiceVideo"
         >
@@ -67,10 +71,10 @@ export default function MeetingFooter({
         </SelectContainer>
         {/* <VideoButton></VideoButton> */}
         <SelectContainer
-          onChange={changeAudio}
-          value={JSON.stringify(
-            JSON.parse(sessionStorage.getItem("deviceInfo")).audio
-          )}
+          onChange={(e) => {
+            changeAudio(e);
+          }}
+          value={JSON.stringify(currAudio)}
           title="오디오 선택"
           id="choiceAudio"
         >

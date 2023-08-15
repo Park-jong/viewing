@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import MainButton from "../Button/MainButton";
 import UserProfile from "../Common/UserProfile";
+import ReactDOM from "react-dom";
 
 const Container = styled.div`
   width: 700px;
@@ -39,6 +40,8 @@ const TextContainer = styled.div`
   top: 50px;
 
   background-color: #f8f6ff;
+  overflow: scroll;
+  cursor: pointer;
 `;
 
 const ButtonContainer = styled.div`
@@ -121,7 +124,18 @@ export default function ResumeBox({
         />
       </ProfileContainer>
       <DateContainer>{date} </DateContainer>
-      <TextContainer>{text}</TextContainer>
+      <TextContainer
+        onClick={() => {
+          const popupWindow = window.open("", "_blank", "width=600,height=400");
+          if (popupWindow) {
+            const popupRoot = popupWindow.document.createElement("div");
+            popupRoot.textContent = text;
+            popupWindow.document.body.appendChild(popupRoot);
+          }
+        }}
+      >
+        {text}
+      </TextContainer>
       {request_files && request_files.length > 0 ? (
         <>
           <FileConatainer>

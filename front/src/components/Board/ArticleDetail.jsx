@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { UserReducer } from "./../../modules/UserReducer/UserReducer";
 import ArticleAxios from "../../modules/Other/Axios/ArticleAxios";
 import SubButton from "../Button/SubButton";
+import { MdAttachFile } from "react-icons/md";
 
 const ArticleContainer = styled.div`
   max-width: 800px;
@@ -103,8 +104,15 @@ const ButtonContainerContainer = styled.div`
 `;
 
 const FileConatainer = styled.div`
-  display: flex;
   margin-bottom: 20px;
+`;
+
+const Icon = styled(MdAttachFile)`
+  transform: rotate(45deg);
+`;
+
+const FileDetailContainer = styled.div`
+  display: flex;
 `;
 
 const File = styled.a``;
@@ -227,26 +235,32 @@ export default function ArticleDetail({ data, setData, count }) {
       </AuthorDateContainer>
 
       <HorizontalLine />
-
+      <Content>{data.content}</Content>
+      <br></br>
       {data.article_files && data.article_files.length > 0 ? (
         <>
-          <h1>첨부파일</h1>
           <FileConatainer>
             {data.article_files.map((file, idx) => (
-              <File
-                href={`${process.env.REACT_APP_SERVER_URL}boards/${data.board_type}/${data.article_id}/files/${file.fileId}`}
-                key={idx}
-              >
-                {file.name}
-              </File>
+              <FileDetailContainer>
+                <Icon></Icon>
+                <h1>첨부파일 :&nbsp;</h1>
+                <File
+                  href={
+                    process.env.REACT_APP_SERVER_URL +
+                    `studies/${param}/boards/${data.article_id}/files/${file.fileId}`
+                  }
+                  key={idx}
+                >
+                  {file.name}
+                </File>
+                <br />
+              </FileDetailContainer>
             ))}
           </FileConatainer>
         </>
       ) : (
         <></>
       )}
-
-      <Content>{data.content}</Content>
 
       {boardTypeText(boardType) !== "공지사항" && <HorizontalLine />}
       {boardTypeText(boardType) !== "공지사항" && (

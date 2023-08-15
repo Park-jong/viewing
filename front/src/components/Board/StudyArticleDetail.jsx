@@ -84,12 +84,15 @@ const ButtonContainerContainer = styled.div`
 `;
 
 const FileConatainer = styled.div`
-  display: flex;
   margin-bottom: 20px;
 `;
 
 const Icon = styled(MdAttachFile)`
   transform: rotate(45deg);
+`;
+
+const FileDetailContainer = styled.a`
+  display: flex;
 `;
 
 const File = styled.a``;
@@ -144,18 +147,20 @@ export default function StudyArticleDetail({ data, setData, count }) {
       {data.article_files && data.article_files.length > 0 ? (
         <>
           <FileConatainer>
-            <Icon></Icon>
-            <h1>첨부파일 :&nbsp;</h1>
             {data.article_files.map((file, idx) => (
-              <File
-                href={
-                  process.env.REACT_APP_SERVER_URL +
-                  `studies/${param}/boards/${data.article_id}/files/${file.fileId}`
-                }
-                key={idx}
-              >
-                {file.name}
-              </File>
+              <FileDetailContainer>
+                <Icon></Icon>
+                <h1>첨부파일 :&nbsp;</h1>
+                <File
+                  href={
+                    process.env.REACT_APP_SERVER_URL +
+                    `studies/${param}/boards/${data.article_id}/files/${file.fileId}`
+                  }
+                  key={idx}
+                >
+                  {file.name}
+                </File>
+              </FileDetailContainer>
             ))}
           </FileConatainer>
         </>

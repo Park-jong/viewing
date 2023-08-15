@@ -54,6 +54,8 @@ const MetaItem = styled.div`
   margin-right: 31px;
 `;
 
+const noDataContainer = styled.div``;
+
 export default function ArticleList({ data, width, type }) {
   const location = useLocation();
   const study_id = useLocation().pathname.split("/")[2];
@@ -78,53 +80,62 @@ export default function ArticleList({ data, width, type }) {
 
   return (
     <>
-      <ArticleContainer>
-        <HeaderContainer $width={width}>
-          <ProfileContainer>작성자</ProfileContainer>
-          <TitleContainer>제목</TitleContainer>
+      {data.length > 0 ? (
+        <ArticleContainer>
+          <HeaderContainer $width={width}>
+            <ProfileContainer>작성자</ProfileContainer>
+            <TitleContainer>제목</TitleContainer>
 
-          <MetaContainer>
-            {isStudyBoard ? null : <MetaItem>조회수</MetaItem>}
-            <MetaItem>댓글</MetaItem>
-            {isStudyBoard ? null : <MetaItem>하트</MetaItem>}
-          </MetaContainer>
-        </HeaderContainer>
-        {isStudyBoard
-          ? data.map((article, idx) => (
-              <ArticleBox
-                url={"/study/" + type + "/board/" + article.article_id}
-                key={idx}
-                title={article.title}
-                width={width}
-                nickname={article.author.nickname}
-                member_id={article.author.member_id}
-                backgroundcolor={article.author.member_profile_background}
-                character={article.author.member_profile_image}
-                commentCount={article.comment_count}
-              />
-            ))
-          : data.map((article, idx) => (
-              <ArticleBox
-                url={"/board/" + type + "/" + article.article_id}
-                key={idx}
-                nickname={article.author.nickname}
-                member_id={article.author.member_id}
-                backgroundcolor={article.author.member_profile_background}
-                character={article.author.member_profile_image}
-                title={article.title}
-                commentCount={article.comment_count}
-                heartCount={article.like_count}
-                viewCount={article.view_count}
-                width={width}
-              />
-            ))}
-      </ArticleContainer>
-      {/* <Pagination
-        limit={limit}
-        page={page}
-        totalPosts={data.length} //4. totalPosts : 데이터의 총 posts 갯수
-        setPage={setPage}
-      /> */}
+            <MetaContainer>
+              {isStudyBoard ? null : <MetaItem>조회수</MetaItem>}
+              <MetaItem>댓글</MetaItem>
+              {isStudyBoard ? null : <MetaItem>하트</MetaItem>}
+            </MetaContainer>
+          </HeaderContainer>
+          {isStudyBoard
+            ? data.map((article, idx) => (
+                <ArticleBox
+                  url={"/study/" + type + "/board/" + article.article_id}
+                  key={idx}
+                  title={article.title}
+                  width={width}
+                  nickname={article.author.nickname}
+                  member_id={article.author.member_id}
+                  backgroundcolor={article.author.member_profile_background}
+                  character={article.author.member_profile_image}
+                  commentCount={article.comment_count}
+                />
+              ))
+            : data.map((article, idx) => (
+                <ArticleBox
+                  url={"/board/" + type + "/" + article.article_id}
+                  key={idx}
+                  nickname={article.author.nickname}
+                  member_id={article.author.member_id}
+                  backgroundcolor={article.author.member_profile_background}
+                  character={article.author.member_profile_image}
+                  title={article.title}
+                  commentCount={article.comment_count}
+                  heartCount={article.like_count}
+                  viewCount={article.view_count}
+                  width={width}
+                />
+              ))}
+        </ArticleContainer>
+      ) : (
+        <noDataContainer>
+          <br></br>
+          <p>일치하는 글이 존재하지 않습니다.</p>
+          <br></br>
+        </noDataContainer>
+      )}
     </>
   );
 }
+
+/* <Pagination
+limit={limit}
+page={page}
+totalPosts={data.length} //4. totalPosts : 데이터의 총 posts 갯수
+setPage={setPage}
+/> */

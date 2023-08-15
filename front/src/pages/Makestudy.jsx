@@ -59,6 +59,7 @@ const InputContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   margin: 20px 0px;
+  position: relative;
 `;
 
 const InputLabel = styled.label`
@@ -81,7 +82,10 @@ const InputField = styled.input`
   padding-inline: 0.5em;
   padding-block: 0.7em;
   border: none;
-  border-bottom: var(--border-height) solid var(--border-before-color);
+  border-bottom: ${(props) =>
+    props.$state
+      ? "1px solid red"
+      : "var(--border-height) solid var(--border-before-color)"};
 
   margin-right: 50px;
 
@@ -176,8 +180,10 @@ const TextArea = styled.textarea`
   background-color: transparent;
   box-sizing: border-box;
   padding: 8px;
-  border: none;
-  border: var(--border-height) solid var(--border-before-color);
+  border: ${(props) =>
+    props.$state
+      ? "1px solid red"
+      : "var(--border-height) solid var(--border-before-color)"};
   height: 300px;
 
   font-family: Pretendard;
@@ -232,6 +238,23 @@ const TagPick = styled.div`
   margin-bottom: 10px;
 `;
 
+const Suggestions = styled.div`
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  width: 100%;
+  max-height: 100px;
+  position: absolute;
+  top: 100%; /* 입력 필드 아래에 위치 */
+  left: 10px;
+  overflow: auto;
+  word-wrap: break-word;
+  z-index: 10; /* 다른 요소들보다 위에 위치 */
+  display: ${(props) => props.$visible};
+`;
+
+const SuggestionValue = styled.div``;
+
 export default function MakeStudy() {
   const currentDate = new Date().toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
   const navigate = useNavigate();
@@ -243,27 +266,63 @@ export default function MakeStudy() {
   const [deadline, setDeadline] = useState(currentDate);
   const [studyName, setStudyName] = useState("");
   const [studyDescription, setStudyDescription] = useState("");
-  const [tagList] = useState(TAG_LIST);
+  const [tagList, setTagList] = useState(TAG_LIST);
 
-  const [, setChoiceTagID] = useState(1);
   const [clickValue, setClickValue] = useState(false);
   const [filterTag, setFilterTag] = useState([]);
 
+  const [suggestion, setSuggestion] = useState([]);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const [studyCompanyState, setStudyCompanyState] = useState(false);
+  const [studyJobState, setStudyJobState] = useState(false);
+  const [studyNameState, setStudyNameState] = useState(false);
+  const [studyDescState, setStudyDescState] = useState(false);
+
+  const maxContentLength = 2000;
+
+  const clickSuggestion = (suggestion) => {
+    setAppliedCompany(suggestion);
+  };
+
   const clickTagBtn = (id) => {
-    setChoiceTagID(id);
-    setClickValue(!clickValue);
-    tagList[id].isChecked = !clickValue;
+    if (tagList[id].isChecked == undefined) tagList[id].isChecked = true;
+    else tagList[id].isChecked = !tagList[id].isChecked;
+    setTagList((prev) => [...prev]);
   };
 
   useEffect(() => {
     setFilterTag(tagList.filter((tag) => tag.isChecked === true));
-  }, [clickValue, tagList]);
+  }, [tagList]);
 
   const tagAxios = filterTag.map((item) => item.id);
-  console.log(tagAxios);
   //redux
   const leaderId = useSelector((state) => state.UserReducer.memberId);
-  console.log(leaderId);
+
+  const validation = (body) => {
+    let result = true;
+    if (body.title) setStudyNameState(false);
+    else {
+      setStudyNameState(true);
+      result = false;
+    }
+    if (body.description) setStudyDescState(false);
+    else {
+      setStudyDescState(true);
+      result = false;
+    }
+    if (body.applied_company) setStudyCompanyState(false);
+    else {
+      setStudyCompanyState(true);
+      result = false;
+    }
+    if (body.applied_job) setStudyJobState(false);
+    else {
+      setStudyJobState(true);
+      result = false;
+    }
+    return result;
+  };
 
   //axios
   const handleMake = () => {
@@ -278,17 +337,44 @@ export default function MakeStudy() {
       tag: tagAxios,
       leader_id: leaderId,
     };
-    customAxios()
-      .post(`studies`, studyData)
-      .then((response) => {
-        alert("생성되었습니다.");
-        navigate("/");
-      })
-      .catch((error) => {
-        alert("스터디 생성 중 에러가 발생했습니다.");
-        console.error("에러가 발생했습니다.:", error);
-      });
+    if (validation(studyData)) {
+      customAxios()
+        .post(`studies`, studyData)
+        .then((response) => {
+          alert("생성되었습니다.");
+          navigate("/");
+        })
+        .catch((error) => {
+          alert("스터디 생성 중 에러가 발생했습니다.");
+        });
+    } else {
+      alert("입력 값을 확인해 주세요.");
+    }
   };
+
+  useEffect(() => {
+    if (suggestion.length === 0) setIsVisible(false);
+    else if (suggestion.length === 1 && appliedCompany === suggestion[0])
+      setIsVisible(false);
+    else setIsVisible(true);
+  }, [suggestion]);
+
+  useEffect(() => {
+    if (appliedCompany.length > 0) {
+      customAxios()
+        .get(`companies/${appliedCompany}`)
+        .then(({ data }) => {
+          setSuggestion((prev) => {
+            return [...data];
+          });
+        });
+    } else {
+      const arr = [];
+      setSuggestion((prev) => {
+        return arr;
+      });
+    }
+  }, [appliedCompany]);
 
   return (
     <Container>
@@ -300,15 +386,37 @@ export default function MakeStudy() {
           <InputField
             type="text"
             value={appliedCompany}
-            onChange={(e) => setAppliedCompany(e.target.value)}
+            maxLength={30}
+            onChange={(e) => {
+              setAppliedCompany(e.target.value);
+            }}
+            $state={studyCompanyState}
           />
+          <Suggestions $visible={isVisible ? "block" : "none"}>
+            {suggestion.map((s, idx) => {
+              return (
+                <SuggestionValue
+                  key={idx}
+                  onClick={() => {
+                    clickSuggestion(s);
+                  }}
+                >
+                  {s}
+                </SuggestionValue>
+              );
+            })}
+          </Suggestions>
         </InputContainer>
         <InputContainer>
           <InputLabel>지원직무</InputLabel>
           <InputField
             type="text"
             value={appliedJob}
-            onChange={(e) => setAppliedJob(e.target.value)}
+            maxLength={20}
+            onChange={(e) => {
+              setAppliedJob(e.target.value);
+            }}
+            $state={studyJobState}
           />
         </InputContainer>
 
@@ -316,7 +424,9 @@ export default function MakeStudy() {
           <InputLabel>경력 여부</InputLabel>
           <SelectField
             value={career}
-            onChange={(e) => setCareer(e.target.value)}
+            onChange={(e) => {
+              setCareer(e.target.value);
+            }}
           >
             {careerOptions.map((option, idx) => (
               <option key={option} value={valueOptions[idx]}>
@@ -333,7 +443,9 @@ export default function MakeStudy() {
             <DeadlineInput
               type="date"
               value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
+              onChange={(e) => {
+                setDeadline(e.target.value);
+              }}
               min={currentDate}
             />
             <DateIcon />
@@ -343,7 +455,9 @@ export default function MakeStudy() {
           <InputLabel>최대인원</InputLabel>
           <SelectField
             value={capacity}
-            onChange={(e) => setCapacity(e.target.value)}
+            onChange={(e) => {
+              setCapacity(e.target.value);
+            }}
           >
             {Array.from({ length: 6 }, (_, i) => i + 1).map((number) => (
               <option key={number} value={number}>
@@ -361,7 +475,9 @@ export default function MakeStudy() {
         <InputField
           type="text"
           value={studyName}
+          maxLength={30}
           onChange={(e) => setStudyName(e.target.value)}
+          $state={studyNameState}
         />
         <span className="input-border"></span>
       </InputContainer>
@@ -369,9 +485,12 @@ export default function MakeStudy() {
         <InputLabel>스터디 소개글</InputLabel>
         <TextArea
           value={studyDescription}
+          maxLength={maxContentLength}
           onChange={(e) => setStudyDescription(e.target.value)}
           placeholder="스터디에 대해 소개해주세요."
+          $state={studyDescState}
         />
+        {studyDescription.length}/{maxContentLength}
         <span className="input-border"></span>
       </InputContainer>
       <InputContainer>
@@ -384,7 +503,13 @@ export default function MakeStudy() {
           </TagText>
           <TagContainer>
             {tagList.map((tag) => (
-              <TagData key={tag.id} tagData={tag} clickTagBtn={clickTagBtn} />
+              <TagData
+                key={tag.id}
+                tagData={tag}
+                clickTagBtn={() => {
+                  clickTagBtn(tag.id);
+                }}
+              />
             ))}
           </TagContainer>
           {/* <TagPickText>선택된 태그</TagPickText>

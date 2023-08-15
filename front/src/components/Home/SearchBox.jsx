@@ -98,7 +98,7 @@ const Suggestions = styled.div`
   overflow: auto;
   word-wrap: break-word;
   z-index: 10; /* 다른 요소들보다 위에 위치 */
-  display: ${(props) => (props.$visible)};
+  display: ${(props) => props.$visible};
 `;
 
 const SuggestionValue = styled.div``;
@@ -143,11 +143,12 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
     setInput1(suggestion);
   };
 
-  useEffect(()=>{
-    if(suggestion.length === 0)setIsVisible(false);
-    else if(suggestion.length === 1 && input1===suggestion[0]) setIsVisible(false);
+  useEffect(() => {
+    if (suggestion.length === 0) setIsVisible(false);
+    else if (suggestion.length === 1 && input1 === suggestion[0])
+      setIsVisible(false);
     else setIsVisible(true);
-  }, [suggestion])
+  }, [suggestion]);
 
   useEffect(() => {
     if (input1.length > 0) {
@@ -156,8 +157,8 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
         .then(({ data }) => {
           setSuggestion((prev) => {
             return [...data];
-          })
-      });
+          });
+        });
     } else {
       const arr = [];
       setSuggestion((prev) => {
@@ -171,6 +172,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
         type="text"
         name="input1"
         value={input1}
+        maxLength={30}
         onChange={(e) => {
           handleInputChange(e);
         }}
@@ -186,6 +188,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
         type="text"
         name="input2"
         value={input2}
+        maxLength={20}
         onChange={(e) => {
           handleInputChange(e);
         }}
@@ -218,7 +221,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
           <SearchIcon />
         </SearchButton>
       </ButtonContainer>
-      <Suggestions $visible={isVisible?"block":"none"}>
+      <Suggestions $visible={isVisible ? "block" : "none"}>
         {suggestion.map((s, idx) => {
           return (
             <SuggestionValue

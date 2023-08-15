@@ -35,6 +35,9 @@ public class CalendarService {
     //일정 추가
     @Transactional
     public CalendarCreatedResponse createCalendar(CalendarRetrieveRequest calendarDto){
+        if(calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())){
+            throw new CreationFailException("일정의 시작시간이 끝나느 시간보다 앞서야 합니다.");
+        }
         Member author = memberRepository.findMemberById(calendarDto.getMemberId());
         Calendar calendar = CalendarRetrieveRequest.toEntity(calendarDto,author);
         calendarRepository.save(calendar);
@@ -60,6 +63,9 @@ public class CalendarService {
     //일정 수정
     @Transactional
     public void updateCalendar(CalendarRetrieveRequest calendarDto){
+        if(calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())){
+            throw new CreationFailException("일정의 시작시간이 끝나는 시간보다 앞서야 합니다.");
+        }
         Member updatedMember = memberRepository.findMemberById(calendarDto.getMemberId());
         if(updatedMember==null){
             throw new CreationFailException("캘린더");

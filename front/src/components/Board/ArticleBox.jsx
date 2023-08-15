@@ -47,8 +47,8 @@ const MetaItem = styled.div`
   color: #999;
   display: flex;
   align-items: center;
-  margin-right: 24px;
-
+  margin-right: 15px;
+  width: 40px;
   svg {
     margin-right: 4px;
   }
@@ -86,18 +86,28 @@ export default function ArticleBox({
           />
         )}
       </ProfileContainer>
-      <Title to={`${url}`}>{title}</Title>
+      <Title to={`${url}`}>
+        {title
+          ? title.length > 30
+            ? `${title.slice(0, 30)}...`
+            : title
+          : "제목없음"}
+      </Title>
 
       <MetaContainer>
-        {isStudyBoard ? null : <MetaItem>{viewCount}</MetaItem>}
+        {isStudyBoard ? null : (
+          <MetaItem>
+            {viewCount > 1000 ? `${viewCount / 1000}K` : viewCount}
+          </MetaItem>
+        )}
         <MetaItem>
           <BiCommentDetail size={14} />
-          {commentCount}
+          {commentCount > 1000 ? `${commentCount / 1000}K` : commentCount}
         </MetaItem>
         {isStudyBoard ? null : (
           <MetaItem>
             {is_like ? <BiSolidHeart size={14} /> : <BiHeart size={14} />}
-            {heartCount}
+            {heartCount > 1000 ? `${heartCount / 1000}K` : heartCount}
           </MetaItem>
         )}
       </MetaContainer>

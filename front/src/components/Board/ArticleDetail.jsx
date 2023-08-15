@@ -42,6 +42,7 @@ const Title = styled.div`
   font-size: 28px;
   font-weight: bold;
   margin: 15px 0px;
+  word-break: break-all;
 `;
 
 const AuthorDateContainer = styled.div`

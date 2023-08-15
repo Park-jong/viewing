@@ -170,6 +170,7 @@ const BodyContainer = styled.div`
 `;
 
 const TagLabel = styled.label`
+  user-select: none;
   cursor: pointer;
 `;
 

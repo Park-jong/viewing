@@ -22,8 +22,8 @@ export default function MypageCalendar() {
 
   return (
     <Container>
-      <CalendarTemplate isFlex={false} value={value} onChange={onChange} modal={modal}></CalendarTemplate>
-      <MainButton content={"일정 추가"} width={100} height={30} onClick={() => setModal(true)}></MainButton>
+      <CalendarTemplate isFlex={false} value={value} onChange={onChange} modal={modal} setModal={setModal}></CalendarTemplate>
+      
       <AlertModal isOpen={modal} onClose={() => setModal(false)} type={"schedule"} value={value} onChange={onChange}></AlertModal>
     </Container>
   );

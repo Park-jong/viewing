@@ -5,13 +5,14 @@ import SubButton from './../Button/SubButton';
 import { customAxios } from './../../modules/Other/Axios/customAxios';
 import { useSelector } from 'react-redux';
 import { UserReducer } from './../../modules/UserReducer/UserReducer';
+import { BiSolidPencil, BiSolidTrash } from "react-icons/bi";
 
 const BigContainer = styled.div`
   margin-top : ${(props) => {
     if (props.$isflex) {
       return "0px"
     } else {
-      return "50px"
+      return "20px"
     };
   }};
 `
@@ -44,6 +45,8 @@ const NickName = styled.div`
 const BarContainer = styled.div`
   height: 50px;
   width: 400px;
+  border-radius: 10px;
+  overflow: hidden;
   position: relative;
 `;
 
@@ -62,9 +65,18 @@ const Schedule = styled.div`
   width: ${(props) => `${(props.end - props.start) * 400}px`};
   margin-left: ${(props) => `${props.start * 400}px`};
   background-color: var(--primary);
-
-  
 `;
+
+  const Button = styled.div`
+    margin-left: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: var(--gray-200);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `
 
 // props에 해당 날짜를 받는다. 날짜에 맞는 스케줄은 상위로직에서 수행한다.
 // props.clicked 에 날짜가 담겨있다. props.clicked
@@ -137,7 +149,7 @@ export default function TimeBar(props) {
     customAxios()
       .get(`members/${memberId}/calendars`)
       .then((res) => {
-        props.dataChange(res.data.data)
+        props.dataChange(res.data)
       })
       .catch((err) => console.log(err));
   }
@@ -152,8 +164,12 @@ export default function TimeBar(props) {
           <Bar></Bar>
           {personalSchedules[i]}
         </BarContainer>
-        <SubButton content={"수정하기"}></SubButton>
-        <SubButton content={"삭제하기"} onClick={() => handleDelete(personalScheduleNums[i])}></SubButton>
+        <Button>
+          <BiSolidPencil size={22}></BiSolidPencil>
+        </Button>
+        <Button onClick={() => handleDelete(personalScheduleNums[i])}>
+          <BiSolidTrash size={22}></BiSolidTrash>
+        </Button>
       </Container>
     );
   }

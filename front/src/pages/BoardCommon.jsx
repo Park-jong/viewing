@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import MainButton from "../components/Button/MainButton";
 import { useLocation, useNavigate } from "react-router-dom";
-import Pagination from './../components/Common/Pagination';
+import Pagination from "./../components/Common/Pagination";
 
 const Container = styled.div`
   display: flex;
@@ -50,10 +50,9 @@ export default function BoardCommon() {
       keyword ? "keyword=" + keyword : ""
     }`;
 
-  useEffect(() => {
-    setPage(0);
+  function handleData(e) {
     customAxios()
-      .get(getSearchUrl() + `&size=20&page=${0}`) // 페이지size, page
+      .get(getSearchUrl() + `&size=20&page=${e}`) // 페이지size, page
       .then((res) => {
         setData(res.data);
       })
@@ -64,7 +63,7 @@ export default function BoardCommon() {
 
   useEffect(() => {
     setPage(0);
-    handleData(0)
+    handleData(0);
   }, [type]);
 
   return (
@@ -86,7 +85,12 @@ export default function BoardCommon() {
           ></MainButton>
         </MarginLeft>
       </BottomContainer>
-      <Pagination handleData={handleData} page={page} setPage={setPage} maxPage={data.totalPages - 1}></Pagination>
+      <Pagination
+        handleData={handleData}
+        page={page}
+        setPage={setPage}
+        maxPage={data.totalPages - 1}
+      ></Pagination>
     </Container>
   );
 }

@@ -13,6 +13,7 @@ import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
 import com.ssafy.interviewstudy.dto.study.*;
 import com.ssafy.interviewstudy.exception.calendar.updateFailException;
+import com.ssafy.interviewstudy.exception.message.CreationFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.calendar.CalendarRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -494,6 +495,9 @@ public class StudyService {
     //스터디 일정 추가
     @Transactional
     public Integer addStudyCalendar(Integer studyId, StudyCalendarDtoRequest studyCalendarDtoRequest){
+        if(studyCalendarDtoRequest.getStartedAt().isAfter(studyCalendarDtoRequest.getEndedAt())){
+            throw new CreationFailException("스터디 일정 시작시간이 끝나는 시간보다 앞서야합니다.");
+        }
         Study study = studyRepository.findById(studyId).get();
         Member member = memberRepository.findById(studyCalendarDtoRequest.getMemberId()).get();
         StudyCalendar studyCalendar = new StudyCalendar(study, member, studyCalendarDtoRequest);
@@ -525,6 +529,9 @@ public class StudyService {
     //스터디 일정 수정
     @Transactional
     public void modifyStudyCalendar(Integer studyId, Integer studyCalendarId, StudyCalendarDtoRequest studyCalendarDtoRequest){
+        if(studyCalendarDtoRequest.getStartedAt().isAfter(studyCalendarDtoRequest.getEndedAt())){
+            throw new CreationFailException("스터디 일정 시작시간이 끝나는 시간보다 앞서야합니다.");
+        }
         StudyCalendar studyCalendar = studyCalendarRepository.findById(studyCalendarId).get();
         studyCalendar.updateCalendar(studyCalendarDtoRequest);
     }

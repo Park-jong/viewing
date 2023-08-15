@@ -6,6 +6,7 @@ import { customAxios } from "../modules/Other/Axios/customAxios";
 import { styled } from "styled-components";
 import BoardNavBar from "../components/Board/BoardNavBar";
 import ArticleList from "../components/Board/Organisms/ArticleList";
+import Pagination from "./../components/Common/Pagination";
 
 const Container = styled.div`
   display: flex;
@@ -29,9 +30,10 @@ export default function StudyPkBoard() {
   const study_id = useLocation().pathname.split("/")[2];
   const [data, setData] = useState([]);
 
+  const [page, setPage] = useState(0);
   useEffect(() => {
     customAxios()
-      .get(`/studies/${study_id}/boards?size=20&page${0}`)
+      .get(`/studies/${study_id}/boards?size=20&page${page}`)
       .then((res) => {
         setData(res.data);
         console.log(res.data);
@@ -40,6 +42,16 @@ export default function StudyPkBoard() {
         console.log(err);
       });
   }, []);
+  function handleData(e) {
+    customAxios()
+      .get(`/studies/${study_id}/boards?&size=20&page=${e}`) // 페이지size, page
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <Container>
@@ -59,6 +71,12 @@ export default function StudyPkBoard() {
         </ButtonContainer>
         <SearchBoxBoard></SearchBoxBoard>
       </FlexContainer>
+      <Pagination
+        handleData={handleData}
+        page={page}
+        setPage={setPage}
+        maxPage={data.totalPages - 1}
+      ></Pagination>
     </Container>
   );
 }

@@ -108,11 +108,11 @@ export default function BoardWrite() {
 
   const SendRequest = (e) => {
     if (!title.trim()) {
-      alert("제목을 입력하세요.")
-      return
+      alert("제목을 입력하세요.");
+      return;
     } else if (!content.trim()) {
-      alert("내용을 입력하세요.")
-      return
+      alert("내용을 입력하세요.");
+      return;
     }
 
     const formData = new FormData();
@@ -130,7 +130,7 @@ export default function BoardWrite() {
       .post(`boards/${category}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + token,
+          "Authorization": "Bearer " + token,
         },
       })
       .then(function (res) {
@@ -178,6 +178,7 @@ export default function BoardWrite() {
         <TitleInput
           onChange={(e) => handleTitle(e)}
           placeholder="제목을 입력해주세요."
+          maxLength={100}
         ></TitleInput>{" "}
       </Title>
       {/* <Content>내용</Content> */}

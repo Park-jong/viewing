@@ -141,9 +141,10 @@ export default function ReplyInput({
     <ReplyContainer>
       <InputStyled
         as="textarea"
-        placeholder="댓글을 입력하세요."
+        placeholder="댓글을 입력하세요. (최대 200자)"
         value={text}
         onChange={handleInput}
+        maxLength={200}
       />
       <ButtonReply onClick={handleClick}>등록</ButtonReply>
     </ReplyContainer>

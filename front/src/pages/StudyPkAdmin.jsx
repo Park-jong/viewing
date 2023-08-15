@@ -582,6 +582,7 @@ export default function StudyPkAdmin() {
           type="text"
           value={studyTitle}
           onChange={changeTitle}
+          maxLength={100}
         ></StudyTitleInputBox>
       </StudyName>
       <Description>

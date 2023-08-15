@@ -89,7 +89,7 @@ export default function StudyPkBoardWrite() {
       .post(`studies/${study_id}/boards`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + token,
+          "Authorization": "Bearer " + token,
         },
       })
       .then(function (res) {
@@ -111,6 +111,7 @@ export default function StudyPkBoardWrite() {
           <TitleInput
             placeholder="제목을 입력해주세요."
             onChange={(e) => handleTitle(e)}
+            maxLength={100}
           ></TitleInput>{" "}
         </Title>
         {/* <Content>내용</Content> */}

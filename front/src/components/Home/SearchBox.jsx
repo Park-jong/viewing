@@ -198,6 +198,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
             handleSearch();
           }
         }}
+        maxLength={100}
       />
       <VerticalLine />
 

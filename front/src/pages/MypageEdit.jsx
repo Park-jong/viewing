@@ -200,6 +200,7 @@ export default function MypageEdit() {
             id="userId"
             defaultValue={nickname}
             onChange={handleNickname}
+            maxLength={30}
           />
           <Error>{errors?.userId?.message}</Error>
           <SubButton

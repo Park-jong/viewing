@@ -114,6 +114,7 @@ export default function SearchBoxBoard() {
         type="text"
         value={input}
         onChange={handleInputChange}
+        maxLength={100}
         placeholder="검색어를 입력하세요."
       />
       <VerticalLine />

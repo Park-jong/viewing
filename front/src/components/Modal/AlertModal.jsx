@@ -83,7 +83,10 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
           <ModalText> 개인 일정 추가 </ModalText>
           <ModalText>
             제목
-            <input onChange={(e) => setTitle(e.target.value)}></input>
+            <input
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={100}
+            ></input>
           </ModalText>
           <ModalText>
             일시
@@ -150,7 +153,7 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
           })
           .catch((err) => {
             console.log(err);
-            alert("에러가 발생했습니다.")
+            alert("에러가 발생했습니다.");
             onClose(false);
           });
     }
@@ -173,7 +176,12 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
                 marginright={20}
                 onClick={() => confirm({ type })}
               ></MainButton>
-              <MainButton content={"취소"} width={50} height={30} onClick={() => onClose(false)}></MainButton>
+              <MainButton
+                content={"취소"}
+                width={50}
+                height={30}
+                onClick={() => onClose(false)}
+              ></MainButton>
             </Buttons>
           </ModalContent>
         </ModalOverlay>

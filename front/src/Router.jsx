@@ -285,6 +285,7 @@ const router = createBrowserRouter([
     path: "message",
     element: <Message />,
   },
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;

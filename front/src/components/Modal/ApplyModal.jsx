@@ -78,15 +78,20 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
       .post(`studies/${study_id}/requests`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + token,
+          "Authorization": "Bearer " + token,
         },
       })
       .then(function (response) {
         console.log(response);
+        alert("신청이 완료되었습니다.");
         handleCloseModal();
       })
       .catch((error) => {
+        if (error.response.status === 400) {
+          alert("이미 신청한 스터디입니다.");
+        }
         console.error("에러가 발생했습니다.:", error);
+        handleCloseModal();
       });
   };
 

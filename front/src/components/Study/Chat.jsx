@@ -112,9 +112,8 @@ export default function Chat() {
   const member = useSelector((state) => state.UserReducer);
   const [msg, setMsg] = useState("");
   const [msgList, setMsgList] = useState([]);
-  const sockJS = new SockJS(`${process.env.REACT_APP_SERVER_URL}studyChat`);
-  const stompClient = stompjs.over(sockJS);
-  stompClient.debug = null;
+  const [sock, setSock] = useState(null);
+  const [stomp, setStomp] = useState(null);
   const studyId = useParams().studyPk;
   const [oldMsgState, setOldMsgState] = useState(true);
   const scrollRef = useRef();
@@ -127,8 +126,8 @@ export default function Chat() {
   //메시지 전송
   const sendMsg = () => {
     try {
-      if (sockJS.readyState === 1) {
-        stompClient.send(
+      if (sock.readyState === 1) {
+        stomp.send(
           "/app/chats/studies/" + studyId,
           {},
           JSON.stringify({ member_id: member.memberId, content: msg })
@@ -200,6 +199,11 @@ export default function Chat() {
 
   //처음 접속 시
   useEffect(() => {
+    const sockJS = new SockJS(`${process.env.REACT_APP_SERVER_URL}studyChat`);
+    const stompClient = stompjs.over(sockJS);
+    stompClient.debug = null;
+    setSock(() => sockJS);
+    setStomp(() => stompClient);
     customAxios()
       .get(`studies/${studyId}/chats`)
       .then(({ data }) => {

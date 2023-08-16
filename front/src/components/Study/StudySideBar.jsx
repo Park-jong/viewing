@@ -98,7 +98,6 @@ export default function StudySideBar() {
 
   useEffect(() => {
     if (isLeader) {
-      console.log("리더 데스");
       setManageMenu(() => "스터디 관리");
       setLinkList((prevList) => [
         ...prevList.slice(0, 3),
@@ -111,7 +110,6 @@ export default function StudySideBar() {
         ...prevList.slice(3),
       ]);
     } else {
-      console.log("리더쟈 나이데스");
       setManageMenu(() => "스터디 정보");
     }
   }, [isLeader]);

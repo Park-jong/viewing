@@ -145,8 +145,6 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
 
   useEffect(() => {
     if (suggestion.length === 0) setIsVisible(false);
-    else if (suggestion.length === 1 && input1 === suggestion[0])
-      setIsVisible(false);
     else setIsVisible(true);
   }, [suggestion]);
 
@@ -181,6 +179,9 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
           if (e.key === "Enter") {
             handleSearch();
           }
+        }}
+        onBlur={() => {
+          setIsVisible(false);
         }}
       />
       <VerticalLine />

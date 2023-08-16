@@ -113,12 +113,14 @@ export default function MypageMessages() {
         deleted={deleted}
         setDeleted={setDeleted}
       />
-      <Pagination
-        page={page}
-        setPage={setPage}
-        maxPage={maxPage}
-        handleData={handleData}
-      ></Pagination>
+      {data.length ? (
+        <Pagination
+          page={page}
+          setPage={setPage}
+          maxPage={maxPage}
+          handleData={handleData}
+        ></Pagination>
+      ) : undefined}
     </>
   );
 }

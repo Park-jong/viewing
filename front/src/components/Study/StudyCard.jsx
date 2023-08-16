@@ -231,7 +231,7 @@ export default function StudyCard({ study }) {
         />
       </CompanyContainer>
 
-      <DateContainer>마감일 | {study.deadline}</DateContainer>
+      <DateContainer>마감일 | {study.deadline.split(" ")[0]}</DateContainer>
 
       <TitleContainer>{study.title}</TitleContainer>
 

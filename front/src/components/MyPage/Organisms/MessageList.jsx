@@ -6,7 +6,7 @@ const EmptyMessage = styled.div`
   padding-bottom: 30px;
 `;
 
-export default function MessageList({ messages, deleted, setDeleted }) {
+export default function MessageList({ messages, deleted, setDeleted,isSend}) {
   return (
     <>
       {messages.length > 0 ? (
@@ -14,7 +14,7 @@ export default function MessageList({ messages, deleted, setDeleted }) {
           <MessageBox
             key={idx}
             message_id={message.messageId} // Pass the message_id prop here
-            name={message.author.nickname}
+            name={isSend ? message.author.nickname : message.receiver.nickname}
             title={message.title}
             date={message.created_at}
             deleted={deleted}

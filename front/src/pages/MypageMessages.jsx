@@ -76,6 +76,7 @@ export default function MypageMessages() {
       .catch((err) => console.log(err));
   }, [useLocation()]);
 
+  console.log(data.slice(10 * page, 10 * page + 10));
   return (
     <>
       <TitleContainer>
@@ -107,11 +108,11 @@ export default function MypageMessages() {
       ) : (
         <></>
       )}
-
       <MessageList
         messages={data.slice(10 * page, 10 * page + 10)}
         deleted={deleted}
         setDeleted={setDeleted}
+        isSend ={param==="send"}
       />
       {data.length ? (
         <Pagination

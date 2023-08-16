@@ -8,7 +8,7 @@ import { FakeData } from "./FakeData";
 
 const Container = styled.div`
   .react-calendar {
-    width: 600px;
+    width: 800px;
     max-width: 100%;
     background: white;
     /* border: 1px solid #a0a096; */
@@ -190,11 +190,10 @@ const StudyDot = styled.div`
 export default function StudyCalendar(props) {
   // const [value, onChange] = useState(new Date());
   // const [data, dataChange] = useState([]);
-  const data = props.data
-  const dataChange = props.dataChange
-  const value = props.value
-  const onChange = props.onChange
-
+  const data = props.data;
+  const dataChange = props.dataChange;
+  const value = props.value;
+  const onChange = props.onChange;
 
   // axios로 스터디원의 일정을 받아왔을 때!
   // useEffect(() => {

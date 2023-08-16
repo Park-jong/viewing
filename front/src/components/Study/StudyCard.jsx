@@ -193,6 +193,21 @@ export default function StudyCard({ study }) {
       });
   };
 
+  switch (study.career_level) {
+    case "NEWCOMER":
+      study.career_level = "신입";
+      break;
+    case "INTERN":
+      study.career_level = "인턴";
+      break;
+    case "ALL":
+      study.career_level = "무관";
+      break;
+    case "EXPERIENCED":
+      study.career_level = "경력";
+      break;
+  }
+
   return (
     <Container
       onClick={() => {

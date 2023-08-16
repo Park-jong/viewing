@@ -68,6 +68,7 @@ public class BoardService {
     }
 
     // 글 detail 조회
+    @Transactional
     public BoardResponse findArticle(Integer memberId, Integer articleId, BoardType boardType) {
         Board article = boardRepository.findById(articleId).get();
         List<ArticleFile> files = article.getFiles();

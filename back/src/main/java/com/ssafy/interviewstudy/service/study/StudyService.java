@@ -468,7 +468,7 @@ public class StudyService {
         Member member = memberRepository.findMemberById(memberId);
         List<Object> list = new ArrayList<>();
         List<StudyCalendarDtoResponse> studyCalendar = studyCalendarRepository.findStudyCalendersByMemberId(memberId);
-        list.add(studyCalendar);
+        list.addAll(studyCalendar);
         List<Calendar> memberCalendarEntity = calendarRepository.findCalendarsByAuthorId(memberId);
         List<CalendarRetrieveResponse> memberCalendar = CalendarListResponse.fromEntity(memberCalendarEntity).getData();
         list.addAll(memberCalendar);
@@ -479,7 +479,7 @@ public class StudyService {
         Member member = memberRepository.findMemberById(memberId);
         List<Object> list = new ArrayList<>();
         List<StudyCalendarDtoResponse> studyCalendar = studyCalendarRepository.findStudyCalendersByMemberIdAndStudyId(memberId,studyId);
-        list.add(studyCalendar);
+        list.addAll(studyCalendar);
         List<Calendar> memberCalendarEntity = calendarRepository.findCalendarsByAuthorId(memberId);
         List<CalendarRetrieveResponse> memberCalendar = CalendarListResponse.fromEntity(memberCalendarEntity).getData();
         list.addAll(memberCalendar);

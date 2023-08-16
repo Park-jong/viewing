@@ -25,6 +25,7 @@ public class Study {
 
     private String title;
 
+    @Column(length = 2000)
     private String description;
 
     private String appliedJob;

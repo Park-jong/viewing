@@ -22,6 +22,7 @@ public class StudyRequest {
     @Column(name = "study_request_id")
     private Integer id;
 
+    @Column(length = 5000)
     private String introduction;
 
     @CreatedDate

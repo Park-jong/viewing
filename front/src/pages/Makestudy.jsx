@@ -282,6 +282,7 @@ export default function MakeStudy() {
 
   const clickSuggestion = (suggestion) => {
     setAppliedCompany(suggestion);
+    setIsVisible(false);
   };
 
   const clickTagBtn = (id) => {
@@ -388,9 +389,6 @@ export default function MakeStudy() {
               setAppliedCompany(e.target.value);
             }}
             $state={studyCompanyState}
-            onBlur={() => {
-              setIsVisible(false);
-            }}
           />
           <Suggestions $visible={isVisible ? "block" : "none"}>
             {suggestion.map((s, idx) => {

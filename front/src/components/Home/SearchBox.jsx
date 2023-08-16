@@ -141,6 +141,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
 
   const clickSuggestion = (suggestion) => {
     setInput1(suggestion);
+    setIsVisible(false);
   };
 
   useEffect(() => {
@@ -179,9 +180,6 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
           if (e.key === "Enter") {
             handleSearch();
           }
-        }}
-        onBlur={() => {
-          setIsVisible(false);
         }}
       />
       <VerticalLine />

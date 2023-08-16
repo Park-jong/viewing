@@ -70,9 +70,6 @@ const OthersCamContainer = styled.div`
 `;
 
 export default function MeetingMain({ publisher, subscribers, view }) {
-  console.log("subscribers: 레이아웃뷰" + subscribers);
-  console.log("길이11111" + subscribers.length);
-
   return (
     <>
       {view === "layout" ? (
@@ -80,7 +77,6 @@ export default function MeetingMain({ publisher, subscribers, view }) {
           <CamContainer>
             <CamBox streamManager={publisher}></CamBox>
           </CamContainer>
-
           {subscribers ? (
             subscribers.subs.map((sub, i) => {
               return (

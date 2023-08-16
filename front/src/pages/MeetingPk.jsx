@@ -43,6 +43,7 @@ const HeaderContainer = styled.div`
   align-items: center;
   width: 99.9%;
   height: 5%;
+  background-color: white;
 `;
 
 const TitleContainer = styled.div`
@@ -113,13 +114,7 @@ const FooterContainer = styled.div`
 
 export default function MeetingPk() {
   // 유저 데이터 - 나중에 redux를 통해 가져와야 함
-  // const userData = useSelector((state) => state.UserReducer);
-  const userData = {
-    memberId: "1",
-    nickname: `nick${Math.ceil(Math.random() * 1000)}`,
-    backgroundColor: "red",
-    backgroundImg: "cow",
-  };
+  const userData = useSelector((state) => state.UserReducer);
 
   // 스터디 아이디  - 이거 pathvariable로 가져오거나 따로 불러오거나
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함
@@ -705,6 +700,18 @@ export default function MeetingPk() {
   };
   //// 사이드바
 
+  const [time, setTime] = useState(0);
+  const upTime = () => {
+    setTimeout(() => {
+      setTime((prev) => prev + 1);
+      upTime();
+    }, 1000);
+  };
+
+  useEffect(() => {
+    upTime();
+  }, []);
+
   //보기형식 state  1: 레이아웃  2: 발표자보기
   const [view, setView] = useState("layout");
 
@@ -721,7 +728,15 @@ export default function MeetingPk() {
         ></BeforeExitModal>
       </ModalContainer>
       <HeaderContainer>
-        <TitleContainer>{"스터디 제목"}</TitleContainer>
+        <TitleContainer>{`${
+          time / 60 < 10
+            ? `0${Math.round(time / 60)}:${
+                time % 60 < 10 ? "0" + (time % 60) : time % 60
+              }`
+            : `${Math.round(time / 60)}:${
+                time % 60 < 10 ? "0" + (time % 60) : time % 60
+              }`
+        }`}</TitleContainer>
         <ButtonContainer>
           <LayoutButton onClick={() => setView("layout")}>
             레이아웃보기

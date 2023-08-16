@@ -116,6 +116,7 @@ export default function MeetingSideBar({
     <Container>
       <TabBarContainer>
         <MeetingTabBar
+          currentOption={option}
           changeOption={changeOption}
           toggleSideBar={toggleSideBar}
         ></MeetingTabBar>

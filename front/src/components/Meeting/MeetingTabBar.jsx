@@ -1,7 +1,8 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { PiUsersThreeFill } from "react-icons/pi";
 import { BsFillChatFill } from "react-icons/bs";
 import { BiSolidNote } from "react-icons/bi";
+import { useEffect, useState } from "react";
 
 const Container = styled.div`
   /* border: 1px solid black; */
@@ -21,13 +22,12 @@ const ButtonContainer = styled.div`
   &:hover {
     background-color: var(--secondary);
   }
-
   ${(props) =>
     props.active &&
-    `
-    background-color: red;
-    color: white;
-  `}
+    css`
+      background-color: var(--primary);
+      color: white;
+    `}
 `;
 
 const ExitContainer = styled.div`

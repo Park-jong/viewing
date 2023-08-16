@@ -131,6 +131,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   const suggestionRef = useRef(null);
   const parentRef = useRef(null);
   const inputRef = useRef(null);
+  const didmount = useRef(false);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "input1") {
@@ -142,16 +143,13 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
 
   const handleFocus = (e) => {
     if (e.target.value.length > 0) {
-      if (suggestion.length > 0) setIsVisible(true);
-      else {
-        customAxios()
-          .get(`companies/${input1}`)
-          .then(({ data }) => {
-            setSuggestion((prev) => {
-              return [...data];
-            });
+      customAxios()
+        .get(`companies/${input1}`)
+        .then(({ data }) => {
+          setSuggestion((prev) => {
+            return [...data];
           });
-      }
+        });
     }
   };
 
@@ -160,6 +158,15 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   };
 
   const handleSearch = () => {
+    if (suggestionSelect != null) {
+      setIsClick((prev) => {
+        const result = { ...prev };
+        result.click = true;
+        result.value = suggestion[suggestionSelect];
+        return result;
+      });
+      return;
+    }
     if (input1.trim() === "") {
       alert("회사명을 입력해주세요.");
       return;
@@ -182,7 +189,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
     });
   };
 
-  const pressDown = (e) => {
+  const pressDown = () => {
     if (suggestionSelect === null) {
       setSuggestionSelect(0);
     } else {
@@ -190,73 +197,74 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
     }
   };
 
-  const pressUp = (e) => {
+  const pressUp = () => {
     if (suggestionSelect === null) {
-      console.log(1);
-      setSuggestionSelect(suggestion.length - 1);
+      setSuggestionSelect(() => suggestion.length - 1);
     } else {
-      console.log(2);
-      setSuggestionSelect(() => suggestionSelect - 1);
+      setSuggestionSelect((prev) => {
+        return prev - 1;
+      });
     }
   };
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === "Down" || event.key === "ArrowDown") {
-        event.preventDefault();
-        pressDown(event);
-      }
-      if (event.key === "Up" || event.key === "ArrowUp") {
-        event.preventDefault();
-        pressUp(event);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
-  useEffect(() => {
     if (suggestion.length === 0) setIsVisible(false);
     else setIsVisible(true);
-    setSuggestionSelect(null);
   }, [suggestion]);
 
   useEffect(() => {
-    if (isClick) {
-      setIsClick(false);
-      setIsVisible(false);
-      return;
-    }
-    if (input1.length > 0) {
-      customAxios()
-        .get(`companies/${input1}`)
-        .then(({ data }) => {
-          setSuggestion((prev) => {
-            return [...data];
-          });
+    if (didmount.current) {
+      setSuggestionSelect(null);
+      if (isClick.click) {
+        setIsClick((prev) => {
+          const result = { ...prev };
+          result.click = false;
+          result.value = "";
+          return result;
         });
-    } else {
-      const arr = [];
-      setSuggestion((prev) => {
-        return arr;
-      });
-    }
+        setIsVisible(false);
+        return;
+      }
+      if (input1.length > 0) {
+        customAxios()
+          .get(`companies/${input1}`)
+          .then(({ data }) => {
+            setSuggestion((prev) => {
+              return [...data];
+            });
+          });
+      } else {
+        const arr = [];
+        setSuggestion((prev) => {
+          return arr;
+        });
+      }
+    } else didmount.current = true;
   }, [input1]);
 
   useEffect(() => {
     if (isClick.click) {
-      setInput1(() => isClick.value);
+      if (input1 === isClick.value) {
+        setIsVisible(false);
+        setSuggestionSelect(null);
+        setIsClick((prev) => {
+          const result = { ...prev };
+          result.click = false;
+          result.value = "";
+          return result;
+        });
+      } else {
+        setInput1(() => isClick.value);
+      }
     }
   }, [isClick]);
 
   useEffect(() => {
-    console.log(suggestionSelect);
-    if (suggestionSelect < 0) setSuggestionSelect(suggestion.length - 1);
-    else if (suggestionSelect >= suggestion.length) setSuggestionSelect(0);
+    if (suggestionSelect < 0) {
+      setSuggestionSelect(suggestion.length - 1);
+    } else if (suggestionSelect >= suggestion.length) {
+      setSuggestionSelect(0);
+    }
     const selectedChild = suggestionRef.current;
     const parentElement = parentRef.current;
     // Scroll the parent element to bring the selected child into view
@@ -281,11 +289,21 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
             handleSearch();
           }
         }}
-        // onBlur={() => {
-        //   setIsVisible(false);
-        // }}
+        onBlur={() => {
+          setIsVisible(false);
+          setSuggestionSelect(null);
+        }}
         onFocus={(e) => {
           handleFocus(e);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Down" || e.key === "ArrowDown") {
+            e.preventDefault();
+            pressDown();
+          } else if (e.key === "Up" || e.key === "ArrowUp") {
+            e.preventDefault();
+            pressUp();
+          }
         }}
       />
       <VerticalLine />

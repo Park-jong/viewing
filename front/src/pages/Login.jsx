@@ -31,6 +31,9 @@ const ButtonsContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 15px;
+  &:hover{
+    cursor : pointer;
+  }
 `;
 
 export default function Login() {
@@ -48,7 +51,7 @@ export default function Login() {
     <Container>
       <InnerContainer>
         <H1>로그인 / 회원가입</H1>
-        <Copywrite>뷰게더에 오신 것을 환영합니다.</Copywrite>
+        <Copywrite>뷰잉에 오신 것을 환영합니다.</Copywrite>
         <ButtonsContainer>
           <KakaoButton></KakaoButton>
         </ButtonsContainer>

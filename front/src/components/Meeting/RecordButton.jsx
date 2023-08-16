@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { BiVideoRecording, BiStopCircle } from "react-icons/bi";
 import { AiOutlinePauseCircle, AiFillPlayCircle } from "react-icons/ai";
+import { RxResume } from "react-icons/rx";
 
 const Container = styled.div`
   /* border: 1px solid black; */
@@ -31,27 +32,35 @@ const RecordingButton = styled.div`
   border-radius: 10px;
   border: 1px solid var(--gray-200);
   margin-right: 15px;
+  cursor: pointer;
 `;
 
 const PauseButton = styled.div`
   /* background-color: var(--gray-100);
   border-radius: 10px;
   border: 1px solid var(--gray-200); */
+  cursor: pointer;
 `;
 
 const ResumeButton = styled.div`
   /* border: 1px solid black; */
   display: inline;
+  cursor: pointer;
 `;
 const StopButton = styled.div`
   /* background-color: var(--gray-100);
   /* border-radius: 10px;
   border: 1px solid var(--gray-200); */
   margin-right: 15px;
+  cursor: pointer;
 `;
 
 const IconBiVideoRecording = styled(BiVideoRecording)`
   font-size: 2rem;
+`;
+
+const TextContainer = styled.div`
+  width: 4em;
 `;
 
 export default function RecordButton({
@@ -73,11 +82,29 @@ export default function RecordButton({
             }
           }}
         >
-          <IconBiVideoRecording /> &nbsp;녹화&nbsp;
+          <IconBiVideoRecording /> &nbsp;
+          {recordState === "ready" ? (
+            <TextContainer>{"녹화시작"}</TextContainer>
+          ) : recordState === "pause" ? (
+            <TextContainer>{"정지중"}</TextContainer>
+          ) : recordState === "record" ? (
+            <TextContainer>{"녹화중"}</TextContainer>
+          ) : undefined}
+          &nbsp;
         </RecordingButton>
       </ReadyState>
 
       <PauseState hidden={recordState !== "pause"}>
+        <PauseButton
+          onClick={() => {
+            const res = pauseRecord();
+            if (res !== "err") {
+              setRecordState("pause");
+            }
+          }}
+        >
+          <AiOutlinePauseCircle fontSize={"1.5rem"} />
+        </PauseButton>
         <ResumeButton
           onClick={() => {
             const res = resumeRecord();
@@ -87,8 +114,11 @@ export default function RecordButton({
           }}
           style={{ marginRight: "17px" }}
         >
-          <AiFillPlayCircle />
+          <RxResume fontSize={"1.5rem"} />
         </ResumeButton>
+      </PauseState>
+
+      <RecordState hidden={recordState !== "record"}>
         <StopButton
           onClick={() => {
             const res = stopRecord();
@@ -97,31 +127,8 @@ export default function RecordButton({
             }
           }}
         >
-          <BiStopCircle />
+          <BiStopCircle fontSize={"1.5rem"} />
         </StopButton>
-      </PauseState>
-
-      <RecordState hidden={recordState !== "record"}>
-        <PauseButton
-          onClick={() => {
-            const res = pauseRecord();
-            if (res !== "err") {
-              setRecordState("pause");
-            }
-          }}
-        >
-          <AiOutlinePauseCircle />
-        </PauseButton>
-        {/* <StopButton
-          onClick={() => {
-            const res = stopRecord();
-            if (res !== "err") {
-              setRecordState("ready");
-            }
-          }}
-        >
-          <BiStopCircle />
-        </StopButton> */}
       </RecordState>
     </Container>
   );

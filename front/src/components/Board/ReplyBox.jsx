@@ -58,6 +58,7 @@ const BottomContainer = styled.div`
 
   color: var(--gray-400);
   font-size: 12px;
+  justify-content: space-between;
 
   ${(props) =>
     props.isNestedReply &&
@@ -70,6 +71,7 @@ const LikeCount = styled.div`
   display: flex;
   align-items: center;
   margin-right: 10px;
+  cursor: pointer;
 `;
 
 const LikeIcon = styled(BiLike)`
@@ -84,6 +86,7 @@ const CommentIcon = styled(BiCommentDetail)`
 `;
 
 const CreatedAt = styled.div`
+  margin-top: 2px;
   margin-right: 10px;
 `;
 
@@ -91,6 +94,7 @@ const ReplyCount = styled.div`
   display: flex;
   align-items: center;
   margin-right: 10px;
+  cursor: pointer;
 `;
 
 const ButtonsContainer = styled.div`
@@ -98,6 +102,9 @@ const ButtonsContainer = styled.div`
 `;
 
 const ButtonsFlex = styled.div`
+  display: flex;
+`;
+const BottomContainer2 = styled.div`
   display: flex;
 `;
 
@@ -196,10 +203,38 @@ export default function ReplyBox({
             backgroundcolor={background}
             characterimg={character}
             nickname={nickname}
+            member_id={author}
           />
         </UserStyled>
         <Content isNestedReply={isNestedReply}>
           {text(isUpdating, isDelete, content)}
+        </Content>
+
+        <BottomContainer isNestedReply={isNestedReply}>
+          <BottomContainer2>
+            <CreatedAt> {created_at}</CreatedAt>
+            {!isStudyBoard ? (
+              <LikeCount>
+                {isLike ? (
+                  <SolidLikeIcon
+                    onClick={() => handleDislike(isDelete)}
+                    size={16}
+                  />
+                ) : (
+                  <LikeIcon onClick={() => handleLike(isDelete)} size={16} />
+                )}
+                {like_count}
+              </LikeCount>
+            ) : (
+              <></>
+            )}
+            {!isNestedReply && (
+              <ReplyCount onClick={toggleShowInput}>
+                <CommentIcon size={16} />
+                {reply_count}
+              </ReplyCount>
+            )}
+          </BottomContainer2>
           {author === memberId && !isDelete ? (
             <ButtonsContainer>
               <ButtonsFlex>
@@ -215,31 +250,6 @@ export default function ReplyBox({
             </ButtonsContainer>
           ) : (
             <></>
-          )}
-        </Content>
-
-        <BottomContainer isNestedReply={isNestedReply}>
-          <CreatedAt> {created_at}</CreatedAt>
-          {!isStudyBoard ? (
-            <LikeCount>
-              {isLike ? (
-                <SolidLikeIcon
-                  onClick={() => handleDislike(isDelete)}
-                  size={16}
-                />
-              ) : (
-                <LikeIcon onClick={() => handleLike(isDelete)} size={16} />
-              )}
-              {like_count}
-            </LikeCount>
-          ) : (
-            <></>
-          )}
-          {!isNestedReply && (
-            <ReplyCount onClick={toggleShowInput}>
-              <CommentIcon size={16} />
-              {reply_count}
-            </ReplyCount>
           )}
         </BottomContainer>
         {showInput && !isDelete && (

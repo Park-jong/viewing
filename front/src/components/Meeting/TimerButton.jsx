@@ -14,14 +14,16 @@ const ReadyState = styled.div`
   align-items: center;
   background-color: var(--gray-100);
   border-radius: 10px;
-border: 1px solid var(--gray-200);
+  border: 1px solid var(--gray-200);
   margin-right: 15px;
+  cursor: pointer;
 `;
-const StartState = styled.div``;
-const StopState = styled.div``;
+const TimeContatiner = styled.div`
+  width: 3em;
+`;
 
 const IconBiTimer = styled(BiTimer)`
-  font-size: 2rem; 
+  font-size: 2rem;
 `;
 
 export default function TimerButton() {
@@ -40,6 +42,19 @@ export default function TimerButton() {
     setSaveTime(timer);
   };
 
+  const changeState = () => {
+    if (timerState === "ready") {
+      setTimer(0);
+      setTimerState("start");
+    } else if (timerState === "start") {
+      saveCurrentTime();
+      setTimerState("stop");
+    } else if (timerState === "stop") {
+      setTimerState("ready");
+      setTimer(0);
+    }
+  };
+
   useEffect(() => {
     checkTime();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,30 +63,44 @@ export default function TimerButton() {
   return (
     <Container>
       <ReadyState
-        hidden={timerState !== "ready"}
         onClick={() => {
-          setTimerState("start");
-          setTimer(0);
+          changeState();
         }}
       >
         <IconBiTimer />
-        &nbsp; 타이머 &nbsp;
+        &nbsp;{" "}
+        {timerState === "ready" ? (
+          <TimeContatiner>{"타이머"}</TimeContatiner>
+        ) : timerState === "start" ? (
+          <TimeContatiner>{"정지"}</TimeContatiner>
+        ) : timerState === "stop" ? (
+          <TimeContatiner>{"초기화"}</TimeContatiner>
+        ) : undefined}{" "}
+        &nbsp;
       </ReadyState>
-      <StartState
-        hidden={timerState !== "start"}
-        onClick={() => {
-          setTimerState("stop");
-          saveCurrentTime();
-        }}
-      >{`${Math.floor(timer / 60)} : ${Math.floor(timer % 60)}`}</StartState>
-      <StopState
-        hidden={timerState !== "stop"}
-        onClick={() => {
-          setTimerState("ready");
-        }}
-      >
-        {`${Math.floor(saveTime / 60)} : ${Math.floor(saveTime % 60)}`}
-      </StopState>
+      <TimeContatiner>
+        {timerState === "ready"
+          ? "00:00"
+          : timerState === "start"
+          ? `${
+              timer / 60 < 10
+                ? `0${Math.round(timer / 60)}:${
+                    timer % 60 < 10 ? "0" + (timer % 60) : timer % 60
+                  }`
+                : `${Math.round(timer / 60)}:${
+                    timer % 60 < 10 ? "0" + (timer % 60) : timer % 60
+                  }`
+            }`
+          : timerState === "stop"
+          ? Math.round(saveTime / 60) < 10
+            ? `0${Math.round(saveTime / 60)}:${
+                saveTime % 60 < 10 ? "0" + (saveTime % 60) : saveTime % 60
+              }`
+            : `${Math.round(saveTime / 60)}:${
+                saveTime % 60 < 10 ? "0" + (saveTime % 60) : saveTime % 60
+              }`
+          : "00:00"}
+      </TimeContatiner>
     </Container>
   );
 }

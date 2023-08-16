@@ -20,6 +20,7 @@ const ProfileImg = styled.div`
   background-size: 70%;
   background-repeat: no-repeat;
   background-position: center;
+  cursor: pointer;
 `;
 
 const DropdownMenu = styled.div`

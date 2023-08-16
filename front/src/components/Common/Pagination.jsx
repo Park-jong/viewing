@@ -37,6 +37,7 @@ const PageButton = styled.div`
   &:hover {
     background-color: var(--gray-200);
   }
+  cursor: pointer;
 `;
 
 const ArrowButton = styled.div`
@@ -45,6 +46,7 @@ const ArrowButton = styled.div`
   &:hover {
     background-color: var(--gray-200);
   }
+  cursor: pointer;
 `;
 
 export default function Pagination({ page, setPage, maxPage, handleData }) {

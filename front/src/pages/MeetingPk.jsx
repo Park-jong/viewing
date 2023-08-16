@@ -43,6 +43,7 @@ const HeaderContainer = styled.div`
   align-items: center;
   width: 99.9%;
   height: 5%;
+  background-color: white;
 `;
 
 const TitleContainer = styled.div`
@@ -82,14 +83,22 @@ const ButtonContainer = styled.div`
 `;
 
 const LayoutButton = styled.button`
-  padding: 5px 20px;
+  padding: 3px 20px;
   margin: 5px;
-  background-color: var(--primary);
+  background-color: var(--gray-800);
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
+
+  transition: background-color 0.3s ease; /* Added */
+
+  &:hover {
+    background-color: var(--gray-200); /* Added */
+    color: black;
+  }
 `;
 
 const FooterContainer = styled.div`
@@ -106,12 +115,6 @@ const FooterContainer = styled.div`
 export default function MeetingPk() {
   // 유저 데이터 - 나중에 redux를 통해 가져와야 함
   const userData = useSelector((state) => state.UserReducer);
-  // const userData = {
-  //   memberId: "5",
-  //   nickname: `nick${Math.ceil(Math.random() * 1000)}`,
-  //   backgroundColor: "red",
-  //   backgroundImg: "cow",
-  // };
 
   // 스터디 아이디  - 이거 pathvariable로 가져오거나 따로 불러오거나
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함
@@ -559,9 +562,15 @@ export default function MeetingPk() {
       let today = new Date();
       let title =
         today.getFullYear().toString() +
-        (today.getMonth() + 1).toString() +
-        today.getDate().toString() +
-        "_interview_record";
+        (today.getMonth() + 1 < 10
+          ? "0" + (today.getMonth() + 1)
+          : today.getMonth() + 1
+        ).toString() +
+        (today.getDate() < 10
+          ? "0" + today.getDate()
+          : today.getDate()
+        ).toString() +
+        "_interview_study_record";
       a.download = `${title}.mp4`;
       a.click();
       a.remove();
@@ -649,13 +658,24 @@ export default function MeetingPk() {
   const downloadFeedback = () => {
     setCheckDownload(true);
     let text = compFeedback();
+    let today = new Date();
 
     const link = document.createElement("a");
     link.setAttribute(
       "href",
       "data:text/plain;charset=utf-8," + encodeURIComponent(text)
     );
-    link.setAttribute("download", "download.txt");
+
+    link.setAttribute(
+      "download",
+      `${today.getFullYear().toString()}${(today.getMonth() + 1 < 10
+        ? "0" + (today.getMonth() + 1)
+        : today.getMonth() + 1
+      ).toString()}${(today.getDate() < 10
+        ? "0" + today.getDate()
+        : today.getDate()
+      ).toString()}_interview_study_feedback".txt`
+    );
     link.click();
     link.remove();
   };
@@ -680,6 +700,18 @@ export default function MeetingPk() {
   };
   //// 사이드바
 
+  const [time, setTime] = useState(0);
+  const upTime = () => {
+    setTimeout(() => {
+      setTime((prev) => prev + 1);
+      upTime();
+    }, 1000);
+  };
+
+  useEffect(() => {
+    upTime();
+  }, []);
+
   //보기형식 state  1: 레이아웃  2: 발표자보기
   const [view, setView] = useState("layout");
 
@@ -696,7 +728,15 @@ export default function MeetingPk() {
         ></BeforeExitModal>
       </ModalContainer>
       <HeaderContainer>
-        <TitleContainer>{"스터디 제목"}</TitleContainer>
+        <TitleContainer>{`${
+          time / 60 < 10
+            ? `0${Math.round(time / 60)}:${
+                time % 60 < 10 ? "0" + (time % 60) : time % 60
+              }`
+            : `${Math.round(time / 60)}:${
+                time % 60 < 10 ? "0" + (time % 60) : time % 60
+              }`
+        }`}</TitleContainer>
         <ButtonContainer>
           <LayoutButton onClick={() => setView("layout")}>
             레이아웃보기

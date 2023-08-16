@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Search from "../../Icons/Search";
 import { Link } from "react-router-dom";
@@ -91,7 +91,7 @@ const Suggestions = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   max-width: 300px;
   width: 100%;
-  max-height: 100px;
+  max-height: 115px;
   position: absolute;
   top: 100%; /* 입력 필드 아래에 위치 */
   left: 20px;
@@ -99,9 +99,24 @@ const Suggestions = styled.div`
   word-wrap: break-word;
   z-index: 10; /* 다른 요소들보다 위에 위치 */
   display: ${(props) => props.$visible};
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none; /* 파이어폭스 */
+  &::-webkit-scrollbar {
+    display: none; /* 크롬, 사파리, 오페라, 엣지 */
+  }
 `;
 
-const SuggestionValue = styled.div``;
+const SuggestionValue = styled.div`
+  color: var(--gray-500);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  &:hover {
+    background-color: var(--secondary);
+    cursor: pointer;
+  }
+  background-color: ${(props) =>
+    props.$selected ? "var(--secondary)" : "none"};
+`;
 
 export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   const [input1, setInput1] = useState(appliedCompany ? appliedCompany : "");
@@ -111,7 +126,12 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   const [selectedOption, setSelectedOption] = useState(
     careerLevel ? careerLevel : "ALL"
   );
-
+  const [isClick, setIsClick] = useState({ value: "", click: false });
+  const [suggestionSelect, setSuggestionSelect] = useState(null);
+  const suggestionRef = useRef(null);
+  const parentRef = useRef(null);
+  const inputRef = useRef(null);
+  const didmount = useRef(false);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "input1") {
@@ -121,11 +141,32 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
     }
   };
 
+  const handleFocus = (e) => {
+    if (e.target.value.length > 0) {
+      customAxios()
+        .get(`companies/${input1}`)
+        .then(({ data }) => {
+          setSuggestion((prev) => {
+            return [...data];
+          });
+        });
+    }
+  };
+
   const handleDropdownChange = (e) => {
     setSelectedOption(e.target.value);
   };
 
   const handleSearch = () => {
+    if (suggestionSelect != null) {
+      setIsClick((prev) => {
+        const result = { ...prev };
+        result.click = true;
+        result.value = suggestion[suggestionSelect];
+        return result;
+      });
+      return;
+    }
     if (input1.trim() === "") {
       alert("회사명을 입력해주세요.");
       return;
@@ -140,7 +181,30 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   };
 
   const clickSuggestion = (suggestion) => {
-    setInput1(suggestion);
+    setIsClick((prev) => {
+      const result = { ...prev };
+      result.click = true;
+      result.value = suggestion;
+      return result;
+    });
+  };
+
+  const pressDown = () => {
+    if (suggestionSelect === null) {
+      setSuggestionSelect(0);
+    } else {
+      setSuggestionSelect(suggestionSelect + 1);
+    }
+  };
+
+  const pressUp = () => {
+    if (suggestionSelect === null) {
+      setSuggestionSelect(() => suggestion.length - 1);
+    } else {
+      setSuggestionSelect((prev) => {
+        return prev - 1;
+      });
+    }
   };
 
   useEffect(() => {
@@ -149,21 +213,65 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   }, [suggestion]);
 
   useEffect(() => {
-    if (input1.length > 0) {
-      customAxios()
-        .get(`companies/${input1}`)
-        .then(({ data }) => {
-          setSuggestion((prev) => {
-            return [...data];
-          });
+    if (didmount.current) {
+      setSuggestionSelect(null);
+      if (isClick.click) {
+        setIsClick((prev) => {
+          const result = { ...prev };
+          result.click = false;
+          result.value = "";
+          return result;
         });
-    } else {
-      const arr = [];
-      setSuggestion((prev) => {
-        return arr;
-      });
-    }
+        setIsVisible(false);
+        return;
+      }
+      if (input1.length > 0) {
+        customAxios()
+          .get(`companies/${input1}`)
+          .then(({ data }) => {
+            setSuggestion((prev) => {
+              return [...data];
+            });
+          });
+      } else {
+        const arr = [];
+        setSuggestion((prev) => {
+          return arr;
+        });
+      }
+    } else didmount.current = true;
   }, [input1]);
+
+  useEffect(() => {
+    if (isClick.click) {
+      if (input1 === isClick.value) {
+        setIsVisible(false);
+        setSuggestionSelect(null);
+        setIsClick((prev) => {
+          const result = { ...prev };
+          result.click = false;
+          result.value = "";
+          return result;
+        });
+      } else {
+        setInput1(() => isClick.value);
+      }
+    }
+  }, [isClick]);
+
+  useEffect(() => {
+    if (suggestionSelect < 0) {
+      setSuggestionSelect(suggestion.length - 1);
+    } else if (suggestionSelect >= suggestion.length) {
+      setSuggestionSelect(0);
+    }
+    const selectedChild = suggestionRef.current;
+    const parentElement = parentRef.current;
+    // Scroll the parent element to bring the selected child into view
+    if (selectedChild != null && parentElement != null) {
+      parentElement.scrollTop = selectedChild.offsetTop;
+    }
+  }, [suggestionSelect]);
   return (
     <SearchContainer $width={width}>
       <SearchInput
@@ -174,10 +282,27 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
         onChange={(e) => {
           handleInputChange(e);
         }}
+        ref={inputRef}
         placeholder="회사명을 입력하세요 (필수)"
         onKeyUp={(e) => {
           if (e.key === "Enter") {
             handleSearch();
+          }
+        }}
+        onBlur={() => {
+          setIsVisible(false);
+          setSuggestionSelect(null);
+        }}
+        onFocus={(e) => {
+          handleFocus(e);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Down" || e.key === "ArrowDown") {
+            e.preventDefault();
+            pressDown();
+          } else if (e.key === "Up" || e.key === "ArrowUp") {
+            e.preventDefault();
+            pressUp();
           }
         }}
       />
@@ -219,14 +344,26 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
           <SearchIcon />
         </SearchButton>
       </ButtonContainer>
-      <Suggestions $visible={isVisible ? "block" : "none"}>
+      <Suggestions ref={parentRef} $visible={isVisible ? "block" : "none"}>
         {suggestion.map((s, idx) => {
-          return (
+          return suggestionSelect === idx ? (
             <SuggestionValue
               key={idx}
-              onClick={() => {
+              onMouseDown={() => {
                 clickSuggestion(s);
               }}
+              $selected={true}
+              ref={suggestionRef}
+            >
+              {s}
+            </SuggestionValue>
+          ) : (
+            <SuggestionValue
+              key={idx}
+              onMouseDown={() => {
+                clickSuggestion(s);
+              }}
+              $selected={false}
             >
               {s}
             </SuggestionValue>

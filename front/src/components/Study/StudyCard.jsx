@@ -38,7 +38,8 @@ const BookmarkContainer = styled.div`
   position: absolute;
   top: 15px;
   right: 20px;
-  z-index: 300;
+  /* z-index: 300; */
+  cursor: pointer;
 `;
 
 const CompanyContainer = styled.div`
@@ -150,21 +151,12 @@ export default function StudyCard({ study }) {
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const navigate = useNavigate();
 
-  const [bookmarked, isBookmarked] = useState(study.bookmark);
-  switch (study.career_level) {
-    case "NEWCOMER":
-      study.career_level = "신입";
-      break;
-    case "INTERN":
-      study.career_level = "인턴";
-      break;
-    case "EXPERIENCED":
-      study.career_level = "경력";
-      break;
-    case "ALL":
-      study.career_level = "무관";
-      break;
-  }
+  const [bookmarked, isBookmarked] = useState();
+
+  useEffect(() => {
+    isBookmarked(study.bookmark);
+  }, []);
+
   const moveStudy = () => {
     customAxios()
       .get(`studies/${study.study_id}/member`)
@@ -201,6 +193,21 @@ export default function StudyCard({ study }) {
         alert("아직 찜하지 않은 스터디입니다.");
       });
   };
+
+  switch (study.career_level) {
+    case "NEWCOMER":
+      study.career_level = "신입";
+      break;
+    case "INTERN":
+      study.career_level = "인턴";
+      break;
+    case "ALL":
+      study.career_level = "무관";
+      break;
+    case "EXPERIENCED":
+      study.career_level = "경력";
+      break;
+  }
 
   return (
     <Container
@@ -241,6 +248,7 @@ export default function StudyCard({ study }) {
           nickname={study.leader.nickname}
           backgroundcolor={study.leader.background}
           characterimg={study.leader.character}
+          member_id={study.leader.member_id}
         />
       </ProfileContainer>
       <CapacityContainer>

@@ -13,9 +13,10 @@ const Container = styled.div`
   /* border: 1px solid black; */
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   width: 100%;
   /* height: 500px; */
+  background-color: white;
 `;
 
 const GroupingContainer = styled.div`

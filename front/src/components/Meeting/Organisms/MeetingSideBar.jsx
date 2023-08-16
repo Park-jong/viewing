@@ -9,6 +9,8 @@ const Container = styled.div`
   /* position: relative; */
   /* border: 1px solid black; */
   width: 100%;
+  background-color: white;
+  z-index: 99;
 `;
 
 const TabBarContainer = styled.div`
@@ -36,15 +38,6 @@ const ChatContainer = styled.div`
   /* border: 1px solid black; */
 `;
 
-const FeedbackContainer = styled.div`
-  position: absolute;
-  top: 5%;
-  width: 100%;
-  height: 95%;
-  /* border: 1px solid black; */
-  overflow-y: auto;
-`;
-
 const ChatLogArea = styled.div`
   position: absolute;
   height: 95%;
@@ -67,11 +60,36 @@ const ChatInput = styled.input`
 
 const SendChatButton = styled.div`
   display: inline;
+  cursor: pointer;
 `;
+
+const FeedbackContainer = styled.div`
+  position: absolute;
+  top: 5%;
+  width: 100%;
+  height: 95%;
+  /* border: 1px solid black; */
+  overflow-y: auto;
+  display: ${(props) => (props.hidden ? "none" : "block")};
+`;
+
+// const FeedbackContainer = styled.div`
+//   position: absolute;
+//   top: 5%;
+//   width: 100%;
+//   height: 95%;
+//   /* border: 1px solid black; */
+//   overflow-y: auto;
+// `;
 
 const FeedbackTargetContainer = styled.div``;
 
-const SelectContainer = styled.select``;
+const SelectContainer = styled.select`
+  width: 100%;
+  padding: 5px;
+  border: 1px solid black;
+  background-color: white;
+`;
 
 const OptionContainer = styled.option``;
 
@@ -99,6 +117,7 @@ export default function MeetingSideBar({
     <Container>
       <TabBarContainer>
         <MeetingTabBar
+          currentOption={option}
           changeOption={changeOption}
           toggleSideBar={toggleSideBar}
         ></MeetingTabBar>

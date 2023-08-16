@@ -25,6 +25,7 @@ const Menu = styled.div`
   color: var(--gray-800);
   border-bottom: 1px solid #ebebebde ;
   text-decoration: none;
+  cursor: pointer;
 
   &:hover {
     background-color: var(--secondary);
@@ -54,6 +55,7 @@ const SubMenu = styled.div`
   text-decoration: none;
   padding-left: 40px;
   font-size: 14px;
+  cursor: pointer;
 
   ${({ $active }) =>
     $active &&
@@ -76,6 +78,7 @@ const MyPage = styled.div`
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  cursor: pointer;
 `;
 
 export default function SideBar() {

@@ -69,7 +69,9 @@ const TagArea = styled.div`
   padding-bottom: 5px;
 `;
 
-const TagBox = styled.span``;
+const TagBox = styled.span`
+  cursor: pointer;
+`;
 
 const SelectedTagBox = styled.span`
   background: #7952e2;
@@ -141,7 +143,7 @@ const StudyTitleInputBox = styled.input`
   --border-after-color: #5891ff;
   --input-hovered-color: #4985e01f;
   position: relative;
-  width: 200px;
+  width: 700px;
   color: #000000;
   font-size: 0.9rem;
   background-color: transparent;
@@ -475,6 +477,7 @@ export default function StudyPkAdmin() {
           <UserProfile
             backgroundcolor={member.background}
             characterimg={member.character}
+            member_id={member.member_id}
           ></UserProfile>
         </Profile>
         <MemberName>{member.nickname}</MemberName>

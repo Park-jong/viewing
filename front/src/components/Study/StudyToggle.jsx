@@ -4,12 +4,14 @@ import styled, { css, keyframes } from "styled-components";
 const Container = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const H1 = styled.h1`
   font-size: 15px;
   font-weight: 700;
   color: var(--gray-800);
+  cursor: pointer;
 `;
 
 const colorAnimation = keyframes`

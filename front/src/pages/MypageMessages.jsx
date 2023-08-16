@@ -21,7 +21,7 @@ const Title = styled.div`
 
 const AllCheck = styled.input`
   margin-bottom: 15px;
-`
+`;
 
 export default function MypageMessages() {
   const member_id = useSelector((state) => state.UserReducer.memberId);
@@ -36,10 +36,10 @@ export default function MypageMessages() {
   };
 
   // 페이지네이션 재료
-  const [page, setPage] = useState(0)
-  const maxPage = parseInt(data.length /10)
-  function handleData () {
-    console.log("nothing")
+  const [page, setPage] = useState(0);
+  const maxPage = parseInt(data.length / 10);
+  function handleData() {
+    console.log("nothing");
   }
 
   const handleDelete = async () => {
@@ -74,7 +74,7 @@ export default function MypageMessages() {
         setData(res.data.data);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [useLocation()]);
 
   return (
     <>
@@ -108,8 +108,19 @@ export default function MypageMessages() {
         <></>
       )}
 
-      <MessageList messages={data.slice(10 * page, 10*page + 10)} deleted={deleted} setDeleted={setDeleted} />
-      <Pagination page={page} setPage={setPage} maxPage={maxPage} handleData={handleData}></Pagination>
+      <MessageList
+        messages={data.slice(10 * page, 10 * page + 10)}
+        deleted={deleted}
+        setDeleted={setDeleted}
+      />
+      {data.length ? (
+        <Pagination
+          page={page}
+          setPage={setPage}
+          maxPage={maxPage}
+          handleData={handleData}
+        ></Pagination>
+      ) : undefined}
     </>
   );
 }

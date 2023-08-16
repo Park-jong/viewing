@@ -62,14 +62,14 @@ export default function MypageArticles() {
   return (
     <>
       <Title>자유게시판</Title>
-      <ArticleList data={free.slice(10*freePage, 10*freePage + 10)} width={800}></ArticleList>
+      <ArticleList data={free.slice(10*freePage, 10*freePage + 10)} width={800} type={"free"}></ArticleList>
       {free.length === 0 ? <>글이 없습니다.</> : <Pagination page={freePage} setPage={setFreePage} maxPage={maxFree} handleData={()=>{}}></Pagination> }
       
       <Title>면접게시판</Title>
-      <ArticleList data={interview.slice(10*interviewPage, 10*interviewPage + 10)} width={800}></ArticleList>
+      <ArticleList data={interview.slice(10*interviewPage, 10*interviewPage + 10)} width={800} type={"interview"}></ArticleList>
       {interview.length === 0 ? <>글이 없습니다.</> : <Pagination page={interviewPage} setPage={setInterviewPage} maxPage={maxInterview} handleData={()=>{}}></Pagination>}
       <Title>질문게시판</Title>
-      <ArticleList data={qna.slice(10*qnaPage, 10*qnaPage + 10)} width={800}></ArticleList>
+      <ArticleList data={qna.slice(10*qnaPage, 10*qnaPage + 10)} width={800} type={"qusetion"}></ArticleList>
       {qna.length === 0 ? <>글이 없습니다.</> : <Pagination page={qnaPage} setPage={setQnaPage} maxPage={maxQna} handleData={()=>{}}></Pagination>}
     </>
   );

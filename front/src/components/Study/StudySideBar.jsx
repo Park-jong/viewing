@@ -52,6 +52,7 @@ const Study = styled.div`
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  cursor: pointer;
 `;
 
 export default function StudySideBar() {

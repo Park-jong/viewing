@@ -53,6 +53,7 @@ const CardContainer = styled.div`
   border: 1px var(--gray-200) solid;
   text-decoration: none;
   z-index: 999;
+  cursor: pointer;
 
   overflow-wrap: break-word; /* Prevent div from getting cut off */
 

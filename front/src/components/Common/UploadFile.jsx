@@ -34,6 +34,7 @@ const CurrentFile = styled.div`
 const SelectedFile = styled.div`
   display: flex;
   align-items: center;
+  margin-left: 25px;
 `;
 
 const FileName = styled.div`
@@ -72,6 +73,7 @@ export default function UploadFile({
     }
 
     setFiles([...files, ...e.target.files]);
+    e.target.value = "";
   };
   const deleteFile = (file, files) => {
     files.splice(

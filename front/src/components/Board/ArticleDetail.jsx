@@ -90,6 +90,7 @@ const IconWrapper = styled.span`
   margin-right: 10px;
 
   font-weight: 300;
+  cursor: pointer;
 `;
 
 const BottomContainer = styled.div`
@@ -114,6 +115,7 @@ const Icon = styled(MdAttachFile)`
 
 const FileDetailContainer = styled.div`
   display: flex;
+  margin-top: 6px;
 `;
 
 const File = styled.a``;
@@ -216,6 +218,7 @@ export default function ArticleDetail({ data, setData, count }) {
                 characterimg={data.author.member_profile_image}
                 nickname={data.author.nickname}
                 nicknameLength={500}
+                member_id={data.author.member_id}
               />
             )
           )}
@@ -304,8 +307,6 @@ export default function ArticleDetail({ data, setData, count }) {
             ) : (
               <></>
             )}
-            <PiSirenLight size={16} />
-            <span style={{ fontSize: "12px" }}> &nbsp;신고하기</span>
           </IconWrapper>
         </BottomContainer>
       )}

@@ -133,6 +133,7 @@ export default function ResumeBox({
           backgroundcolor={backgroundcolor}
           characterimg={characterimg}
           nickname={nickname}
+          member_id={member_id}
         />
       </ProfileContainer>
       <DateContainer>{date} </DateContainer>

@@ -19,6 +19,8 @@ const FlexContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 15px;
 `;
 
 const ButtonContainer = styled.div`
@@ -26,25 +28,28 @@ const ButtonContainer = styled.div`
 `;
 
 export default function StudyPkBoard() {
+  const url = new URL(document.URL);
+  const query = url.searchParams;
+  const searchBy = query.get("searchBy");
+  const keyword = query.get("keyword");
   const navigate = useNavigate();
   const study_id = useLocation().pathname.split("/")[2];
   const [data, setData] = useState([]);
 
   const [page, setPage] = useState(0);
   useEffect(() => {
-    customAxios()
-      .get(`/studies/${study_id}/boards?size=20&page${page}`)
-      .then((res) => {
-        setData(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setPage(0);
+    handleData(0);
   }, []);
+
+  const getSearchUrl = () =>
+    `studies/${study_id}/boards?${searchBy ? "searchBy=" + searchBy : ""}&${
+      keyword ? "keyword=" + keyword : ""
+    }`;
+
   function handleData(e) {
     customAxios()
-      .get(`/studies/${study_id}/boards?&size=20&page=${e}`) // 페이지size, page
+      .get(getSearchUrl() + `&size=20&page=${e}`) // 페이지size, page
       .then((res) => {
         setData(res.data);
       })

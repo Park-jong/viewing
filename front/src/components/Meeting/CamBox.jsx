@@ -88,6 +88,7 @@ function CamBox({ streamManager }) {
               nickname={getUserData().nickname}
               backgroundcolor={getUserData().backgroundColor}
               characterimg={getUserData().backgroundImg}
+              member_id={getUserData().member_id}
             />
           </ProfileBox>
         </ProfileContainer>

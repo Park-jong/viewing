@@ -243,7 +243,7 @@ const Suggestions = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   max-width: 300px;
   width: 100%;
-  max-height: 100px;
+  max-height: 115px;
   position: absolute;
   top: 100%; /* 입력 필드 아래에 위치 */
   left: 10px;
@@ -251,9 +251,22 @@ const Suggestions = styled.div`
   word-wrap: break-word;
   z-index: 10; /* 다른 요소들보다 위에 위치 */
   display: ${(props) => props.$visible};
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none; /* 파이어폭스 */
+  &::-webkit-scrollbar {
+    display: none; /* 크롬, 사파리, 오페라, 엣지 */
+  }
 `;
 
-const SuggestionValue = styled.div``;
+const SuggestionValue = styled.div`
+  color: var(--gray-500);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  &:hover {
+    background-color: var(--secondary);
+    cursor: pointer;
+  }
+`;
 
 export default function MakeStudy() {
   const currentDate = new Date().toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
@@ -277,12 +290,32 @@ export default function MakeStudy() {
   const [studyJobState, setStudyJobState] = useState(false);
   const [studyNameState, setStudyNameState] = useState(false);
   const [studyDescState, setStudyDescState] = useState(false);
+  const [isClick, setIsClick] = useState({ value: "", click: false });
 
   const maxContentLength = 2000;
 
   const clickSuggestion = (suggestion) => {
-    setAppliedCompany(suggestion);
-    setIsVisible(false);
+    setIsClick((prev) => {
+      const result = { ...prev };
+      result.click = true;
+      result.value = suggestion;
+      return result;
+    });
+  };
+
+  const handleFocus = (e) => {
+    if (e.target.value.length > 0) {
+      if (suggestion.length > 0) setIsVisible(true);
+      else {
+        customAxios()
+          .get(`companies/${appliedCompany}`)
+          .then(({ data }) => {
+            setSuggestion((prev) => {
+              return [...data];
+            });
+          });
+      }
+    }
   };
 
   const clickTagBtn = (id) => {
@@ -358,6 +391,12 @@ export default function MakeStudy() {
   }, [suggestion]);
 
   useEffect(() => {
+    if (isClick) {
+      setIsClick(false);
+      setIsVisible(false);
+      return;
+    }
+
     if (appliedCompany.length > 0) {
       customAxios()
         .get(`companies/${appliedCompany}`)
@@ -374,6 +413,12 @@ export default function MakeStudy() {
     }
   }, [appliedCompany]);
 
+  useEffect(() => {
+    if (isClick.click) {
+      setAppliedCompany(() => isClick.value);
+    }
+  }, [isClick]);
+
   return (
     <Container>
       <Title>✍ 스터디 기본 정보를 입력해주세요.</Title>
@@ -389,13 +434,19 @@ export default function MakeStudy() {
               setAppliedCompany(e.target.value);
             }}
             $state={studyCompanyState}
+            onBlur={() => {
+              setIsVisible(false);
+            }}
+            onFocus={(e) => {
+              handleFocus(e);
+            }}
           />
           <Suggestions $visible={isVisible ? "block" : "none"}>
             {suggestion.map((s, idx) => {
               return (
                 <SuggestionValue
                   key={idx}
-                  onClick={() => {
+                  onMouseDown={() => {
                     clickSuggestion(s);
                   }}
                 >

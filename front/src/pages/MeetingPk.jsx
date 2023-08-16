@@ -82,14 +82,22 @@ const ButtonContainer = styled.div`
 `;
 
 const LayoutButton = styled.button`
-  padding: 5px 20px;
+  padding: 3px 20px;
   margin: 5px;
-  background-color: var(--primary);
+  background-color: var(--gray-800);
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
+
+  transition: background-color 0.3s ease; /* Added */
+
+  &:hover {
+    background-color: var(--gray-200); /* Added */
+    color: black;
+  }
 `;
 
 const FooterContainer = styled.div`
@@ -105,13 +113,13 @@ const FooterContainer = styled.div`
 
 export default function MeetingPk() {
   // 유저 데이터 - 나중에 redux를 통해 가져와야 함
-  const userData = useSelector((state) => state.UserReducer);
-  // const userData = {
-  //   memberId: "5",
-  //   nickname: `nick${Math.ceil(Math.random() * 1000)}`,
-  //   backgroundColor: "red",
-  //   backgroundImg: "cow",
-  // };
+  // const userData = useSelector((state) => state.UserReducer);
+  const userData = {
+    memberId: "1",
+    nickname: `nick${Math.ceil(Math.random() * 1000)}`,
+    backgroundColor: "red",
+    backgroundImg: "cow",
+  };
 
   // 스터디 아이디  - 이거 pathvariable로 가져오거나 따로 불러오거나
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함

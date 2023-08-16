@@ -16,7 +16,7 @@ const ButtonContainer = styled.div`
   justify-content: center;
   height: 30px;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  /* transition: background-color 0.3s ease, color 0.3s ease; */
 
   &:hover {
     background-color: var(--secondary);
@@ -25,7 +25,7 @@ const ButtonContainer = styled.div`
   ${(props) =>
     props.active &&
     `
-    background-color: var(--primary);
+    background-color: red;
     color: white;
   `}
 `;

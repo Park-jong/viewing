@@ -8,6 +8,12 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   background-color: var(--gray-100);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: var(--secondary);
+  }
 `;
 
 export default function ChatButton({ toggleSideBar, changeOption }) {

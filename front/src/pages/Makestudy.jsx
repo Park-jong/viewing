@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useEffect } from "react";
 import TagData from "../components/Study/TagData";
@@ -45,6 +45,7 @@ const Title = styled.div`
   margin-top: 50px;
 
   margin-bottom: 30px;
+  user-select: none;
 `;
 
 const HorizontalLine = styled.div`
@@ -52,6 +53,7 @@ const HorizontalLine = styled.div`
   height: 3px;
   background-color: var(--gray-100);
   margin-bottom: 20px;
+  user-select: none;
 `;
 
 const InputContainer = styled.div`
@@ -60,12 +62,14 @@ const InputContainer = styled.div`
   align-items: flex-start;
   margin: 20px 0px;
   position: relative;
+  user-select: none;
 `;
 
 const InputLabel = styled.label`
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 5px;
+  user-select: none;
 `;
 
 const InputField = styled.input`
@@ -266,6 +270,8 @@ const SuggestionValue = styled.div`
     background-color: var(--secondary);
     cursor: pointer;
   }
+  background-color: ${(props) =>
+    props.$selected ? "var(--secondary)" : "none"};
 `;
 
 export default function MakeStudy() {
@@ -294,6 +300,10 @@ export default function MakeStudy() {
 
   const maxContentLength = 2000;
 
+  const [suggestionSelect, setSuggestionSelect] = useState(null);
+  const suggestionRef = useRef(null);
+  const parentRef = useRef(null);
+
   const clickSuggestion = (suggestion) => {
     setIsClick((prev) => {
       const result = { ...prev };
@@ -301,6 +311,36 @@ export default function MakeStudy() {
       result.value = suggestion;
       return result;
     });
+  };
+
+  const enterKeySelect = () => {
+    if (suggestionSelect != null) {
+      setIsClick((prev) => {
+        const result = { ...prev };
+        result.click = true;
+        result.value = suggestion[suggestionSelect];
+        return result;
+      });
+      return;
+    }
+  };
+
+  const pressDown = () => {
+    if (suggestionSelect === null) {
+      setSuggestionSelect(0);
+    } else {
+      setSuggestionSelect(suggestionSelect + 1);
+    }
+  };
+
+  const pressUp = () => {
+    if (suggestionSelect === null) {
+      setSuggestionSelect(() => suggestion.length - 1);
+    } else {
+      setSuggestionSelect((prev) => {
+        return prev - 1;
+      });
+    }
   };
 
   const handleFocus = (e) => {
@@ -391,8 +431,14 @@ export default function MakeStudy() {
   }, [suggestion]);
 
   useEffect(() => {
-    if (isClick) {
-      setIsClick(false);
+    setSuggestionSelect(null);
+    if (isClick.click) {
+      setIsClick((prev) => {
+        const result = { ...prev };
+        result.click = false;
+        result.value = "";
+        return result;
+      });
       setIsVisible(false);
       return;
     }
@@ -415,9 +461,34 @@ export default function MakeStudy() {
 
   useEffect(() => {
     if (isClick.click) {
-      setAppliedCompany(() => isClick.value);
+      if (appliedCompany === isClick.value) {
+        setIsVisible(false);
+        setSuggestionSelect(null);
+        setIsClick((prev) => {
+          const result = { ...prev };
+          result.click = false;
+          result.value = "";
+          return result;
+        });
+      } else {
+        setAppliedCompany(() => isClick.value);
+      }
     }
   }, [isClick]);
+
+  useEffect(() => {
+    if (suggestionSelect < 0) {
+      setSuggestionSelect(suggestion.length - 1);
+    } else if (suggestionSelect >= suggestion.length) {
+      setSuggestionSelect(0);
+    }
+    const selectedChild = suggestionRef.current;
+    const parentElement = parentRef.current;
+    // Scroll the parent element to bring the selected child into view
+    if (selectedChild != null && parentElement != null) {
+      parentElement.scrollTop = selectedChild.offsetTop;
+    }
+  }, [suggestionSelect]);
 
   return (
     <Container>
@@ -440,15 +511,41 @@ export default function MakeStudy() {
             onFocus={(e) => {
               handleFocus(e);
             }}
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                enterKeySelect();
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Down" || e.key === "ArrowDown") {
+                e.preventDefault();
+                pressDown();
+              } else if (e.key === "Up" || e.key === "ArrowUp") {
+                e.preventDefault();
+                pressUp();
+              }
+            }}
           />
-          <Suggestions $visible={isVisible ? "block" : "none"}>
+          <Suggestions $visible={isVisible ? "block" : "none"} ref={parentRef}>
             {suggestion.map((s, idx) => {
-              return (
+              return suggestionSelect === idx ? (
                 <SuggestionValue
                   key={idx}
                   onMouseDown={() => {
                     clickSuggestion(s);
                   }}
+                  $selected={true}
+                  ref={suggestionRef}
+                >
+                  {s}
+                </SuggestionValue>
+              ) : (
+                <SuggestionValue
+                  key={idx}
+                  onMouseDown={() => {
+                    clickSuggestion(s);
+                  }}
+                  $selected={false}
                 >
                   {s}
                 </SuggestionValue>

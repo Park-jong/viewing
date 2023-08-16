@@ -217,29 +217,62 @@ export default function DropAlert() {
       .put(`members/${memberId}/notification/${alert.notificationId}`)
       .then((res) => {
         dispatch(HandleRead(alert));
+        console.log(alert);
         switch (alert.notificationType) {
           case "Message":
             navigate("mypage/get");
             return;
-          case "Approve":
+          case "StudyRequest_Approve":
+            if(alert.url){
+              navigate(`study/${alert.url}`);
+            }
             return;
-          case "Apply":
+          case "StudyRequest":
+            if(alert.url){
+              navigate(`study/${alert.url}/applicant`);
+            }
+            return;
+          case "StudyRequest_Reject":
             return;
           case "StudyArticle":
+            if(alert.url){
+              console.log(alert.url.split);
+              navigate(`study/${alert.url.split(' ')[0]}/board/${alert.url.split(' ')[1]}`);
+            }
             return;
           case "StudyMeeting":
             return;
           case "StudyComment":
+            if(alert.url){
+              navigate(`study/${alert.url.split(' ')[0]}/board/${alert.url.split(' ')[1]}`);
+            }
             return;
           case "StudyReply":
+            if(alert.url){
+              navigate(`study/${alert.url.split(' ')[0]}/board/${alert.url.split(' ')[1]}`);
+            }
             return;
           case "BoardComment":
+            if(alert.url){
+              navigate(`board/${alert.url.split(' ')[0]}/${alert.url.split(' ')[1]}`);
+            }
             return;
           case "BoardReply":
+            if(alert.url){
+              navigate(`board/${alert.url.split(' ')[0]}/${alert.url.split(' ')[1]}`);
+            }
             return;
           case "Leader":
+            if(alert.url){
+              navigate(`study/${alert.url}`);
+            }
+            return;
+          case "Study_Banned":
             return;
           case "StudyCalendar":
+            if(alert.url){
+              navigate(`study/${alert.url}/calendar`);
+            }
             return;
           case "Comment":
             return;

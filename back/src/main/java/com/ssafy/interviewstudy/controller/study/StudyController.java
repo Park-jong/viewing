@@ -176,7 +176,8 @@ public class StudyController {
     public ResponseEntity<?> requestApproval(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
         Integer memberId = null;
         if(map.containsKey("user_id")) memberId = (Integer)map.get("user_id");
-        studyService.permitRequest(requestId, studyId, memberId);
+        boolean result = studyService.permitRequest(requestId, studyId, memberId);
+        if(!result) return ResponseEntity.badRequest().body("제한 인원을 초과하였습니다.");
         return ResponseEntity.ok().build();
     }
 

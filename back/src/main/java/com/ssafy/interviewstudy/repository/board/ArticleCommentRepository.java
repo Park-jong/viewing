@@ -25,4 +25,8 @@ public interface ArticleCommentRepository extends JpaRepository<ArticleComment, 
     // 대댓글 수 count
     @Query("select count(c) from ArticleComment c where c.comment.id = :commentId and c.isDelete = false")
     Integer countByComment(Integer commentId);
+
+    // 댓글ID로 가져오기
+    @Query("select ac from ArticleComment ac where ac.comment.id=:commentId")
+    List<ArticleComment> findArticleCommentsByComment_Id(Integer commentId);
 }

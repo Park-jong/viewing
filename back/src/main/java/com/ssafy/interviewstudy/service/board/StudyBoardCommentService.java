@@ -7,6 +7,7 @@ import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.StudyBoardCommentResponse;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.StudyBoardCommentRepository;
 import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
 import com.ssafy.interviewstudy.service.notification.NotificationService;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,7 +42,7 @@ public class StudyBoardCommentService {
                 notificationService.sendNotificationToMember(
                         NotificationDto
                                 .builder()
-                                .memberId(commentRequest.getMemberId())
+                                .memberId(comment.getArticle().getAuthor().getId())
                                 .content("스터디 게시판 게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
                                 .notificationType(NotificationType.StudyComment)
                                 .url(comment.getArticle().getStudy().getId().toString()+" "+articleId.toString())
@@ -56,11 +58,15 @@ public class StudyBoardCommentService {
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         StudyBoardComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
+        Optional<StudyBoardComment> parentComment = commentRepository.findById(commentId);
+        if(parentComment.isEmpty()){
+            throw new NotFoundException("대댓글 대상인 댓글이 존재하지 않습니다.");
+        }
         //스터디 게시판 댓글에 대댓글이 달림
         notificationService.sendNotificationToMember(
                 NotificationDto
                         .builder()
-                        .memberId(comment.getAuthor().getId())
+                        .memberId(parentComment.get().getAuthor().getId())
                         .content("스터디 게시판 댓글에 답글이 달렸습니다")
                         .notificationType(NotificationType.StudyReply)
                         .isRead(false)

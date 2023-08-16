@@ -2,6 +2,7 @@ package com.ssafy.interviewstudy.service.board;
 
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.board.ArticleComment;
+import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.domain.board.CommentLike;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.notification.Notification;
@@ -9,6 +10,7 @@ import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.CommentResponse;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import com.ssafy.interviewstudy.repository.board.CommentLikeRepository;
@@ -24,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -50,10 +53,10 @@ public class CommentService {
            notificationService.sendNotificationToMember(
                    NotificationDto
                            .builder()
-                           .memberId(commentRequest.getMemberId())
+                           .memberId(comment.getArticle().getAuthor().getId())
                            .content("게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
                            .notificationType(NotificationType.BoardComment)
-                           .url(articleId.toString())
+                           .url(boardTypeToUrl(comment.getArticle().getBoardType())+" "+articleId.toString())
                            .isRead(false)
                            .build()
            );
@@ -66,15 +69,19 @@ public class CommentService {
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         ArticleComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
+        Optional<ArticleComment> parentComment = articleCommentRepository.findById(commentId);
+        if(parentComment.isEmpty()){
+            throw new NotFoundException("대댓글 대상인 댓글이 없습니다.");
+        }
         articleCommentRepository.save(comment);
         //대댓글이 달릴 댓글의 작성자에게 알림 보내기
         notificationService
                 .sendNotificationToMember(
                         NotificationDto
                                 .builder()
-                                .memberId(comment.getAuthor().getId())
+                                .memberId(parentComment.get().getAuthor().getId())
                                 .content("댓글에 대댓글이 달렸습니다.")
-                                .url(comment.getArticle().getId().toString()+" "+comment.getId().toString())
+                                .url(boardTypeToUrl(comment.getArticle().getBoardType())+" "+articleId.toString())
                                 .notificationType(NotificationType.BoardReply)
                                 .isRead(false)
                                 .build()
@@ -164,5 +171,18 @@ public class CommentService {
 
         if(comment.getAuthor().getId() == memberId) return true;
         else return false;
+    }
+
+    public static String boardTypeToUrl(BoardType boardType){
+        if(boardType==BoardType.review){
+            return "interview";
+        }
+        if(boardType==BoardType.qna){
+            return "question";
+        }
+        if(boardType==BoardType.general){
+            return "free";
+        }
+        return "free";
     }
 }

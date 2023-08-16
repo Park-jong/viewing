@@ -284,8 +284,13 @@ public class StudyService {
 
     //가입 신청 승인
     @Transactional
-    public void permitRequest(Integer requestId, Integer studyId, Integer memberId){
+    public boolean permitRequest(Integer requestId, Integer studyId, Integer memberId){
         StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
+        Optional<Study> byStudyId = studyRepository.findById(studyId);
+        if(byStudyId.isEmpty()) throw new NotFoundException("스터디를 찾을 수 없음");
+        Study study = byStudyId.get();
+        long count = studyMemberRepository.countStudyMemberByStudy(study);
+        if(count >= study.getCapacity()) return false;
 
         deleteRequest(requestId);
         StudyMember sm = new StudyMember(studyRequest.getStudy(), studyRequest.getApplicant());
@@ -300,12 +305,13 @@ public class StudyService {
                             .builder()
                             .memberId(memberId)
                             .content(studyRequest.getStudy().getTitle()+" 스터디에 가입이 승인되었습니다! ")
-                            .notificationType(NotificationType.StudyRequest)
+                            .notificationType(NotificationType.StudyRequest_Approve)
                             .url(studyId.toString())
                             .isRead(false)
                             .build()
             );
         }
+        return true;
     }
 
     //가입 신청 거절
@@ -321,7 +327,7 @@ public class StudyService {
               NotificationDto
                       .builder()
                       .content(study.getTitle()+" 스터디에 가입신청이 거절 되었습니다.")
-                      .notificationType(NotificationType.StudyRequest)
+                      .notificationType(NotificationType.StudyRequest_Reject)
                       .memberId(memberId)
                       .isRead(false)
                       .url(studyId.toString())

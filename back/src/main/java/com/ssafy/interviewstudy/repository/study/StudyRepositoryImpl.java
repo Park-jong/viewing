@@ -4,6 +4,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.DateTimeTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -23,6 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.ssafy.interviewstudy.domain.member.QMember.member;
@@ -58,7 +60,8 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                         appliedCompanyLike(appliedCompany),
                         appliedJobLike(appliedJob),
                         careerLevelEq(careerLevel),
-                        tagEq(tag))
+                        tagEq(tag),
+                        inDeadline())
                 .orderBy(study.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -123,7 +126,8 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                             study.isDelete.eq(false),
                             appliedCompanyLike(appliedCompany),
                             appliedJobLike(appliedJob),
-                            careerLevelEq(careerLevel))
+                            careerLevelEq(careerLevel),
+                            inDeadline())
                     .fetchOne();
         }
         else {
@@ -136,7 +140,8 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                             appliedCompanyLike(appliedCompany),
                             appliedJobLike(appliedJob),
                             careerLevelEq(careerLevel),
-                            tagEq(tag))
+                            tagEq(tag),
+                            inDeadline())
                     .fetchOne();
         }
         return count;
@@ -164,5 +169,9 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
 
     private BooleanExpression tagEq(Integer tag){
         return tag != null ? studyTag.tag.id.eq(tag) : null;
+    }
+
+    private BooleanExpression inDeadline() {
+        return Expressions.dateTimeTemplate(LocalDateTime.class,"date(now())").loe(Expressions.dateTimeTemplate(LocalDateTime.class,"date({0})", study.deadline));
     }
 }

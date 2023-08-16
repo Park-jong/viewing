@@ -284,8 +284,13 @@ public class StudyService {
 
     //가입 신청 승인
     @Transactional
-    public void permitRequest(Integer requestId, Integer studyId, Integer memberId){
+    public boolean permitRequest(Integer requestId, Integer studyId, Integer memberId){
         StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
+        Optional<Study> byStudyId = studyRepository.findById(studyId);
+        if(byStudyId.isEmpty()) throw new NotFoundException("스터디를 찾을 수 없음");
+        Study study = byStudyId.get();
+        long count = studyMemberRepository.countStudyMemberByStudy(study);
+        if(count >= study.getCapacity()) return false;
 
         deleteRequest(requestId);
         StudyMember sm = new StudyMember(studyRequest.getStudy(), studyRequest.getApplicant());
@@ -306,6 +311,7 @@ public class StudyService {
                             .build()
             );
         }
+        return true;
     }
 
     //가입 신청 거절

@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import CamBox from "../CamBox";
 import React from "react";
-import Slide from "../Slide";
 
 const Container = styled.div`
   border: 1px solid var(--gray-200);
@@ -105,8 +104,6 @@ export default function MeetingMain({ publisher, subscribers, view }) {
                 </OthersCamContainer>
               );
             })}
-
-            {/* <Slide subscribers={subscribers} /> */}
           </OthersContainer>
           <MeContainer>
             <MeCamContainer>

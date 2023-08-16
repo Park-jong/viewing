@@ -7,6 +7,7 @@ import { customAxios } from "../modules/Other/Axios/customAxios";
 import MainButton from "../components/Button/MainButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import Pagination from "./../components/Common/Pagination";
+import { useSelector } from "react-redux";
 
 const Container = styled.div`
   display: flex;
@@ -31,6 +32,7 @@ export default function BoardCommon() {
   const query = url.searchParams;
   const searchBy = query.get("searchBy");
   const keyword = query.get("keyword");
+  const member_id = useSelector((state) => state.UserReducer.memberId);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
@@ -50,6 +52,16 @@ export default function BoardCommon() {
     `boards/${param(type)}?${searchBy ? "searchBy=" + searchBy : ""}&${
       keyword ? "keyword=" + keyword : ""
     }`;
+
+  function navigateWrite() {
+    customAxios()
+      .get(`members/${member_id}`)
+      .then((res) => navigate(`/board/write?type=${type}`))
+      .catch((err) => {
+        window.alert("로그인이 필요합니다.");
+        navigate(`/login`);
+      });
+  }
 
   function handleData(e) {
     customAxios()
@@ -82,7 +94,7 @@ export default function BoardCommon() {
             content={"글쓰기"}
             width={80}
             height={35}
-            onClick={() => navigate(`/board/write?type=${type}`)}
+            onClick={() => navigateWrite()}
           ></MainButton>
         </MarginLeft>
       </BottomContainer>

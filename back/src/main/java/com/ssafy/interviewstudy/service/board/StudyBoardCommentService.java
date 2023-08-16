@@ -40,7 +40,7 @@ public class StudyBoardCommentService {
                 notificationService.sendNotificationToMember(
                         NotificationDto
                                 .builder()
-                                .memberId(commentRequest.getMemberId())
+                                .memberId(comment.getArticle().getAuthor().getId())
                                 .content("스터디 게시판 게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
                                 .notificationType(NotificationType.StudyComment)
                                 .url(comment.getArticle().getStudy().getId().toString()+" "+articleId.toString())

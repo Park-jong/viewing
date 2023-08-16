@@ -50,7 +50,7 @@ public class CommentService {
            notificationService.sendNotificationToMember(
                    NotificationDto
                            .builder()
-                           .memberId(commentRequest.getMemberId())
+                           .memberId(comment.getArticle().getAuthor().getId())
                            .content("게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
                            .notificationType(NotificationType.BoardComment)
                            .url(articleId.toString())

@@ -72,6 +72,7 @@ export default function UploadFile({
     }
 
     setFiles([...files, ...e.target.files]);
+    e.target.value = "";
   };
   const deleteFile = (file, files) => {
     files.splice(

@@ -99,7 +99,7 @@ export default function SearchBoxBoard() {
     }
 
     const queryString = isStudy
-      ? `study/${
+      ? `/study/${
           param[2]
         }/board?searchBy=${selectedOption}&keyword=${encodeURIComponent(input)}`
       : `/board/${

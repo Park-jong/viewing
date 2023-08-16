@@ -130,7 +130,6 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   const [suggestionSelect, setSuggestionSelect] = useState(null);
   const suggestionRef = useRef(null);
   const parentRef = useRef(null);
-  const inputRef = useRef(null);
   const didmount = useRef(false);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -282,7 +281,6 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
         onChange={(e) => {
           handleInputChange(e);
         }}
-        ref={inputRef}
         placeholder="회사명을 입력하세요 (필수)"
         onKeyUp={(e) => {
           if (e.key === "Enter") {

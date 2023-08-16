@@ -8,7 +8,7 @@ import { FakeData } from "./FakeData";
 
 const Container = styled.div`
   .react-calendar {
-    width: 500px;
+    width: 600px;
     max-width: 100%;
     background: white;
     /* border: 1px solid #a0a096; */

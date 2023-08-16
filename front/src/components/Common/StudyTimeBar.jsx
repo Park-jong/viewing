@@ -7,7 +7,7 @@ const BigContainer = styled.div`
     if (props.$isflex) {
       return "0px";
     } else {
-      return "50px";
+      return "25px";
     }
   }};
 `;
@@ -39,6 +39,8 @@ const NickName = styled.div`
 const BarContainer = styled.div`
   height: 50px;
   width: 400px;
+  border-radius: 10px;
+  overflow: hidden;
   position: relative;
 `;
 
@@ -62,6 +64,17 @@ const Schedule = styled.div`
     background-color: var(--secondary);
   }
 `;
+
+const Button = styled.div`
+    margin-left: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: var(--gray-200);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `
 
 // props에 해당 날짜를 받는다. 날짜에 맞는 스케줄은 상위로직에서 수행한다.
 // props.clicked 에 날짜가 담겨있다. props.clicked
@@ -145,13 +158,13 @@ export default function StudyTimeBar(props) {
   if (data.length) {
     res = (
       <BigContainer>
-        <Container $isflex={props.isFlex}>
+        { studySchedules.length>0 ? <Container $isflex={props.isFlex}>
           <NickName>Study</NickName>
           <BarContainer>
             <Bar></Bar>
             {studySchedules}
           </BarContainer>
-        </Container>
+        </Container> : <></>}
         {finalSchedules}
       </BigContainer>
     );

@@ -9,8 +9,9 @@ import StudyCalendarModal from "../../Modal/StudyCalendarModal";
 import { customAxios } from "../../../modules/Other/Axios/customAxios";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import StudyCalendar from './../StudyCalendar';
+import StudyCalendar from "./../StudyCalendar";
 import StudyTimeBar from "../StudyTimeBar";
+import MainButton from "../../Button/MainButton";
 
 const empty = {
   author: {
@@ -36,6 +37,13 @@ const Container = styled.div`
   }};
   justify-content: center;
   align-items: center;
+`;
+
+const ButtonContainer = styled.div`
+  margin-top: 20px;
+  margin-bottom: 0px;
+  display: flex;
+  justify-content: right;
 `;
 
 const AddButton = styled.button``;
@@ -128,20 +136,28 @@ export default function StudyCalendarTemplate({ isFlex, data, dataChange }) {
 
   return (
     <Container $isFlex={isFlex}>
-      <AddButton
-        onClick={() => {
-          showAdd();
-        }}
-      >
-        일정 추가
-      </AddButton>
       <StudyCalendar
         dataChange={dataChange}
         data={data}
         value={value}
         onChange={onChange}
       ></StudyCalendar>
-      <StudyTimeBar data={data2} isFlex={isFlex} showDetail={showDetail}></StudyTimeBar>
+      <ButtonContainer>
+        <MainButton
+          onClick={() => {
+            showAdd();
+          }}
+          content={"일정 추가"}
+          width={100}
+          height={30}
+        >
+        </MainButton>
+      </ButtonContainer>
+      <StudyTimeBar
+        data={data2}
+        isFlex={isFlex}
+        showDetail={showDetail}
+      ></StudyTimeBar>
       <StudyCalendarModal
         isOpen={isOpen}
         type={type}

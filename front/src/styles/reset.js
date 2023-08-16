@@ -50,6 +50,9 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+* {
+	word-break: break-all;
+}
 `;
 
 export default ResetStyle;

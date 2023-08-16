@@ -244,7 +244,7 @@ export default function Search() {
 
   const getSearchUrl = () =>
     `studies?${appliedCompany ? "appliedCompany=" + appliedCompany : ""}&${
-      job ? "job=" + job : ""
+      job ? "appliedJob=" + job : ""
     }&${careerLevel ? "careerLevel=" + careerLevel : ""}&option=${isToggled}&${
       searchTag ? "tag=" + searchTag : ""
     }`;

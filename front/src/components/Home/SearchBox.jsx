@@ -134,7 +134,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
     // Construct the query string
     const queryString = `/search?appliedCompany=${encodeURIComponent(
       input1
-    )}&job=${encodeURIComponent(input2)}&careerLevel=${selectedOption}`;
+    )}&appliedJob=${encodeURIComponent(input2)}&careerLevel=${selectedOption}`;
     // Navigate to the search results page with the query string
     window.location.href = queryString;
   };
@@ -179,9 +179,6 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
           if (e.key === "Enter") {
             handleSearch();
           }
-        }}
-        onBlur={() => {
-          setIsVisible(false);
         }}
       />
       <VerticalLine />

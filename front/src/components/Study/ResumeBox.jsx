@@ -45,7 +45,7 @@ const TextContainer = styled.div`
   white-space: pre-line;
 
   background-color: #f8f6ff;
-  overflow: scroll;
+  /* overflow: scroll; */
   cursor: pointer;
 `;
 

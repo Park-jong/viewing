@@ -2,6 +2,7 @@ package com.ssafy.interviewstudy.service.board;
 
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.board.ArticleComment;
+import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.domain.board.CommentLike;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.notification.Notification;
@@ -53,7 +54,7 @@ public class CommentService {
                            .memberId(comment.getArticle().getAuthor().getId())
                            .content("게시글"+comment.getArticle().getTitle()+"에 댓글이 달렸습니다. ")
                            .notificationType(NotificationType.BoardComment)
-                           .url(articleId.toString())
+                           .url(boardTypeToUrl(comment.getArticle().getBoardType())+" "+articleId.toString())
                            .isRead(false)
                            .build()
            );
@@ -74,7 +75,7 @@ public class CommentService {
                                 .builder()
                                 .memberId(comment.getAuthor().getId())
                                 .content("댓글에 대댓글이 달렸습니다.")
-                                .url(comment.getArticle().getId().toString()+" "+comment.getId().toString())
+                                .url(boardTypeToUrl(comment.getArticle().getBoardType())+" "+articleId.toString())
                                 .notificationType(NotificationType.BoardReply)
                                 .isRead(false)
                                 .build()
@@ -164,5 +165,18 @@ public class CommentService {
 
         if(comment.getAuthor().getId() == memberId) return true;
         else return false;
+    }
+
+    public static String boardTypeToUrl(BoardType boardType){
+        if(boardType==BoardType.review){
+            return "interview";
+        }
+        if(boardType==BoardType.qna){
+            return "question";
+        }
+        if(boardType==BoardType.general){
+            return "free";
+        }
+        return "free";
     }
 }

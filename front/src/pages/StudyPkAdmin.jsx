@@ -141,7 +141,7 @@ const StudyTitleInputBox = styled.input`
   --border-after-color: #5891ff;
   --input-hovered-color: #4985e01f;
   position: relative;
-  width: 200px;
+  width: 700px;
   color: #000000;
   font-size: 0.9rem;
   background-color: transparent;

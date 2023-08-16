@@ -59,6 +59,7 @@ const MemberName = styled.span`
 const MemberBox = styled.div`
   display: flex;
   align-items: center;
+  margin-top: 25px;
 `;
 
 const StudyName = styled.div``;
@@ -98,9 +99,9 @@ const StudyTitle = styled.div`
   --border-after-color: #5891ff;
   --input-hovered-color: #4985e01f;
   position: relative;
-  width: 200px;
   color: #000000;
   font-size: 0.9rem;
+  width: 700px;
   background-color: transparent;
   box-sizing: border-box;
   padding-inline: 0.5em;

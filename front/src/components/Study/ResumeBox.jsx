@@ -104,7 +104,14 @@ export default function ResumeBox({
             setList(response.data);
           });
       })
-      .catch();
+      .catch(({ response }) => {
+        if (
+          response.data === "제한 인원을 초과하였습니다." &&
+          response.status === 400
+        ) {
+          alert(response.data);
+        }
+      });
   };
 
   const denial = () => {

@@ -92,7 +92,7 @@ export default function StudyCalendarModal({
                   return obj;
                 });
               }}
-              min = {currentDate}
+              min={currentDate}
             ></input>
           </ModalText>
           <ModalText>
@@ -217,14 +217,18 @@ export default function StudyCalendarModal({
               height={30}
               marginright={20}
               disabled={!data.is_study_calendar}
-              onClick={() => updateSchedule()}
+              onClick={() => {
+                if (data.is_study_calendar) updateSchedule();
+              }}
             ></MainButton>
             <MainButton
               content={"삭제"}
               width={50}
               height={30}
               disabled={!data.is_study_calendar}
-              onClick={() => deleteSchedule()}
+              onClick={() => {
+                if (data.is_study_calendar) deleteSchedule();
+              }}
             ></MainButton>
           </Buttons>
         </>

@@ -305,7 +305,7 @@ public class StudyService {
                             .builder()
                             .memberId(memberId)
                             .content(studyRequest.getStudy().getTitle()+" 스터디에 가입이 승인되었습니다! ")
-                            .notificationType(NotificationType.StudyRequest)
+                            .notificationType(NotificationType.StudyRequest_Approve)
                             .url(studyId.toString())
                             .isRead(false)
                             .build()
@@ -327,7 +327,7 @@ public class StudyService {
               NotificationDto
                       .builder()
                       .content(study.getTitle()+" 스터디에 가입신청이 거절 되었습니다.")
-                      .notificationType(NotificationType.StudyRequest)
+                      .notificationType(NotificationType.StudyRequest_Reject)
                       .memberId(memberId)
                       .isRead(false)
                       .url(studyId.toString())

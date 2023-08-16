@@ -10,6 +10,7 @@ import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.CommentResponse;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import com.ssafy.interviewstudy.repository.board.CommentLikeRepository;
@@ -25,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,13 +69,17 @@ public class CommentService {
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
         ArticleComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
+        Optional<ArticleComment> parentComment = articleCommentRepository.findById(commentId);
+        if(parentComment.isEmpty()){
+            throw new NotFoundException("대댓글 대상인 댓글이 없습니다.");
+        }
         articleCommentRepository.save(comment);
         //대댓글이 달릴 댓글의 작성자에게 알림 보내기
         notificationService
                 .sendNotificationToMember(
                         NotificationDto
                                 .builder()
-                                .memberId(comment.getAuthor().getId())
+                                .memberId(parentComment.get().getAuthor().getId())
                                 .content("댓글에 대댓글이 달렸습니다.")
                                 .url(boardTypeToUrl(comment.getArticle().getBoardType())+" "+articleId.toString())
                                 .notificationType(NotificationType.BoardReply)

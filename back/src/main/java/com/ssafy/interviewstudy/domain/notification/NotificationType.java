@@ -9,6 +9,8 @@ public enum NotificationType {
     //스터디 신청 승인/거부/ 스터디장이 신청받은거
     //어디 스터디인지
     StudyRequest,
+    StudyRequest_Approve,
+    StudyRequest_Reject,
     //스터디 게시판에 게시글이 등록됨 (스터디원 전원)
     //어디 스터디인지 제목
     StudyArticle,

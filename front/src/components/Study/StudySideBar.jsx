@@ -56,7 +56,7 @@ const StyledLink = styled(Link)`
 `;
 
 export default function StudySideBar() {
-  const [clicked, setClicked] = useState(document.location.pathname);
+  const [clicked, setClicked] = useState("");
 
   const location = useLocation();
 
@@ -66,7 +66,6 @@ export default function StudySideBar() {
   const memberId = member.memberId;
   const studyId = location.pathname.split("/")[2];
   const [isLeader, setIsLeader] = useState(false);
-  const [menuListDoms, setMenuListDoms] = useState([]);
   const [menuList, setMenuList] = useState([
     "스터디 캘린더",
     "스터디 게시판",
@@ -88,8 +87,9 @@ export default function StudySideBar() {
       .get(`studies/${studyId}/member`)
       .then(({ data }) => {
         if (data.is_leader) {
-          setIsLeader(() => true);
+          setIsLeader(true);
         }
+        setList(data.is_leader);
       })
       .catch((err) => {
         alert("접근 권한이 없습니다.");
@@ -97,55 +97,51 @@ export default function StudySideBar() {
       });
   }, []);
 
-  useEffect(() => {
-    if (isLeader) {
-      setManageMenu(() => "스터디 관리");
+  function setList(leader) {
+    if (leader) {
       setLinkList((prevList) => [
+        `/study/${studyId}`,
         ...prevList.slice(0, 3),
         `/study/${studyId}/applicant`,
         ...prevList.slice(3),
       ]);
       setMenuList((prevList) => [
+        "스터디 관리",
         ...prevList.slice(0, 3),
         "참여신청 관리",
         ...prevList.slice(3),
       ]);
     } else {
-      setManageMenu(() => "스터디 정보");
+      setLinkList((prevList) => [`/study/${studyId}`, ...prevList.slice(0)]);
+      setMenuList((prevList) => ["스터디 정보", ...prevList.slice(0)]);
     }
-  }, [isLeader]);
+    setClicked(document.location.pathname);
+  }
 
   function handleClick(menu) {
     setClicked(menu);
   }
-  useEffect(() => {
-    const doms = menuList.map((menu, idx) => {
+
+  const menuListDoms = menuList.map((menu, idx) => {
+    if (clicked) {
       return (
         <StyledLink
           to={linkList[idx]}
-          onClick={() => handleClick(menu)}
+          onClick={() => handleClick(linkList[idx])}
           key={idx}
         >
-          <Menu $active={clicked === menu}>{menu}</Menu>
+          <Menu $active={clicked === linkList[idx]}>{menu}</Menu>
         </StyledLink>
       );
-    });
-    setMenuListDoms(doms);
-  }, [menuList]);
+    }
+  });
 
   return (
     <Container>
       <SidebarContainer>
         <Study>스터디</Study>
-        <StyledLink
-          to={`/study/${studyId}`}
-          onClick={() => handleClick(manageMenu)}
-        >
-          <Menu $active={clicked === manageMenu}>{manageMenu}</Menu>
-        </StyledLink>
         {menuListDoms}
       </SidebarContainer>
-      {/* <StudySideBar></StudySideBar> */}
       <div>
         <Outlet context={{ isLeader, setIsLeader }} />
       </div>

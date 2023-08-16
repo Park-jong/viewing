@@ -4,7 +4,7 @@ import { PiSirenLight } from "react-icons/pi";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import UserProfile from "../Common/UserProfile";
-import { MdAttachFile } from "react-icons/md";
+import { MdArrowBackIos, MdAttachFile } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import SubButton from "../Button/SubButton";
@@ -17,11 +17,20 @@ const ArticleContainer = styled.div`
   /* background-color: #f2f2f2; */
   /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 `;
+const BoardListButton = styled.span`
+  margin-top: 5px;
+  margin-left: 10px;
+  display: flex;
+  color: #848484;
+  cursor: pointer;
+`;
+
+const BackIcon = styled(MdArrowBackIos)``;
 
 const Title = styled.div`
   font-size: 28px;
   font-weight: bold;
-  margin: 30px 0px;
+  margin: 15px 0px 20px;
 `;
 
 const AuthorDateContainer = styled.div`
@@ -100,7 +109,7 @@ const File = styled.a``;
 
 export default function StudyArticleDetail({ data, setData, count }) {
   const param = useLocation().pathname.split("/")[2]; // studyId
-  const article_id = useLocation().pathname.split("/")[4]; // studyId
+  const article_id = useLocation().pathname.split("/")[4];
 
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const navigate = useNavigate();
@@ -116,6 +125,10 @@ export default function StudyArticleDetail({ data, setData, count }) {
 
   return (
     <ArticleContainer>
+      <BoardListButton onClick={() => navigate(`/study/${param}/board`)}>
+        <BackIcon></BackIcon>
+        <p>목록가기</p>
+      </BoardListButton>
       <Title>{data.title}</Title>
       <AuthorDateContainer>
         <AuthorInfo>

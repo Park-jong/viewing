@@ -2,6 +2,15 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { customAxios } from "../modules/Other/Axios/customAxios";
+import { styled } from "styled-components";
+
+const Container = styled.div`
+padding-top: 20%;
+padding-left: 20%;
+padding-right: 20%;
+font-size: xx-large;
+text-align: center;
+`;
 
 export default function GitHubLogin() {
   let params = new URL(document.URL).searchParams;
@@ -26,5 +35,5 @@ export default function GitHubLogin() {
       });
   }, []);
 
-  return <div>로그인 중입니다. 잠시만 기다리세요.</div>;
+  return <Container>로그인 중입니다. 잠시만 기다리세요.</Container>;
 }

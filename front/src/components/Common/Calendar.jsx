@@ -190,7 +190,9 @@ const StudyDot = styled.div`
 export default function Calendar(props) {
   // const [value, onChange] = useState(new Date());
   // const [data, dataChange] = useState([]);
-  const data = props.data;
+  const data = props.data;  
+  const dataChange = props.dataChange;
+
   const value = props.value;
   const onChange = props.onChange;
 

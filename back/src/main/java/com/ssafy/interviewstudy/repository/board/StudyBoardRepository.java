@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface StudyBoardRepository extends JpaRepository<StudyBoard, Integer> {
 
-
+    @Query("select b from StudyBoard b join b.author ba join b.study bs where b.study.id = :studyId order by b.createdAt desc")
     Page<StudyBoard> findByStudy_Id(Integer studyId, Pageable pageable);
 
     // 검색조건 : 제목 제목+내용 작성자

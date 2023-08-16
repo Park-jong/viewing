@@ -25,7 +25,7 @@ const InputButton = styled.div`
 `;
 
 const CurrentFile = styled.div`
-  display: flex;
+  /* display: flex; */
   flex-wrap: wrap;
   align-items: center;
   width: 900px;
@@ -35,6 +35,7 @@ const SelectedFile = styled.div`
   display: flex;
   align-items: center;
   margin-left: 25px;
+  margin-bottom: 5px;
 `;
 
 const FileName = styled.div`

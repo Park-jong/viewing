@@ -55,6 +55,7 @@ const TextArea = styled.textarea`
   font-size: 15px;
 
   line-height: 150%;
+  resize: none;
 
   ::placeholder {
     font-family: "Pretendard";
@@ -69,6 +70,7 @@ const ButtonsContainer = styled.div`
 `;
 
 export default function BoardWrite() {
+  const maxLen = 5;
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -130,7 +132,7 @@ export default function BoardWrite() {
       .post(`boards/${category}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Authorization": "Bearer " + token,
+          Authorization: "Bearer " + token,
         },
       })
       .then(function (res) {
@@ -183,8 +185,10 @@ export default function BoardWrite() {
       </Title>
       {/* <Content>내용</Content> */}
       <TextArea
-        placeholder="내용을 입력해주세요."
+        placeholder=" 내용을 입력해주세요.
+        내용은 최대 5000자까지 입력 가능합니다."
         onChange={(e) => handleContent(e)}
+        maxLength={5000}
       ></TextArea>
       <UploadFile
         width={200}

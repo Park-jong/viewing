@@ -37,11 +37,11 @@ export default function StudyPkWithdraw() {
 
   return (
     <Container>
-      <Guide>정말 탈퇴하시겠습니까?</Guide>
-      <>
-        {isLeader ? (
-          <>스터디장은 탈퇴할 수 없습니다.</>
-        ) : (
+      {isLeader ? (
+        <>스터디장은 탈퇴할 수 없습니다.</>
+      ) : (
+        <>
+          <Guide>정말 탈퇴하시겠습니까?</Guide>
           <ExitButton
             onClick={() => {
               exitStudy();
@@ -49,8 +49,8 @@ export default function StudyPkWithdraw() {
           >
             탈퇴하기
           </ExitButton>
-        )}
-      </>
+        </>
+      )}
     </Container>
   );
 }

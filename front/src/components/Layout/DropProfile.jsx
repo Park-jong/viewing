@@ -80,19 +80,13 @@ export default function DropProfile({ member }) {
         .get(`${KAKAO_LOGOUT_URL}?${KAKAO_LOGOUT_PARAMS}`)
         .then((res) => {
           console.log(res);
-          localStorage.removeItem("access_token");
-          dispatch(Logout());
         })
         .catch
         //로그아웃 실패시?
         ();
-    } else if (socialLoginType == "google") {
-      localStorage.removeItem("access_token");
-      dispatch(Logout());
-    } else if (socialLoginType == "github") {
-      localStorage.removeItem("access_token");
-      dispatch(Logout());
     }
+    localStorage.removeItem("access_token");
+    dispatch(Logout());
     window.alert("로그아웃 되엇습니다");
     navigate("/");
   };

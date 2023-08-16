@@ -60,6 +60,7 @@ const ChatInput = styled.input`
 
 const SendChatButton = styled.div`
   display: inline;
+  cursor: pointer;
 `;
 
 const FeedbackContainer = styled.div`

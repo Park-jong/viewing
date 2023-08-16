@@ -90,6 +90,7 @@ const IconWrapper = styled.span`
   margin-right: 10px;
 
   font-weight: 300;
+  cursor: pointer;
 `;
 
 const BottomContainer = styled.div`

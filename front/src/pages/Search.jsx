@@ -161,7 +161,9 @@ const TagContainer = styled.div`
   padding-bottom: 20px;
 `;
 
-const TagRadio = styled.input``;
+const TagRadio = styled.input`
+  cursor: pointer;
+`;
 
 const BodyContainer = styled.div`
   display: flex;

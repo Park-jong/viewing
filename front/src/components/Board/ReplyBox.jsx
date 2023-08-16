@@ -71,6 +71,7 @@ const LikeCount = styled.div`
   display: flex;
   align-items: center;
   margin-right: 10px;
+  cursor: pointer;
 `;
 
 const LikeIcon = styled(BiLike)`
@@ -93,6 +94,7 @@ const ReplyCount = styled.div`
   display: flex;
   align-items: center;
   margin-right: 10px;
+  cursor: pointer;
 `;
 
 const ButtonsContainer = styled.div`

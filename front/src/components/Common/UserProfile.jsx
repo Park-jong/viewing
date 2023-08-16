@@ -6,6 +6,7 @@ const ProfileContainer = styled.div`
   display: flex;
   position: relative;
   align-items: center;
+  cursor: pointer;
 `;
 
 const ProfileImg = styled.div`

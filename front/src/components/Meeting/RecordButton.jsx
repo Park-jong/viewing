@@ -32,23 +32,27 @@ const RecordingButton = styled.div`
   border-radius: 10px;
   border: 1px solid var(--gray-200);
   margin-right: 15px;
+  cursor: pointer;
 `;
 
 const PauseButton = styled.div`
   /* background-color: var(--gray-100);
   border-radius: 10px;
   border: 1px solid var(--gray-200); */
+  cursor: pointer;
 `;
 
 const ResumeButton = styled.div`
   /* border: 1px solid black; */
   display: inline;
+  cursor: pointer;
 `;
 const StopButton = styled.div`
   /* background-color: var(--gray-100);
   /* border-radius: 10px;
   border: 1px solid var(--gray-200); */
   margin-right: 15px;
+  cursor: pointer;
 `;
 
 const IconBiVideoRecording = styled(BiVideoRecording)`

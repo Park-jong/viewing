@@ -69,7 +69,9 @@ const TagArea = styled.div`
   padding-bottom: 5px;
 `;
 
-const TagBox = styled.span``;
+const TagBox = styled.span`
+  cursor: pointer;
+`;
 
 const SelectedTagBox = styled.span`
   background: #7952e2;

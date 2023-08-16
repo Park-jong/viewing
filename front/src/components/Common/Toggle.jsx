@@ -10,6 +10,7 @@ const H1 = styled.h1`
   font-size: 15px;
   font-weight: 700;
   color: var(--gray-800);
+  cursor: pointer;
 `;
 
 const colorAnimation = keyframes`
@@ -43,6 +44,7 @@ const ToggleContainer = styled.div`
   overflow: hidden;
   padding: 3px;
   margin-left: 5px;
+  cursor: pointer;
 
   ${({ $isToggled }) =>
     $isToggled &&

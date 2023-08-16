@@ -7,6 +7,7 @@ const Container = styled.div`
   border: 1px solid #ccc;
   text-align: center;
   padding-top: 6px;
+  cursor: pointer;
 
   &:hover {
     background-color: #ccc;

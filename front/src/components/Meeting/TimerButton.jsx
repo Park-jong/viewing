@@ -16,6 +16,7 @@ const ReadyState = styled.div`
   border-radius: 10px;
   border: 1px solid var(--gray-200);
   margin-right: 15px;
+  cursor: pointer;
 `;
 const TimeContatiner = styled.div`
   width: 3em;

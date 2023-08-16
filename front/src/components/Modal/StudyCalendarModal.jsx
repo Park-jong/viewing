@@ -39,6 +39,7 @@ const Buttons = styled.div`
 const XButtonContainer = styled.div`
   display: flex;
   justify-content: right;
+  cursor: pointer;
 `;
 
 export default function StudyCalendarModal({

@@ -10,6 +10,7 @@ const ButtonWrap = styled.div`
 const Button = styled.div`
   width: 50px;
   height: 50px;
+  cursor: pointer;
 `;
 
 export default function Pagination({ page, totalPosts, limit, setPage }) {

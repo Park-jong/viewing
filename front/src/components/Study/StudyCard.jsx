@@ -39,6 +39,7 @@ const BookmarkContainer = styled.div`
   top: 15px;
   right: 20px;
   /* z-index: 300; */
+  cursor: pointer;
 `;
 
 const CompanyContainer = styled.div`

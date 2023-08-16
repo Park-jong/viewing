@@ -83,6 +83,7 @@ const Schedule = styled.div`
   &:hover {
     background-color: var(--secondary);
   }
+  cursor: pointer;
 `;
 
 const Button = styled.div`

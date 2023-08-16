@@ -95,6 +95,7 @@ const Button = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 // props에 해당 날짜를 받는다. 날짜에 맞는 스케줄은 상위로직에서 수행한다.

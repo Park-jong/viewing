@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Search from "../../Icons/Search";
 import { Link } from "react-router-dom";
@@ -91,7 +91,7 @@ const Suggestions = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   max-width: 300px;
   width: 100%;
-  max-height: 100px;
+  max-height: 115px;
   position: absolute;
   top: 100%; /* 입력 필드 아래에 위치 */
   left: 20px;
@@ -99,9 +99,24 @@ const Suggestions = styled.div`
   word-wrap: break-word;
   z-index: 10; /* 다른 요소들보다 위에 위치 */
   display: ${(props) => props.$visible};
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none; /* 파이어폭스 */
+  &::-webkit-scrollbar {
+    display: none; /* 크롬, 사파리, 오페라, 엣지 */
+  }
 `;
 
-const SuggestionValue = styled.div``;
+const SuggestionValue = styled.div`
+  color: var(--gray-500);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  &:hover {
+    background-color: var(--secondary);
+    cursor: pointer;
+  }
+  background-color: ${(props) =>
+    props.$selected ? "var(--secondary)" : "none"};
+`;
 
 export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   const [input1, setInput1] = useState(appliedCompany ? appliedCompany : "");
@@ -111,13 +126,32 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   const [selectedOption, setSelectedOption] = useState(
     careerLevel ? careerLevel : "ALL"
   );
-
+  const [isClick, setIsClick] = useState({ value: "", click: false });
+  const [suggestionSelect, setSuggestionSelect] = useState(null);
+  const suggestionRef = useRef(null);
+  const parentRef = useRef(null);
+  const inputRef = useRef(null);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "input1") {
       setInput1(value);
     } else if (name === "input2") {
       setInput2(value);
+    }
+  };
+
+  const handleFocus = (e) => {
+    if (e.target.value.length > 0) {
+      if (suggestion.length > 0) setIsVisible(true);
+      else {
+        customAxios()
+          .get(`companies/${input1}`)
+          .then(({ data }) => {
+            setSuggestion((prev) => {
+              return [...data];
+            });
+          });
+      }
     }
   };
 
@@ -140,15 +174,63 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
   };
 
   const clickSuggestion = (suggestion) => {
-    setInput1(suggestion);
+    setIsClick((prev) => {
+      const result = { ...prev };
+      result.click = true;
+      result.value = suggestion;
+      return result;
+    });
   };
+
+  const pressDown = (e) => {
+    if (suggestionSelect === null) {
+      setSuggestionSelect(0);
+    } else {
+      setSuggestionSelect(suggestionSelect + 1);
+    }
+  };
+
+  const pressUp = (e) => {
+    if (suggestionSelect === null) {
+      console.log(1);
+      setSuggestionSelect(suggestion.length - 1);
+    } else {
+      console.log(2);
+      setSuggestionSelect(() => suggestionSelect - 1);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Down" || event.key === "ArrowDown") {
+        event.preventDefault();
+        pressDown(event);
+      }
+      if (event.key === "Up" || event.key === "ArrowUp") {
+        event.preventDefault();
+        pressUp(event);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     if (suggestion.length === 0) setIsVisible(false);
     else setIsVisible(true);
+    setSuggestionSelect(null);
   }, [suggestion]);
 
   useEffect(() => {
+    if (isClick) {
+      setIsClick(false);
+      setIsVisible(false);
+      return;
+    }
     if (input1.length > 0) {
       customAxios()
         .get(`companies/${input1}`)
@@ -164,6 +246,24 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
       });
     }
   }, [input1]);
+
+  useEffect(() => {
+    if (isClick.click) {
+      setInput1(() => isClick.value);
+    }
+  }, [isClick]);
+
+  useEffect(() => {
+    console.log(suggestionSelect);
+    if (suggestionSelect < 0) setSuggestionSelect(suggestion.length - 1);
+    else if (suggestionSelect >= suggestion.length) setSuggestionSelect(0);
+    const selectedChild = suggestionRef.current;
+    const parentElement = parentRef.current;
+    // Scroll the parent element to bring the selected child into view
+    if (selectedChild != null && parentElement != null) {
+      parentElement.scrollTop = selectedChild.offsetTop;
+    }
+  }, [suggestionSelect]);
   return (
     <SearchContainer $width={width}>
       <SearchInput
@@ -174,11 +274,18 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
         onChange={(e) => {
           handleInputChange(e);
         }}
+        ref={inputRef}
         placeholder="회사명을 입력하세요 (필수)"
         onKeyUp={(e) => {
           if (e.key === "Enter") {
             handleSearch();
           }
+        }}
+        // onBlur={() => {
+        //   setIsVisible(false);
+        // }}
+        onFocus={(e) => {
+          handleFocus(e);
         }}
       />
       <VerticalLine />
@@ -219,14 +326,26 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
           <SearchIcon />
         </SearchButton>
       </ButtonContainer>
-      <Suggestions $visible={isVisible ? "block" : "none"}>
+      <Suggestions ref={parentRef} $visible={isVisible ? "block" : "none"}>
         {suggestion.map((s, idx) => {
-          return (
+          return suggestionSelect === idx ? (
             <SuggestionValue
               key={idx}
-              onClick={() => {
+              onMouseDown={() => {
                 clickSuggestion(s);
               }}
+              $selected={true}
+              ref={suggestionRef}
+            >
+              {s}
+            </SuggestionValue>
+          ) : (
+            <SuggestionValue
+              key={idx}
+              onMouseDown={() => {
+                clickSuggestion(s);
+              }}
+              $selected={false}
             >
               {s}
             </SuggestionValue>

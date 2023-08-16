@@ -226,7 +226,7 @@ export default function Search() {
   // console.log(query.get("appliedCompany"));
 
   const appliedCompany = query.get("appliedCompany");
-  const job = query.get("job");
+  const job = query.get("appliedJob");
   const careerLevel = query.get("careerLevel");
 
   const [searchPage, setSearchPage] = useState(0);

@@ -45,6 +45,7 @@ const TextArea = styled.textarea`
   font-size: 15px;
 
   line-height: 150%;
+  resize: none;
 
   ::placeholder {
     font-family: "Pretendard";
@@ -117,8 +118,10 @@ export default function StudyPkBoardWrite() {
         </Title>
         {/* <Content>내용</Content> */}
         <TextArea
-          placeholder="내용을 입력해주세요."
+          placeholder=" 내용을 입력해주세요.
+          내용은 최대 5000자 입력 가능합니다."
           onChange={(e) => handleContent(e)}
+          maxLength={5000}
         ></TextArea>
         <UploadFile
           width={200}

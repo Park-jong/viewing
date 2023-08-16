@@ -63,6 +63,9 @@ const Text = styled.div``;
 //     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 //   }
 // `;
+const NicnameInputContainer = styled.div`
+  display: flex;
+`;
 
 const NicknameInput = styled.input`
   --border-height: 1px;
@@ -105,6 +108,8 @@ const ButtonContainer = styled.div`
   justify-content: center;
 `;
 
+const maxLength = 40;
+
 export default function MypageEdit() {
   //
 
@@ -119,6 +124,8 @@ export default function MypageEdit() {
   const [nickname, setNickname] = useState(nick);
   const [selectedColor, setSelectedColor] = useState(color);
   const [selectedImage, setSelectedImage] = useState(img);
+  const [nickLength, setNickLength] = useState(nick.length);
+  const [checkLength, setCheckLength] = useState(nick.length < maxLength);
 
   // react-hook-form에서 사용되는 함수
   const {
@@ -130,15 +137,21 @@ export default function MypageEdit() {
   } = useForm();
 
   const handleNickname = (e) => {
+    setNickLength(e.target.value.length);
     setNickname(e.target.value);
     setNickChecked(false);
   };
 
   const handleCheck = () => {
+    if (nickname.length > maxLength) {
+      alert("닉네임은 40자를 넘길 수 없습니다.");
+      return;
+    }
+
     customAxios()
       .get(`login/nickname/check/${nickname}`)
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         alert("사용 가능한 닉네임입니다.");
         setNickChecked(true);
       })
@@ -148,6 +161,11 @@ export default function MypageEdit() {
   };
 
   const onSubmit = (type) => {
+    if (nickname.length > maxLength) {
+      alert("닉네임은 40자를 넘길 수 없습니다.");
+      return;
+    }
+
     const data = () => {
       if (type === "nickname") {
         return { member_id: member_id, nickname: nickname };
@@ -171,6 +189,7 @@ export default function MypageEdit() {
 
         if (type === "nickname") {
           setNickChecked(false);
+
           dispatch(ChangeNickname(nickname));
           alert("프로필 변경이 완료되었습니다.");
         } else if (type === "profile") {
@@ -196,12 +215,22 @@ export default function MypageEdit() {
       <FlexContainer>
         <form onSubmit={handleSubmit(onSubmit)}>
           <h1>닉네임&nbsp;&nbsp;&nbsp;</h1>
-          <NicknameInput
+          {/* <NicknameInput
             id="userId"
             defaultValue={nickname}
             onChange={handleNickname}
             maxLength={30}
-          />
+          /> */}
+          <NicnameInputContainer>
+            <NicknameInput
+              id="userId"
+              defaultValue={nickname}
+              onChange={handleNickname}
+            />
+            <div style={{ color: "gray", fontSize: "14px", marginTop: "11px" }}>
+              {nickLength}/{maxLength}
+            </div>
+          </NicnameInputContainer>
           <Error>{errors?.userId?.message}</Error>
           <SubButton
             onClick={() => handleCheck()}

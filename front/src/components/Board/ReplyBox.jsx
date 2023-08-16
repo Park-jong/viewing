@@ -196,6 +196,7 @@ export default function ReplyBox({
             backgroundcolor={background}
             characterimg={character}
             nickname={nickname}
+            member_id={author}
           />
         </UserStyled>
         <Content isNestedReply={isNestedReply}>

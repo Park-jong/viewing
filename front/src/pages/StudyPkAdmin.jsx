@@ -475,6 +475,7 @@ export default function StudyPkAdmin() {
           <UserProfile
             backgroundcolor={member.background}
             characterimg={member.character}
+            member_id={member.member_id}
           ></UserProfile>
         </Profile>
         <MemberName>{member.nickname}</MemberName>

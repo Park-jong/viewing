@@ -149,6 +149,7 @@ export default function StudyPkDetail() {
           nickname={studyData.leader.nickname}
           backgroundcolor={studyData.leader.background}
           characterimg={studyData.leader.character}
+          member_id={studyData.leader.member_id}
         />
         &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
         <CreatedAt>{studyData.created_at}</CreatedAt>

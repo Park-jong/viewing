@@ -123,6 +123,7 @@ export default function StudyArticleDetail({ data, setData, count }) {
               backgroundcolor={data.author.member_profile_background}
               characterimg={data.author.member_profile_image}
               nickname={data.author.nickname}
+              member_id={data.author.member_id}
             />
           )}
         </AuthorInfo>

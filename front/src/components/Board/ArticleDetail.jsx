@@ -216,6 +216,7 @@ export default function ArticleDetail({ data, setData, count }) {
                 characterimg={data.author.member_profile_image}
                 nickname={data.author.nickname}
                 nicknameLength={500}
+                member_id={data.author.member_id}
               />
             )
           )}

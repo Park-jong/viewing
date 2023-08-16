@@ -12,6 +12,7 @@ export default function MemberBox({ data }) {
         nickname={data.nickname}
         backgroundcolor={data.backgroundColor}
         characterimg={data.backgroundImg}
+        member_id={data.member_id}
       ></UserProfile>
     </Container>
   );

@@ -283,6 +283,7 @@ export default function Chat() {
                     nickname={m.member.nickname}
                     backgroundcolor={m.member.background}
                     characterimg={m.member.character}
+                    member_id={m.member.member_id}
                   />
                 ) : (
                   <UserProfile nickname={"알 수 없음"} />

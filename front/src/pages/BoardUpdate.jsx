@@ -117,7 +117,7 @@ export default function BoardUpdate() {
       .put(`boards/${board_type()}/${param[3]}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Authorization": "Bearer " + token,
+          Authorization: "Bearer " + token,
         },
       })
       .then(function (res) {
@@ -154,6 +154,7 @@ export default function BoardUpdate() {
       <TextArea
         defaultValue={content}
         onChange={(e) => handleContent(e)}
+        maxLength={5000}
       ></TextArea>
       <UploadFile
         width={200}

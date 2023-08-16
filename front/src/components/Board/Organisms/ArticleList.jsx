@@ -125,7 +125,7 @@ export default function ArticleList({ data, width, type }) {
       ) : (
         <noDataContainer>
           <br></br>
-          <p>일치하는 글이 존재하지 않습니다.</p>
+          <p>글이 존재하지 않습니다.</p>
           <br></br>
         </noDataContainer>
       )}

@@ -19,6 +19,8 @@ const FlexContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 15px;
 `;
 
 const ButtonContainer = styled.div`
@@ -46,7 +48,6 @@ export default function StudyPkBoard() {
     }`;
 
   function handleData(e) {
-    console.log(getSearchUrl());
     customAxios()
       .get(getSearchUrl() + `&size=20&page=${e}`) // 페이지size, page
       .then((res) => {

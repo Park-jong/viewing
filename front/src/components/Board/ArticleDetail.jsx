@@ -114,6 +114,7 @@ const Icon = styled(MdAttachFile)`
 
 const FileDetailContainer = styled.div`
   display: flex;
+  margin-top: 6px;
 `;
 
 const File = styled.a``;
@@ -305,8 +306,6 @@ export default function ArticleDetail({ data, setData, count }) {
             ) : (
               <></>
             )}
-            <PiSirenLight size={16} />
-            <span style={{ fontSize: "12px" }}> &nbsp;신고하기</span>
           </IconWrapper>
         </BottomContainer>
       )}

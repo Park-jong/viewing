@@ -18,6 +18,7 @@ const Container = styled.div`
 const BottomContainer = styled.div`
   display: flex;
   align-items: center;
+  margin-top: 20px;
   margin-bottom: 15px;
 `;
 

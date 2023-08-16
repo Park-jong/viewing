@@ -93,6 +93,7 @@ const Icon = styled(MdAttachFile)`
 
 const FileDetailContainer = styled.a`
   display: flex;
+  margin-top: 6px;
 `;
 
 const File = styled.a``;

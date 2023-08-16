@@ -116,6 +116,11 @@ export default function SearchBoxBoard() {
         onChange={handleInputChange}
         maxLength={100}
         placeholder="검색어를 입력하세요."
+        onKeyUp={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
       />
       <VerticalLine />
 

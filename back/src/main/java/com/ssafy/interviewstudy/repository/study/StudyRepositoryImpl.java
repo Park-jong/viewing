@@ -77,7 +77,8 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                 ).distinct()
                 .from(study)
                 .leftJoin(studyBookmark).on(study.id.eq(studyBookmark.study.id), isBookmarked(memberId))
-                .where(study.id.in(studyIds))
+                .where(study.id.in(studyIds),
+                        study.isDelete.eq(false))
                 .orderBy(study.id.desc())
                 .fetch();
         return result;
@@ -90,7 +91,8 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
                 )
                 .from(study)
                 .join(study.studyBookmarks, studyBookmark).fetchJoin()
-                .where(studyBookmark.member.eq(member))
+                .where(studyBookmark.member.eq(member),
+                        study.isDelete.eq(false))
                 .fetch();
         return result;
     }
@@ -98,11 +100,15 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
     @Override
     public List<Tuple> findMyStudyMemberCountByMember(Member member){
         List<Tuple> result = queryFactory.select(study,
-                        JPAExpressions.select(studyMember.count()).from(studyMember).where(studyMember.study.id.eq(study.id))
+                    new CaseBuilder().when(studyBookmark.member.id.isNotNull()).then(true).otherwise(false),
+                    JPAExpressions.select(studyMember.count()).from(studyMember).where(studyMember.study.id.eq(study.id))
+
                 )
                 .from(study)
                 .join(study.studyMembers, studyMember).fetchJoin()
-                .where(studyMember.member.eq(member))
+                .leftJoin(studyBookmark).on(study.id.eq(studyBookmark.study.id), studyBookmark.member.eq(member))
+                .where(studyMember.member.eq(member),
+                        study.isDelete.eq(false))
                 .fetch();
         return result;
     }

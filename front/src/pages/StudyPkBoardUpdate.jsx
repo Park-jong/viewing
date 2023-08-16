@@ -43,6 +43,7 @@ const TextArea = styled.textarea`
   font-size: 15px;
 
   line-height: 150%;
+  resize: none;
 
   ::placeholder {
     font-family: "Pretendard";
@@ -88,7 +89,7 @@ export default function StudyPkBoardUpdate() {
       .put(`studies/${param[2]}/boards/${param[4]}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Authorization": "Bearer " + token,
+          Authorization: "Bearer " + token,
         },
       })
       .then((res) => {
@@ -125,6 +126,7 @@ export default function StudyPkBoardUpdate() {
       <TextArea
         defaultValue={content}
         onChange={(e) => handleContent(e)}
+        maxLength={5000}
       ></TextArea>
       <UploadFile
         width={200}

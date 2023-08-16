@@ -55,6 +55,7 @@ const TextArea = styled.textarea`
   font-size: 15px;
 
   line-height: 150%;
+  resize: none;
 
   ::placeholder {
     font-family: "Pretendard";

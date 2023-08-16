@@ -50,15 +50,14 @@ const ArrowButton = styled.div`
 `;
 
 export default function Pagination({ page, setPage, maxPage, handleData }) {
-
   const handlePage = (e) => {
-    if (e < 0) {
+    if (e <= 0) {
       e = 0;
     } else if (e > maxPage) {
       e = maxPage;
     }
     setPage(e);
-    handleData(e)
+    handleData(e);
   };
 
   const a = [page];
@@ -71,7 +70,7 @@ export default function Pagination({ page, setPage, maxPage, handleData }) {
       a.unshift(page - temp);
       num += 1;
       if (num == 5) {
-        break
+        break;
       }
     } else {
       flag1 = 0;
@@ -80,7 +79,7 @@ export default function Pagination({ page, setPage, maxPage, handleData }) {
       a.push(page + temp);
       num += 1;
       if (num == 5) {
-        break
+        break;
       }
     } else {
       flag2 = 0;
@@ -88,10 +87,11 @@ export default function Pagination({ page, setPage, maxPage, handleData }) {
     temp += 1;
   }
 
-    const pageButtons = a
-      .map((p, idx) => <PageButton key={idx} $now={page} $page={p} onClick={() => handlePage(p)}>
+  const pageButtons = a.map((p, idx) => (
+    <PageButton key={idx} $now={page} $page={p} onClick={() => handlePage(p)}>
       {p + 1}
-    </PageButton>);
+    </PageButton>
+  ));
 
   return (
     <PageContainer>

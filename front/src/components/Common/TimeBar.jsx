@@ -176,23 +176,6 @@ export default function TimeBar(props) {
 
   const finalSchedules = [];
 
-  for (let i in personalSchedules) {
-    finalSchedules.push(
-      <Container key={i}>
-        <NickName>{i}</NickName>
-        <BarContainer>
-          <Bar></Bar>
-          {personalSchedules[i]}
-        </BarContainer>
-        <Button>
-          <BiSolidPencil size={22}></BiSolidPencil>
-        </Button>
-        <Button onClick={() => handleDelete(personalScheduleNums[i])}>
-          <BiSolidTrash size={22}></BiSolidTrash>
-        </Button>
-      </Container>
-    );
-  }
   const timeDisplayContainers = [];
 
   for (let i = 0; i < 24; i++) {
@@ -200,6 +183,26 @@ export default function TimeBar(props) {
       <TimeDisplayContainer>
         <TimeDisplayText>{i}</TimeDisplayText>
       </TimeDisplayContainer>
+    );
+  }
+  for (let i in personalSchedules) {
+    finalSchedules.push(
+      <Container key={i}>
+        <NickName>{i}</NickName>
+        <TimeAndBarContainer>
+          <TimeContainer>{timeDisplayContainers}</TimeContainer>
+          <BarContainer>
+            <Bar></Bar>
+            {studySchedules}
+          </BarContainer>
+        </TimeAndBarContainer>
+        <Button>
+          <BiSolidPencil size={22}></BiSolidPencil>
+        </Button>
+        <Button onClick={() => handleDelete(personalScheduleNums[i])}>
+          <BiSolidTrash size={22}></BiSolidTrash>
+        </Button>
+      </Container>
     );
   }
 

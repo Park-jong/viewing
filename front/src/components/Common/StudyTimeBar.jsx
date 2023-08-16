@@ -152,11 +152,21 @@ export default function StudyTimeBar(props) {
     } else {
       if (involve(schedule, personalSchedules)) {
         personalSchedules[schedule.author.nickname].push(
-          <Schedule start={start} end={end} key={index}></Schedule>
+          <Schedule
+            start={start}
+            end={end}
+            key={index}
+            onClick={() => showDetail(schedule)}
+          ></Schedule>
         );
       } else {
         personalSchedules[schedule.author.nickname] = [
-          <Schedule start={start} end={end} key={index}></Schedule>,
+          <Schedule
+            start={start}
+            end={end}
+            key={index}
+            onClick={() => showDetail(schedule)}
+          ></Schedule>,
         ];
       }
     }

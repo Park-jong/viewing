@@ -23,7 +23,7 @@ const Menu = styled.div`
   padding-top: 13px;
   padding-left: 15px;
   color: var(--gray-800);
-  border-bottom: 1px solid #ebebebde ;
+  border-bottom: 1px solid #ebebebde;
   text-decoration: none;
   cursor: pointer;
 
@@ -82,21 +82,22 @@ const StyledLink = styled(Link)`
 `;
 
 export default function SideBar() {
-  const [clicked, setClicked] = useState(document.location.pathname);
+  const [clicked, setClicked] = useState("");
   const [subClicked, setSubClicked] = useState(false);
 
-  const navigate = useNavigate()
-  const location = useLocation()
-  
-  useEffect( () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setClicked(document.location.pathname);
     if (location.pathname === "/mypage") {
       navigate("/mypage/edit");
     }
-  }, [location, navigate])
+  }, [location, navigate]);
 
   function handleClick(menu) {
-    setSubClicked(false)
-    setClicked(menu)
+    setSubClicked(false);
+    setClicked(menu);
   }
 
   const menuList = [
@@ -122,14 +123,10 @@ export default function SideBar() {
     "/mypage/withdraw",
   ];
   const menuListDoms = menuList.map((menu, idx) => {
-    if (menu === "내 쪽지함") {
+    if (menu === "내 쪽지함" && clicked) {
       return (
         <div key={idx}>
-          <Menu
-            $active={clicked === menu}
-            onClick={() => setClicked(menu)}
-            
-          >
+          <Menu $active={clicked === menu} onClick={() => setClicked(menu)}>
             {menu}
           </Menu>
           <StyledLink to={"/mypage/get"}>
@@ -156,10 +153,10 @@ export default function SideBar() {
       return (
         <StyledLink
           to={linkList[idx]}
-          onClick={() => handleClick(menu)}
+          onClick={() => handleClick(linkList[idx])}
           key={idx}
         >
-          <Menu $active={clicked === menu}>{menu}</Menu>
+          <Menu $active={clicked === linkList[idx]}>{menu}</Menu>
         </StyledLink>
       );
     }
@@ -171,7 +168,6 @@ export default function SideBar() {
         <MyPage>마이 페이지</MyPage>
         {menuListDoms}
       </SidebarContainer>
-      {/* <StudySideBar></StudySideBar> */}
       <div>
         <Outlet />
       </div>

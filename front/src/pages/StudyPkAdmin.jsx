@@ -608,7 +608,7 @@ export default function StudyPkAdmin() {
             width={120}
             height={35}
             marginright={10}
-            content={"스터디삭제"}
+            content={"스터디 삭제"}
             onClick={() => deleteStudy()}
           />
           <MainButton

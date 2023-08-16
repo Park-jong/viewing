@@ -5,6 +5,7 @@ import UserProfile from "../Common/UserProfile";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import { useLocation, useNavigate } from "react-router-dom";
 import CommentAxios from "../../modules/Other/Axios/CommentAxios";
+import { useSelector } from "react-redux";
 
 const ReplyContainer = styled.div`
   max-width: 800px;
@@ -63,6 +64,7 @@ export default function ReplyInput({
   update = false,
   setIsUpdating,
 }) {
+  const member_id = useSelector((state) => state.UserReducer.memberId);
   const [text, setText] = useState("");
   const param = useLocation().pathname.split("/")[3];
 
@@ -82,59 +84,66 @@ export default function ReplyInput({
   };
 
   const handleClick = () => {
-    if (text.trim() === "") {
-      alert("댓글을 입력해주세요.");
-      return;
-    }
+    customAxios()
+      .get(`members/${member_id}`)
+      .then((res) => {
+        if (text.trim() === "") {
+          alert("댓글을 입력해주세요.");
+          return;
+        }
+        if (update) {
+          const url = isStudy
+            ? `/studies/${study_id}/boards/${article_id}/comments/${commentId}`
+            : `boards/${param}/comments/${commentId}/`;
+          customAxios()
+            .put(url, { content: text })
+            .then((res) => {
+              !isStudy
+                ? CommentAxios(setReply, param)
+                : customAxios()
+                    .get(`studies/${study_id}/boards/${article_id}/comments`)
+                    .then((response) => {
+                      setReply(response.data);
+                    })
+                    .catch((err) => console.log(err));
+              setIsUpdating(false);
+            });
+        } else {
+          let url = "";
+          if (isStudy) {
+            url = commentId
+              ? `studies/${study_id}/boards/${article_id}/comments/${commentId}/replies`
+              : `studies/${study_id}/boards/${article_id}/comments`;
 
-    if (update) {
-      const url = isStudy
-        ? `/studies/${study_id}/boards/${article_id}/comments/${commentId}`
-        : `boards/${param}/comments/${commentId}/`;
-      customAxios()
-        .put(url, { content: text })
-        .then((res) => {
-          !isStudy
-            ? CommentAxios(setReply, param)
-            : customAxios()
-                .get(`studies/${study_id}/boards/${article_id}/comments`)
-                .then((response) => {
-                  setReply(response.data);
-                })
-                .catch((err) => console.log(err));
-          setIsUpdating(false);
-        });
-    } else {
-      let url = "";
-      if (isStudy) {
-        url = commentId
-          ? `studies/${study_id}/boards/${article_id}/comments/${commentId}/replies`
-          : `studies/${study_id}/boards/${article_id}/comments`;
-
-        customAxios()
-          .post(url, { content: text })
-          .then((res) => {
             customAxios()
-              .get(`studies/${study_id}/boards/${article_id}/comments`)
-              .then((response) => {
-                setReply(response.data);
-              })
-              .catch((err) => console.log(err));
-            setText("");
-          });
-      } else {
-        url = commentId
-          ? `boards/${param}/comments/${commentId}/replies`
-          : `boards/${param}/comments`;
+              .post(url, { content: text })
+              .then((res) => {
+                customAxios()
+                  .get(`studies/${study_id}/boards/${article_id}/comments`)
+                  .then((response) => {
+                    setReply(response.data);
+                  })
+                  .catch((err) => console.log(err));
+                setText("");
+              });
+          } else {
+            url = commentId
+              ? `boards/${param}/comments/${commentId}/replies`
+              : `boards/${param}/comments`;
 
-        customAxios()
-          .post(url, { content: text })
-          .then((res) => {
-            CommentAxios(setReply, param);
-            setText("");
-          });
-      }
-    }
+            customAxios()
+              .post(url, { content: text })
+              .then((res) => {
+                CommentAxios(setReply, param);
+                setText("");
+              });
+          }
+        }
+      })
+      .catch((err) => {
+        window.alert("로그인이 필요합니다.");
+        return;
+      });
   };
 
   return (

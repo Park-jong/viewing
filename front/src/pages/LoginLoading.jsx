@@ -6,6 +6,30 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { JWTDecoder } from "../modules/Other/JWT/JWTDecoder";
 import { Login } from "../modules/UserReducer/Actions";
+import { keyframes, styled } from "styled-components";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
+const Container = styled.div`
+  margin-top: 400px;
+  justify-content: center;
+  text-align: center;
+  display: flex;
+`;
+
+const Icon = styled(AiOutlineLoading3Quarters)`
+  animation: rotate_image 6s linear infinite;
+  transform-origin: 50% 50%;
+  width: 60px;
+  height: 60px;
+  color: #2e2e2e;
+  margin-right: 20px;
+
+  @keyframes rotate_image {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
 
 export default function LoginLoading() {
   let params = new URL(document.URL).searchParams;
@@ -48,5 +72,17 @@ export default function LoginLoading() {
       });
   }, []);
 
-  return <div>로그인 중입니다. 잠시만 기다리세요.</div>;
+  return (
+    <Container>
+      <Icon></Icon>
+      <div
+        style={{
+          fontSize: "30px",
+        }}
+      >
+        로그인 중입니다.
+        <br></br>잠시만 기다리세요.
+      </div>
+    </Container>
+  );
 }

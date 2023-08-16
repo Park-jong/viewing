@@ -55,6 +55,7 @@ export default function StudyCalendarModal({
   const [date, setDate] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const currentDate = new Date().toISOString().split("T")[0];
   let width = 600;
   let height = 400;
   let content = "";
@@ -91,6 +92,7 @@ export default function StudyCalendarModal({
                   return obj;
                 });
               }}
+              min = {currentDate}
             ></input>
           </ModalText>
           <ModalText>

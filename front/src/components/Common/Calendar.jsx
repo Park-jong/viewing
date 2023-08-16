@@ -191,7 +191,6 @@ export default function Calendar(props) {
   // const [value, onChange] = useState(new Date());
   // const [data, dataChange] = useState([]);
   const data = props.data;
-  const dataChange = props.dataChange;
   const value = props.value;
   const onChange = props.onChange;
 
@@ -205,6 +204,7 @@ export default function Calendar(props) {
       <ReactCalendar
         onChange={onChange}
         value={value}
+        minDate={new Date()}
         calendarType="gregory"
         tileContent={({ activeStartDate, date, view }) => {
           const NewDots = [];

@@ -9,6 +9,9 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import TagStyled from "../components/Study/TagStyled";
 import TagStyledSelected from "../components/Study/TagStyledSelected";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import {
   BiChevronLeft,
   BiChevronRight,
@@ -167,6 +170,7 @@ const BodyContainer = styled.div`
 `;
 
 const TagLabel = styled.label`
+  user-select: none;
   cursor: pointer;
 `;
 
@@ -235,6 +239,9 @@ export default function Search() {
   const [isToggled, setIsToggled] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
 
+  const member = useSelector((state) => state.UserReducer);
+  const navigate = useNavigate();
+
   const getSearchUrl = () =>
     `studies?${appliedCompany ? "appliedCompany=" + appliedCompany : ""}&${
       job ? "job=" + job : ""
@@ -267,7 +274,10 @@ export default function Search() {
     newDataSearch();
   }, []);
 
-  const handleClick = () => {};
+  const handleClick = () => {
+    if (member.memberId) navigate("/makestudy");
+    else navigate("/login");
+  };
 
   useEffect(() => {
     newDataSearch();
@@ -295,16 +305,16 @@ export default function Search() {
         />
       </ToggleContainer>
       <SearchContainer>
-        <Link to={"/makestudy"}>
-          <StyledButton
-            marginright={10}
-            width={200}
-            height={45}
-            fontSize={16}
-            content="스터디 생성하기"
-            onClick={handleClick}
-          />
-        </Link>
+        <StyledButton
+          marginright={10}
+          width={200}
+          height={45}
+          fontSize={16}
+          content="스터디 생성하기"
+          onClick={() => {
+            handleClick();
+          }}
+        />
         <SearchBox
           width={950}
           appliedCompany={appliedCompany}

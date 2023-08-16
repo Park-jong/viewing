@@ -163,9 +163,7 @@ export default function Chat() {
 
   //메시지가 유효한지
   const checkSendState = () => {
-    if (msg.length > maxLength) {
-      console.log(`입력가능한 최대 글자 수는 ${maxLength}자 입니다.`);
-    } else if (msg) {
+    if (msg && msg.length <= maxLength) {
       sendMsg();
     }
   };
@@ -305,6 +303,7 @@ export default function Chat() {
         }}
         onChange={chgMsg}
         value={msg}
+        maxLength={maxLength}
       ></MessageInputBox>
       <SendButton onClick={checkSendState}>전송</SendButton>
       <div style={{ color: "gray", fontSize: "12px" }}>

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Logo from "../../Icons/Logo";
 import Alarm from "../../Icons/Alarm";
 // import ProfileImg from "./ProfileImg";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import DropProfile from "./DropProfile";
 import DropAlert from "./DropAlert";
 import { useSelector } from "react-redux";
@@ -74,7 +74,10 @@ const MarginRight = styled.div`
 export default function HeaderBox() {
   const member = useSelector((state) => state.UserReducer);
   const isSocialLogin = member.memberId;
-
+  const location = useLocation();
+  const clickHandle = () => {
+    if (location.pathname === "/search") window.location.href = "/search";
+  };
   return (
     <HeaderStyle>
       <FirstContainer to={"/"}>
@@ -82,7 +85,14 @@ export default function HeaderBox() {
         <LogoStyled>뷰잉</LogoStyled>
       </FirstContainer>
       <SecondContainer>
-        <MenuItem to="/search">스터디</MenuItem>
+        <MenuItem
+          to="/search"
+          onClick={() => {
+            clickHandle();
+          }}
+        >
+          스터디
+        </MenuItem>
         <MenuItem to="/board/free">커뮤니티</MenuItem>
       </SecondContainer>
       {/* 로그인 상태에 따라 알맞은 내용 표시 */}

@@ -49,33 +49,56 @@ const Input = styled.input`
   display: none;
 `;
 
-export default function UploadFile({ width, height, setFiles, files, deleted, setDeleted }) {
+export default function UploadFile({
+  width,
+  height,
+  setFiles,
+  files,
+  deleted,
+  setDeleted,
+}) {
+  const maxSize = 50 * 1024 * 1024;
+
   const handleFileChange = (e) => {
+    var file = e.target.files[0];
+
+    if (file.size > maxSize) {
+      alert("파일 사이즈는 50MB를 넘어갈 수 없습니다.");
+      return;
+    }
+    if (files.length >= 3) {
+      alert("파일은 최대 3개까지만 업로드할 수 있습니다.");
+      return;
+    }
+
     setFiles([...files, ...e.target.files]);
   };
   const deleteFile = (file, files) => {
-    files.splice(files.findIndex((f) => f===file), 1)
-    const temp = [...files]
+    files.splice(
+      files.findIndex((f) => f === file),
+      1
+    );
+    const temp = [...files];
     setFiles(temp);
-    if(file.fileId) {
-      setDeleted([...deleted, file])
+    if (file.fileId) {
+      setDeleted([...deleted, file]);
     }
   };
 
   return (
     <Container>
       <CurrentFile>
-        {files.length > 0 ? (
-          files.map((file, idx) => 
-          <SelectedFile key={idx}>
-            <FileName>{file.name}</FileName>
-            <div onClick={() => deleteFile(file, files)}>
-              <SubButton content="삭제하기" ></SubButton>   
-            </div>
-          </SelectedFile>)
-        ) : (
-          "파일을 업로드하세요."
-        )}
+        {files.length > 0
+          ? files.map((file, idx) => (
+              <SelectedFile key={idx}>
+                <FileName>{file.name}</FileName>
+                <div onClick={() => deleteFile(file, files)}>
+                  <SubButton content="삭제하기"></SubButton>
+                </div>
+                <br></br>
+              </SelectedFile>
+            ))
+          : "파일을 업로드하세요."}
       </CurrentFile>
       <Input
         type="file"

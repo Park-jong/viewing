@@ -45,10 +45,14 @@ const XButtonContainer = styled.div`
   justify-content: right;
 `;
 
-export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
+export default function ScheduleUpdateModal({
+  isOpen,
+  onClose,
+  value,
+  onChange,
+}) {
   let width = 600;
   let height = 400;
-  let content = "";
   const [title, setTitle] = useState("");
   const date = moment(value).format("YYYY-MM-DD");
   const setDate = onChange;
@@ -57,89 +61,51 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
   const [start, setStart] = useState("00:00");
   const [end, setEnd] = useState("12:00");
   const member_id = useSelector((state) => state.UserReducer.memberId);
-  let navigate = useNavigate();
 
-  switch (type) {
-    case "withdraw":
-      width = 300;
-      height = 180;
-      content = <ModalText>정말 탈퇴하시겠습니까?</ModalText>;
-      break;
-    case "withdraw_super":
-      width = 300;
-      height = 180;
-      content = <ModalText>방장은 탈퇴할 수 없습니다.</ModalText>;
-      break;
-    case "delete":
-      width = 300;
-      height = 180;
-      content = <ModalText>정말 삭제하시겠습니까?</ModalText>;
-      break;
-    case "schedule":
-      width = 500;
-      height = 400;
-      content = (
-        <>
-          <ModalText> 개인 일정 추가 </ModalText>
-          <ModalText>
-            제목
-            <input
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={100}
-            ></input>
-          </ModalText>
-          <ModalText>
-            일시
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            ></input>
-          </ModalText>
-          <ModalText>
-            시작시간{" "}
-            <input
-              type="time"
-              onChange={(e) => {
-                setStart(e.target.value);
-              }}
-              value={start}
-            />
-            종료시간{" "}
-            <input
-              type="time"
-              onChange={(e) => {
-                setEnd(e.target.value);
-              }}
-              value={end}
-            />
-          </ModalText>
-        </>
-      );
-      break;
-  }
+  const content = (
+    <>
+      <ModalText> 개인 일정 변경 </ModalText>
+      <ModalText>
+        제목
+        <input value={title} onChange={(e) => setTitle(e.target.value)}></input>
+      </ModalText>
+      <ModalText>
+        일시
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        ></input>
+      </ModalText>
+      <ModalText>
+        시작시간{" "}
+        <input
+          type="time"
+          onChange={(e) => {
+            setStart(e.target.value);
+          }}
+          value={start}
+        />
+        종료시간{" "}
+        <input
+          type="time"
+          onChange={(e) => {
+            setEnd(e.target.value);
+          }}
+          value={end}
+        />
+      </ModalText>
+    </>
+  );
 
   //확인버튼 onclick 함수
-  function confirm({ type }) {
-    switch (type) {
-      case "withdraw":
-        customAxios()
-          .delete(`members/${member_id}`)
-          .then(() => {
-            onClose(false);
-            console.log("확인버튼 입력");
-            navigate(`/`);
-            localStorage.clear();
-          })
-          .catch();
-        break;
-      case "schedule":
+  function confirm() {
         if (start >= end) {
           alert("종료시간이 시작시간보다 빠릅니다.");
-          break;
+          return
         } else if (!title.trim()) {
           alert("내용을 입력하세요.");
-          break;
+          return
         }
         customAxios()
           .post(`members/${member_id}/calendars`, {
@@ -157,7 +123,6 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
             onClose(false);
           });
     }
-  }
 
   return (
     <>

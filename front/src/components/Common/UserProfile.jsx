@@ -59,7 +59,7 @@ export default function UserProfile({
     const offsetX = event.clientX - rect.left;
     const offsetY = event.clientY - rect.top;
     setMenuPosition({ x: offsetX, y: offsetY });
-    console.log(menuPosition);
+
   };
 
   return (

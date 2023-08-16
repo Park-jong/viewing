@@ -95,11 +95,11 @@ export default function BoardUpdate() {
 
   const SendRequest = () => {
     if (!title.trim()) {
-      alert("제목을 입력하세요.")
-      return
+      alert("제목을 입력하세요.");
+      return;
     } else if (!content.trim()) {
-      alert("내용을 입력하세요.")
-      return
+      alert("내용을 입력하세요.");
+      return;
     }
 
     const formData = new FormData();
@@ -117,7 +117,7 @@ export default function BoardUpdate() {
       .put(`boards/${board_type()}/${param[3]}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + token,
+          "Authorization": "Bearer " + token,
         },
       })
       .then(function (res) {
@@ -147,6 +147,7 @@ export default function BoardUpdate() {
         <TitleInput
           defaultValue={title}
           onChange={(e) => handleTitle(e)}
+          maxLength={100}
         ></TitleInput>{" "}
       </Title>
       <Content>내용</Content>

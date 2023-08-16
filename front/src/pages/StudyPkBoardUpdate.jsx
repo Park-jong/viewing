@@ -88,7 +88,7 @@ export default function StudyPkBoardUpdate() {
       .put(`studies/${param[2]}/boards/${param[4]}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + token,
+          "Authorization": "Bearer " + token,
         },
       })
       .then((res) => {
@@ -118,6 +118,7 @@ export default function StudyPkBoardUpdate() {
         <TitleInput
           defaultValue={title}
           onChange={(e) => handleTitle(e)}
+          maxLength={100}
         ></TitleInput>{" "}
       </Title>
       <Content>내용</Content>

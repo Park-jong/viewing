@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import InputBox from "../Common/InputBox";
 import UploadFile from "../Common/UploadFile";
@@ -49,6 +49,10 @@ const ButtonContainer = styled.div`
   margin-top: 10px;
 `;
 
+const TextLength = styled.div`
+  font-size: 10px;
+`;
+
 export default function ApplyModal({ isModalOpen, onClose, studyData }) {
   const [text, setText] = useState("");
   const [files, setFiles] = useState([]);
@@ -56,10 +60,7 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
   const member_id = useSelector((state) => state.UserReducer.memberId);
   const token = localStorage.getItem("access_token");
   const study_id = useLocation().pathname.split("/")[2];
-
-  const handleInputChange = (event) => {
-    setText(event.target.value);
-  };
+  const maxContentLength = 5000;
 
   const handleApply = () => {
     const formData = new FormData();
@@ -77,15 +78,20 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
       .post(`studies/${study_id}/requests`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + token,
+          "Authorization": "Bearer " + token,
         },
       })
       .then(function (response) {
         console.log(response);
+        alert("신청이 완료되었습니다.");
         handleCloseModal();
       })
       .catch((error) => {
+        if (error.response.status === 400) {
+          alert("이미 신청한 스터디입니다.");
+        }
         console.error("에러가 발생했습니다.:", error);
+        handleCloseModal();
       });
   };
 
@@ -101,6 +107,12 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
     let dayOfWeek = week[now.getDay()];
     return todayMonth + "월 " + todayDate + "일 " + dayOfWeek + "요일 ";
   };
+
+  useEffect(() => {
+    if (text.length > maxContentLength) {
+      setText((prev) => prev.substring(0, maxContentLength));
+    }
+  }, [text]);
 
   return (
     <>
@@ -121,8 +133,10 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
               height={150}
               setText={setText}
               text={text}
-              onChange={handleInputChange}
             ></InputBox>
+            <TextLength>
+              {text.length}/{maxContentLength}
+            </TextLength>
             <UploadFile setFiles={setFiles} files={files}></UploadFile>
             <ButtonContainer>
               <MainButton

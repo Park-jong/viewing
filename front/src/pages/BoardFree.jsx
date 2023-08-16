@@ -48,25 +48,31 @@ const Container = styled.div`
 
 export default function BoardFree() {
   const [data, setData] = useState([]);
-  const navigate = useNavigate()
-  const type = useLocation().pathname.split('/')[2]
-  console.log(type)
+  const navigate = useNavigate();
+  const type = useLocation().pathname.split("/")[2];
+  console.log(type);
 
-  useEffect(()=>{
-    customAxios().get("boards/general")
-    .then((res) => {
-      setData(res.data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  },[])
+  useEffect(() => {
+    customAxios()
+      .get("boards/general")
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <Container>
       <BoardNavBar />
-      <ArticleList data={data} width={1000} type={"free"}/>
+      <ArticleList data={data} width={1000} type={"free"} />
       <SearchBoxBoard></SearchBoxBoard>
-      <MainButton content={"글쓰기"} width={80} height={35} onClick={() => navigate(`/board/write?type=${type}`)}></MainButton>
+      <MainButton
+        content={"글쓰기"}
+        width={80}
+        height={35}
+        onClick={() => navigate(`/board/write?type=${type}`)}
+      ></MainButton>
     </Container>
   );
 }

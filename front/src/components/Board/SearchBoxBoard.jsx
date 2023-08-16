@@ -108,14 +108,13 @@ export default function SearchBoxBoard() {
     window.location.href = queryString;
   };
 
-  const isInputEmpty = input.trim() === "";
-
   return (
     <SearchContainer>
       <SearchInput
         type="text"
         value={input}
         onChange={handleInputChange}
+        maxLength={100}
         placeholder="검색어를 입력하세요."
       />
       <VerticalLine />
@@ -126,7 +125,7 @@ export default function SearchBoxBoard() {
         <option value="author">작성자</option>
       </Dropdown>
       <ButtonContainer>
-        <SearchButton onClick={handleSearch} disabled={isInputEmpty}>
+        <SearchButton onClick={handleSearch}>
           <SearchIcon />
         </SearchButton>
       </ButtonContainer>

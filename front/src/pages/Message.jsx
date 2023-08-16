@@ -45,7 +45,7 @@ const Nickname = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-`
+`;
 
 export default function Message() {
   const [title, setTitle] = useState("");
@@ -54,9 +54,7 @@ export default function Message() {
   const receiver_id = new URLSearchParams(window.location.search).get(
     "member_id"
   );
-  const nickname = new URLSearchParams(window.location.search).get(
-    "nickname"
-  );
+  const nickname = new URLSearchParams(window.location.search).get("nickname");
   const SERVER = process.env.REACT_APP_SERVER_URL + "messages";
 
   function handleContent(e) {
@@ -65,30 +63,31 @@ export default function Message() {
 
   function handleSubmit() {
     if (!title.trim()) {
-      alert("제목을 입력해주세요.")
-      return
+      alert("제목을 입력해주세요.");
+      return;
     } else if (!content.trim()) {
-      alert("내용을 입력해주세요.")
-      return
+      alert("내용을 입력해주세요.");
+      return;
     }
     customAxios()
       .post(SERVER, { title, content, author_id, receiver_id })
       .then((res) => {
-        console.log(res)
-        window.close()
+        console.log(res);
+        window.close();
       })
       .catch((err) => console.log(err));
   }
-  
 
   return (
     <Container>
-      <H1><Nickname>{nickname}</Nickname>에게 쪽지 보내기</H1>
+      <H1>
+        <Nickname>{nickname}</Nickname>에게 쪽지 보내기
+      </H1>
       <TitleContainer>
         <Title>제목 :</Title>
-        <InputBox setText={setTitle} height={20} width={200} />
+        <InputBox setText={setTitle} height={20} width={200} maxLength={100} />
       </TitleContainer>
-      <Content onChange={handleContent}></Content>
+      <Content onChange={handleContent} maxLength={1000}></Content>
       <ButtonsContainer>
         <MainButton
           onClick={() => handleSubmit()}
@@ -97,7 +96,12 @@ export default function Message() {
           height={40}
           marginright={20}
         ></MainButton>
-        <MainButton content={"취소"} width={100} height={40} onClick={window.close}></MainButton>
+        <MainButton
+          content={"취소"}
+          width={100}
+          height={40}
+          onClick={window.close}
+        ></MainButton>
       </ButtonsContainer>
     </Container>
   );

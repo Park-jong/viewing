@@ -74,7 +74,7 @@ export default function ReplyInput({
   const article_id = useLocation().pathname.split("/")[4]; //스터디일때만
 
   useEffect(() => {
-    setText(value);
+    if (value) setText(value);
   }, []);
 
   const handleInput = (e) => {
@@ -82,6 +82,11 @@ export default function ReplyInput({
   };
 
   const handleClick = () => {
+    if (text.trim() === "") {
+      alert("댓글을 입력해주세요.");
+      return;
+    }
+
     if (update) {
       const url = isStudy
         ? `/studies/${study_id}/boards/${article_id}/comments/${commentId}`
@@ -136,9 +141,10 @@ export default function ReplyInput({
     <ReplyContainer>
       <InputStyled
         as="textarea"
-        placeholder="댓글을 입력하세요."
+        placeholder="댓글을 입력하세요. (최대 200자)"
         value={text}
         onChange={handleInput}
+        maxLength={200}
       />
       <ButtonReply onClick={handleClick}>등록</ButtonReply>
     </ReplyContainer>

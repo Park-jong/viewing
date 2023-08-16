@@ -6,12 +6,7 @@ import { useEffect, useState } from "react";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import MainButton from "../components/Button/MainButton";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  BiChevronLeft,
-  BiChevronRight,
-  BiChevronsLeft,
-  BiChevronsRight,
-} from "react-icons/bi";
+import Pagination from "./../components/Common/Pagination";
 
 const Container = styled.div`
   display: flex;
@@ -30,35 +25,6 @@ const MarginLeft = styled.div`
   margin-left: 20px;
 `;
 
-const PageContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PageButton = styled.div`
-  padding: 5px;
-  border-radius: 10px;
-  background-color: ${(props) => {
-    if (props.$now === props.$page) {
-      return "var(--gray-200)";
-    } else {
-      return "";
-    }
-  }};
-  &:hover {
-    background-color: var(--gray-200);
-  }
-`;
-
-const ArrowButton = styled.div`
-  padding: 3px;
-  border-radius: 10px;
-  &:hover {
-    background-color: var(--gray-200);
-  }
-`;
-
 export default function BoardCommon() {
   const url = new URL(document.URL);
   const query = url.searchParams;
@@ -67,7 +33,6 @@ export default function BoardCommon() {
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
-  const [maxPage, setMaxPage] = useState(1);
   const navigate = useNavigate();
   const type = useLocation().pathname.split("/")[2];
   const param = (type) => {
@@ -85,25 +50,7 @@ export default function BoardCommon() {
       keyword ? "keyword=" + keyword : ""
     }`;
 
-  useEffect(() => {
-    setPage(0);
-    customAxios()
-      .get(getSearchUrl() + `&size=20&page=${0}`) // 페이지size, page
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [type]);
-
-  const handlePage = (e) => {
-    if (e < 0) {
-      e = 0;
-    } else if (e > maxPage) {
-      e = maxPage;
-    }
-    setPage(e);
+  function handleData(e) {
     customAxios()
       .get(getSearchUrl() + `&size=20&page=${e}`) // 페이지size, page
       .then((res) => {
@@ -112,7 +59,12 @@ export default function BoardCommon() {
       .catch((err) => {
         console.log(err);
       });
-  };
+  }
+
+  useEffect(() => {
+    setPage(0);
+    handleData(0);
+  }, [type]);
 
   return (
     <Container>
@@ -133,28 +85,12 @@ export default function BoardCommon() {
           ></MainButton>
         </MarginLeft>
       </BottomContainer>
-      <PageContainer>
-        <ArrowButton>
-          <BiChevronsLeft onClick={() => handlePage(0)}></BiChevronsLeft>
-        </ArrowButton>
-        <ArrowButton>
-          <BiChevronLeft onClick={() => handlePage(page - 1)}></BiChevronLeft>
-        </ArrowButton>
-        <PageButton $now={page} $page={0} onClick={() => handlePage(0)}>
-          1
-        </PageButton>
-        <PageButton $now={page} $page={1} onClick={() => handlePage(1)}>
-          2
-        </PageButton>
-        <ArrowButton>
-          <BiChevronRight onClick={() => handlePage(page + 1)}></BiChevronRight>
-        </ArrowButton>
-        <ArrowButton>
-          <BiChevronsRight
-            onClick={() => handlePage(maxPage)}
-          ></BiChevronsRight>
-        </ArrowButton>
-      </PageContainer>
+      <Pagination
+        handleData={handleData}
+        page={page}
+        setPage={setPage}
+        maxPage={data.totalPages - 1}
+      ></Pagination>
     </Container>
   );
 }

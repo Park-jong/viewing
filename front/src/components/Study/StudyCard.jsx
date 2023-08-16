@@ -150,11 +150,7 @@ export default function StudyCard({ study }) {
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const navigate = useNavigate();
 
-  const [bookmarked, isBookmarked] = useState();
-
-  useEffect(() => {
-    isBookmarked(study.bookmark);
-  }, []);
+  const [bookmarked, isBookmarked] = useState(study.bookmark);
 
   const moveStudy = () => {
     customAxios()

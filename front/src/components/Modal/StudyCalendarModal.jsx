@@ -74,6 +74,7 @@ export default function StudyCalendarModal({
                   return obj;
                 });
               }}
+              maxLength={100}
             ></input>
           </ModalText>
           <ModalText>

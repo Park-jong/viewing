@@ -3,22 +3,27 @@ import styled from "styled-components";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import MainButton from "../Button/MainButton";
 import UserProfile from "../Common/UserProfile";
+import ReactDOM from "react-dom";
 
 const Container = styled.div`
   width: 700px;
-  height: 230px;
+  min-height: 230px;
   border-radius: 36px;
   border: 2px solid var(--gray-200);
   position: relative;
-  display: flex;
+  /* display: flex; */
 
   margin: 7px;
 `;
 
+const BoxContainer = styled.div`
+  display: inline-block;
+`;
+
 const ProfileContainer = styled.div`
-  position: absolute;
-  left: 30px;
-  top: 10px;
+  /* position: absolute; */
+  margin-left: 30px;
+  margin-top: 10px;
 `;
 
 const DateContainer = styled.div`
@@ -29,24 +34,28 @@ const DateContainer = styled.div`
 
 const TextContainer = styled.div`
   width: 600px;
-  height: 80px;
+  min-height: 80px;
 
   padding: 10px;
   line-height: 150%;
 
-  position: absolute;
-  left: 40px;
-  top: 50px;
+  /* position: absolute; */
+  margin-left: 40px;
+  margin-top: 10px;
+  white-space: pre-line;
 
   background-color: #f8f6ff;
+  overflow: scroll;
+  cursor: pointer;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  bottom: 10px;
+  /* position: absolute; */
+  /* margin-top: 10px; */
+  margin-bottom: 10px;
   left: 250px;
 `;
 
@@ -56,11 +65,17 @@ const Icon = styled(MdAttachFile)`
 
 const File = styled.a``;
 
-const FileConatainer = styled.div`
+const FileDetailContainer = styled.div`
   display: flex;
-  position: absolute;
-  bottom: 50px;
-  left: 45px;
+  margin-top: 10px;
+`;
+
+const FileConatainer = styled.div`
+  /* display: flex; */
+  /* position: absolute; */
+  /* bottom: 50px; */
+  margin-top: 10px;
+  margin-left: 45px;
 `;
 
 export default function ResumeBox({
@@ -121,20 +136,34 @@ export default function ResumeBox({
         />
       </ProfileContainer>
       <DateContainer>{date} </DateContainer>
-      <TextContainer>{text}</TextContainer>
+      <TextContainer
+        onClick={() => {
+          const popupWindow = window.open("", "_blank", "width=600,height=400");
+          if (popupWindow) {
+            const popupRoot = popupWindow.document.createElement("div");
+            popupRoot.textContent = text;
+            popupWindow.document.body.appendChild(popupRoot);
+          }
+        }}
+      >
+        {text}
+      </TextContainer>
       {request_files && request_files.length > 0 ? (
         <>
           <FileConatainer>
-            <Icon />
-            <h1>첨부파일 :&nbsp;</h1>
             {request_files.map((file, idx) => (
-              <File
-                href={`${SERVER}studies/${study_id}/requests/${request_id}/files/${file.file_id}`}
-                key={idx}
-              >
-                {file.name}
-              </File>
+              <FileDetailContainer>
+                <Icon />
+                <h1>첨부파일 :&nbsp;</h1>
+                <File
+                  href={`${SERVER}studies/${study_id}/requests/${request_id}/files/${file.file_id}`}
+                  key={idx}
+                >
+                  {file.name}
+                </File>
+              </FileDetailContainer>
             ))}
+            <br></br>
           </FileConatainer>
         </>
       ) : (

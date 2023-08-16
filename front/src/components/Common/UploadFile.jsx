@@ -34,6 +34,7 @@ const CurrentFile = styled.div`
 const SelectedFile = styled.div`
   display: flex;
   align-items: center;
+  margin-left: 25px;
 `;
 
 const FileName = styled.div`

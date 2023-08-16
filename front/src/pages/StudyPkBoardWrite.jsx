@@ -32,6 +32,7 @@ const Content = styled.div`
 `;
 
 const TextArea = styled.textarea`
+  resize: none;
   width: 100%;
   height: 500px;
 
@@ -89,7 +90,7 @@ export default function StudyPkBoardWrite() {
       .post(`studies/${study_id}/boards`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Authorization": "Bearer " + token,
+          Authorization: "Bearer " + token,
         },
       })
       .then(function (res) {

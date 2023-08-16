@@ -559,9 +559,15 @@ export default function MeetingPk() {
       let today = new Date();
       let title =
         today.getFullYear().toString() +
-        (today.getMonth() + 1).toString() +
-        today.getDate().toString() +
-        "_interview_record";
+        (today.getMonth() + 1 < 10
+          ? "0" + (today.getMonth() + 1)
+          : today.getMonth() + 1
+        ).toString() +
+        (today.getDate() < 10
+          ? "0" + today.getDate()
+          : today.getDate()
+        ).toString() +
+        "_interview_study_record";
       a.download = `${title}.mp4`;
       a.click();
       a.remove();
@@ -649,13 +655,24 @@ export default function MeetingPk() {
   const downloadFeedback = () => {
     setCheckDownload(true);
     let text = compFeedback();
+    let today = new Date();
 
     const link = document.createElement("a");
     link.setAttribute(
       "href",
       "data:text/plain;charset=utf-8," + encodeURIComponent(text)
     );
-    link.setAttribute("download", "download.txt");
+
+    link.setAttribute(
+      "download",
+      `${today.getFullYear().toString()}${(today.getMonth() + 1 < 10
+        ? "0" + (today.getMonth() + 1)
+        : today.getMonth() + 1
+      ).toString()}${(today.getDate() < 10
+        ? "0" + today.getDate()
+        : today.getDate()
+      ).toString()}_interview_study_feedback".txt`
+    );
     link.click();
     link.remove();
   };

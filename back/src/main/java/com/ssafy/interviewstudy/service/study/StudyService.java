@@ -67,7 +67,7 @@ public class StudyService {
         List<Tuple> counts = studyRepository.findMyStudyMemberCountByMember(member);
         List<StudyDtoResponse> result = new ArrayList<>();
         for (Tuple tuple : counts) {
-            result.add(new StudyDtoResponse(tuple.get(0, Study.class),  tuple.get(1, Long.class)));
+            result.add(new StudyDtoResponse(tuple.get(0, Study.class), tuple.get(1, Boolean.class), tuple.get(2, Long.class)));
         }
         return result;
     }

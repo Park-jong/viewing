@@ -13,9 +13,10 @@ const Container = styled.div`
   border-radius: 8px;
   padding: 0 12px;
   font-size: 11px;
+  margin-left: 15px;
   cursor: pointer;
 `;
 
-export default function SubButton({content, onClick}) {
-  return <Container onClick={onClick}>{content}</Container>
+export default function SubButton({ content, onClick }) {
+  return <Container onClick={onClick}>{content}</Container>;
 }

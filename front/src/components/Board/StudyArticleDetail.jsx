@@ -127,11 +127,6 @@ export default function StudyArticleDetail({ data, setData, count }) {
           )}
         </AuthorInfo>
         <CountDateContainer>
-          <IconWrapper>
-            <BiBullseye size={16} />
-            <span> {data.view_count}</span>
-          </IconWrapper>
-
           <DateInfo>
             {" "}
             &nbsp;작성일&nbsp;&nbsp;
@@ -193,8 +188,6 @@ export default function StudyArticleDetail({ data, setData, count }) {
           ) : (
             <></>
           )}
-          <PiSirenLight size={16} />
-          <span style={{ fontSize: "12px" }}> &nbsp;신고하기</span>
         </IconWrapper>
       </BottomContainer>
     </ArticleContainer>

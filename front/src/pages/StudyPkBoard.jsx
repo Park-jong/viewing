@@ -42,6 +42,11 @@ export default function StudyPkBoard() {
     handleData(0);
   }, []);
 
+  useEffect(() => {
+    setPage(0);
+    handleData(0);
+  }, [keyword]);
+
   const getSearchUrl = () =>
     `studies/${study_id}/boards?${searchBy ? "searchBy=" + searchBy : ""}&${
       keyword ? "keyword=" + keyword : ""

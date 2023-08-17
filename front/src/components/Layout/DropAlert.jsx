@@ -69,6 +69,8 @@ const CardTitle = styled.div`
   font-weight: 500;
   font-size: 14px;
   word-wrap: break-word; /* Prevent text truncation and allow word wrapping */
+  text-align: center;
+  margin: 0px 30px 0px 20px;
 `;
 
 const CardDate = styled.div`
@@ -136,7 +138,7 @@ export default function DropAlert() {
   };
 
   useEffect(() => {
-    if(token==null) return;
+    if (token == null) return;
     let eventSource;
     const fetchSse = () => {
       eventSource = new EventSource(
@@ -223,54 +225,70 @@ export default function DropAlert() {
             navigate("mypage/get");
             return;
           case "StudyRequest_Approve":
-            if(alert.url){
+            if (alert.url) {
               navigate(`study/${alert.url}`);
             }
             return;
           case "StudyRequest":
-            if(alert.url){
+            if (alert.url) {
               navigate(`study/${alert.url}/applicant`);
             }
             return;
           case "StudyRequest_Reject":
             return;
           case "StudyArticle":
-            if(alert.url){
+            if (alert.url) {
               console.log(alert.url.split);
-              navigate(`study/${alert.url.split(' ')[0]}/board/${alert.url.split(' ')[1]}`);
+              navigate(
+                `study/${alert.url.split(" ")[0]}/board/${
+                  alert.url.split(" ")[1]
+                }`
+              );
             }
             return;
           case "StudyMeeting":
             return;
           case "StudyComment":
-            if(alert.url){
-              navigate(`study/${alert.url.split(' ')[0]}/board/${alert.url.split(' ')[1]}`);
+            if (alert.url) {
+              navigate(
+                `study/${alert.url.split(" ")[0]}/board/${
+                  alert.url.split(" ")[1]
+                }`
+              );
             }
             return;
           case "StudyReply":
-            if(alert.url){
-              navigate(`study/${alert.url.split(' ')[0]}/board/${alert.url.split(' ')[1]}`);
+            if (alert.url) {
+              navigate(
+                `study/${alert.url.split(" ")[0]}/board/${
+                  alert.url.split(" ")[1]
+                }`
+              );
             }
             return;
           case "BoardComment":
-            if(alert.url){
-              navigate(`board/${alert.url.split(' ')[0]}/${alert.url.split(' ')[1]}`);
+            if (alert.url) {
+              navigate(
+                `board/${alert.url.split(" ")[0]}/${alert.url.split(" ")[1]}`
+              );
             }
             return;
           case "BoardReply":
-            if(alert.url){
-              navigate(`board/${alert.url.split(' ')[0]}/${alert.url.split(' ')[1]}`);
+            if (alert.url) {
+              navigate(
+                `board/${alert.url.split(" ")[0]}/${alert.url.split(" ")[1]}`
+              );
             }
             return;
           case "Leader":
-            if(alert.url){
+            if (alert.url) {
               navigate(`study/${alert.url}`);
             }
             return;
           case "Study_Banned":
             return;
           case "StudyCalendar":
-            if(alert.url){
+            if (alert.url) {
               navigate(`study/${alert.url}/calendar`);
             }
             return;

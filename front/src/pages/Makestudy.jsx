@@ -368,7 +368,7 @@ export default function MakeStudy() {
     setFilterTag(tagList.filter((tag) => tag.isChecked === true));
   }, [tagList]);
 
-  const tagAxios = filterTag.map((item) => item.id);
+  const tagAxios = () => filterTag.map((item) => item.id);
   //redux
   const leaderId = useSelector((state) => state.UserReducer.memberId);
 
@@ -407,7 +407,7 @@ export default function MakeStudy() {
       career_level: career,
       deadline: `${deadline}T00:00:00 `,
       applied_job: appliedJob,
-      tag: tagAxios,
+      tags: tagAxios(),
       leader_id: leaderId,
     };
     if (validation(studyData)) {

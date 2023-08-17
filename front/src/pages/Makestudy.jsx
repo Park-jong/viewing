@@ -374,26 +374,37 @@ export default function MakeStudy() {
 
   const validation = (body) => {
     let result = true;
+
     if (body.title) setStudyNameState(false);
     else {
       setStudyNameState(true);
       result = false;
     }
+
     if (body.description) setStudyDescState(false);
     else {
       setStudyDescState(true);
       result = false;
     }
+
     if (body.applied_company) setStudyCompanyState(false);
     else {
       setStudyCompanyState(true);
       result = false;
     }
+
     if (body.applied_job) setStudyJobState(false);
     else {
       setStudyJobState(true);
       result = false;
     }
+
+    if (suggestion.includes(appliedCompany)) setStudyCompanyState(false);
+    else {
+      setStudyCompanyState(true);
+      result = false;
+    }
+
     return result;
   };
 

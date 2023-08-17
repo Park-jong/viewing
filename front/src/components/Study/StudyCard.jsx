@@ -99,7 +99,7 @@ const TitleContainer = styled.div`
 const TagContainer = styled.div`
   position: absolute;
   /* top: 30px; */
-  top: 200px;
+  top: 185px;
   left: 5px;
 
   display: flex;

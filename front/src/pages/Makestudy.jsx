@@ -368,7 +368,7 @@ export default function MakeStudy() {
     setFilterTag(tagList.filter((tag) => tag.isChecked === true));
   }, [tagList]);
 
-  const tagAxios = () => filterTag.map((item) => item.id);
+  const tagAxios = () => filterTag.map((item) => item.id + 1);
   //redux
   const leaderId = useSelector((state) => state.UserReducer.memberId);
 

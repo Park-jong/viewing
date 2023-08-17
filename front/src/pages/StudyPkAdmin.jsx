@@ -50,17 +50,13 @@ const MemberArea = styled.div``;
 
 const Profile = styled.span`
   display: inline-flex;
-`;
-
-const MemberName = styled.span`
-  display: inline-flex;
-  align-items: center;
-  width: 200px;
+  width: 300px;
 `;
 
 const MemberBox = styled.div`
   display: flex;
   align-items: center;
+  margin-top: 25px;
 `;
 
 const StudyName = styled.div``;
@@ -485,9 +481,9 @@ export default function StudyPkAdmin() {
             backgroundcolor={member.background}
             characterimg={member.character}
             member_id={member.member_id}
+            nickname={member.nickname}
           ></UserProfile>
         </Profile>
-        <MemberName>{member.nickname}</MemberName>
         {member.member_id === studyLeaderId ? (
           <BiCrown />
         ) : (

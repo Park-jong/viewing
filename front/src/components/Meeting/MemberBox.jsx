@@ -8,13 +8,14 @@ const Container = styled.div`
 `;
 
 export default function MemberBox({ data }) {
+  console.log(data);
   return (
     <Container>
       <UserProfile
         nickname={data.nickname}
         backgroundcolor={data.backgroundColor}
         characterimg={data.backgroundImg}
-        member_id={data.member_id}
+        member_id={data.memberId}
       ></UserProfile>
     </Container>
   );

@@ -266,6 +266,13 @@ export default function DropAlert() {
               );
             }
             return;
+
+          case "Conference":
+            if (alert.url) {
+              console.log(alert.url.split);
+              navigate(`study/${alert.url}/meeting`);
+            }
+            return;
           case "BoardComment":
             if (alert.url) {
               navigate(

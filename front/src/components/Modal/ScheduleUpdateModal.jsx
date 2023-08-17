@@ -63,6 +63,7 @@ export default function ScheduleUpdateModal({
   const [end, setEnd] = useState("12:00");
   const member_id = useSelector((state) => state.UserReducer.memberId);
 
+  const currentDate = new Date().toISOString().split("T")[0];
   const content = (
     <>
       <ModalText> 개인 일정 변경 </ModalText>
@@ -76,6 +77,7 @@ export default function ScheduleUpdateModal({
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
+          min={currentDate}
         ></input>
       </ModalText>
       <ModalText>
@@ -101,29 +103,29 @@ export default function ScheduleUpdateModal({
 
   //확인버튼 onclick 함수
   function confirm() {
-        if (start >= end) {
-          alert("종료시간이 시작시간보다 빠릅니다.");
-          return
-        } else if (!title.trim()) {
-          alert("내용을 입력하세요.");
-          return
-        }
-        customAxios()
-          .post(`members/${member_id}/calendars`, {
-            description: title,
-            ended_at: `${date}T${end}`,
-            started_at: `${date}T${start}`,
-          })
-          .then((res) => {
-            console.log(res);
-            onClose(false);
-          })
-          .catch((err) => {
-            console.log(err);
-            alert("에러가 발생했습니다.");
-            onClose(false);
-          });
+    if (start >= end) {
+      alert("종료시간이 시작시간보다 빠릅니다.");
+      return;
+    } else if (!title.trim()) {
+      alert("내용을 입력하세요.");
+      return;
     }
+    customAxios()
+      .post(`members/${member_id}/calendars`, {
+        description: title,
+        ended_at: `${date}T${end}`,
+        started_at: `${date}T${start}`,
+      })
+      .then((res) => {
+        console.log(res);
+        onClose(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("에러가 발생했습니다.");
+        onClose(false);
+      });
+  }
 
   return (
     <>

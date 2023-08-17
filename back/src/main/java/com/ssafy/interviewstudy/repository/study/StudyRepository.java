@@ -27,4 +27,11 @@ public interface StudyRepository extends JpaRepository<Study, Integer>, StudyRep
     @Query("select distinct s from Study s join fetch s.leader l join fetch s.appliedCompany c left join fetch s.studyTags st left join fetch st.tag t where s.id in :ids and s.isDelete = false")
     //스터디 태그들 조회
     public List<Study> findByIds(@Param("ids") List<Integer> ids);
+
+    @Query("select s from Study s where s.leader = :member")
+    public List<Study> findStudyByLeader(@Param("member")Member member);
+
+    @Query("select s.id from Study s join s.studyMembers sm where sm.member = :member")
+    List<Integer> findStudyIdByMember(@Param("member")Member member);
+
 }

@@ -1,16 +1,29 @@
 package com.ssafy.interviewstudy.service.member;
 
+import com.ssafy.interviewstudy.domain.board.ArticleComment;
+import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.member.MemberStatus;
+import com.ssafy.interviewstudy.domain.study.Study;
+import com.ssafy.interviewstudy.domain.study.StudyCalendar;
+import com.ssafy.interviewstudy.domain.study.StudyRequest;
 import com.ssafy.interviewstudy.dto.member.MemberProfileChangeDto;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
+import com.ssafy.interviewstudy.repository.board.ArticleCommentRepository;
+import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import com.ssafy.interviewstudy.repository.board.StudyBoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.member.MemberStudyRepository;
+import com.ssafy.interviewstudy.repository.message.MessageRepository;
+import com.ssafy.interviewstudy.repository.study.*;
+import com.ssafy.interviewstudy.service.board.BoardService;
+import com.ssafy.interviewstudy.service.study.StudyService;
 import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,9 +32,19 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    private final StudyBoardRepository studyBoardRepository;
+    private final ArticleCommentRepository articleCommentRepository;
 
-    private final MemberStudyRepository memberStudyRepository;
+    private final BoardRepository boardRepository;
+
+    private final StudyRepository studyRepository;
+
+    private final StudyRequestFileRepository studyRequestFileRepository;
+
+    private final StudyRequestRepository studyRequestRepository;
+
+    private final BoardService boardService;
+
+    private final StudyService studyService;
 
     public Member findByEmail(String email){
         Member member = memberRepository.findUserByEmailAndStatusACTIVE(email);
@@ -83,7 +106,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void withdrawl(Integer memberId){
+    public boolean withdrawl(Integer memberId){
         if(memberId == null){
             throw new NotFoundException("멤버 정보가 없습니다");
         }
@@ -91,6 +114,30 @@ public class MemberService {
         if(member == null){
             throw new NotFoundException("멤버 정보가 없습니다.");
         }
+        List<Study> list = studyRepository.findStudyByLeader(member);
+
+        if(list.size() > 0){
+            return false;
+        }
+
         member.withdrawl();
+        articleCommentRepository.deleteArticleCommentByAuthor(member);
+
+        List<Board> articles = boardRepository.findAllByMember(member);
+        for (Board article : articles) {
+            boardService.removeArticle(article.getId());
+        }
+
+        List<Integer> studyIdList = studyRepository.findStudyIdByMember(member);
+        for (Integer id : studyIdList) {
+            studyService.leaveStudy(id, memberId);
+        }
+
+        List<StudyRequest> requests = studyRequestRepository.findStudyRequestsByApplicant(member);
+        for (StudyRequest request : requests) {
+            studyRequestFileRepository.deleteByRequestId(request.getId());
+            studyRequestRepository.deleteStudyRequestById(request.getId());
+        }
+        return true;
     }
 }

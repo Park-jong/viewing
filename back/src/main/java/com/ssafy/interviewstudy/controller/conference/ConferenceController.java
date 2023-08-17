@@ -64,7 +64,6 @@ public class ConferenceController {
        if (!studyService.checkStudyMember(istudyId, memberId)) {
            return new ResponseEntity<>("스터디 멤버가 아닙니다.", HttpStatus.UNAUTHORIZED);
        };
-
         SessionProperties properties = SessionProperties.fromJson(params).build();
         Session checkSession = openvidu.getActiveSession(studyId);
         if (checkSession != null) {

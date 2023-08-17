@@ -49,4 +49,9 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Intege
     @Query("delete from StudyMember sm where sm.study = :study")
     public void deleteStudyMemberByStudy(@Param("study")Study study);
 
+
+    //회원 탈퇴 시
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from StudyMember sm where sm.member = :member")
+    public void deleteStudyMemberByMember(@Param("member")Member member);
 }

@@ -171,9 +171,8 @@ export default function MeetingPkReady() {
   const currAudio = useRef();
 
   // 미디어 권한을 얻고, 가용기기를 찾는다.
-  useEffect(async () => {
-    await getPermission();
-    findDevice();
+  useEffect(() => {
+    getPermission();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -191,6 +190,7 @@ export default function MeetingPkReady() {
         );
         window.location.replace(`/study/${studyId}/meeting`);
       });
+    findDevice();
   };
 
   // 가용한 미디어 기기를 찾는 함수
@@ -282,6 +282,7 @@ export default function MeetingPkReady() {
     const dataArray = new Uint8Array(bufferLength);
 
     const updateVolume = () => {
+      if (!currAudio.current) return;
       if (savedId === "noDevice") {
         setVolume("");
         return;

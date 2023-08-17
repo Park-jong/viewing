@@ -13,6 +13,7 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 100;
 `;
 
 const ModalContent = styled.div`
@@ -22,24 +23,67 @@ const ModalContent = styled.div`
   height: ${(props) => `${props.$height}px`};
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const ModalTitle = styled.div`
+  font-size: 25px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 20px;
 `;
 
 const ModalText = styled.div`
-  font-size: 22px;
+  font-size: 16px;
   text-align: center;
-  margin-top: 45px;
+  margin-top: 20px;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  /* input {
+    width: 50%;
+    padding: 8px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  } */
+`;
+
+const TitleInput = styled.input`
+  width: 70%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const TimeInput = styled.input`
+  width: 23%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 `;
 
 const Buttons = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 50px;
+  margin-top: 20px;
+
+  button + button {
+    margin-left: 10px;
+  }
 `;
 
 const XButtonContainer = styled.div`
   display: flex;
-  justify-content: right;
+  justify-content: flex-end;
   cursor: pointer;
+  margin-bottom: -30px;
 `;
 
 export default function StudyCalendarModal({
@@ -65,10 +109,10 @@ export default function StudyCalendarModal({
       height = 400;
       content = (
         <>
-          <ModalText> 스터디 일정 추가 </ModalText>
+          <ModalTitle> ✍스터디 일정 추가 </ModalTitle>
           <ModalText>
             제목
-            <input
+            <TitleInput
               onChange={(e) => {
                 setData((prev) => {
                   const obj = { ...prev };
@@ -77,11 +121,12 @@ export default function StudyCalendarModal({
                 });
               }}
               maxLength={100}
-            ></input>
+              placeholder="스터디 일정을 입력해주세요. (EX. 모의면접)"
+            ></TitleInput>
           </ModalText>
           <ModalText>
             일시
-            <input
+            <TitleInput
               type="date"
               onChange={(e) => {
                 setDate(e.target.value);
@@ -93,11 +138,11 @@ export default function StudyCalendarModal({
                 });
               }}
               min={currentDate}
-            ></input>
+            ></TitleInput>
           </ModalText>
           <ModalText>
             시작시간{" "}
-            <input
+            <TimeInput
               type="time"
               onChange={(e) => {
                 setStart(e.target.value);
@@ -109,7 +154,7 @@ export default function StudyCalendarModal({
               }}
             />
             종료시간{" "}
-            <input
+            <TimeInput
               type="time"
               onChange={(e) => {
                 setEnd(e.target.value);
@@ -147,10 +192,10 @@ export default function StudyCalendarModal({
       console.log(data);
       content = (
         <>
-          <ModalText> 스터디 일정 조회 </ModalText>
+          <ModalTitle> 스터디 일정 조회 </ModalTitle>
           <ModalText>
             제목
-            <input
+            <TitleInput
               onChange={(e) => {
                 setData((prev) => {
                   const obj = { ...prev };
@@ -160,11 +205,11 @@ export default function StudyCalendarModal({
               }}
               value={data.description}
               disabled={!data.is_study_calendar}
-            ></input>
+            ></TitleInput>
           </ModalText>
           <ModalText>
             일시
-            <input
+            <TitleInput
               type="date"
               onChange={(e) => {
                 setData((prev) => {
@@ -178,11 +223,11 @@ export default function StudyCalendarModal({
               }}
               value={data.started_at.split("T")[0]}
               disabled={!data.is_study_calendar}
-            ></input>
+            ></TitleInput>
           </ModalText>
           <ModalText>
             시작시간{" "}
-            <input
+            <TimeInput
               type="time"
               onChange={(e) => {
                 setData((prev) => {
@@ -196,7 +241,7 @@ export default function StudyCalendarModal({
               disabled={!data.is_study_calendar}
             />
             종료시간{" "}
-            <input
+            <TimeInput
               type="time"
               onChange={(e) => {
                 setData((prev) => {

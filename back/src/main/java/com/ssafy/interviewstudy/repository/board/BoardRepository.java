@@ -27,7 +27,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     Page<Board> findByTitleContaining(@Param("keyword") String keyword, @Param("boardType") BoardType boardType, Pageable pageable);
 
     // 제목+내용
-    @Query("select b from Board b JOIN b.author ba where b.title like %:keyword% or b.content like %:keyword% and b.boardType = :boardType order by b.createdAt desc")
+    @Query("select b from Board b JOIN b.author ba where (b.title like  %:keyword% or b.content like %:keyword%) and b.boardType = :boardType order by b.createdAt desc")
     Page<Board> findByTitleOrContent(@Param("keyword") String keyword, BoardType boardType, Pageable pageable);
 
     // 작성자

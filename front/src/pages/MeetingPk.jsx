@@ -130,6 +130,10 @@ export default function MeetingPk() {
   const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
   const [currentAudioDevice, setCurrentAudioDevice] = useState(undefined);
   useEffect(() => {
+    if (!sessionStorage.getItem("deviceInfo")) {
+      alert("잘못된 접근입니다.");
+      window.location.replace(`/study/${studyId}/meeting`);
+    }
     setDeviceInfo(JSON.parse(sessionStorage.getItem("deviceInfo")));
     setCurrentVideoDevice(
       sessionStorage.getItem("deviceInfo")

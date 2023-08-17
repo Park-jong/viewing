@@ -78,11 +78,10 @@ export default function ApplyModal({ isModalOpen, onClose, studyData }) {
       .post(`studies/${study_id}/requests`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "Authorization": "Bearer " + token,
+          Authorization: "Bearer " + token,
         },
       })
       .then(function (response) {
-        console.log(response);
         alert("신청이 완료되었습니다.");
         handleCloseModal();
       })

@@ -76,7 +76,6 @@ export default function StudyPkBoardUpdate() {
   const SendRequest = () => {
     const formData = new FormData();
     const request = { member_id, content, title, files_deleted: deleted };
-    console.log(request, files);
     // formData.append("member_id", member_id);
     // formData.append("content", text);
     files.forEach((file) => formData.append("request_files", file));
@@ -93,7 +92,6 @@ export default function StudyPkBoardUpdate() {
         },
       })
       .then((res) => {
-        // console.log(res);
         navigate(`/study/${param[2]}/board/${param[4]}`);
       })
       .catch((error) => {

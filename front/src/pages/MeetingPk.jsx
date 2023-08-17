@@ -344,8 +344,7 @@ export default function MeetingPk() {
           let videodevice = JSON.parse(
             sessionStorage.getItem("deviceInfo")
           ).video;
-          console.log(audiodevice);
-          console.log(videodevice);
+
           let newPublisher = await OV.initPublisherAsync(undefined, {
             audioSource:
               audiodevice.deviceId === "noDevice"

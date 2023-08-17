@@ -106,26 +106,26 @@ import { useLocation } from "react-router-dom";
 export default function BoardFreePk() {
   const [data, setData] = useState([]);
   const [reply, setReply] = useState([]);
-  const param = useLocation().pathname.split("/")[3]
-  console.log(param)
+  const param = useLocation().pathname.split("/")[3];
 
-  useEffect(()=>{
-    customAxios().get(`boards/general/${param}`)
-    .then((res) => {
-      setData(res.data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-    customAxios().get(`boards/${param}/comments`)
-    .then((res) => {
-      setReply(res.data)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  },[])
-
+  useEffect(() => {
+    customAxios()
+      .get(`boards/general/${param}`)
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    customAxios()
+      .get(`boards/${param}/comments`)
+      .then((res) => {
+        setReply(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <>

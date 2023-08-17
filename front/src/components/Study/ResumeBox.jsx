@@ -101,7 +101,9 @@ export default function ResumeBox({
             setList(response.data);
           });
       })
-      .catch();
+      .catch(() => {
+        alert("승인이 불가능한 상태입니다. 스터디 상태를 확인해주세요.");
+      });
   };
 
   const denial = () => {

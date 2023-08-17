@@ -156,16 +156,22 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
     setSelectedOption(e.target.value);
   };
 
-  const handleSearch = () => {
+  const handleEnter = () => {
     if (suggestionSelect != null) {
       setIsClick((prev) => {
         const result = { ...prev };
         result.click = true;
         result.value = suggestion[suggestionSelect];
+        setSuggestionSelect(null);
         return result;
       });
       return;
     }
+
+    handleSearch();
+  };
+
+  const handleSearch = () => {
     if (input1.trim() === "") {
       alert("회사명을 입력해주세요.");
       return;
@@ -184,6 +190,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
       const result = { ...prev };
       result.click = true;
       result.value = suggestion;
+      setSuggestionSelect(null);
       return result;
     });
   };
@@ -284,7 +291,7 @@ export default function SearchBox({ width, appliedCompany, job, careerLevel }) {
         placeholder="회사명을 입력하세요 (필수)"
         onKeyUp={(e) => {
           if (e.key === "Enter") {
-            handleSearch();
+            handleEnter();
           }
         }}
         onBlur={() => {

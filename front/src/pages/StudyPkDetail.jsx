@@ -93,6 +93,13 @@ export default function StudyPkDetail() {
 
   const navigate = useNavigate();
 
+  const careerFilter = {
+    ALL: "무관",
+    INTERN: "인턴",
+    NEWCOMER: "신입",
+    EXPERIENCED: "경력",
+  };
+
   const emptyStudyData = {
     study_id: studyPk,
     title: "",
@@ -174,7 +181,7 @@ export default function StudyPkDetail() {
             <CompanyJobTag
               company={studyData.applied_company}
               position={studyData.applied_job}
-              career={studyData.career_level}
+              career={careerFilter[studyData.career_level]}
               style={{ marginTop: "0px" }}
             />
           </DetailContent>

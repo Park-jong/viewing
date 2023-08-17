@@ -6,6 +6,8 @@ import { customAxios } from "./../../modules/Other/Axios/customAxios";
 import { useSelector } from "react-redux";
 import { UserReducer } from "./../../modules/UserReducer/UserReducer";
 import { BiSolidPencil, BiSolidTrash } from "react-icons/bi";
+import { useState } from "react";
+import ScheduleUpdateModal from "../Modal/ScheduleUpdateModal";
 
 const BigContainer = styled.div`
   margin-top: ${(props) => {
@@ -24,7 +26,7 @@ const Container = styled.div`
 `;
 
 const NoSchedule = styled.div`
-  width: 500px;
+  width: 800px;
   text-align: center;
   margin-top: ${(props) => {
     if (props.$isflex) {
@@ -36,6 +38,7 @@ const NoSchedule = styled.div`
 `;
 
 const NickName = styled.div`
+  margin-top: 25px;
   text-align: right;
   width: 80px;
   margin-right: 20px;
@@ -45,7 +48,7 @@ const TimeAndBarContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 80px;
-  width: 700px;
+  width: 600px;
 `;
 const TimeDisplayContainer = styled.div`
   width: calc(100% * (100 / 24));
@@ -81,12 +84,13 @@ const Schedule = styled.div`
   position: absolute;
 
   height: 100%;
-  width: ${(props) => `${(props.end - props.start) * 700}px`};
-  margin-left: ${(props) => `${props.start * 700}px`};
+  width: ${(props) => `${(props.end - props.start) * 600}px`};
+  margin-left: ${(props) => `${props.start * 600}px`};
   background-color: var(--primary);
 `;
 
 const Button = styled.div`
+  margin-top: 30px;
   margin-left: 5px;
   width: 40px;
   height: 40px;
@@ -129,10 +133,13 @@ export function involve(schedule, object) {
 }
 
 export default function TimeBar(props) {
+  const [updateData, setUpdateData] = useState([])
+  const [updating, setUpdating] = [props.update, props.setUpdate]
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const studySchedules = [];
   const personalSchedules = {};
   const personalScheduleNums = {};
+  const personalScheduleUpdate = {};
   // personalSchedules 안에 들어갈 형식은 다음과 같다.
   // {'personalId' : []}   personalId에 <Schedule> 넣기
 
@@ -150,20 +157,28 @@ export default function TimeBar(props) {
           <Schedule start={start} end={end} key={index}></Schedule>
         );
         personalScheduleNums[schedule.description].push(schedule.id);
+        personalScheduleUpdate[schedule.description].push(schedule);
       } else {
         personalSchedules[schedule.description] = [
           <Schedule start={start} end={end} key={index}></Schedule>,
         ];
         personalScheduleNums[schedule.description] = [schedule.id];
+        personalScheduleUpdate[schedule.description] = [schedule];
       }
     }
   });
+
+  const handleUpdate = async (schedules) => {
+    console.log(schedules)
+    setUpdating(true)
+    setUpdateData(schedules)
+  }
 
   const handleDelete = async (nums) => {
     for (let i of nums) {
       await customAxios()
         .delete(`members/${memberId}/calendars/${i}`)
-        .then((res) => console.log(res))
+        .then((res) => {})
         .catch((err) => alert("오류가 발생했습니다."));
     }
     customAxios()
@@ -171,7 +186,7 @@ export default function TimeBar(props) {
       .then((res) => {
         props.dataChange(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => alert("오류가 발생했습니다."));
   };
 
   const finalSchedules = [];
@@ -180,7 +195,7 @@ export default function TimeBar(props) {
 
   for (let i = 0; i < 24; i++) {
     timeDisplayContainers.push(
-      <TimeDisplayContainer>
+      <TimeDisplayContainer key={i}>
         <TimeDisplayText>{i}</TimeDisplayText>
       </TimeDisplayContainer>
     );
@@ -196,8 +211,8 @@ export default function TimeBar(props) {
             {personalSchedules[i]}
           </BarContainer>
         </TimeAndBarContainer>
-        <Button>
-          <BiSolidPencil size={22}></BiSolidPencil>
+        <Button onClick={() => handleUpdate(personalScheduleUpdate[i])}>
+          <BiSolidPencil size={22} ></BiSolidPencil>
         </Button>
         <Button onClick={() => handleDelete(personalScheduleNums[i])}>
           <BiSolidTrash size={22}></BiSolidTrash>
@@ -225,6 +240,7 @@ export default function TimeBar(props) {
           <></>
         )}
         {finalSchedules}
+        <ScheduleUpdateModal isOpen={updating} onClose={setUpdating} data={updateData}></ScheduleUpdateModal>
       </BigContainer>
     );
   }

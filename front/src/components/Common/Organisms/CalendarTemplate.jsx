@@ -2,8 +2,6 @@ import { styled } from "styled-components";
 import Calendar from "../Calendar";
 import TimeBar from "../TimeBar";
 import { useState, useEffect } from "react";
-import { FakeData } from "../FakeData";
-import { FakeData2 } from "../FakeData2";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import { customAxios } from "../../../modules/Other/Axios/customAxios";
@@ -38,16 +36,16 @@ export default function CalendarTemplate({
 }) {
   const [data, dataChange] = useState([]);
   const memberId = useSelector((state) => state.UserReducer.memberId);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     customAxios()
       .get(`members/${memberId}/calendars`)
       .then((res) => {
-        console.log(res.data);
         dataChange(res.data);
       })
       .catch((err) => console.log(err));
-  }, [modal]);
+  }, [modal, update]);
   const data2 = data.filter((d) => {
     return (
       moment(value).format("YY.MM.DD") ===
@@ -71,7 +69,7 @@ export default function CalendarTemplate({
           onClick={() => setModal(true)}
         ></MainButton>
       </ButtonContainer>
-      <TimeBar data={data2} isFlex={isFlex} dataChange={dataChange}></TimeBar>
+      <TimeBar data={data2} isFlex={isFlex} dataChange={dataChange} update={update} setUpdate={setUpdate}></TimeBar>
     </Container>
   );
 }

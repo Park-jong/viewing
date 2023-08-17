@@ -84,6 +84,7 @@ const DetailContent = styled.div`
   font-weight: 500;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 `;
 
 export default function StudyPkDetail() {

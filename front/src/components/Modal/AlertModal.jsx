@@ -166,11 +166,13 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
           .delete(`members/${member_id}`)
           .then(() => {
             onClose(false);
-
-            navigate(`/`);
             localStorage.clear();
+            navigate(`/`);
           })
-          .catch();
+          .catch((err) => {
+            if (err.response.status === 400)
+              alert("스터디장인 스터디가 존재합니다.");
+          });
         break;
       case "schedule":
         if (start >= end) {

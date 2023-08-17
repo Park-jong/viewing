@@ -79,6 +79,11 @@ export default function BoardCommon() {
     handleData(0);
   }, [type]);
 
+  useEffect(() => {
+    setPage(0);
+    handleData(0);
+  }, [keyword]);
+
   return (
     <Container>
       <BoardNavBar />

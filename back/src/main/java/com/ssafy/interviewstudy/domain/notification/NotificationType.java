@@ -36,5 +36,7 @@ public enum NotificationType {
     //들어갈 정보 (새 쪽지가 도착했습니다.)
     Message,
     //테스트용
-    Test
+    Test,
+    //영상회의 생김
+    Conference
 }

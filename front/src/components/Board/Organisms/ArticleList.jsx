@@ -54,7 +54,7 @@ const MetaItem = styled.div`
   margin-right: 31px;
 `;
 
-const noDataContainer = styled.div``;
+const NoDataContainer = styled.div``;
 
 export default function ArticleList({ data, width, type }) {
   const location = useLocation();
@@ -123,11 +123,11 @@ export default function ArticleList({ data, width, type }) {
               ))}
         </ArticleContainer>
       ) : (
-        <noDataContainer>
+        <NoDataContainer>
           <br></br>
           <p>글이 존재하지 않습니다.</p>
           <br></br>
-        </noDataContainer>
+        </NoDataContainer>
       )}
     </>
   );

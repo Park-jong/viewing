@@ -187,6 +187,12 @@ export default function StudyPkDetail() {
             ))}
           </DetailContent>
         </DetailTag>
+        <DetailTag>
+          모집여부&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+          <DetailContent>
+            {studyData.recruitment ? "모집 중" : "모집 마감"}
+          </DetailContent>
+        </DetailTag>
       </DetailContainer>
 
       <DetailTitle>스터디소개</DetailTitle>

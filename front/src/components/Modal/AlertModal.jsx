@@ -60,6 +60,7 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
   const member_id = useSelector((state) => state.UserReducer.memberId);
   let navigate = useNavigate();
 
+  const currentDate = new Date().toISOString().split("T")[0];
   switch (type) {
     case "withdraw":
       width = 300;
@@ -95,6 +96,7 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              min={currentDate}
             ></input>
           </ModalText>
           <ModalText>

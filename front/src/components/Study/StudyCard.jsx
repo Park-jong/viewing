@@ -72,6 +72,18 @@ const DateContainer = styled.div`
   bottom: 190px;
 `;
 
+const RecruitContainer = styled.div`
+  position: absolute;
+  /* top: 50px; */
+
+  font-size: 11px;
+  color: var(--gray-400);
+  font-weight: 300;
+
+  left: 10px;
+  bottom: 260px;
+`;
+
 const TitleContainer = styled.div`
   position: absolute;
   top: 140px;
@@ -232,6 +244,10 @@ export default function StudyCard({ study }) {
       </CompanyContainer>
 
       <DateContainer>마감일 | {study.deadline.split(" ")[0]}</DateContainer>
+
+      <RecruitContainer>
+        {study.recruitment ? "모집 중" : "모집 마감"}
+      </RecruitContainer>
 
       <TitleContainer>{study.title}</TitleContainer>
 

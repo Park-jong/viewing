@@ -3,11 +3,10 @@ import styled from "styled-components";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import MainButton from "../Button/MainButton";
 import UserProfile from "../Common/UserProfile";
-import ReactDOM from "react-dom";
 
 const Container = styled.div`
   width: 700px;
-  min-height: 230px;
+  min-height: 210px;
   border-radius: 36px;
   border: 2px solid var(--gray-200);
   position: relative;
@@ -45,8 +44,6 @@ const TextContainer = styled.div`
   white-space: pre-line;
 
   background-color: #f8f6ff;
-  /* overflow: scroll; */
-  cursor: pointer;
 `;
 
 const ButtonContainer = styled.div`
@@ -54,7 +51,7 @@ const ButtonContainer = styled.div`
   justify-content: center;
   align-items: center;
   /* position: absolute; */
-  /* margin-top: 10px; */
+  margin-top: 10px;
   margin-bottom: 10px;
   left: 250px;
 `;
@@ -104,14 +101,7 @@ export default function ResumeBox({
             setList(response.data);
           });
       })
-      .catch(({ response }) => {
-        if (
-          response.data === "제한 인원을 초과하였습니다." &&
-          response.status === 400
-        ) {
-          alert(response.data);
-        }
-      });
+      .catch();
   };
 
   const denial = () => {
@@ -140,22 +130,10 @@ export default function ResumeBox({
           backgroundcolor={backgroundcolor}
           characterimg={characterimg}
           nickname={nickname}
-          member_id={member_id}
         />
       </ProfileContainer>
       <DateContainer>{date} </DateContainer>
-      <TextContainer
-        onClick={() => {
-          const popupWindow = window.open("", "_blank", "width=600,height=400");
-          if (popupWindow) {
-            const popupRoot = popupWindow.document.createElement("div");
-            popupRoot.textContent = text;
-            popupWindow.document.body.appendChild(popupRoot);
-          }
-        }}
-      >
-        {text}
-      </TextContainer>
+      <TextContainer>{text}</TextContainer>
       {request_files && request_files.length > 0 ? (
         <>
           <FileConatainer>

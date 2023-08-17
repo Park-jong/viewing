@@ -361,6 +361,11 @@ export default function StudyPkAdmin() {
     }
   };
 
+  const validation = (body) => {
+    if (!body.title.trim() || !body.description.trim()) return false;
+    return true;
+  };
+
   const updateStudy = () => {
     const body = {
       title: studyTitle,
@@ -383,14 +388,18 @@ export default function StudyPkAdmin() {
         "스터디정보를 변경하시겠습니까?\n기존에 저장된 내용은 삭제되며 복구할 수 없습니다."
       )
     ) {
-      customAxios()
-        .put(`studies/${studyId}`, body)
-        .then((res) => {
-          alert("변경되었습니다.");
-        })
-        .catch(() => {
-          alert("변경에 실패하였습니다.");
-        });
+      if (validation(body)) {
+        customAxios()
+          .put(`studies/${studyId}`, body)
+          .then((res) => {
+            alert("변경되었습니다.");
+          })
+          .catch(() => {
+            alert("변경에 실패하였습니다.");
+          });
+      } else {
+        alert("입력 값을 확인해주세요");
+      }
     }
   };
 

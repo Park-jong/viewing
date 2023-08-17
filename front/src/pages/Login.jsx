@@ -4,7 +4,7 @@ import GoogleButton from "../components/Button/GoogleButton";
 import KakaoButton from "../components/Button/KakaoButton";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { UserReducer } from './../modules/UserReducer/UserReducer';
+import { UserReducer } from "./../modules/UserReducer/UserReducer";
 import { useEffect } from "react";
 
 const Container = styled.div`
@@ -25,6 +25,7 @@ const Copywrite = styled.h1`
   font-size: 40px;
   margin-top: 15px;
   margin-bottom: 30px;
+  font-weight: 700;
 `;
 
 const ButtonsContainer = styled.div`
@@ -44,13 +45,12 @@ export default function Login() {
     if (isLogin) {
       navigate("/");
     }
-  }, [])
-  
+  }, []);
 
   return (
     <Container>
       <InnerContainer>
-        <H1>로그인 / 회원가입</H1>
+        {/* <H1>로그인 / 회원가입</H1> */}
         <Copywrite>뷰잉에 오신 것을 환영합니다.</Copywrite>
         <ButtonsContainer>
           <KakaoButton></KakaoButton>

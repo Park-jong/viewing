@@ -80,6 +80,9 @@ const BodyContainer = styled.div`
 
   overflow-x: hidden;
 
+  /* overflow-y: hidden; Add this line to disable vertical scrolling */
+
+  /* margin-left: 100px; */
   /* flex-direction: column; */
 `;
 
@@ -98,8 +101,10 @@ const TitleContainer = styled(motion.div)`
 `;
 
 const CardContainer = styled.div`
-  width: 550px;
-  height: 450px;
+  /* width: 550px; */
+  /* height: 450px; */
+  width: 450px;
+  height: 350px;
   margin: 30px 30px;
   display: flex;
   flex-wrap: wrap;
@@ -119,6 +124,7 @@ const CardContainer = styled.div`
   /* Add a separate element for the background image */
   position: relative;
   overflow: hidden;
+  /* z-index: 99; */
 
   /* overflow-x: scroll; */
 
@@ -195,12 +201,12 @@ function useElementViewportPosition(ref) {
 
 //framer motion 애니메이션 정의
 const slideAnimation = {
-  variants: {
-    full: { backgroundColor: "#663399" },
-    partial: { backgroundColor: "#808080" },
-  },
-  initial: "partial",
-  whileinview: "full",
+  // variants: {
+  //   full: { backgroundColor: "#663399" },
+  //   partial: { backgroundColor: "#808080" },
+  // },
+  // initial: "partial",
+  // whileinview: "full",
   viewport: { amount: 1, once: true },
   //  whileInView는 애니메이션 동작을 지정합니다. CardContainer가 뷰포트에 들어왔을 때, "full" 상태로 애니메이션이 작동하도록 합니다.
 };
@@ -212,10 +218,16 @@ export default function Home() {
   //useElementViewportPosition 커스텀 훅을 사용하여 ref로 참조된 DOM 요소가 뷰포트 내에서 어느 정도 보이는지에 대한 정보를 position 변수로 받아옵니다.
   const [carouselEndPosition, setCarouselEndPosition] = useState(0);
   const { scrollYProgress } = useScroll();
+
   //  useScroll 훅을 사용하여 현재 스크롤 위치에 따른 스크롤 진행 상태를 scrollYProgress 변수로 받아옵니다.
 
   const x = useTransform(scrollYProgress, position, [0, carouselEndPosition]);
 
+  const y = useTransform(scrollYProgress, position, [0, 0]);
+
+  useEffect(() => {
+    console.log("y value:", y);
+  }, [y]);
   // useEffect(() => {
   //   window.addEventListener("scroll", () =>
   //     console.log({ scrollYProgress: scrollYProgress.current })
@@ -330,7 +342,7 @@ export default function Home() {
               <motion.div
                 ref={carouselRef}
                 className="carousel"
-                style={{ x, display: "flex", overflow: "hidden" }}
+                style={{ x, y, display: "flex", overflow: "hidden" }}
               >
                 {Array.from(Array(5).keys()).map((i) => (
                   <StyledLink to={urlMain[i]} key={i}>
@@ -339,10 +351,12 @@ export default function Home() {
                       key={i}
                       className="carousel__slide"
                       index={i}
+                      // style={{ y: y }} // y 값을 스타일에 적용
                     >
                       {/* {i + 1} */}
                       {/* 원하는 내용 */}
-                      {mentData[i]} {/* Display the content from mentData */}
+                      {mentData[i]}
+                      {/* // Display the content from mentData */}
                     </CardContainer>
                   </StyledLink>
                   // <motion.div

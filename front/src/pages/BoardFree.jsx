@@ -50,7 +50,6 @@ export default function BoardFree() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   const type = useLocation().pathname.split("/")[2];
-  console.log(type);
 
   useEffect(() => {
     customAxios()

@@ -72,7 +72,6 @@ export default function Message() {
     customAxios()
       .post(SERVER, { title, content, author_id, receiver_id })
       .then((res) => {
-        console.log(res);
         window.close();
       })
       .catch((err) => console.log(err));

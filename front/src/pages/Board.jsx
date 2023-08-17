@@ -5,8 +5,6 @@ import { useState } from "react";
 
 export default function Board() {
   const [isOpen, setIsOpen] = useState(true);
-  console.log(isOpen)
-  console.log(!isOpen)
 
   return (
     <>

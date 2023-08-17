@@ -95,7 +95,6 @@ export default function StudyPkBoardWrite() {
         },
       })
       .then(function (res) {
-        console.log(res);
         navigate(`/study/${study_id}/board/${res.data}`);
       })
       .catch((error) => {

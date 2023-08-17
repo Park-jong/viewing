@@ -189,7 +189,6 @@ export default function StudyCalendarModal({
     case "schedule_view":
       width = 500;
       height = 400;
-      console.log(data);
       content = (
         <>
           <ModalTitle> 스터디 일정 조회 </ModalTitle>

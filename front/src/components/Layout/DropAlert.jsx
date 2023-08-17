@@ -219,7 +219,7 @@ export default function DropAlert() {
       .put(`members/${memberId}/notification/${alert.notificationId}`)
       .then((res) => {
         dispatch(HandleRead(alert));
-        console.log(alert);
+
         switch (alert.notificationType) {
           case "Message":
             navigate("/mypage/get");
@@ -238,7 +238,6 @@ export default function DropAlert() {
             return;
           case "StudyArticle":
             if (alert.url) {
-              console.log(alert.url.split);
               navigate(
                 `/study/${alert.url.split(" ")[0]}/board/${
                   alert.url.split(" ")[1]
@@ -269,7 +268,6 @@ export default function DropAlert() {
 
           case "Conference":
             if (alert.url) {
-              console.log(alert.url.split);
               navigate(`/study/${alert.url}/meeting`);
             }
             return;

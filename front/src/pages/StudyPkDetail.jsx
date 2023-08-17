@@ -123,8 +123,6 @@ export default function StudyPkDetail() {
   };
   const [studyData, SetstudyData] = useState(emptyStudyData);
 
-  // console.log(studyPk);
-
   useEffect(() => {
     customAxios()
       .get(`studies/${studyPk}`)

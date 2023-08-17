@@ -8,7 +8,6 @@ const Container = styled.div`
 `;
 
 export default function MemberBox({ data }) {
-  console.log(data);
   return (
     <Container>
       <UserProfile

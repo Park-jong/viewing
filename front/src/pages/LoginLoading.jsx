@@ -52,7 +52,6 @@ export default function LoginLoading() {
           .then((res) => {
             res.data.web = web;
             dispatch(Login(res.data)); // 리덕스에 적용
-            console.log(res.data);
           })
           .catch((err) => {
             console.log(err, 1);

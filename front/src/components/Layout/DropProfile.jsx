@@ -79,9 +79,7 @@ export default function DropProfile({ member }) {
       const KAKAO_LOGOUT_PARAMS = new URLSearchParams(queries).toString();
       axios
         .get(`${KAKAO_LOGOUT_URL}?${KAKAO_LOGOUT_PARAMS}`)
-        .then((res) => {
-          console.log(res);
-        })
+        .then((res) => {})
         .catch
         //로그아웃 실패시?
         ();

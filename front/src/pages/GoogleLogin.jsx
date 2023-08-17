@@ -26,7 +26,6 @@ export default function GoogleLogin() {
           .get(`users/${payload.memberId}/`)
           .then((res) => {
             dispatch(Login(res.data)); // 리덕스에 적용
-            console.log(res.data);
           })
           .catch((err) => {
             console.log(err, 1);

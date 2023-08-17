@@ -16,7 +16,6 @@ export default function StudyPkBoardPk() {
       .get(`studies/${param}/boards/${article_id}`)
       .then((response) => {
         // 받아온 응답 데이터를 상태 변수에 저장
-        console.log(response.data);
         setRes(response.data);
       })
       .catch(console.log("error"));

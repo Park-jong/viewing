@@ -159,7 +159,6 @@ const CapacityContainer = styled.div`
 `;
 
 export default function StudyCard({ study }) {
-  // console.log(study.tag);
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const navigate = useNavigate();
 

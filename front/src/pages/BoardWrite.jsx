@@ -71,7 +71,7 @@ const ButtonsContainer = styled.div`
 
 export default function BoardWrite() {
   const maxLen = 5;
-  
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState([]);
@@ -87,7 +87,6 @@ export default function BoardWrite() {
     }
   };
   const [category, setCategory] = useState(board_type());
-  console.log(category)
   const member_id = useSelector((state) => state.UserReducer.memberId);
   const navigate = useNavigate();
 
@@ -111,7 +110,6 @@ export default function BoardWrite() {
   };
 
   const SendRequest = (e) => {
-    
     if (!title.trim()) {
       alert("제목을 입력하세요.");
       return;
@@ -130,8 +128,7 @@ export default function BoardWrite() {
       "request",
       new Blob([JSON.stringify(request)], { type: "application/json" })
     );
-    
-    console.log(request, category);
+
     customAxios()
       .post(`boards/${category}`, formData, {
         headers: {

@@ -122,7 +122,6 @@ export default function BoardUpdate() {
         },
       })
       .then(function (res) {
-        console.log(res);
         navigate(`/board/${param[2]}/${param[3]}`);
       })
       .catch((error) => {

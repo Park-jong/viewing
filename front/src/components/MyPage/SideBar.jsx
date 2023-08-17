@@ -87,20 +87,18 @@ export default function SideBar() {
   const [clicked, setClicked] = useState(location.pathname);
   const [subClicked, setSubClicked] = useState(false);
 
-  console.log(clicked)
-
   useEffect(() => {
     if (location.pathname === "/mypage") {
       navigate("/mypage/edit");
     }
-    
-    if (location.pathname === "/mypage/get"){
-      setClicked("내 쪽지함")
-      setSubClicked("get")
+
+    if (location.pathname === "/mypage/get") {
+      setClicked("내 쪽지함");
+      setSubClicked("get");
     } else if (location.pathname === "/mypage/send") {
-      setSubClicked("send")
+      setSubClicked("send");
     } else {
-      setClicked(location.pathname)
+      setClicked(location.pathname);
     }
   }, [location, navigate]);
 
@@ -135,7 +133,10 @@ export default function SideBar() {
     if (menu === "내 쪽지함" && clicked) {
       return (
         <div key={idx}>
-          <Menu $active={clicked === (menu ||"/mypage/get" || "/mypage/send")} onClick={() => setClicked(menu)}>
+          <Menu
+            $active={clicked === (menu || "/mypage/get" || "/mypage/send")}
+            onClick={() => setClicked(menu)}
+          >
             {menu}
           </Menu>
           <StyledLink to={"/mypage/get"}>

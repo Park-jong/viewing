@@ -29,9 +29,13 @@ const ModalContent = styled.div`
 `;
 
 const ModalText = styled.div`
-  font-size: 22px;
+  font-size: 16px;
   text-align: center;
-  margin-top: 45px;
+  margin-top: 20px;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 `;
 
 const Buttons = styled.div`
@@ -51,7 +55,7 @@ const BtnContainer = styled.div`
   justify-content: center;
   margin-top: 10px;
   padding-right: 10px;
-`
+`;
 
 const ScheduleSelected = styled.div`
   width: 30px;
@@ -60,28 +64,50 @@ const ScheduleSelected = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${props => props.$active ? "var(--primary)" : "var(--gray-200)"};
+  background-color: ${(props) =>
+    props.$active ? "var(--primary)" : "var(--gray-200)"};
   margin-left: 10px;
+`;
 
-`
+const TitleInput = styled.input`
+  width: 70%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const TimeInput = styled.input`
+  width: 23%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const ModalTitle = styled.div`
+  font-size: 25px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 20px;
+`;
 
 export default function ScheduleUpdateModal({
   isOpen,
   onClose,
   value,
   onChange,
-  data=[]
+  data = [],
 }) {
   let width = 600;
   let height = 400;
-  const [select, setSelect] = useState(0)
+  const [select, setSelect] = useState(0);
 
-  const num = data.length
-  const numList = []
-  for (let i = 1 ; i<=num ; i++) {
-    numList.push(i)
+  const num = data.length;
+  const numList = [];
+  for (let i = 1; i <= num; i++) {
+    numList.push(i);
   }
-  
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("2023-08-17");
@@ -89,40 +115,46 @@ export default function ScheduleUpdateModal({
   const [end, setEnd] = useState("12:00");
   const member_id = useSelector((state) => state.UserReducer.memberId);
 
-  
-  useEffect(()=>{
-    if (data.length>0){
-      setTitle(data[select].description)
-      setDate(data[select].started_at.split("T")[0])
-      setStart(data[select].started_at.split("T")[1])
-      setEnd(data[select].ended_at.split("T")[1])
-    } 
-  }, [select, data])
-
+  useEffect(() => {
+    if (data.length > 0) {
+      setTitle(data[select].description);
+      setDate(data[select].started_at.split("T")[0]);
+      setStart(data[select].started_at.split("T")[1]);
+      setEnd(data[select].ended_at.split("T")[1]);
+    }
+  }, [select, data]);
 
   const currentDate = new Date().toISOString().split("T")[0];
   const content = (
     <>
-      <ModalText> 개인 일정 변경 </ModalText>
+      <ModalTitle> 개인 일정 변경 </ModalTitle>
       <BtnContainer>
-        {numList.map((num, idx) => <ScheduleSelected onClick={() => setSelect(idx)} key={idx} $active={idx === select}>{num}</ScheduleSelected>)}
+        {numList.map((num, idx) => (
+          <ScheduleSelected
+            onClick={() => setSelect(idx)}
+            key={idx}
+            $active={idx === select}
+          >
+            {num}
+          </ScheduleSelected>
+        ))}
       </BtnContainer>
       <ModalText>
         제목
-        <input value={title} onChange={(e) => setTitle(e.target.value)}></input>
+        <TitleInput value={title} onChange={(e) => setTitle(e.target.value)}></TitleInput>
       </ModalText>
       <ModalText>
         일시
-        <input
+        <TitleInput
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           min={currentDate}
-        ></input>
+        ></TitleInput>
       </ModalText>
       <ModalText>
         시작시간{" "}
-        <input
+        <TimeInput
           type="time"
           onChange={(e) => {
             setStart(e.target.value);
@@ -130,7 +162,7 @@ export default function ScheduleUpdateModal({
           value={start}
         />
         종료시간{" "}
-        <input
+        <TimeInput
           type="time"
           onChange={(e) => {
             setEnd(e.target.value);
@@ -157,7 +189,6 @@ export default function ScheduleUpdateModal({
         started_at: `${date}T${start}`,
       })
       .then((res) => {
-        console.log(res);
         onClose(false);
       })
       .catch((err) => {

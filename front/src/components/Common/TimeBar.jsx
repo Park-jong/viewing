@@ -133,8 +133,8 @@ export function involve(schedule, object) {
 }
 
 export default function TimeBar(props) {
-  const [updateData, setUpdateData] = useState([])
-  const [updating, setUpdating] = [props.update, props.setUpdate]
+  const [updateData, setUpdateData] = useState([]);
+  const [updating, setUpdating] = [props.update, props.setUpdate];
   const memberId = useSelector((state) => state.UserReducer.memberId);
   const studySchedules = [];
   const personalSchedules = {};
@@ -169,10 +169,9 @@ export default function TimeBar(props) {
   });
 
   const handleUpdate = async (schedules) => {
-    console.log(schedules)
-    setUpdating(true)
-    setUpdateData(schedules)
-  }
+    setUpdating(true);
+    setUpdateData(schedules);
+  };
 
   const handleDelete = async (nums) => {
     for (let i of nums) {
@@ -212,7 +211,7 @@ export default function TimeBar(props) {
           </BarContainer>
         </TimeAndBarContainer>
         <Button onClick={() => handleUpdate(personalScheduleUpdate[i])}>
-          <BiSolidPencil size={22} ></BiSolidPencil>
+          <BiSolidPencil size={22}></BiSolidPencil>
         </Button>
         <Button onClick={() => handleDelete(personalScheduleNums[i])}>
           <BiSolidTrash size={22}></BiSolidTrash>
@@ -240,7 +239,11 @@ export default function TimeBar(props) {
           <></>
         )}
         {finalSchedules}
-        <ScheduleUpdateModal isOpen={updating} onClose={setUpdating} data={updateData}></ScheduleUpdateModal>
+        <ScheduleUpdateModal
+          isOpen={updating}
+          onClose={setUpdating}
+          data={updateData}
+        ></ScheduleUpdateModal>
       </BigContainer>
     );
   }

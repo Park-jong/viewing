@@ -12,7 +12,6 @@ export default function MypageGet() {
     customAxios()
       .get(`members/${member_id}/messages/receive`)
       .then((res) => {
-        console.log(res)
         setData(res.data.data);
       })
       .catch((err) => console.log(err));
@@ -21,7 +20,6 @@ export default function MypageGet() {
   return (
     <>
       <MessageList messages={data} />
-      
     </>
   );
 }

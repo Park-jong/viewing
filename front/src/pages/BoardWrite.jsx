@@ -71,7 +71,7 @@ const ButtonsContainer = styled.div`
 
 export default function BoardWrite() {
   const maxLen = 5;
-  const [category, setCategory] = useState("");
+  
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState([]);
@@ -86,6 +86,8 @@ export default function BoardWrite() {
       return "qna";
     }
   };
+  const [category, setCategory] = useState(board_type());
+  console.log(category)
   const member_id = useSelector((state) => state.UserReducer.memberId);
   const navigate = useNavigate();
 
@@ -109,6 +111,7 @@ export default function BoardWrite() {
   };
 
   const SendRequest = (e) => {
+    
     if (!title.trim()) {
       alert("제목을 입력하세요.");
       return;
@@ -118,7 +121,7 @@ export default function BoardWrite() {
     }
 
     const formData = new FormData();
-    const request = { member_id, content, title, board_type: board_type() };
+    const request = { member_id, content, title, board_type: category };
     // formData.append("member_id", member_id);
     // formData.append("content", text);
     files.forEach((file) => formData.append("request_files", file));
@@ -127,7 +130,8 @@ export default function BoardWrite() {
       "request",
       new Blob([JSON.stringify(request)], { type: "application/json" })
     );
-
+    
+    console.log(request, category);
     customAxios()
       .post(`boards/${category}`, formData, {
         headers: {
@@ -144,15 +148,15 @@ export default function BoardWrite() {
       });
   };
 
-  useEffect(() => {
-    setCategory(board_type());
-  }, []);
-
   return (
     <Container>
       <Category>
         {/* 카테고리{" "} */}
-        <CategorySelect onChange={(e) => handleCategory(e)}>
+        <CategorySelect
+          onChange={(e) => {
+            handleCategory(e);
+          }}
+        >
           {param === "free" ? (
             <option value={"general"} selected>
               자유게시판
@@ -172,7 +176,7 @@ export default function BoardWrite() {
               면접게시판
             </option>
           ) : (
-            <option value={"reivew"}>면접게시판</option>
+            <option value={"review"}>면접 후기</option>
           )}
         </CategorySelect>
       </Category>

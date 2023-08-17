@@ -490,6 +490,10 @@ export default function MakeStudy() {
     }
   }, [suggestionSelect]);
 
+  useEffect(() => {
+    setFilterTag([]);
+  }, []);
+
   return (
     <Container>
       <Title>✍ 스터디 기본 정보를 입력해주세요.</Title>

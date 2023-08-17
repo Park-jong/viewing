@@ -200,7 +200,7 @@ const slideAnimation = {
     partial: { backgroundColor: "#808080" },
   },
   initial: "partial",
-  whileInView: "full",
+  whileinview: "full",
   viewport: { amount: 1, once: true },
   //  whileInView는 애니메이션 동작을 지정합니다. CardContainer가 뷰포트에 들어왔을 때, "full" 상태로 애니메이션이 작동하도록 합니다.
 };

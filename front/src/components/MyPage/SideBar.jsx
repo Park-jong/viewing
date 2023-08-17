@@ -87,10 +87,20 @@ export default function SideBar() {
   const [clicked, setClicked] = useState(location.pathname);
   const [subClicked, setSubClicked] = useState(false);
 
+  console.log(clicked)
 
   useEffect(() => {
     if (location.pathname === "/mypage") {
       navigate("/mypage/edit");
+    }
+    
+    if (location.pathname === "/mypage/get"){
+      setClicked("내 쪽지함")
+      setSubClicked("get")
+    } else if (location.pathname === "/mypage/send") {
+      setSubClicked("send")
+    } else {
+      setClicked(location.pathname)
     }
   }, [location, navigate]);
 

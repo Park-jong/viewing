@@ -22,7 +22,7 @@ const HeaderStyle = styled.div`
   height: 64px;
   /* background-color: transparent; Optional: Add a background color for the header */
   background-color: ${(props) =>
-    props.isScrolled ? "#ffffff" : "transparent"};
+    props.$isscrolled ? "#ffffff" : "transparent"};
   transition: background-color 0.3s ease; /* Add a smooth transition effect for background color change */
 
   z-index: 99;
@@ -108,7 +108,7 @@ export default function HeaderHome() {
   const isSocialLogin = member.memberId; // true라고 가정하겠습니다. 실제 상태는 알맞게 설정해주세요.
 
   return (
-    <HeaderStyle isScrolled={isScrolled}>
+    <HeaderStyle $isscrolled={isScrolled}>
       <FirstContainer to={"/"}>
         {/* <Logo /> */}
         <LogoStyled>뷰잉</LogoStyled>

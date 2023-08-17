@@ -305,6 +305,13 @@ export default function StudyPkAdmin() {
     tags: [],
   });
 
+  const filterCareer = {
+    ALL: "경력무관",
+    EXPERIENCED: "경력",
+    INTERN: "인턴",
+    NEWCOMER: "신입",
+  };
+
   const changeTitle = (e) => {
     setStudyTitle(() => e.target.value);
   };
@@ -549,7 +556,7 @@ export default function StudyPkAdmin() {
         </Job>
         <CareerLevel>
           <Category>경력</Category>
-          <div>{careerLevel}</div>
+          <div>{filterCareer[careerLevel]}</div>
           {/* <CareerLevelInputBox value={careerLevel} onChange={changeCareerLevel}>
             <CareerLevelType></CareerLevelType>
           </CareerLevelInputBox> */}

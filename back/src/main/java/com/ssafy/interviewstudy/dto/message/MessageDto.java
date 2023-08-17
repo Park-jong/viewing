@@ -58,7 +58,7 @@ public class MessageDto {
                         .memberId(message.getReceiver().getId())
                         .background(message.getReceiver().getMemberProfileBackground())
                         .character(message.getReceiver().getMemberProfileImage())
-                        .nickname(message.getAuthor().getNickname())
+                        .nickname(message.getReceiver().getNickname())
                         .build()
         );
         return messageDetailResponse;

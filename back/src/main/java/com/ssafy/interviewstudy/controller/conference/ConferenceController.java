@@ -1,5 +1,10 @@
 package com.ssafy.interviewstudy.controller.conference;
 
+import com.ssafy.interviewstudy.domain.notification.NotificationType;
+import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
+import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
+import com.ssafy.interviewstudy.service.notification.NotificationService;
 import com.ssafy.interviewstudy.service.study.StudyService;
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +37,29 @@ public class ConferenceController {
 
     private final StudyService studyService;
 
+    private final NotificationService notificationService;
+
     @PostMapping("/studies/{study_id}/conference")
     public ResponseEntity<String> initializeSession(@PathVariable(name="study_id") String studyId, @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
         
        Integer memberId = Integer.parseInt((String) params.get("user_id"));
        Integer istudyId = Integer.parseInt(studyId);
+       notificationService.sendNotificationToStudyMember(
+               NotificationStudyDto
+                       .builder()
+                       .studyId(istudyId)
+                       .notificationDto(
+                               NotificationDto
+                                       .builder()
+                                       .memberId(1)
+                                       .url(studyId)
+                                       .notificationType(NotificationType.Conference)
+                                       .content("영상회의가 시작되었습니다")
+                                       .build()
+                       )
+                       .build()
+       );
 
        if (!studyService.checkStudyMember(istudyId, memberId)) {
            return new ResponseEntity<>("스터디 멤버가 아닙니다.", HttpStatus.UNAUTHORIZED);

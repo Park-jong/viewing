@@ -14,17 +14,17 @@ const careerOptions = ["전체", "신입", "경력", "인턴"];
 const valueOptions = ["ALL", "NEWCOMER", "EXPERIENCED", "INTERN"];
 
 const TAG_LIST = [
-  { id: 0, tag_category: "자소서 제출 필수", color: "rgb(246, 246, 246)" },
-  { id: 1, tag_category: "합격인증 필수", color: "rgb(240, 248, 248)" },
-  { id: 2, tag_category: "압박면접", color: "rgb(238, 237, 244)" },
-  { id: 3, tag_category: "정보공유", color: "rgb(238, 245, 246)" },
-  { id: 4, tag_category: "영상회의 필수", color: "rgb(236, 249, 247)" },
-  { id: 5, tag_category: "중고신입", color: "rgb(239, 251, 243)" },
-  { id: 6, tag_category: "온라인 진행", color: "rgb(233, 231, 238)" },
-  { id: 7, tag_category: "오프라인 진행", color: "rgb(240, 249, 245)" },
-  { id: 8, tag_category: "온오프라인 혼합", color: "rgb(233, 244, 251)" },
-  { id: 9, tag_category: "피드백 필수", color: "rgb(236, 241, 241)" },
-  { id: 10, tag_category: "초보 환영", color: "rgb(241, 236, 241)" },
+  { id: 1, tag_category: "자소서 제출 필수", color: "rgb(246, 246, 246)" },
+  { id: 2, tag_category: "합격인증 필수", color: "rgb(240, 248, 248)" },
+  { id: 3, tag_category: "압박면접", color: "rgb(238, 237, 244)" },
+  { id: 4, tag_category: "정보공유", color: "rgb(238, 245, 246)" },
+  { id: 5, tag_category: "영상회의 필수", color: "rgb(236, 249, 247)" },
+  { id: 6, tag_category: "중고신입", color: "rgb(239, 251, 243)" },
+  { id: 7, tag_category: "온라인 진행", color: "rgb(233, 231, 238)" },
+  { id: 8, tag_category: "오프라인 진행", color: "rgb(240, 249, 245)" },
+  { id: 9, tag_category: "온오프라인 혼합", color: "rgb(233, 244, 251)" },
+  { id: 10, tag_category: "피드백 필수", color: "rgb(236, 241, 241)" },
+  { id: 11, tag_category: "초보 환영", color: "rgb(241, 236, 241)" },
 ];
 
 const Container = styled.div`

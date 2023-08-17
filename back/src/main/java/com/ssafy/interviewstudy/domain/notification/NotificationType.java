@@ -38,5 +38,6 @@ public enum NotificationType {
     //테스트용
     Test,
     //영상회의 생김
-    Conference
+    Conference,
+    Study_Banned
 }

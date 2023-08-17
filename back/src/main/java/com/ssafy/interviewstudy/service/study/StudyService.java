@@ -371,7 +371,7 @@ public class StudyService {
                         .builder()
                         .content(study.getTitle()+" 스터디에서 추방되었습니다.")
                         .memberId(memberId)
-                        .notificationType(NotificationType.StudyRequest)
+                        .notificationType(NotificationType.Study_Banned)
                         .url(studyId.toString())
                         .isRead(false)
                         .build()

@@ -63,20 +63,32 @@ export default function UserProfile({
   };
 
   return (
-    <ProfileContainer onClick={toggleMenu} ref={AlertRef}>
-      <ProfileImg
-        $backgroundcolor={backgroundcolor}
-        $characterimg={characterimg}
-      ></ProfileImg>
-      <Username $nicknameLength={nicknameLength}>{nickname}</Username>
+    <>
+      {member_id && nickname !== null ? (
+        <ProfileContainer onClick={toggleMenu} ref={AlertRef}>
+          <ProfileImg
+            $backgroundcolor={backgroundcolor}
+            $characterimg={characterimg}
+          ></ProfileImg>
+          <Username $nicknameLength={nicknameLength}>{nickname}</Username>
 
-      <MiniMenuList
-        to={nickname}
-        member_id={member_id}
-        isVisible={isMenuVisible}
-        top={menuPosition.y}
-        left={menuPosition.x}
-      ></MiniMenuList>
-    </ProfileContainer>
+          <MiniMenuList
+            to={nickname}
+            member_id={member_id}
+            isVisible={isMenuVisible}
+            top={menuPosition.y}
+            left={menuPosition.x}
+          ></MiniMenuList>
+        </ProfileContainer>
+      ) : (
+        <ProfileContainer>
+          <ProfileImg
+            $backgroundcolor={backgroundcolor}
+            $characterimg={characterimg}
+          ></ProfileImg>
+          <Username $nicknameLength={nicknameLength}>{"알 수 없음"}</Username>
+        </ProfileContainer>
+      )}
+    </>
   );
 }

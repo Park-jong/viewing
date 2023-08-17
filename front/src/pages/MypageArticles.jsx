@@ -103,7 +103,7 @@ export default function MypageArticles() {
       <ArticleList
         data={qna.slice(10 * qnaPage, 10 * qnaPage + 10)}
         width={800}
-        type={"qusetion"}
+        type={"question"}
       ></ArticleList>
       {qna.length === 0 ? (
         <></>

@@ -147,11 +147,10 @@ export default function StudyCalendarTemplate({ isFlex, data, dataChange }) {
           onClick={() => {
             showAdd();
           }}
-          content={"일정 추가"}
-          width={100}
+          content={"스터디 일정 추가"}
+          width={150}
           height={30}
-        >
-        </MainButton>
+        ></MainButton>
       </ButtonContainer>
       <StudyTimeBar
         data={data2}

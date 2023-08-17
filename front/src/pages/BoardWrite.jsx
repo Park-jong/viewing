@@ -140,7 +140,6 @@ export default function BoardWrite() {
         },
       })
       .then(function (res) {
-        console.log(res);
         navigate(`/board/${param}/${res.data}`);
       })
       .catch((error) => {

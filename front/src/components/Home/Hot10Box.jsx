@@ -52,9 +52,13 @@ const RankContainer = styled(Link)`
   // padding-right: 10px; /* Add padding to create space between rank number and study name */
 `;
 
-const FirstContainer = styled.div``;
+const FirstContainer = styled.div`
+  margin-top: 7px;
+`;
 
-const SecondContainer = styled.div``;
+const SecondContainer = styled.div`
+  margin-top: 7px;
+`;
 
 export default function Hot10Box() {
   // Sample data for rankings
@@ -73,7 +77,7 @@ export default function Hot10Box() {
 
   return (
     <Container>
-      <TitleContainer>인기 스터디</TitleContainer>
+      <TitleContainer>추천 스터디</TitleContainer>
       <BodyContainer>
         <FirstContainer>
           {rankings.slice(0, 5).map((study, index) => (
@@ -81,7 +85,7 @@ export default function Hot10Box() {
               to={`/search?appliedCompany=${study}&appliedJob=&careerLevel=ALL`}
               key={index}
             >
-              {`${index + 1}`}
+              {/* {`${index + 1}`} */}
               &nbsp;&nbsp;&nbsp; {study}
             </RankContainer>
           ))}
@@ -92,7 +96,8 @@ export default function Hot10Box() {
               to={`/search?appliedCompany=${study}&appliedJob=&careerLevel=ALL`}
               key={index}
             >
-              {`${index + 6}`} &nbsp;&nbsp;&nbsp; {study}
+              {/* {`${index + 6}`}  */}
+              &nbsp;&nbsp;&nbsp; {study}
             </RankContainer>
           ))}
         </SecondContainer>

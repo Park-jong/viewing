@@ -64,7 +64,7 @@ export default function UserProfile({
 
   return (
     <>
-      {member_id && nickname !== null ? (
+      {member_id || nickname ? (
         <ProfileContainer onClick={toggleMenu} ref={AlertRef}>
           <ProfileImg
             $backgroundcolor={backgroundcolor}

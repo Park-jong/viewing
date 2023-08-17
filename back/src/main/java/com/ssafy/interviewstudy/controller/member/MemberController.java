@@ -209,7 +209,9 @@ public class MemberController {
     @Authority(authorityType = AuthorityType.Member)
     @DeleteMapping("/members/{memberId}")
     public ResponseEntity withdrawl(@PathVariable Integer memberId){
-        memberService.withdrawl(memberId);
+        boolean result = memberService.withdrawl(memberId);
+        if(!result)
+            return ResponseEntity.badRequest().body("스터디장인 스터디가 존재합니다.");
         return ResponseEntity.ok().build();
     }
 

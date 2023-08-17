@@ -46,4 +46,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     @Query("select b from Board b JOIN b.author ba where b.boardType = :boardType order by b.createdAt desc")
     Page<Board> findByType(BoardType boardType, Pageable pageable);
 
+    //내가 쓴 글 (탈퇴용)
+    @Query("SELECT b FROM Board b where b.author = :member")
+    List<Board> findAllByMember(Member member);
 }

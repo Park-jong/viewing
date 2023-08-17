@@ -151,6 +151,9 @@ public class Member {
     public void withdrawl(){
         this.status=MemberStatus.INACTIVE;
         this.inactiveAt = LocalDateTime.now();
+        this.nickname = null;
+        this.memberProfileBackground = null;
+        this.memberProfileImage = null;
     }
 
     public void changeNickname(String nickname){

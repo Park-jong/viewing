@@ -29,9 +29,13 @@ const ModalContent = styled.div`
 `;
 
 const ModalText = styled.div`
-  font-size: 22px;
+  font-size: 16px;
   text-align: center;
-  margin-top: 45px;
+  margin-top: 20px;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 `;
 
 const Buttons = styled.div`
@@ -63,6 +67,29 @@ const ScheduleSelected = styled.div`
   background-color: ${(props) =>
     props.$active ? "var(--primary)" : "var(--gray-200)"};
   margin-left: 10px;
+`;
+
+const TitleInput = styled.input`
+  width: 70%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const TimeInput = styled.input`
+  width: 23%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const ModalTitle = styled.div`
+  font-size: 25px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 20px;
 `;
 
 export default function ScheduleUpdateModal({
@@ -100,7 +127,7 @@ export default function ScheduleUpdateModal({
   const currentDate = new Date().toISOString().split("T")[0];
   const content = (
     <>
-      <ModalText> 개인 일정 변경 </ModalText>
+      <ModalTitle> 개인 일정 변경 </ModalTitle>
       <BtnContainer>
         {numList.map((num, idx) => (
           <ScheduleSelected
@@ -114,20 +141,20 @@ export default function ScheduleUpdateModal({
       </BtnContainer>
       <ModalText>
         제목
-        <input value={title} onChange={(e) => setTitle(e.target.value)}></input>
+        <TitleInput value={title} onChange={(e) => setTitle(e.target.value)}></TitleInput>
       </ModalText>
       <ModalText>
         일시
-        <input
+        <TitleInput
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           min={currentDate}
-        ></input>
+        ></TitleInput>
       </ModalText>
       <ModalText>
         시작시간{" "}
-        <input
+        <TimeInput
           type="time"
           onChange={(e) => {
             setStart(e.target.value);
@@ -135,7 +162,7 @@ export default function ScheduleUpdateModal({
           value={start}
         />
         종료시간{" "}
-        <input
+        <TimeInput
           type="time"
           onChange={(e) => {
             setEnd(e.target.value);

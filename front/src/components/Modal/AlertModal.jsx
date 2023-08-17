@@ -46,6 +46,42 @@ const XButtonContainer = styled.div`
   cursor: pointer;
 `;
 
+const ScheduleSelected = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${(props) =>
+    props.$active ? "var(--primary)" : "var(--gray-200)"};
+  margin-left: 10px;
+`;
+
+const TitleInput = styled.input`
+  width: 70%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const TimeInput = styled.input`
+  width: 23%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const ModalTitle = styled.div`
+  font-size: 25px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 20px;
+`;
+
+
 export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
   let width = 600;
   let height = 400;
@@ -79,29 +115,29 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
       break;
     case "schedule":
       width = 500;
-      height = 400;
+      height = 420;
       content = (
         <>
-          <ModalText> 개인 일정 추가 </ModalText>
+          <ModalTitle> 개인 일정 추가 </ModalTitle>
           <ModalText>
             제목
-            <input
+            <TitleInput
               onChange={(e) => setTitle(e.target.value)}
               maxLength={100}
-            ></input>
+            ></TitleInput>
           </ModalText>
           <ModalText>
             일시
-            <input
+            <TitleInput
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               min={currentDate}
-            ></input>
+            ></TitleInput>
           </ModalText>
           <ModalText>
             시작시간{" "}
-            <input
+            <TimeInput
               type="time"
               onChange={(e) => {
                 setStart(e.target.value);
@@ -109,7 +145,7 @@ export default function AlertModal({ isOpen, onClose, type, value, onChange }) {
               value={start}
             />
             종료시간{" "}
-            <input
+            <TimeInput
               type="time"
               onChange={(e) => {
                 setEnd(e.target.value);

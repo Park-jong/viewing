@@ -185,10 +185,13 @@ export default function StudyTimeBar(props) {
     finalSchedules.push(
       <Container key={i}>
         <NickName>{i}</NickName>
-        <BarContainer>
-          <Bar></Bar>
-          {personalSchedules[i]}
-        </BarContainer>
+        <TimeAndBarContainer>
+          <TimeContainer>{timeDisplayContainers}</TimeContainer>
+          <BarContainer>
+            <Bar></Bar>
+            {personalSchedules[i]}
+          </BarContainer>
+        </TimeAndBarContainer>
       </Container>
     );
   }

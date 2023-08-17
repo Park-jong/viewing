@@ -193,7 +193,7 @@ export default function TimeBar(props) {
           <TimeContainer>{timeDisplayContainers}</TimeContainer>
           <BarContainer>
             <Bar></Bar>
-            {studySchedules}
+            {personalSchedules[i]}
           </BarContainer>
         </TimeAndBarContainer>
         <Button>

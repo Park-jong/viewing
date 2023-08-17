@@ -75,6 +75,7 @@ public class CommentService {
         }
         articleCommentRepository.save(comment);
         //대댓글이 달릴 댓글의 작성자에게 알림 보내기
+        System.out.println(boardTypeToUrl(comment.getArticle().getBoardType()));
         notificationService
                 .sendNotificationToMember(
                         NotificationDto

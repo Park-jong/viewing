@@ -286,7 +286,7 @@ export default function Chat() {
                     member_id={m.member.member_id}
                   />
                 ) : (
-                  <UserProfile nickname={"알 수 없음"} />
+                  <UserProfile />
                 )}
               </ChatProfile>
               <ChatText>{m.content}</ChatText>

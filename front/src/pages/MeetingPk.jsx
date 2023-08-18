@@ -233,8 +233,9 @@ export default function MeetingPk() {
     }));
 
     if (
-      recorder.state === LocalRecorderState.PAUSED ||
-      recorder.state === LocalRecorderState.RECORDING
+      recorder &&
+      (recorder.state === LocalRecorderState.PAUSED ||
+        recorder.state === LocalRecorderState.RECORDING)
     ) {
       await stopRecord();
     }

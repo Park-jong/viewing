@@ -113,7 +113,7 @@ https://i9a205.p.ssafy.io/
  <summary>커뮤니티</summary>
 
  ### ✍ 게시글 
-  <img src="uploads/게시글.mov"  width="700" >
+  <img src="uploads/%EA%B2%8C%EC%8B%9C%EA%B8%80.mov"  width="700" >
 
  ### ✍ 게시글 작성
  <img src="uploads/게시글작성.mov"  width="700" >

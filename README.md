@@ -81,17 +81,17 @@ https://i9a205.p.ssafy.io/
  <summary>스터디</summary>
 
  ### ✍ 로그인
-  <img src="./uploads/화면_기록_2023-08-18_오전_8.51.57.mov"  width="700" >
+  <img src="uploads/화면_기록_2023-08-18_오전_8.51.57.mov"  width="700" >
 
  ### ✍ 스터디 검색 & 신청
- <img src="./uploads/화면_기록_2023-08-18_오전_8.54.47.mov"  width="700" >
+ <img src="uploads/화면_기록_2023-08-18_오전_8.54.47.mov"  width="700" >
 
  ### ✍ 스터디 관리 (방장)
-  <img src="./uploads/화면_기록_2023-08-18_오전_8.58.25.mov"  width="700" >
-  <img src="./uploads/화면_기록_2023-08-18_오전_9.56.02.mov"  width="700" >
+  <img src="uploads/화면_기록_2023-08-18_오전_8.58.25.mov"  width="700" >
+  <img src="uploads/화면_기록_2023-08-18_오전_9.56.02.mov"  width="700" >
 
  ### ✍ 스터디 기능
-  <img src="./uploads/화면_기록_2023-08-18_오전_9.33.23.mov"  width="700" >
+  <img src="uploads/화면_기록_2023-08-18_오전_9.33.23.mov"  width="700" >
 
 </details>
 
@@ -99,13 +99,13 @@ https://i9a205.p.ssafy.io/
  <summary>영상회의</summary>
 
  ### ✍ 기본 기능
-  <img src="./uploads/영상_채팅__피드백_기능.m4v"  width="700" >
+  <img src="uploads/영상_채팅__피드백_기능.m4v"  width="700" >
 
  ### ✍ 녹화, 타이머
- <img src="./uploads/비디오_녹화_녹음.m4v"  width="700" >
+ <img src="uploads/비디오_녹화_녹음.m4v"  width="700" >
 
  ### ✍ 피드백 기능
-  <img src="./uploads/피드백기능.m4v"  width="700" >
+  <img src="uploads/피드백기능.m4v"  width="700" >
 
 </details>
 
@@ -113,13 +113,13 @@ https://i9a205.p.ssafy.io/
  <summary>커뮤니티</summary>
 
  ### ✍ 게시글 
-  <img src="./uploads/게시글.mov"  width="700" >
+  <img src="uploads/게시글.mov"  width="700" >
 
  ### ✍ 게시글 작성
- <img src="./uploads/게시글작성.mov"  width="700" >
+ <img src="uploads/게시글작성.mov"  width="700" >
 
  ### ✍ 게시글 검색 및 댓글
-  <img src="./uploads/글검색댓글작성.mov"  width="700" >
+  <img src="uploads/글검색댓글작성.mov"  width="700" >
 </details>
 
 

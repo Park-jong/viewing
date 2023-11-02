@@ -48,7 +48,6 @@ https://i9a205.p.ssafy.io/
     <img src="https://github.com/Park-jong/viewing/assets/54964209/3308176e-dffe-4b71-a9e3-898d000cbaa2"  width="700" >
 </details>
 
-
 <br>
 
 ## ⚙️ 기술 스택
@@ -80,14 +79,11 @@ https://i9a205.p.ssafy.io/
 <details>
  <summary>스터디</summary>
 
- ### ✍ 로그인
-  <img src="uploads/화면_기록_2023-08-18_오전_8.51.57.mov"  width="700" >
-
  ### ✍ 스터디 검색 & 신청
- <img src="uploads/화면_기록_2023-08-18_오전_8.54.47.mov"  width="700" >
+ <img src="https://github.com/Park-jong/viewing/assets/54964209/9fe599c3-6ef9-4160-88c6-f4f7e01c0517"  width="700" >
 
  ### ✍ 스터디 관리 (방장)
-  <img src="uploads/화면_기록_2023-08-18_오전_8.58.25.mov"  width="700" >
+  <img src="https://github.com/Park-jong/viewing/assets/54964209/1f7020b4-e1de-4388-8a07-66862b9ac1cd"  width="700" >
   <img src="uploads/화면_기록_2023-08-18_오전_9.56.02.mov"  width="700" >
 
  ### ✍ 스터디 기능
@@ -113,13 +109,13 @@ https://i9a205.p.ssafy.io/
  <summary>커뮤니티</summary>
 
  ### ✍ 게시글 
-  <img src="uploads/%EA%B2%8C%EC%8B%9C%EA%B8%80.mov"  width="700" >
+  <img src="https://github.com/Park-jong/viewing/assets/54964209/de5dbd42-cfbd-453d-b796-4c2e5caabbac"  width="700" >
 
  ### ✍ 게시글 작성
- <img src="uploads/게시글작성.mov"  width="700" >
+ <img src="https://github.com/Park-jong/viewing/assets/54964209/c498103f-4c61-4b81-8310-65def19ad047"  width="700" >
 
  ### ✍ 게시글 검색 및 댓글
-  <img src="uploads/글검색댓글작성.mov"  width="700" >
+  <img src="https://github.com/Park-jong/viewing/assets/54964209/a9005f66-45ae-403e-b166-e8b96b5d9480"  width="700" >
 </details>
 
 

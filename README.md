@@ -2,7 +2,7 @@
 
 <br>
 
-<img src="https://github.com/Park-jong/viewing/assets/54964209/e572fc3e-a183-4cf8-b6a3-ec952166908b" width="800"/>
+<img src="uploads/main.jpg" width="800"/>
 
 <br>
 
@@ -20,7 +20,6 @@
 원하는 스터디가 있다면 가입 신청을 해보세요.<br>
 없다면 직접 스터디 생성하기 !
 
-
 ### ⏰ 개발 기간
 
 2023.07.10 ~ 2023.08.17
@@ -30,21 +29,24 @@
 ## 📁 분석 설계
 
 ### API 명세서 링크(NOTION)
+
 [API 명세서](https://imported-blouse-29a.notion.site/api-76df542ba576406a9385ba7b7cf879d2?pvs=4)
 
 ### ERD 링크
+
 [ERD](https://www.erdcloud.com/d/T43jjEq9d8XXDzow6)
 
 ### 시스템 아키텍처
 
 <details>
  <summary>열어서 확인하기</summary>
-    <img src="https://github.com/Park-jong/viewing/assets/54964209/3308176e-dffe-4b71-a9e3-898d000cbaa2"  width="700" >
+    <img src="uploads/architecture.jpg"  width="700" >
 </details>
 
 <br>
 
 ## ⚙️ 기술 스택
+
 ![Java](https://img.shields.io/badge/OpenJDK-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring](https://img.shields.io/badge/Spring-6DB33F.svg?&style=for-the-badge&logo=Spring&logoColor=white)
 
@@ -64,23 +66,24 @@
 
 ![webrtc](https://img.shields.io/badge/webrtc-333333?style=for-the-badge&logo=webrtc&logoColor=white)
 
-
 <br>
 
 ## 🖥️ 주요 화면 / 구현 예시
 
-
 <details>
  <summary>스터디</summary>
 
- ### ✍ 스터디 검색 & 신청
- <img src="https://github.com/Park-jong/viewing/assets/54964209/9fe599c3-6ef9-4160-88c6-f4f7e01c0517"  width="700" >
+### ✍ 스터디 검색 & 신청
 
- ### ✍ 스터디 관리 (방장)
-  <img src="https://github.com/Park-jong/viewing/assets/54964209/1f7020b4-e1de-4388-8a07-66862b9ac1cd"  width="700" >
+ <img src="uploads/search.gif"  width="700" >
+
+### ✍ 스터디 관리 (방장)
+
+  <img src="uploads/admin.gif"  width="700" >
   <img src="uploads/화면_기록_2023-08-18_오전_9.56.02.mov"  width="700" >
 
- ### ✍ 스터디 기능
+### ✍ 스터디 기능
+
   <img src="uploads/화면_기록_2023-08-18_오전_9.33.23.mov"  width="700" >
 
 </details>
@@ -88,13 +91,16 @@
 <details>
  <summary>영상회의</summary>
 
- ### ✍ 기본 기능
+### ✍ 기본 기능
+
   <img src="uploads/영상_채팅__피드백_기능.m4v"  width="700" >
 
- ### ✍ 녹화, 타이머
+### ✍ 녹화, 타이머
+
  <img src="uploads/비디오_녹화_녹음.m4v"  width="700" >
 
- ### ✍ 피드백 기능
+### ✍ 피드백 기능
+
   <img src="uploads/피드백기능.m4v"  width="700" >
 
 </details>
@@ -102,17 +108,15 @@
 <details>
  <summary>커뮤니티</summary>
 
- ### ✍ 게시글 
-  <img src="https://github.com/Park-jong/viewing/assets/54964209/de5dbd42-cfbd-453d-b796-4c2e5caabbac"  width="700" >
+### ✍ 게시글
 
- ### ✍ 게시글 작성
- <img src="https://github.com/Park-jong/viewing/assets/54964209/c498103f-4c61-4b81-8310-65def19ad047"  width="700" >
+  <img src="uploads/board.gif"  width="700" >
 
- ### ✍ 게시글 검색 및 댓글
-  <img src="https://github.com/Park-jong/viewing/assets/54964209/a9005f66-45ae-403e-b166-e8b96b5d9480"  width="700" >
+### ✍ 게시글 작성
+
+ <img src="uploads/write.gif"  width="700" >
+
+### ✍ 게시글 검색 및 댓글
+
+  <img src="uploads/comment.gif"  width="700" >
 </details>
-
-
-
-
-

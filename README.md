@@ -80,11 +80,11 @@
 ### ✍ 스터디 관리 (방장)
 
   <img src="uploads/admin.gif"  width="700" >
-  <img src="uploads/화면_기록_2023-08-18_오전_9.56.02.mov"  width="700" >
+  <img src="uploads/admin2.gif"  width="700" >
 
 ### ✍ 스터디 기능
 
-  <img src="uploads/화면_기록_2023-08-18_오전_9.33.23.mov"  width="700" >
+  <img src="uploads/study.gif"  width="700" >
 
 </details>
 

@@ -93,15 +93,19 @@
 
 ### ✍ 기본 기능
 
-  <img src="uploads/영상_채팅__피드백_기능.m4v"  width="700" >
+  <img src="uploads/base1.png"  width="700" >
 
 ### ✍ 녹화, 타이머
 
- <img src="uploads/비디오_녹화_녹음.m4v"  width="700" >
+  <img src="uploads/record1.png"  width="700" >
+  
+  <img src="uploads/record2.png"  width="700" >
 
 ### ✍ 피드백 기능
 
-  <img src="uploads/피드백기능.m4v"  width="700" >
+  <img src="uploads/feedback1.png"  width="700" >
+
+  <img src="uploads/feedback2.png"  width="700" >
 
 </details>
 

@@ -15,24 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BoardDtoService {
-    private final MemberRepository memberRepository;
     private final ArticleLikeService articleLikeService;
 
-    public Board toEntity(BoardRequest boardRequest) {
-        Member author = memberRepository.findMemberById(boardRequest.getMemberId());
-
-        Board article = Board.builder()
-                .title(boardRequest.getTitle())
-                .content(boardRequest.getContent())
-                .author(author)
-                .boardType(boardRequest.getBoardType())
-                .build();
-
-        return article;
-    }
-
     public BoardResponse fromEntityWithoutContent(Board article) {
-        BoardResponse boardResponse = BoardResponse.builder()
+        return BoardResponse.builder()
                 .articleId(article.getId())
                 .author(new Author(article.getAuthor()))
                 .title(article.getTitle())
@@ -40,20 +26,6 @@ public class BoardDtoService {
                 .commentCount(article.getComments().size())
                 .likeCount(articleLikeService.getLikeCount(article.getId()))
                 .build();
-
-        return boardResponse;
     }
 
-    public BoardResponse fromEntity(Integer memberId, Board article) {
-        BoardResponse boardResponse = fromEntityWithoutContent(article);
-
-        if (memberId != null)
-            boardResponse.setIsLike(articleLikeService.checkMemberLikeArticle(article.getId(), memberId));
-
-        boardResponse.setContent(article.getContent());
-        boardResponse.setCreatedAt(article.getCreatedAt());
-        boardResponse.setUpdatedAt(article.getUpdatedAt());
-
-        return boardResponse;
-    }
 }

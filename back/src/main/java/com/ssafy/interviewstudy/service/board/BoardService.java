@@ -86,13 +86,10 @@ public class BoardService {
         Board article = boardRepository.findById(articleId).get();
         List<ArticleFile> files = article.getFiles();
         List<FileResponse> fileResponses = new ArrayList<>();
-
-        if (article != null) modifyViewCount(article);
-
+        modifyViewCount(article);
         for (ArticleFile file : files) {
             fileResponses.add(new FileResponse(file));
         }
-        // Null이면 예외 발생 처리
         BoardResponse boardResponse = fromEntity(memberId, article);
         boardResponse.setBoardType(boardType);
         boardResponse.setArticleFiles(fileResponses);
@@ -111,27 +108,46 @@ public class BoardService {
         return boardResponse;
     }
 
-    // 글 수정
+    // 글 저장
     @Transactional
-    public BoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest, List<MultipartFile> files) {
-        Board originArticle = boardRepository.findById(articleId).get();
-        originArticle.modifyArticle(boardRequest);
-        boardRepository.save(originArticle);
+    public Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files) {
+        Board article = boardRepository.save(toEntity(boardRequest));
+        fileSave(boardRequest, article, files);
+        return article.getId();
+    }
 
-        // 파일 저장
+    private Board toEntity(BoardRequest boardRequest) {
+        Member author = memberRepository.findMemberById(boardRequest.getMemberId());
+        return Board.builder()
+                .title(boardRequest.getTitle())
+                .content(boardRequest.getContent())
+                .author(author)
+                .boardType(boardRequest.getBoardType())
+                .build();
+    }
+
+    private void fileSave(BoardRequest boardRequest, Board article, List<MultipartFile> files){
         if (files != null) {
             for (MultipartFile file : files) {
                 try {
                     String saveFileName = boardRequest.getMemberId() + "_" + String.valueOf(System.currentTimeMillis());
                     fm.upload(file.getInputStream(), saveFileName, file.getContentType(), file.getSize());
-                    ArticleFile articleFile = new ArticleFile(originArticle, file, saveFileName);
+                    ArticleFile articleFile = new ArticleFile(article, file, saveFileName);
                     articleFileRepository.save(articleFile);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
+    }
 
+    // 글 수정
+    @Transactional
+    public BoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest, List<MultipartFile> files) {
+        Board originArticle = boardRepository.findById(articleId).get();
+        originArticle.modifyArticle(boardRequest);
+        boardRepository.save(originArticle);
+        fileSave(boardRequest, originArticle, files);
         return fromEntity(boardRequest.getMemberId(), originArticle);
     }
 
@@ -139,7 +155,7 @@ public class BoardService {
     // 글 삭제
     @Transactional
     public Integer removeArticle(Integer articleId) {
-        if (boardRepository.findById(articleId) == null) {
+        if (boardRepository.findById(articleId).isEmpty()) {
             return 0;
         }
         removeFiles(articleId);
@@ -156,43 +172,10 @@ public class BoardService {
         }
     }
 
-    // 글 저장
-    @Transactional
-    public Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files) {
-        Board article = boardRepository.save(toEntity(boardRequest));
-        // 파일 저장
-        if (files != null) {
-            for (MultipartFile file : files) {
-                try {
-                    String saveFileName = boardRequest.getMemberId() + "_" + String.valueOf(System.currentTimeMillis());
-                    fm.upload(file.getInputStream(), saveFileName, file.getContentType(), file.getSize());
-                    ArticleFile articleFile = new ArticleFile(article, file, saveFileName);
-                    articleFileRepository.save(articleFile);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return article.getId();
-    }
-
-    private Board toEntity(BoardRequest boardRequest) {
-        Member author = memberRepository.findMemberById(boardRequest.getMemberId());
-        Board board = Board.builder()
-                .title(boardRequest.getTitle())
-                .content(boardRequest.getContent())
-                .author(author)
-                .boardType(boardRequest.getBoardType())
-                .build();
-        return board;
-    }
-
     // 파일 삭제
     @Transactional
     public void removeFiles(Integer articleId) {
         List<ArticleFile> files = articleFileRepository.findByArticle_Id(articleId);
-
         for (ArticleFile file : files) {
             fm.delete(file.getSaveFileName());
             articleFileRepository.deleteById(file.getId());
@@ -202,11 +185,9 @@ public class BoardService {
     // 파일 다운로드
     public FileResponse fileDownload(Integer fileId) {
         ArticleFile articleFile = articleFileRepository.findById(fileId).get();
-        byte[] file = null;
         FileResponse result = new FileResponse(articleFile);
-
         try {
-            file = fm.download(articleFile.getSaveFileName());
+            byte[] file = fm.download(articleFile.getSaveFileName());
             result.setFileData(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -225,5 +206,4 @@ public class BoardService {
         Board article = boardRepository.findById(articleId).get();
         return Objects.equals(article.getAuthor().getId(), memberId);
     }
-
 }

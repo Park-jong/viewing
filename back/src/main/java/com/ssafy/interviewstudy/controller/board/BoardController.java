@@ -65,7 +65,6 @@ public class BoardController {
                                            @RequestPart(value = "request_files", required = false) List<MultipartFile> requestFiles) {
         boardRequest.setBoardType(boardType);
         boardRequest.setMemberId(memberInfo.getMemberId());
-
         // 삭제된 파일의 리스트를 받아서 서버와 db에서 삭제
         if (boardRequest.getFilesDeleted() != null) {
             boardService.removeFileList(boardRequest.getFilesDeleted());

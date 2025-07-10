@@ -5,13 +5,10 @@ import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
-import com.ssafy.interviewstudy.dto.board.CommentResponse;
 import com.ssafy.interviewstudy.dto.board.StudyBoardCommentResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.service.board.CommentService;
-import com.ssafy.interviewstudy.service.board.StudyBoardCommentService;
+import com.ssafy.interviewstudy.service.board.StudyBoardCommentServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudyBoardCommentController {
 
-    private final StudyBoardCommentService commentService;
+    private final StudyBoardCommentServiceImpl commentService;
 
     // 댓글 조회
     @JWTRequired

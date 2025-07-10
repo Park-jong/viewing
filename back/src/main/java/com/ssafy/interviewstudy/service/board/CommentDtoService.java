@@ -26,7 +26,6 @@ public class CommentDtoService {
 
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
-    private final CommentLikeRepository commentLikeRepository;
     private final ArticleCommentRepository commentRepository;
     private final CommentLikeService commentLikeService;
 

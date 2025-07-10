@@ -4,12 +4,11 @@ import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.service.board.StudyBoardCommentService;
+import com.ssafy.interviewstudy.service.board.StudyBoardCommentServiceImpl;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.service.study.StudyService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
@@ -28,7 +27,7 @@ public class MemberStudyCommentInterceptor implements HandlerInterceptor {
 
     private final MemberService memberService;
 
-    private final StudyBoardCommentService studyBoardCommentService;
+    private final StudyBoardCommentServiceImpl studyBoardCommentService;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //자기가 처리해야 할 부분인지 체크

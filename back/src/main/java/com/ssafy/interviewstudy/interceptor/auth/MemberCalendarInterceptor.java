@@ -8,7 +8,6 @@ import com.ssafy.interviewstudy.service.calendar.CalendarService;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;

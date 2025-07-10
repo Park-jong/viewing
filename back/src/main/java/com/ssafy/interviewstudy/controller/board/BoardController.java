@@ -39,7 +39,6 @@ public class BoardController {
     public ResponseEntity<?> articleDetail(@MemberInfo JWTMemberInfo memberInfo, @PathVariable BoardType boardType, @PathVariable Integer articleId) {
         Integer memberId = (memberInfo == null) ? null : memberInfo.getMemberId();
         BoardResponse boardResponse = boardService.findArticle(memberId, articleId, boardType);
-
         return ResponseEntity.ok(boardResponse);
     }
 
@@ -53,7 +52,6 @@ public class BoardController {
         boardRequest.setBoardType(boardType);
         boardRequest.setMemberId(memberInfo.getMemberId());
         Integer articleId = boardService.saveBoard(boardRequest, requestFiles);
-
         return ResponseEntity.ok(articleId);
     }
 
@@ -67,12 +65,11 @@ public class BoardController {
                                            @RequestPart(value = "request_files", required = false) List<MultipartFile> requestFiles) {
         boardRequest.setBoardType(boardType);
         boardRequest.setMemberId(memberInfo.getMemberId());
-
         // 삭제된 파일의 리스트를 받아서 서버와 db에서 삭제
-        if (boardRequest.getFilesDeleted()!= null) boardService.removeFileList(boardRequest.getFilesDeleted());
-
+        if (boardRequest.getFilesDeleted() != null) {
+            boardService.removeFileList(boardRequest.getFilesDeleted());
+        }
         BoardResponse response = boardService.modifyArticle(articleId, boardRequest, requestFiles);
-
         return ResponseEntity.ok(response);
     }
 
@@ -82,9 +79,9 @@ public class BoardController {
     @DeleteMapping("/{articleId}")
     public ResponseEntity<?> articleRemove(@PathVariable Integer articleId) {
         Integer response = boardService.removeArticle(articleId);
-        if (response == 0)
+        if (response == 0) {
             return ResponseEntity.badRequest().body("없는 게시물입니다.");
-
+        }
         return ResponseEntity.ok(response);
     }
 
@@ -94,10 +91,11 @@ public class BoardController {
                                          @RequestParam(value = "keyword", required = false) String keyword,
                                          @PathVariable BoardType boardType, Pageable pageable) {
         Page<BoardResponse> boardResponses;
-        if (StringUtils.hasText(keyword))
+        if (StringUtils.hasText(keyword)) {
             boardResponses = boardService.findArticleByKeyword(searchBy, keyword, boardType, pageable);
-        else boardResponses = boardService.findBoardList(boardType, pageable);
-
+        } else {
+            boardResponses = boardService.findBoardList(boardType, pageable);
+        }
         return ResponseEntity.ok(boardResponses);
     }
 
@@ -125,7 +123,6 @@ public class BoardController {
     @DeleteMapping("/{articleId}/files")
     public ResponseEntity<?> articleFile(@PathVariable BoardType boardType, @PathVariable Integer articleId) {
         boardService.removeFiles(articleId);
-
         return ResponseEntity.ok().build();
     }
 

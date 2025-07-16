@@ -17,8 +17,6 @@ public interface BoardService {
     // 글 검색
     Page<BoardResponse> findArticleByKeyword(String searchBy, String keyword, BoardType boardType, Pageable pageable);
 
-    BoardResponse fromEntityWithoutContent(Board article);
-
     //글 목록 조회
     Page<BoardResponse> findBoardList(BoardType boardType, Pageable pageable);
 
@@ -37,16 +35,6 @@ public interface BoardService {
     // 글 삭제
     @Transactional
     Integer removeArticle(Integer articleId);
-
-    @Transactional
-    void removeFileList(List<FileResponse> files);
-
-    // 파일 삭제
-    @Transactional
-    void removeFiles(Integer articleId);
-
-    // 파일 다운로드
-    FileResponse fileDownload(Integer fileId);
 
     // 조회수+1
     @Transactional

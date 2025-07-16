@@ -10,6 +10,7 @@ import com.ssafy.interviewstudy.dto.board.BoardResponse;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.study.RequestFile;
+import com.ssafy.interviewstudy.service.board.BoardFileService;
 import com.ssafy.interviewstudy.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardFileService boardFileService;
 
     // 글 상세조회(하나)
     @JWTRequired
@@ -67,7 +69,7 @@ public class BoardController {
         boardRequest.setMemberId(memberInfo.getMemberId());
         // 삭제된 파일의 리스트를 받아서 서버와 db에서 삭제
         if (boardRequest.getFilesDeleted() != null) {
-            boardService.removeFileList(boardRequest.getFilesDeleted());
+            boardFileService.removeFileList(boardRequest.getFilesDeleted());
         }
         BoardResponse response = boardService.modifyArticle(articleId, boardRequest, requestFiles);
         return ResponseEntity.ok(response);
@@ -102,7 +104,7 @@ public class BoardController {
     // 파일 다운로드
     @GetMapping("/{articleId}/files/{fileId}")
     public ResponseEntity<?> articleFile(@PathVariable BoardType boardType, @PathVariable Integer articleId, @PathVariable Integer fileId) {
-        FileResponse file = boardService.fileDownload(fileId);
+        FileResponse file = boardFileService.fileDownload(fileId);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         String fileName = null;
@@ -122,7 +124,7 @@ public class BoardController {
     @JWTRequired(required = true)
     @DeleteMapping("/{articleId}/files")
     public ResponseEntity<?> articleFile(@PathVariable BoardType boardType, @PathVariable Integer articleId) {
-        boardService.removeFiles(articleId);
+        boardFileService.removeFiles(articleId);
         return ResponseEntity.ok().build();
     }
 

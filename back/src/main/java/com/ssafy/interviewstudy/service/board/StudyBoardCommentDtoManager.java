@@ -1,13 +1,11 @@
 package com.ssafy.interviewstudy.service.board;
 
-import com.ssafy.interviewstudy.domain.board.ArticleComment;
 import com.ssafy.interviewstudy.domain.board.StudyBoardComment;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.*;
 import com.ssafy.interviewstudy.repository.board.*;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class StudyBoardCommentDtoService {
+public class StudyBoardCommentDtoManager {
 
     private final MemberRepository memberRepository;
     private final StudyBoardRepository boardRepository;

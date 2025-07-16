@@ -25,7 +25,7 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
 
     private final StudyBoardCommentRepository commentRepository;
     private final StudyBoardRepository boardRepository;
-    private final StudyBoardCommentDtoService commentDtoService;
+    private final StudyBoardCommentDtoManager commentDtoManager;
     private final NotificationService notificationService;
 
     // 게시글 댓글 저장
@@ -34,7 +34,7 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
     @Override
     public Integer saveComment(Integer articleId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
-        StudyBoardComment comment = commentRepository.save(commentDtoService.toEntity(commentRequest));
+        StudyBoardComment comment = commentRepository.save(commentDtoManager.toEntity(commentRequest));
 
         //스터디 게시글에 댓글이 달릴 경우 알림을 보내줘야함
         if(comment.getId()!=null){
@@ -58,7 +58,7 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
     @Override
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest){
         commentRequest.setArticleId(articleId);
-        StudyBoardComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
+        StudyBoardComment comment = commentDtoManager.toEntityWithParent(commentId, commentRequest);
         Optional<StudyBoardComment> parentComment = commentRepository.findById(commentId);
         if(parentComment.isEmpty()){
             throw new NotFoundException("대댓글 대상인 댓글이 존재하지 않습니다.");
@@ -86,7 +86,7 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
         List<StudyBoardCommentResponse> commentResponses = new ArrayList<>();
 
         for (StudyBoardComment c: comment) {
-            commentResponses.add(commentDtoService.fromEntity(c));
+            commentResponses.add(commentDtoManager.fromEntity(c));
         }
 
         return commentResponses;
@@ -109,7 +109,7 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
         originComment.modifyComment(commentRequest);
         StudyBoardComment modifiedComment = commentRepository.save(originComment);
 
-        return commentDtoService.fromEntity(modifiedComment);
+        return commentDtoManager.fromEntity(modifiedComment);
     }
 
     // (대)댓글 삭제

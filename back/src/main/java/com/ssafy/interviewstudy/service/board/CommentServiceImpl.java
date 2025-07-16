@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,16 +33,15 @@ public class CommentServiceImpl implements CommentService {
     private final ArticleCommentRepository articleCommentRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final MemberRepository memberRepository;
-    private final CommentDtoService commentDtoService;
+    private final CommentDtoManager commentDtoManager;
     private final NotificationService notificationService;
-
 
     // 게시글 댓글 저장
     @Transactional
     @Override
     public Integer saveComment(Integer articleId, CommentRequest commentRequest) {
         commentRequest.setArticleId(articleId);
-        ArticleComment comment = articleCommentRepository.save(commentDtoService.toEntity(commentRequest));
+        ArticleComment comment = articleCommentRepository.save(commentDtoManager.fromRequestToEntity(commentRequest));
         //댓글이 달릴 게시글 작성자에게 알림
         if (comment.getId() != null) {
             sendNotification(comment, NotificationType.BoardComment);
@@ -51,21 +51,28 @@ public class CommentServiceImpl implements CommentService {
 
     private void sendNotification(ArticleComment comment, NotificationType type) {
         Integer receiver = comment.getArticle().getAuthor().getId();
-        String content;
-        if (type == NotificationType.BoardComment) {
-            content = newCommentNotification(comment);
-        } else if (type == NotificationType.BoardReply) {
-            content = newReplyNotification(comment);
-        } else {
-            content = "";
-        }
+        String content = getNotificationContentByType(comment, type);
         String url = getUrl(comment);
         NotificationDto notification = makeNotification(receiver, content, type, url, false);
         notificationService.sendNotificationToMember(notification);
     }
 
+    private String getNotificationContentByType(ArticleComment comment, NotificationType type) {
+        if (type == NotificationType.BoardComment) {
+            return newCommentNotification(comment);
+        } else if (type == NotificationType.BoardReply) {
+            return newReplyNotification(comment);
+        } else {
+            return "";
+        }
+    }
+
     private String newCommentNotification(ArticleComment comment) {
         return "게시글" + comment.getArticle().getTitle() + "에 댓글이 달렸습니다.";
+    }
+
+    private String newReplyNotification(ArticleComment comment) {
+        return "댓글에 대댓글이 달렸습니다.";
     }
 
     private String getUrl(ArticleComment comment) {
@@ -88,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest) {
         commentRequest.setArticleId(articleId);
-        ArticleComment comment = commentDtoService.toEntityWithParent(commentId, commentRequest);
+        ArticleComment comment = commentDtoManager.fromRequestToEntityWithParent(commentId, commentRequest);
         Optional<ArticleComment> parentComment = articleCommentRepository.findById(commentId);
         if (parentComment.isEmpty()) {
             throw new NotFoundException("대댓글 대상인 댓글이 없습니다.");
@@ -96,10 +103,6 @@ public class CommentServiceImpl implements CommentService {
         articleCommentRepository.save(comment);
         sendNotification(comment, NotificationType.BoardComment);
         return comment.getId();
-    }
-
-    private String newReplyNotification(ArticleComment comment) {
-        return "댓글에 대댓글이 달렸습니다.";
     }
 
     // 게시글 댓글 조회
@@ -110,11 +113,10 @@ public class CommentServiceImpl implements CommentService {
                 Sort.Order.asc("cr.createdAt")
         );
         List<ArticleComment> comment = articleCommentRepository.findAllByArticle(boardRepository.findById(articleId).get());
-        System.out.println(comment.size());
         findReplies(comment);
         List<CommentResponse> commentResponses = new ArrayList<>();
         for (ArticleComment c : comment) {
-            commentResponses.add(commentDtoService.fromEntity(memberId, c));
+            commentResponses.add(commentDtoManager.fromEntityToResponse(memberId, c));
         }
         return commentResponses;
     }
@@ -132,7 +134,7 @@ public class CommentServiceImpl implements CommentService {
         ArticleComment originComment = articleCommentRepository.findById(commentId).get();
         originComment.modifyComment(commentRequest);
         ArticleComment modifiedComment = articleCommentRepository.save(originComment);
-        return commentDtoService.fromEntity(commentRequest.getMemberId(), modifiedComment);
+        return commentDtoManager.fromEntityToResponse(commentRequest.getMemberId(), modifiedComment);
     }
 
     // (대)댓글 삭제
@@ -161,6 +163,10 @@ public class CommentServiceImpl implements CommentService {
         return commentLike.getId();
     }
 
+    private Boolean checkMemberLikeComment(Integer memberId, Integer commentId) {
+        return commentLikeRepository.existsByMember_IdAndComment_Id(memberId, commentId);
+    }
+
     // 댓글 좋아요 삭제
     @Transactional
     @Override
@@ -172,15 +178,11 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    private Boolean checkMemberLikeComment(Integer memberId, Integer commentId) {
-        return commentLikeRepository.existsByMember_IdAndComment_Id(memberId, commentId);
-    }
-
     // 댓글 작성자가 본인인지 체크
     @Override
     public Boolean checkAuthor(Integer commentId, Integer memberId) {
         ArticleComment comment = articleCommentRepository.findById(commentId).get();
-        return comment.getAuthor().getId() == memberId;
+        return Objects.equals(comment.getAuthor().getId(), memberId);
     }
 
     private static String boardTypeToUrl(BoardType boardType) {

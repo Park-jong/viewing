@@ -31,12 +31,11 @@ public class StudyBoardServiceImpl implements StudyBoardService {
 
     private final ArticleFileRepository articleFileRepository;
     private final StudyBoardRepository boardRepository;
-    private final StudyBoardDtoService boardDtoService;
+    private final StudyBoardDtoManager boardDtoManager;
     private final NotificationService notificationService;
     private final FileManager fm;
 
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
-
     //글 목록 조회
     @Override
     public Page<StudyBoardResponse> findBoardList(Integer studyId, Pageable pageable) {
@@ -45,7 +44,7 @@ public class StudyBoardServiceImpl implements StudyBoardService {
         List<StudyBoardResponse> responseList = new ArrayList<>();
 
         for (StudyBoard b : boardList) {
-            responseList.add(boardDtoService.fromEntityWithoutContent(b));
+            responseList.add(boardDtoManager.fromEntityWithoutContent(b));
         }
 
         return new PageImpl<>(responseList, pageable, content.getTotalElements());
@@ -56,14 +55,11 @@ public class StudyBoardServiceImpl implements StudyBoardService {
     public StudyBoardResponse findArticle(Integer articleId) {
         StudyBoard article = boardRepository.findById(articleId).get();
         List<ArticleFile> files = article.getFiles();
-
         List<FileResponse> fileResponses = new ArrayList<>();
-
         for (ArticleFile file : files) {
             fileResponses.add(new FileResponse(file));
         }
-
-        StudyBoardResponse boardResponse = boardDtoService.fromEntity(article);
+        StudyBoardResponse boardResponse = boardDtoManager.fromEntity(article);
         boardResponse.setArticleFiles(fileResponses);
 
         return boardResponse;
@@ -76,7 +72,6 @@ public class StudyBoardServiceImpl implements StudyBoardService {
         StudyBoard originArticle = boardRepository.findById(articleId).get();
         originArticle.modifyArticle(boardRequest);
         boardRepository.save(originArticle);
-
         // 파일 저장
         if (files != null) {
             for (MultipartFile file : files) {
@@ -90,8 +85,7 @@ public class StudyBoardServiceImpl implements StudyBoardService {
                 }
             }
         }
-
-        return boardDtoService.fromEntity(originArticle);
+        return boardDtoManager.fromEntity(originArticle);
     }
 
     // 글 삭제
@@ -111,7 +105,7 @@ public class StudyBoardServiceImpl implements StudyBoardService {
     @Transactional
     @Override
     public Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files){
-        StudyBoard article = boardRepository.save(boardDtoService.toEntity(boardRequest));
+        StudyBoard article = boardRepository.save(boardDtoManager.toEntity(boardRequest));
 
         // 파일 저장
         if (files != null) {
@@ -159,7 +153,7 @@ public class StudyBoardServiceImpl implements StudyBoardService {
         else articles = boardRepository.findWithAuthor(studyId, keyword, pageable);
 
         for (StudyBoard b: articles.getContent()) {
-            responseList.add(boardDtoService.fromEntityWithoutContent(b));
+            responseList.add(boardDtoManager.fromEntityWithoutContent(b));
         }
 
         return new PageImpl<>(responseList, pageable, articles.getTotalElements());

@@ -5,11 +5,14 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.Author;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
+import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.service.redis.ArticleLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -40,7 +43,12 @@ public class BoardDtoManger {
         boardResponse.setTitle(article.getTitle());
         boardResponse.setCreatedAt(article.getCreatedAt());
         boardResponse.setUpdatedAt(article.getUpdatedAt());
+        boardResponse.setBoardType(article.getBoardType());
         return boardResponse;
+    }
+
+    public void setFiles(BoardResponse response, List<FileResponse> files){
+        response.setArticleFiles(files);
     }
 
     public Board fromRequestToEntity(BoardRequest boardRequest) {

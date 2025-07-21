@@ -1,6 +1,8 @@
 package com.ssafy.interviewstudy.service.notification;
 
+import com.ssafy.interviewstudy.domain.board.ArticleComment;
 import com.ssafy.interviewstudy.domain.notification.Notification;
+import com.ssafy.interviewstudy.domain.notification.NotificationType;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,9 @@ public interface NotificationService {
     @Transactional
         //특정 멤버에게 이벤트 보내기
     void sendNotificationToMember(NotificationDto notificationDto);
+
+    @Transactional
+    void sendNotificationAboutComment(ArticleComment comment, NotificationType type);
 
     @Transactional
     void sendNotificationToStudyMember(NotificationStudyDto notificationStudyDto);

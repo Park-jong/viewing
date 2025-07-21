@@ -9,7 +9,6 @@ import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.dto.study.RequestFile;
 import com.ssafy.interviewstudy.service.board.BoardFileService;
 import com.ssafy.interviewstudy.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +52,7 @@ public class BoardController {
                                         @RequestPart(value = "request_files", required = false) List<MultipartFile> requestFiles) {
         boardRequest.setBoardType(boardType);
         boardRequest.setMemberId(memberInfo.getMemberId());
-        Integer articleId = boardService.saveBoard(boardRequest, requestFiles);
+        Integer articleId = boardService.saveArticle(boardRequest, requestFiles);
         return ResponseEntity.ok(articleId);
     }
 

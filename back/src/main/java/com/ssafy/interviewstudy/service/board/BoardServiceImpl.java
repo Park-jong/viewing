@@ -6,6 +6,7 @@ import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
+import com.ssafy.interviewstudy.exception.board.BoardExceptionFactory;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,10 +33,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Page<BoardResponse> findArticleByKeyword(String searchBy, String keyword, BoardType boardType, Pageable pageable) {
         Page<Board> articles = findArticles(searchBy, keyword, boardType, pageable);
-        List<BoardResponse> responseList = new ArrayList<>();
-        for (Board board : articles.getContent()) {
-            responseList.add(boardDtoManger.fromEntityWithoutContent(board));
-        }
+        List<BoardResponse> responseList = articles.getContent().stream().map(boardDtoManger::fromEntityWithoutContent).collect(Collectors.toList());
         return new PageImpl<>(responseList, pageable, articles.getTotalElements());
     }
 
@@ -68,10 +66,7 @@ public class BoardServiceImpl implements BoardService {
     public Page<BoardResponse> findBoardList(BoardType boardType, Pageable pageable) {
         Page<Board> content = boardRepository.findByType(boardType, pageable);
         List<Board> boardList = content.getContent();
-        List<BoardResponse> responseList = new ArrayList<>();
-        for (Board b : boardList) {
-            responseList.add(boardDtoManger.fromEntityWithoutContent(b));
-        }
+        List<BoardResponse> responseList = boardList.stream().map(boardDtoManger::fromEntityWithoutContent).collect(Collectors.toList());
         return new PageImpl<>(responseList, pageable, content.getTotalElements());
     }
 
@@ -79,28 +74,25 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public BoardResponse findArticle(Integer memberId, Integer articleId, BoardType boardType) {
-        Board article = boardRepository.findById(articleId).orElseThrow(() -> new EntityNotFoundException("해당 게시글이 존재하지 않습니다."));
+        Board article = boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound);
         List<ArticleFile> files = article.getFiles();
-        List<FileResponse> fileResponses = new ArrayList<>();
-        modifyViewCount(article);
-        for (ArticleFile file : files) {
-            fileResponses.add(new FileResponse(file));
-        }
-        return makeDetailResponse(memberId, article, boardType, fileResponses);
+        List<FileResponse> fileResponses = files.stream().map(FileResponse::new).collect(Collectors.toList());
+        incrementAndSaveViewCount(article);
+        return makeDetailResponse(memberId, article, fileResponses);
     }
 
-    private BoardResponse makeDetailResponse(Integer memberId, Board article, BoardType boardType, List<FileResponse> files) {
+    private BoardResponse makeDetailResponse(Integer memberId, Board article, List<FileResponse> files) {
         BoardResponse boardResponse = boardDtoManger.fromEntityToResponse(memberId, article);
-        boardResponse.setBoardType(boardType);
-        boardResponse.setArticleFiles(files);
+        boardDtoManger.setFiles(boardResponse, files);
         return boardResponse;
     }
 
     // 글 저장
     @Transactional
     @Override
-    public Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files) {
-        Board article = boardRepository.save(boardDtoManger.fromRequestToEntity(boardRequest));
+    public Integer saveArticle(BoardRequest boardRequest, List<MultipartFile> files) {
+        Board saveArticle = boardDtoManger.fromRequestToEntity(boardRequest);
+        Board article = boardRepository.save(saveArticle);
         boardFileService.saveFiles(boardRequest, article, files);
         return article.getId();
     }
@@ -109,7 +101,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public BoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest, List<MultipartFile> files) {
-        Board article = boardRepository.findById(articleId).orElseThrow(() -> new EntityNotFoundException("해당 게시글이 존재하지 않습니다."));
+        Board article = boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound);
         article.modifyArticle(boardRequest);
         boardFileService.saveFiles(boardRequest, article, files);
         return boardDtoManger.fromEntityToResponse(boardRequest.getMemberId(), article);
@@ -130,14 +122,14 @@ public class BoardServiceImpl implements BoardService {
     // 조회수+1
     @Transactional
     @Override
-    public void modifyViewCount(Board article) {
+    public void incrementAndSaveViewCount(Board article) {
         article.updateViewCount();
         boardRepository.save(article);
     }
 
     @Override
     public Boolean checkAuthor(Integer articleId, Integer memberId) {
-        Board article = boardRepository.findById(articleId).orElseThrow(() -> new EntityNotFoundException("해당 게시글이 존재하지 않습니다."));
+        Board article = boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound);
         return Objects.equals(article.getAuthor().getId(), memberId);
     }
 

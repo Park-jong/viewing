@@ -6,13 +6,10 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.Author;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
-import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.repository.board.ArticleFileRepository;
 import com.ssafy.interviewstudy.repository.board.BoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.service.redis.ArticleLikeService;
-import com.ssafy.interviewstudy.support.file.FileManager;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
 
@@ -48,8 +42,12 @@ class BoardServiceTest {
     private ArticleLikeService articleLikeService;
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private BoardDtoManger boardDtoManger;
+    @Mock
+    private BoardFileService boardFileService;
     @InjectMocks
-    private BoardService boardService;
+    private BoardServiceImpl boardService;
 
     Member mockMember;
     Board mockBoard;
@@ -57,6 +55,9 @@ class BoardServiceTest {
     List<Board> mockBoardList;
     BoardType mockBoardType;
     BoardResponse mockBoardResponse;
+    BoardResponse mockModifyBoardResponse;
+    BoardRequest mockModifyRequest = new BoardRequest(1, 1, "제목 수정", "내용 수정", BoardType.general, null);
+    BoardRequest mockRequest;
 
     @BeforeEach
     void setUp() {
@@ -67,6 +68,8 @@ class BoardServiceTest {
         mockBoardList.add(mockBoard);
         pageable = PageRequest.of(0, 10);
         mockBoardResponse = createMockBoardResponse(mockMember);
+        mockModifyBoardResponse = modifyMockBoardResponse(mockMember);
+        mockRequest = createMockRequest();
     }
 
     private Member createMockMember() {
@@ -96,6 +99,20 @@ class BoardServiceTest {
                 .build();
     }
 
+    private BoardResponse modifyMockBoardResponse(Member author) {
+        return BoardResponse.builder()
+                .articleId(1)
+                .author(new Author(author))
+                .title("제목 수정")
+                .content("내용 수정")
+                .viewCount(0)
+                .build();
+    }
+
+    private BoardRequest createMockRequest() {
+        return new BoardRequest(1, null, "제목", "내용", BoardType.general, null);
+    }
+
     @Test
     void findArticleByKeywordWithAuthor() {
         //given
@@ -103,7 +120,7 @@ class BoardServiceTest {
         String mockKeyword = "홍길";
         mockBoard.setAuthor(mockMember);
         Mockito.when(boardRepository.findWithAuthor(mockKeyword, mockBoardType, pageable)).thenReturn(new PageImpl<>(mockBoardList, pageable, 1));
-        Mockito.when(articleLikeService.getLikeCount(1)).thenReturn(20);
+        Mockito.when(boardDtoManger.fromEntityWithoutContent(mockBoard)).thenReturn(mockBoardResponse);
         //when
         Page<BoardResponse> result = boardService.findArticleByKeyword(searchBy, mockKeyword, mockBoardType, pageable);
         //then
@@ -120,7 +137,7 @@ class BoardServiceTest {
         String searchBy = "title";
         String mockKeyword = "제목";
         Mockito.when(boardRepository.findByTitleContaining(mockKeyword, mockBoardType, pageable)).thenReturn(new PageImpl<>(mockBoardList, pageable, 1));
-        Mockito.when(articleLikeService.getLikeCount(1)).thenReturn(20);
+        Mockito.when(boardDtoManger.fromEntityWithoutContent(mockBoard)).thenReturn(mockBoardResponse);
         //when
         Page<BoardResponse> result = boardService.findArticleByKeyword(searchBy, mockKeyword, mockBoardType, pageable);
         //then
@@ -136,7 +153,7 @@ class BoardServiceTest {
         String searchBy = "content";
         String mockKeyword = "내용";
         Mockito.when(boardRepository.findByTitleOrContent(mockKeyword, mockBoardType, pageable)).thenReturn(new PageImpl<>(mockBoardList, pageable, 1));
-        Mockito.when(articleLikeService.getLikeCount(1)).thenReturn(20);
+        Mockito.when(boardDtoManger.fromEntityWithoutContent(mockBoard)).thenReturn(mockBoardResponse);
         //when
         Page<BoardResponse> result = boardService.findArticleByKeyword(searchBy, mockKeyword, mockBoardType, pageable);
         //then
@@ -150,6 +167,7 @@ class BoardServiceTest {
     void findBoardList() {
         //given
         Mockito.when(boardRepository.findByType(mockBoardType, pageable)).thenReturn(new PageImpl<>(mockBoardList, pageable, 1));
+        Mockito.when(boardDtoManger.fromEntityWithoutContent(mockBoard)).thenReturn(mockBoardResponse);
         //when
         Page<BoardResponse> result = boardService.findBoardList(mockBoardType, pageable);
         //then
@@ -160,8 +178,7 @@ class BoardServiceTest {
     void findArticle() {
         //given
         Mockito.when(boardRepository.findById(1)).thenReturn(Optional.ofNullable(mockBoard));
-        Mockito.when(articleLikeService.getLikeCount(1)).thenReturn(20);
-        Mockito.when(articleLikeService.checkMemberLikeArticle(1, 1)).thenReturn(true);
+        Mockito.when(boardDtoManger.fromEntityToResponse(mockMember.getId(), mockBoard)).thenReturn(mockBoardResponse);
         //when
         BoardResponse result = boardService.findArticle(1, 1, mockBoardType);
         //then
@@ -173,12 +190,10 @@ class BoardServiceTest {
     @Test
     void modifyArticle() {
         //given
-        BoardRequest mockRequest = new BoardRequest(1, 1, "제목 수정", "내용 수정", BoardType.general, null);
         Mockito.when(boardRepository.findById(1)).thenReturn(Optional.ofNullable(mockBoard));
-        Mockito.when(articleLikeService.getLikeCount(1)).thenReturn(20);
-        Mockito.when(articleLikeService.checkMemberLikeArticle(1, 1)).thenReturn(true);
+        Mockito.when(boardDtoManger.fromEntityToResponse(mockMember.getId(), mockBoard)).thenReturn(mockModifyBoardResponse);
         //when
-        BoardResponse result = boardService.modifyArticle(1, mockRequest, null);
+        BoardResponse result = boardService.modifyArticle(1, mockModifyRequest, null);
         //then
         assertThat(result.getArticleId()).isEqualTo(1);
         assertThat(result.getTitle()).isEqualTo("제목 수정");
@@ -199,17 +214,10 @@ class BoardServiceTest {
     @Test
     void saveBoard() {
         //given
-        BoardRequest boardRequest = new BoardRequest(1, null, "제목", "내용", BoardType.general, null);
-        Board output = new Board();
-        output.setId(1);
-        output.setTitle("제목");
-        output.setContent("내용");
-        output.setAuthor(mockMember);
-        output.setViewCount(0);
-        Mockito.when(boardRepository.save(any(Board.class))).thenReturn(output);
-        Mockito.when(memberRepository.findMemberById(1)).thenReturn(mockMember);
+        Mockito.when(boardRepository.save(any(Board.class))).thenReturn(mockBoard);
+        Mockito.when(boardDtoManger.fromRequestToEntity(mockRequest)).thenReturn(mockBoard);
         //when
-        Integer result = boardService.saveBoard(boardRequest, null);
+        Integer result = boardService.saveArticle(mockRequest, null);
         //then
         assertThat(result).isEqualTo(1);
     }
@@ -219,7 +227,7 @@ class BoardServiceTest {
         //given
         int viewCount = mockBoard.getViewCount();
         //when
-        boardService.modifyViewCount(mockBoard);
+        boardService.incrementAndSaveViewCount(mockBoard);
         //then
         assertThat(mockBoard.getViewCount()).isEqualTo(viewCount + 1);
     }

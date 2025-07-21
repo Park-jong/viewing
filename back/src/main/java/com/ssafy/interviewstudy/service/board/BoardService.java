@@ -4,7 +4,6 @@ import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
-import com.ssafy.interviewstudy.dto.board.FileResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,7 @@ public interface BoardService {
 
     // 글 저장
     @Transactional
-    Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files);
+    Integer saveArticle(BoardRequest boardRequest, List<MultipartFile> files);
 
     // 글 수정
     @Transactional
@@ -38,7 +37,7 @@ public interface BoardService {
 
     // 조회수+1
     @Transactional
-    void modifyViewCount(Board article);
+    void incrementAndSaveViewCount(Board article);
 
     Boolean checkAuthor(Integer articleId, Integer memberId);
 }

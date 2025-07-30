@@ -2,8 +2,8 @@ package com.ssafy.interviewstudy.service.redis;
 
 import com.ssafy.interviewstudy.domain.board.ArticleComment;
 import com.ssafy.interviewstudy.domain.board.CommentLike;
-import com.ssafy.interviewstudy.repository.board.ArticleCommentRepository;
-import com.ssafy.interviewstudy.repository.board.CommentLikeRepository;
+import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleCommentRepository;
+import com.ssafy.interviewstudy.repository.board.generalBoard.CommentLikeRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -109,7 +109,6 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     @Override
     public void deleteAllMembersInSetScheduled() {
         Set<String> comments = redisTemplate.opsForSet().members(keySet);
-
         for (String key : comments) {
             redisTemplate.delete(keyString + key);
         }

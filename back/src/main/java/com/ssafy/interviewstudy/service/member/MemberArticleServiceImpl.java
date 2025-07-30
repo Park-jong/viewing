@@ -4,10 +4,9 @@ import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
-import com.ssafy.interviewstudy.repository.board.BoardRepository;
+import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberArticleLikeRepository;
-import com.ssafy.interviewstudy.service.board.BoardDtoManger;
-import com.ssafy.interviewstudy.service.board.BoardService;
+import com.ssafy.interviewstudy.service.board.generalBoard.BoardDtoManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,16 +23,14 @@ public class MemberArticleServiceImpl implements MemberArticleService {
 
     private final MemberArticleLikeRepository memberArticleLikeRepository;
     private final BoardRepository boardRepository;
-    private final BoardService boardService;
-    private final BoardDtoManger boardDtoManger;
+    private final BoardDtoManager boardDtoManger;
 
 
     @Transactional(readOnly = true)
     @Override
     public List<BoardResponse> getLikedArticleByMemberId(BoardRequest boardRequest, BoardType boardType) {
         List<BoardResponse> boardResponses = new ArrayList<>();
-        List<Board> boardList = new ArrayList<>();
-        boardList = memberArticleLikeRepository.getArticleByMemberId(boardRequest.getMemberId(), boardType);
+        List<Board> boardList = memberArticleLikeRepository.getArticleByMemberId(boardRequest.getMemberId(), boardType);
         for (Board b : boardList) {
             boardResponses.add(boardDtoManger.fromEntityWithoutContent(b));
         }

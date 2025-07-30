@@ -7,7 +7,7 @@ import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.StudyBoardCommentResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.service.board.StudyBoardCommentServiceImpl;
+import com.ssafy.interviewstudy.service.board.studyBoard.StudyBoardCommentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

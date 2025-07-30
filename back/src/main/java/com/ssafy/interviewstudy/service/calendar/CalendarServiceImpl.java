@@ -26,7 +26,7 @@ public class CalendarServiceImpl implements CalendarService {
     //나의 일정 조회
     @Transactional
     @Override
-    public CalendarListResponse getCalendarList(Integer memberId){
+    public CalendarListResponse getCalendarList(Integer memberId) {
         List<Calendar> calendarList = calendarRepository.findCalendarsByAuthorId(memberId);
         return CalendarListResponse.fromEntity(calendarList);
     }
@@ -34,29 +34,22 @@ public class CalendarServiceImpl implements CalendarService {
     //일정 추가
     @Transactional
     @Override
-    public CalendarCreatedResponse createCalendar(CalendarRetrieveRequest calendarDto){
-        if(calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())){
-            throw new CreationFailException("일정의 시작시간이 끝나느 시간보다 앞서야 합니다.");
+    public CalendarCreatedResponse createCalendar(CalendarRetrieveRequest calendarDto) {
+        if (calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())) {
+            throw new CreationFailException("일정의 시작시간이 끝나는 시간보다 앞서야 합니다.");
         }
-        Member author = memberRepository.findMemberById(calendarDto.getMemberId());
-        Calendar calendar = CalendarRetrieveRequest.toEntity(calendarDto,author);
+        Member author = memberRepository.findById(calendarDto.getMemberId()).orElseThrow(() -> new CreationFailException("캘린더"));
+        Calendar calendar = CalendarRetrieveRequest.toEntity(calendarDto, author);
         calendarRepository.save(calendar);
-        //Optional을 쓸만한 상황
-        if(calendar==null){
-            throw new CreationFailException("캘린더");
-        }
-        if(calendar.getId()==null){
-            throw new CreationFailException("캘린더");
-        }
         return new CalendarCreatedResponse(calendar.getId());
     }
 
     //일정 삭제
     @Transactional
     @Override
-    public void deleteCalendar(Integer calendarId){
+    public void deleteCalendar(Integer calendarId) {
         Integer result = calendarRepository.deleteCalendarById(calendarId);
-        if(result == null){
+        if (result == null) {
             throw new NotFoundException("쪽지");
         }
     }
@@ -64,22 +57,19 @@ public class CalendarServiceImpl implements CalendarService {
     //일정 수정
     @Transactional
     @Override
-    public void updateCalendar(CalendarRetrieveRequest calendarDto){
-        if(calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())){
+    public void updateCalendar(CalendarRetrieveRequest calendarDto) {
+        if (calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())) {
             throw new CreationFailException("일정의 시작시간이 끝나는 시간보다 앞서야 합니다.");
         }
-        Member updatedMember = memberRepository.findMemberById(calendarDto.getMemberId());
-        if(updatedMember==null){
-            throw new CreationFailException("캘린더");
-        }
-        calendarRepository.save(CalendarRetrieveRequest.toEntity(calendarDto,updatedMember));
+        Member updatedMember = memberRepository.findById(calendarDto.getMemberId()).orElseThrow(() -> new CreationFailException("캘린더"));
+        calendarRepository.save(CalendarRetrieveRequest.toEntity(calendarDto, updatedMember));
     }
 
     //본인 일정이 맞는지 체크
     @Override
-    public Boolean checkOwnCalendar(Integer memberId, Integer calendarId){
-        Calendar calendar = calendarRepository.findCalendarByAuthorIdAndId(memberId,calendarId);
-        return calendar!=null;
+    public Boolean checkOwnCalendar(Integer memberId, Integer calendarId) {
+        Calendar calendar = calendarRepository.findCalendarByAuthorIdAndId(memberId, calendarId);
+        return calendar != null;
     }
 
 }

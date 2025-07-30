@@ -131,7 +131,6 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     @Override
     public void sendNotificationToMember(NotificationDto notificationDto) {
-
         Notification notification = dtoToEntity(notificationDto);
         notificationRepository.save(notification);
         Map<String, SseEmitter> memberEmitters = emitterRepository.getEmittersByMemberId(notificationDto.getMemberId());

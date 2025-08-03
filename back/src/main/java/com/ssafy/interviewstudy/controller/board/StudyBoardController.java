@@ -4,12 +4,12 @@ import com.ssafy.interviewstudy.annotation.Authority;
 import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.annotation.MemberInfo;
-import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.dto.board.StudyBoardResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.service.board.StudyBoardService;
+import com.ssafy.interviewstudy.service.board.generalBoard.BoardFileService;
+import com.ssafy.interviewstudy.service.board.studyBoard.StudyBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,13 +31,13 @@ import java.util.List;
 public class StudyBoardController {
 
     private final StudyBoardService boardService;
+    private final BoardFileService boardFileService;
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member_Study_Article)
     @GetMapping("/{articleId}")
     public ResponseEntity<?> articleDetail(@PathVariable Integer articleId){
         StudyBoardResponse boardResponse = boardService.findArticle(articleId);
-
         return ResponseEntity.ok(boardResponse);
     }
 
@@ -52,7 +52,6 @@ public class StudyBoardController {
         System.out.println(studyId);
         boardRequest.setStudyId(studyId);
         Integer articleId = boardService.saveBoard(boardRequest, requestFiles);
-
         return ResponseEntity.ok(articleId);
     }
 
@@ -67,9 +66,8 @@ public class StudyBoardController {
         boardRequest.setMemberId(memberInfo.getMemberId());
         boardRequest.setStudyId(studyId);
         // 삭제된 파일의 리스트를 받아서 서버와 db에서 삭제
-        if (boardRequest.getFilesDeleted()!= null) boardService.removeFileList(boardRequest.getFilesDeleted());
+        if (boardRequest.getFilesDeleted()!= null) boardFileService.removeFileList(boardRequest.getFilesDeleted());
         StudyBoardResponse response = boardService.modifyArticle(articleId, boardRequest, requestFiles);
-
         return ResponseEntity.ok(response);
     }
 
@@ -79,10 +77,8 @@ public class StudyBoardController {
     @DeleteMapping("/{articleId}")
     public ResponseEntity<?> articleRemove(@PathVariable Integer articleId){
         Integer response = boardService.removeArticle(articleId);
-
         if(response == 0)
             return ResponseEntity.badRequest().body("없는 게시물입니다.");
-
         return ResponseEntity.ok(response);
     }
 
@@ -96,14 +92,13 @@ public class StudyBoardController {
         if(StringUtils.hasText(keyword))
             boardResponses = boardService.findArticleByKeyword(studyId, searchBy, keyword, pageable);
         else boardResponses = boardService.findBoardList(studyId, pageable);
-
         return ResponseEntity.ok(boardResponses);
     }
 
     // 파일 다운로드
     @GetMapping("/{articleId}/files/{fileId}")
     public ResponseEntity<?> articleFile(@PathVariable Integer articleId, @PathVariable Integer fileId){
-        FileResponse file = boardService.fileDownload(fileId);
+        FileResponse file = boardFileService.fileDownload(fileId);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         String fileName = null;
@@ -123,8 +118,7 @@ public class StudyBoardController {
     @JWTRequired(required = true)
     @DeleteMapping("/{articleId}/files")
     public ResponseEntity<?> articleFile(@PathVariable Integer articleId){
-        boardService.removeFiles(articleId);
-
+        boardFileService.removeFiles(articleId);
         return ResponseEntity.ok().build();
     }
 

@@ -2,8 +2,9 @@ package com.ssafy.interviewstudy.service.redis;
 
 import com.ssafy.interviewstudy.domain.board.ArticleLike;
 import com.ssafy.interviewstudy.domain.board.Board;
-import com.ssafy.interviewstudy.repository.board.ArticleLikeRepository;
-import com.ssafy.interviewstudy.repository.board.BoardRepository;
+import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleLikeRepository;
+import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,7 +21,6 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
 
     private String keySet = "article";
     private String keyString = "article:";
-
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final ArticleLikeRepository articleLikeRepository;
@@ -45,11 +45,10 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
     public Integer getLikeCount(Integer articleId) {
         // 좋아요가 눌린 게시글들의 set 목록에 있지만 키가 존재하지 않는다 => 캐시미스. 다시 불러오기
         if (!redisTemplate.hasKey(keySet)) saveLikeArticleListFromDb();
-
         if (redisTemplate.opsForSet().isMember(keySet, String.valueOf(articleId))
-                && !redisTemplate.hasKey(keyString + articleId))
+                && !redisTemplate.hasKey(keyString + articleId)) {
             saveArticleLike(articleId);
-
+        }
         long likeCount = redisTemplate.opsForSet().size(keyString + articleId);
         return (int) likeCount;
     }
@@ -57,17 +56,15 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
     // 좋아요 누르기
     @Override
     public Integer saveArticleLike(Integer articleId, Integer memberId) {
-
-
         // 이미 좋아요를 누른 상황이면 0을 반환
         if (checkMemberLikeArticle(articleId, memberId)) return 0;
-
         redisTemplate.opsForSet().add(keySet, String.valueOf(articleId));
         redisTemplate.opsForSet().add(keyString + articleId, String.valueOf(memberId));
-        articleLikeRepository.save(ArticleLike.builder()
+        ArticleLike articleLike = ArticleLike.builder()
                 .article(boardRepository.findById(articleId).get())
                 .member(memberRepository.findMemberById(memberId))
-                .build());
+                .build();
+        articleLikeRepository.save(articleLike);
         return articleId;
     }
 
@@ -79,8 +76,9 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
 
         long removeCnt = redisTemplate.opsForSet().remove(keyString + articleId, String.valueOf(memberId));
         if (removeCnt > 0) {
-            articleLikeRepository.removeByArticleAndMember(boardRepository.findById(articleId).get()
-                    , memberRepository.findMemberById(memberId));
+            Board board = boardRepository.findById(articleId).get();
+            Member member = memberRepository.findMemberById(memberId);
+            articleLikeRepository.removeByArticleAndMember(board, member);
         }
         return (int) removeCnt;
     }
@@ -97,10 +95,8 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
     // 캐시에 없으면 DB에서 조회하고 업데이트
     @Override
     public void saveLikeArticleListFromDb() {
-        System.out.println("redis");
         List<Board> articles = articleLikeRepository.findArticleLikeByAllArticle();
-
-        if(articles == null) return;
+        if (articles == null) return;
         for (Board article : articles) {
             redisTemplate.opsForSet().add(keySet, String.valueOf(article.getId()));
         }
@@ -110,7 +106,6 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
     @Override
     public void deleteAllMembersInSetScheduled() {
         Set<String> articles = redisTemplate.opsForSet().members(keySet);
-
         for (String key : articles) {
             redisTemplate.delete(keyString + key);
         }

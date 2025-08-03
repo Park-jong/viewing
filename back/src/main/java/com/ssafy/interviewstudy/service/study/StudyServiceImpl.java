@@ -227,8 +227,7 @@ public class StudyServiceImpl implements StudyService {
         //스터디 리더에게 스터디 신청 알림을 보내자!
         if(studyRequest.getId()!=null){
             notificationService.sendNotificationToMember(
-                    NotificationDto
-                            .builder()
+                    NotificationDto.builder()
                             .notificationType(NotificationType.StudyRequest)
                             .content(study.getTitle()+" 스터디에 가입신청이 왔습니다.")
                             .memberId(study.getLeader().getId())

@@ -5,7 +5,7 @@ import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.service.board.BoardService;
+import com.ssafy.interviewstudy.service.board.generalBoard.BoardService;
 import com.ssafy.interviewstudy.service.member.MemberService;
 import com.ssafy.interviewstudy.util.auth.BoardTypeExtractor;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;

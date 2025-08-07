@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public interface BoardFileService {
+public interface BoardFileManager {
     void saveFiles(BoardRequest boardRequest, Board article, List<MultipartFile> files);
 
     void saveFiles(BoardRequest boardRequest, StudyBoard article, List<MultipartFile> files);

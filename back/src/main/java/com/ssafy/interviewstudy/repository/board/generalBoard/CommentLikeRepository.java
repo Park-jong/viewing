@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface CommentLikeRepository extends CommonRepository<CommentLike, Integer> {
 
-    List<CommentLike> findByComment_Id(Integer commentId);
+    List<CommentLike> findByCommentId(Integer commentId);
 
-    Boolean existsByMember_IdAndComment_Id(Integer memberId, Integer commentId);
+    Boolean existsByMemberIdAndCommentId(Integer memberId, Integer commentId);
 
     Integer countByComment(ArticleComment comment);
 

@@ -26,7 +26,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardDtoManager boardDtoManger;
-    private final BoardFileService boardFileService;
+    private final BoardFileManager boardFileService;
 
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
     // 글 검색

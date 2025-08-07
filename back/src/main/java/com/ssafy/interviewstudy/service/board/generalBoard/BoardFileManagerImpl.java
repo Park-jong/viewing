@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class BoardFileServiceImpl implements BoardFileService {
+public class BoardFileManagerImpl implements BoardFileManager {
 
     private final FileManager fm;
     private final ArticleFileRepository articleFileRepository;
@@ -86,7 +86,7 @@ public class BoardFileServiceImpl implements BoardFileService {
 
     @Override
     public void removeFiles(Integer articleId) {
-        List<ArticleFile> files = articleFileRepository.findByArticle_Id(articleId);
+        List<ArticleFile> files = articleFileRepository.findByArticleId(articleId);
         for (ArticleFile file : files) {
             fm.delete(file.getSaveFileName());
             articleFileRepository.deleteById(file.getId());

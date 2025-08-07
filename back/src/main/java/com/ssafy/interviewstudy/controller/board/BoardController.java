@@ -9,7 +9,7 @@ import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.service.board.generalBoard.BoardFileService;
+import com.ssafy.interviewstudy.service.board.generalBoard.BoardFileManager;
 import com.ssafy.interviewstudy.service.board.generalBoard.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,7 +32,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final BoardFileService boardFileService;
+    private final BoardFileManager boardFileService;
 
     // 글 상세조회(하나)
     @JWTRequired

@@ -1,8 +1,10 @@
 package com.ssafy.interviewstudy.service.board.studyBoard;
 
+import com.ssafy.interviewstudy.domain.board.StudyBoard;
 import com.ssafy.interviewstudy.domain.board.StudyBoardComment;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.*;
+import com.ssafy.interviewstudy.exception.board.BoardExceptionFactory;
 import com.ssafy.interviewstudy.repository.board.studyBoard.StudyBoardCommentRepository;
 import com.ssafy.interviewstudy.repository.board.studyBoard.StudyBoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -22,26 +24,24 @@ public class StudyBoardCommentDtoManager {
     private final StudyBoardRepository boardRepository;
     private final StudyBoardCommentRepository commentRepository;
 
-    public StudyBoardComment toEntity(CommentRequest commentRequest){
-        Member author = memberRepository.findMemberById(commentRequest.getMemberId());
-
-        StudyBoardComment articleComment = StudyBoardComment.builder()
+    public StudyBoardComment toEntity(CommentRequest commentRequest) {
+        Member author = memberRepository.findMemberById(commentRequest.getMemberId()).orElseThrow(BoardExceptionFactory::memberNotFound);
+        StudyBoard article = boardRepository.findById(commentRequest.getArticleId()).orElseThrow(BoardExceptionFactory::articleNotFound);
+        return StudyBoardComment.builder()
                 .author(author)
-                .article(boardRepository.findById(commentRequest.getArticleId()).get())
+                .article(article)
                 .isDelete(false)
                 .content(commentRequest.getContent()).build();
-
-        return articleComment;
     }
 
-    public StudyBoardComment toEntityWithParent(Integer commentId, CommentRequest commentRequest){
+    public StudyBoardComment toEntityWithParent(Integer commentId, CommentRequest commentRequest) {
         StudyBoardComment comment = toEntity(commentRequest);
-        comment.setComment(commentRepository.findById(commentId).get());
-
+        StudyBoardComment parent = commentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
+        comment.setComment(parent);
         return comment;
     }
 
-    public StudyBoardCommentResponse fromEntity(StudyBoardComment articleComment){
+    public StudyBoardCommentResponse fromEntity(StudyBoardComment articleComment) {
         StudyBoardCommentResponse commentResponse = StudyBoardCommentResponse.builder()
                 .commentId(articleComment.getId())
                 .content(articleComment.getContent())
@@ -50,16 +50,14 @@ public class StudyBoardCommentDtoManager {
                 .createdAt(articleComment.getCreatedAt())
                 .updatedAt(articleComment.getUpdatedAt())
                 .build();
-
         commentResponse.setReplies(fromEntity(articleComment.getReplies()));
         commentResponse.setCommentCount(articleComment.getReplies().size());
-
         return commentResponse;
     }
 
-    public List<StudyBoardCommentReplyResponse> fromEntity(List<StudyBoardComment> replies){
+    public List<StudyBoardCommentReplyResponse> fromEntity(List<StudyBoardComment> replies) {
         List<StudyBoardCommentReplyResponse> replyResponses = new ArrayList<>();
-        for (StudyBoardComment c: replies) {
+        for (StudyBoardComment c : replies) {
             replyResponses.add(StudyBoardCommentReplyResponse.builder()
                     .commentId(c.getId())
                     .content(c.getContent())

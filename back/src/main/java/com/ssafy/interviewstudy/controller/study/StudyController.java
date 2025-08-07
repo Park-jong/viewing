@@ -5,9 +5,13 @@ import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.annotation.MemberInfo;
 import com.ssafy.interviewstudy.domain.study.CareerLevel;
+import com.ssafy.interviewstudy.domain.study.StudyMember;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.study.*;
 import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyCalendar.StudyCalendarService;
+import com.ssafy.interviewstudy.service.study.studyChat.StudyChatService;
+import com.ssafy.interviewstudy.service.study.studyMember.StudyMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,10 +37,16 @@ import java.util.Map;
 @RequestMapping("/studies")
 public class StudyController {
     private final StudyService studyService;
+    private final StudyChatService studyChatService;
+    private final StudyCalendarService studyCalendarService;
+    private final StudyMemberService studyMemberService;
 
     @Autowired
-    public StudyController(StudyService studyService){
+    public StudyController(StudyService studyService, StudyCalendarService studyCalendarService, StudyChatService studyChatService, StudyMemberService studyMemberService){
         this.studyService = studyService;
+        this.studyCalendarService = studyCalendarService;
+        this.studyChatService = studyChatService;
+        this.studyMemberService = studyMemberService;
     }
 
     //스터디 조회
@@ -60,7 +70,7 @@ public class StudyController {
     @GetMapping("/{study_id}/member")
     public ResponseEntity<?> studyMemberInfo(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") int studyId){
         if(memberInfo == null) return ResponseEntity.badRequest().body("로그인 정보 없음");
-        StudyMemberDto result = studyService.findStudyMember(studyId, memberInfo.getMemberId());
+        StudyMemberDto result = studyMemberService.findStudyMember(studyId, memberInfo.getMemberId());
         if(result == null){
             return ResponseEntity.badRequest().body("잘못된 접근");
         }
@@ -118,7 +128,7 @@ public class StudyController {
     public ResponseEntity<?> studyRequestAdd(@PathVariable("study_id") Integer studyId, @RequestPart(value = "request", required = false) RequestDto request, @RequestPart(value = "request_files", required = false)List<MultipartFile> requestFiles){
         Integer madeRequest = null;
         try{
-            madeRequest = studyService.addRequest(studyId, request, requestFiles);
+            madeRequest = studyMemberService.addRequest(studyId, request, requestFiles);
         }
         catch(ConstraintViolationException ce){
             return ResponseEntity.internalServerError().body("신청 실패");
@@ -140,7 +150,7 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Leader)
     @GetMapping("/{study_id}/requests")
     public ResponseEntity<?> studyRequestList(@PathVariable("study_id") Integer studyId){
-        List<RequestDtoResponse> response = studyService.findRequestsByStudy(studyId);
+        List<RequestDtoResponse> response = studyMemberService.findRequestsByStudy(studyId);
         return ResponseEntity.ok().body(response);
     }
 
@@ -148,14 +158,14 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Member_Study_Request)
     @GetMapping("/{study_id}/requests/{request_id}")
     public ResponseEntity<?> studyRequest(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId){
-        RequestDtoResponse response = studyService.findRequestById(requestId);
+        RequestDtoResponse response = studyMemberService.findRequestById(requestId);
         return ResponseEntity.ok().body(response);
     }
 
     //파일 다운로드
     @GetMapping("/{study_id}/requests/{request_id}/files/{file_id}")
     public ResponseEntity<?> studyRequestFile(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @PathVariable("file_id") Integer fileId){
-        RequestFile file = studyService.requestFileDownload(studyId, requestId, fileId);
+        RequestFile file = studyMemberService.requestFileDownload(studyId, requestId, fileId);
         HttpHeaders httpHeaders = new HttpHeaders();
         String fileName = null;
         try {
@@ -176,7 +186,7 @@ public class StudyController {
     public ResponseEntity<?> requestApproval(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
         Integer memberId = null;
         if(map.containsKey("user_id")) memberId = (Integer)map.get("user_id");
-        boolean result = studyService.permitRequest(requestId, studyId, memberId);
+        boolean result = studyMemberService.permitRequest(requestId, studyId, memberId);
         if(!result) return ResponseEntity.badRequest().body("제한 인원을 초과하였습니다.");
         return ResponseEntity.ok().build();
     }
@@ -188,7 +198,7 @@ public class StudyController {
     public ResponseEntity<?> requestDenial(@PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId, @Valid@RequestBody Map map){
         Integer memberId = null;
         if(map.containsKey("user_id")) memberId = (Integer)map.get("user_id");
-        studyService.rejectRequest(requestId, studyId, memberId);
+        studyMemberService.rejectRequest(requestId, studyId, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -198,7 +208,7 @@ public class StudyController {
     @DeleteMapping("/{study_id}/requests/{request_id}")
     public ResponseEntity<?> requestCancel(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("request_id") Integer requestId){
         Integer memberId = memberInfo.getMemberId();
-        studyService.cancelRequest(requestId, studyId, memberId);
+        studyMemberService.cancelRequest(requestId, studyId, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -207,7 +217,7 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Leader)
     @DeleteMapping("/{study_id}/members/{user_id}/ban")
     public ResponseEntity<?> studyMemberBan(@PathVariable("study_id") Integer studyId, @PathVariable("user_id") Integer memberId){
-        boolean result = studyService.banMemberStudy(studyId, memberId);
+        boolean result = studyMemberService.banMemberStudy(studyId, memberId);
         if(!result)
             return ResponseEntity.badRequest().body("스터디장은 추방할 수 없음");
         return ResponseEntity.ok().build();
@@ -218,7 +228,7 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Study_Member)
     @DeleteMapping("/{study_id}/members/{user_id}/exit")
     public ResponseEntity<?> studyMemberExit(@PathVariable("study_id") Integer studyId, @PathVariable("user_id") Integer memberId){
-        boolean result = studyService.leaveStudy(studyId, memberId);
+        boolean result = studyMemberService.leaveStudy(studyId, memberId);
         if(!result)
             return ResponseEntity.badRequest().body("스터디장은 탈퇴할 수 없음");
         return ResponseEntity.ok().build();
@@ -236,7 +246,7 @@ public class StudyController {
             leaderId = (Integer)map.get("before_leader_id");
         if(map.containsKey("after_leader_id"))
             memberId = (Integer)map.get("after_leader_id");
-        studyService.delegateLeader(studyId, leaderId, memberId);
+        studyMemberService.delegateLeader(studyId, leaderId, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -245,7 +255,7 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/members")
     public ResponseEntity<?> studyMemberList(@PathVariable("study_id") Integer studyId){
-        return ResponseEntity.ok().body(studyService.findStudyMembers(studyId));
+        return ResponseEntity.ok().body(studyMemberService.findStudyMembers(studyId));
     }
 
     //채팅 입력
@@ -253,7 +263,7 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Study_Member)
     @PostMapping("/{study_id}/chats")
     public ResponseEntity<?> studyChatsAdd(@PathVariable("study_id") Integer studyId, @Valid@RequestBody ChatRequest chat){
-        studyService.addChat(studyId, chat);
+        studyChatService.addChat(studyId, chat);
         return ResponseEntity.ok().build();
     }
 
@@ -262,7 +272,7 @@ public class StudyController {
     @Authority(authorityType = AuthorityType.Study_Member)
     @GetMapping("/{study_id}/chats")
     public ResponseEntity<?> studyChatList(@PathVariable("study_id") Integer studyId, @RequestParam(name = "startChatId", required = false) Integer startChatId){
-        List<ChatResponse> oldStudyChats = studyService.findOldStudyChats(studyId, startChatId);
+        List<ChatResponse> oldStudyChats = studyChatService.findOldStudyChats(studyId, startChatId);
         Collections.reverse(oldStudyChats);
         return ResponseEntity.ok().body(oldStudyChats);
     }
@@ -271,26 +281,26 @@ public class StudyController {
     @GetMapping("/{study_id}/calendars")
     public ResponseEntity<?> studyCalendarList(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId){
         Integer memberId = memberInfo.getMemberId();
-        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok().body(studyService.findStudyCalendarsByStudy(studyId));
+        if(!studyMemberService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().body(studyCalendarService.findStudyCalendarsByStudy(studyId));
     }
 
     @JWTRequired(required = true)
     @GetMapping("/{study_id}/calendars/{calendar_id}")
     public ResponseEntity<?> studyCalendarDetail(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId){
         Integer memberId = memberInfo.getMemberId();
-        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok().body(studyService.findStudyCalendarByStudy(studyId, calendarId));
+        if(!studyMemberService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().body(studyCalendarService.findStudyCalendarByStudy(studyId, calendarId));
     }
 
     @JWTRequired(required = true)
     @PostMapping("/{study_id}/calendars")
     public ResponseEntity<?> studyCalendarAdd(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
         Integer memberId = memberInfo.getMemberId();
-        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
+        if(!studyMemberService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
         Integer madeSchedule = null;
         try {
-            madeSchedule = studyService.addStudyCalendar(studyId, studyCalendar);
+            madeSchedule = studyCalendarService.addStudyCalendar(studyId, studyCalendar);
         }
         catch(ConstraintViolationException ce){
             return ResponseEntity.internalServerError().body("일정 생성 실패");
@@ -302,8 +312,8 @@ public class StudyController {
     @PutMapping("/{study_id}/calendars/{calendar_id}")
     public ResponseEntity<?> studyCalendarModify(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId, @Valid @RequestBody StudyCalendarDtoRequest studyCalendar){
         Integer memberId = memberInfo.getMemberId();
-        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
-        studyService.modifyStudyCalendar(studyId, calendarId, studyCalendar);
+        if(!studyMemberService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
+        studyCalendarService.modifyStudyCalendar(studyId, calendarId, studyCalendar);
         return ResponseEntity.ok().build();
     }
 
@@ -311,8 +321,8 @@ public class StudyController {
     @DeleteMapping("/{study_id}/calendars/{calendar_id}")
     public ResponseEntity<?> studyCalendarRemove(@MemberInfo JWTMemberInfo memberInfo, @PathVariable("study_id") Integer studyId, @PathVariable("calendar_id") Integer calendarId){
         Integer memberId = memberInfo.getMemberId();
-        if(!studyService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
-        studyService.removeStudyCalendar(studyId, calendarId);
+        if(!studyMemberService.checkStudyMember(studyId, memberId)) return ResponseEntity.badRequest().build();
+        studyCalendarService.removeStudyCalendar(studyId, calendarId);
         return ResponseEntity.ok().build();
     }
 

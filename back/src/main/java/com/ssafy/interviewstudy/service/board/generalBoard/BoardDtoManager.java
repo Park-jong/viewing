@@ -6,6 +6,8 @@ import com.ssafy.interviewstudy.dto.board.Author;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
+import com.ssafy.interviewstudy.exception.board.BoardExceptionFactory;
+import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.service.redis.ArticleLikeService;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +54,7 @@ public class BoardDtoManager {
     }
 
     public Board fromRequestToEntity(BoardRequest boardRequest) {
-        Member author = memberRepository.findMemberById(boardRequest.getMemberId());
+        Member author = memberRepository.findMemberById(boardRequest.getMemberId()).orElseThrow(BoardExceptionFactory::memberNotFound);
         return Board.builder()
                 .title(boardRequest.getTitle())
                 .content(boardRequest.getContent())

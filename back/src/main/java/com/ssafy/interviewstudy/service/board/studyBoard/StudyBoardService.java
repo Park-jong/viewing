@@ -18,15 +18,12 @@ public interface StudyBoardService {
     StudyBoardResponse findArticle(Integer articleId);
 
     // 글 수정
-    @Transactional
     StudyBoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest, List<MultipartFile> files);
 
     // 글 삭제
-    @Transactional
     Integer removeArticle(Integer articleId);
 
     // 글 저장
-    @Transactional
     Integer saveBoard(BoardRequest boardRequest, List<MultipartFile> files);
 
     // 글 검색

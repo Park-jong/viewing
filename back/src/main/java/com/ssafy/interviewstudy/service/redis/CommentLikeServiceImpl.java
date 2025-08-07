@@ -2,6 +2,7 @@ package com.ssafy.interviewstudy.service.redis;
 
 import com.ssafy.interviewstudy.domain.board.ArticleComment;
 import com.ssafy.interviewstudy.domain.board.CommentLike;
+import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.CommentLikeRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -65,7 +66,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         redisTemplate.opsForSet().add(keyString + commentId, String.valueOf(memberId));
         commentLikeRepository.save(CommentLike.builder()
                 .comment(articleCommentRepository.findById(commentId).get())
-                .member(memberRepository.findMemberById(memberId))
+                .member(memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound))
                 .build());
         return commentId;
     }
@@ -80,7 +81,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         long removeCnt = redisTemplate.opsForSet().remove(keyString + commentId, String.valueOf(memberId));
         if (removeCnt > 0) {
             commentLikeRepository.removeCommentLikeByCommentAndMember(articleCommentRepository.findById(commentId).get()
-                    , memberRepository.findMemberById(memberId));
+                    , memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound));
         }
         return (int) removeCnt;
     }
@@ -88,7 +89,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     // 해당하는 글 번호에 좋아요를 누른 멤버들 저장
     @Override
     public void saveCommentLike(Integer commentId) {
-        List<CommentLike> likes = commentLikeRepository.findByComment_Id(commentId);
+        List<CommentLike> likes = commentLikeRepository.findByCommentId(commentId);
         for (CommentLike like : likes) {
             redisTemplate.opsForSet().add(keyString + commentId, String.valueOf(like.getMember().getId()));
         }

@@ -6,7 +6,7 @@ import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.dto.calendar.CalendarCreatedResponse;
 import com.ssafy.interviewstudy.dto.calendar.CalendarRetrieveRequest;
 import com.ssafy.interviewstudy.service.calendar.CalendarService;
-import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyCalendar.StudyCalendarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,7 @@ CalendarController {
 
     private final CalendarService calendarService;
 
-    private final StudyService studyService;
+    private final StudyCalendarService studyCalendarService;
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
@@ -35,10 +35,10 @@ CalendarController {
     ){
         List<Object> studyCalendarsByMemberId = new ArrayList<>();
         if(studyId==null){
-            studyCalendarsByMemberId = studyService.findStudyCalendarsByMemberId(memberId);
+            studyCalendarsByMemberId = studyCalendarService.findStudyCalendarsByMemberId(memberId);
         }
         else{
-            studyCalendarsByMemberId = studyService.findStudyCalendarsByMemberIdStudyId(memberId,studyId);
+            studyCalendarsByMemberId = studyCalendarService.findStudyCalendarsByMemberIdStudyId(memberId,studyId);
         }
         return ResponseEntity.ok().body(studyCalendarsByMemberId);
     }

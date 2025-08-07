@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.service.redis;
 import com.ssafy.interviewstudy.domain.board.ArticleLike;
 import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleLikeRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -62,7 +63,7 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
         redisTemplate.opsForSet().add(keyString + articleId, String.valueOf(memberId));
         ArticleLike articleLike = ArticleLike.builder()
                 .article(boardRepository.findById(articleId).get())
-                .member(memberRepository.findMemberById(memberId))
+                .member(memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound))
                 .build();
         articleLikeRepository.save(articleLike);
         return articleId;
@@ -77,7 +78,7 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
         long removeCnt = redisTemplate.opsForSet().remove(keyString + articleId, String.valueOf(memberId));
         if (removeCnt > 0) {
             Board board = boardRepository.findById(articleId).get();
-            Member member = memberRepository.findMemberById(memberId);
+            Member member = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
             articleLikeRepository.removeByArticleAndMember(board, member);
         }
         return (int) removeCnt;
@@ -86,7 +87,7 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
     // 해당하는 글 번호에 좋아요를 누른 멤버들 저장
     @Override
     public void saveArticleLike(Integer articleId) {
-        List<ArticleLike> likes = articleLikeRepository.findByArticle_Id(articleId);
+        List<ArticleLike> likes = articleLikeRepository.findByArticleId(articleId);
         for (ArticleLike like : likes) {
             redisTemplate.opsForSet().add(keyString + articleId, String.valueOf(like.getMember().getId()));
         }

@@ -88,7 +88,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public Integer saveCommentLike(Integer memberId, Integer commentId) {
-        Member member = memberRepository.findMemberById(memberId);
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(BoardExceptionFactory::memberNotFound);
         ArticleComment comment = articleCommentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
         // 이미 좋아요를 누른 회원인지 체크
         if (checkMemberLikeComment(memberId, commentId)) {
@@ -99,14 +99,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private Boolean checkMemberLikeComment(Integer memberId, Integer commentId) {
-        return commentLikeRepository.existsByMember_IdAndComment_Id(memberId, commentId);
+        return commentLikeRepository.existsByMemberIdAndCommentId(memberId, commentId);
     }
 
     // 댓글 좋아요 삭제
     @Transactional
     @Override
     public void removeCommentLike(Integer memberId, Integer commentId) {
-        Member member = memberRepository.findMemberById(memberId);
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(BoardExceptionFactory::memberNotFound);
         ArticleComment comment = articleCommentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
         if (checkMemberLikeComment(memberId, commentId)) {
             commentLikeRepository.removeCommentLikeByCommentAndMember(comment, member);

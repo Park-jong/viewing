@@ -6,10 +6,9 @@ import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.member.MemberService;
-import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyMember.StudyMemberService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
@@ -24,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberStudyInterceptor implements HandlerInterceptor {
 
-    private final StudyService studyService;
+    private final StudyMemberService studyMemberService;
 
     private final MemberService memberService;
 
@@ -91,7 +90,7 @@ public class MemberStudyInterceptor implements HandlerInterceptor {
         }
 
         //스터디에 가입한 멤버 조회
-        Boolean isMemberInStudy = studyService.checkStudyMember(studyId,memberId);
+        Boolean isMemberInStudy = studyMemberService.checkStudyMember(studyId,memberId);
         
         if(!isMemberInStudy){
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,"해당 스터디의 스터디원이 아닙니다");

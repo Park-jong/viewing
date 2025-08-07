@@ -5,6 +5,7 @@ import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.domain.study.StudyBookmark;
 import com.ssafy.interviewstudy.dto.member.bookmark.StudyBookmarkRequest;
 import com.ssafy.interviewstudy.dto.member.bookmark.StudyBookmarkResponse;
+import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.exception.message.CreationFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -48,7 +49,7 @@ public class MemberStudyBookmarkServiceImpl implements MemberStudyBookmarkServic
         }
 
         //스터디 북마크할 멤버 조회
-        Member member = memberRepository.findMemberById(studyBookmarkRequest.getMemberId());
+        Member member = memberRepository.findMemberById(studyBookmarkRequest.getMemberId()).orElseThrow(MemberExceptionFactory::memberNotFound);
 
 
         //북마크 대상 스터디 조회

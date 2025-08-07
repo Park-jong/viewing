@@ -6,6 +6,7 @@ import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.dto.study.ChatRequest;
 import com.ssafy.interviewstudy.dto.study.ChatResponse;
 import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyChat.StudyChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ import javax.validation.Valid;
 @Controller
 @RequiredArgsConstructor
 public class StudyChatController {
-    private final StudyService studyService;
+    private final StudyChatService studyService;
 
     @MessageMapping("/chats/studies/{study_id}")
     @SendTo("/topic/{study_id}")

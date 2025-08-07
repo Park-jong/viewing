@@ -45,7 +45,7 @@ class BoardServiceTest {
     @Mock
     private BoardDtoManager boardDtoManager;
     @Mock
-    private BoardFileService boardFileService;
+    private BoardFileManager boardFileService;
     @InjectMocks
     private BoardServiceImpl boardService;
 

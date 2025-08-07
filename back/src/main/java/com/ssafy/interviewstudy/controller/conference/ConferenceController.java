@@ -6,6 +6,7 @@ import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
 import com.ssafy.interviewstudy.service.notification.NotificationService;
 import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyMember.StudyMemberService;
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +36,7 @@ public class ConferenceController {
         this.openvidu = new OpenVidu(OPENVIDU_URL,OPENVIDU_SECRET);
     }
 
-    private final StudyService studyService;
+    private final StudyMemberService studymemberService;
 
     private final NotificationService notificationService;
 
@@ -61,7 +62,7 @@ public class ConferenceController {
                        .build()
        );
 
-       if (!studyService.checkStudyMember(istudyId, memberId)) {
+       if (!studymemberService.checkStudyMember(istudyId, memberId)) {
            return new ResponseEntity<>("스터디 멤버가 아닙니다.", HttpStatus.UNAUTHORIZED);
        };
         SessionProperties properties = SessionProperties.fromJson(params).build();
@@ -81,7 +82,7 @@ public class ConferenceController {
        Integer memberId = Integer.parseInt((String) params.get("user_id"));
        Integer istudyId = Integer.parseInt(studyId);
 
-       if (!studyService.checkStudyMember(istudyId, memberId)) {
+       if (!studymemberService.checkStudyMember(istudyId, memberId)) {
            return new ResponseEntity<>("스터디 멤버가 아닙니다.", HttpStatus.UNAUTHORIZED);
        };
 

@@ -5,10 +5,9 @@ import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.member.MemberService;
-import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyMember.StudyMemberService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
@@ -23,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LeaderInterceptor implements HandlerInterceptor {
 
-    private final StudyService studyService;
+    private final StudyMemberService studyMemberService;
 
     private final MemberService memberService;
 
@@ -77,7 +76,7 @@ public class LeaderInterceptor implements HandlerInterceptor {
             return false;
         }
         //리더인지 아닌지 체크 서비스로 할듯
-        Boolean isStudyLeader = studyService.checkStudyLeader(studyId,memberId);
+        Boolean isStudyLeader = studyMemberService.checkStudyLeader(studyId,memberId);
         if(!isStudyLeader){
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "리더가 아닙니다.");
             return false;

@@ -7,6 +7,7 @@ import com.ssafy.interviewstudy.dto.message.MessageCreatedResponse;
 import com.ssafy.interviewstudy.dto.message.MessageListResponse;
 import com.ssafy.interviewstudy.dto.message.MessageSendRequest;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
+import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.exception.message.CreationFailException;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -57,8 +58,8 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     @Override
     public MessageCreatedResponse sendMessage(MessageSendRequest messageSendRequest){
-        Member author = memberRepository.findMemberById(messageSendRequest.getAuthorId());
-        Member receiver = memberRepository.findMemberById(messageSendRequest.getReceiverId());
+        Member author = memberRepository.findMemberById(messageSendRequest.getAuthorId()).orElseThrow(MemberExceptionFactory::memberNotFound);
+        Member receiver = memberRepository.findMemberById(messageSendRequest.getReceiverId()).orElseThrow(MemberExceptionFactory::memberNotFound);
         if(author==null || receiver==null) throw new CreationFailException("쪽지");
 
         Message message = MessageSendRequest.toEntity(messageSendRequest,author,receiver);
@@ -81,7 +82,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Boolean checkMessageByMember(Integer messageId, Integer memberId){
-        Member member = memberRepository.findMemberById(memberId);
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
         Message message = messageRepository.findMessageById(messageId);
 
         if(message==null || member==null) return false;

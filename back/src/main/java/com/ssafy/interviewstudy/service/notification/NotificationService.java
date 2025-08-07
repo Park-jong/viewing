@@ -15,25 +15,18 @@ public interface NotificationService {
 
     void sendEventByEmitter(SseEmitter sseEmitter, Object notificationDto, String emitterId, Integer eventId, String eventName);
 
-    @Transactional
-        //특정 멤버에게 이벤트 보내기
+    //특정 멤버에게 이벤트 보내기
     void sendNotificationToMember(NotificationDto notificationDto);
 
-    @Transactional
     void sendNotificationAboutComment(ArticleComment comment, NotificationType type);
 
-    @Transactional
     void sendNotificationToStudyMember(NotificationStudyDto notificationStudyDto);
 
-    @Transactional
     Notification dtoToEntity(@Valid NotificationDto notificationDto);
 
-    @Transactional
     void sendMissingData(Integer lastEventId, Integer memberId, String emitterId, SseEmitter sseEmitter);
 
-    @Transactional
     Boolean checkNotification(Integer notificationId);
 
-    @Transactional
     Boolean checkNotificationByMemberId(Integer memberId, Integer notificationId);
 }

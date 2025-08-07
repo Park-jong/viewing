@@ -6,7 +6,7 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.board.studyBoard.StudyBoardService;
 import com.ssafy.interviewstudy.service.member.MemberService;
-import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyMember.StudyMemberService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberStudyArticleInterceptor implements HandlerInterceptor {
 
-    private final StudyService studyService;
+    private final StudyMemberService studyMemberService;
 
     private final MemberService memberService;
 
@@ -77,7 +77,7 @@ public class MemberStudyArticleInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        if(!studyService.checkStudyMember(studyId,memberId)){
+        if(!studyMemberService.checkStudyMember(studyId,memberId)){
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"해당 스터디원이 아닙니다.");
             return false;
         }

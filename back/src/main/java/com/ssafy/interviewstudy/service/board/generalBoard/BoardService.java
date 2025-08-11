@@ -20,23 +20,18 @@ public interface BoardService {
     Page<BoardResponse> findBoardList(BoardType boardType, Pageable pageable);
 
     // 글 detail 조회
-    @Transactional
     BoardResponse findArticle(Integer memberId, Integer articleId, BoardType boardType);
 
     // 글 저장
-    @Transactional
     Integer saveArticle(BoardRequest boardRequest, List<MultipartFile> files);
 
     // 글 수정
-    @Transactional
     BoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest, List<MultipartFile> files);
 
     // 글 삭제
-    @Transactional
     Integer removeArticle(Integer articleId);
 
     // 조회수+1
-    @Transactional
     void incrementAndSaveViewCount(Board article);
 
     Boolean checkAuthor(Integer articleId, Integer memberId);

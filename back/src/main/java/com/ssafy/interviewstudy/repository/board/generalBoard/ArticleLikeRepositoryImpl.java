@@ -41,12 +41,12 @@ public class ArticleLikeRepositoryImpl implements ArticleLikeRepository {
     }
 
     @Override
-    public List<ArticleLike> findByArticle_Id(Integer articleId) {
+    public List<ArticleLike> findByArticleId(Integer articleId) {
         return jpaArticleLikeRepository.findByArticle_Id(articleId);
     }
 
     @Override
-    public Boolean existsByMember_IdAndArticle_Id(Integer memberId, Integer articleId) {
+    public Boolean existsByMemberIdAndArticleId(Integer memberId, Integer articleId) {
         return jpaArticleLikeRepository.existsByMember_IdAndArticle_Id(memberId, articleId);
     }
 

@@ -34,12 +34,12 @@ public class ArticleFileRepositoryImpl implements ArticleFileRepository{
     }
 
     @Override
-    public List<ArticleFile> findByArticle_Id(Integer articleId) {
+    public List<ArticleFile> findByArticleId(Integer articleId) {
         return jpaArticleFileRepository.findByArticle_Id(articleId);
     }
 
     @Override
-    public List<ArticleFile> findByStudyArticle_Id(Integer articleId) {
+    public List<ArticleFile> findByStudyArticleId(Integer articleId) {
         return jpaArticleFileRepository.findByStudyArticle_Id(articleId);
     }
 

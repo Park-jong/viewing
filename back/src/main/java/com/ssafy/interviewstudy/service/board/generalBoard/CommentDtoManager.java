@@ -1,11 +1,13 @@
 package com.ssafy.interviewstudy.service.board.generalBoard;
 
 import com.ssafy.interviewstudy.domain.board.ArticleComment;
+import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.Author;
 import com.ssafy.interviewstudy.dto.board.CommentReplyResponse;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.CommentResponse;
+import com.ssafy.interviewstudy.exception.board.BoardExceptionFactory;
 import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
@@ -28,13 +30,13 @@ public class CommentDtoManager {
     private final CommentLikeService commentLikeService;
 
     public ArticleComment fromRequestToEntity(CommentRequest commentRequest){
-        Member author = memberRepository.findMemberById(commentRequest.getMemberId());
-        ArticleComment articleComment = ArticleComment.builder()
+        Member author = memberRepository.findMemberById(commentRequest.getMemberId()).orElseThrow(BoardExceptionFactory::memberNotFound);
+        Board article = boardRepository.findById(commentRequest.getArticleId()).orElseThrow(BoardExceptionFactory::articleNotFound);
+        return ArticleComment.builder()
                 .author(author)
-                .article(boardRepository.findById(commentRequest.getArticleId()).get())
+                .article(article)
                 .isDelete(false)
                 .content(commentRequest.getContent()).build();
-        return articleComment;
     }
 
     public ArticleComment fromRequestToEntityWithParent(Integer commentId, CommentRequest commentRequest){

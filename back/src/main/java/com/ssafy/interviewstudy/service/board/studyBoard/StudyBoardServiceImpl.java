@@ -9,7 +9,7 @@ import com.ssafy.interviewstudy.dto.board.StudyBoardResponse;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.exception.board.BoardExceptionFactory;
 import com.ssafy.interviewstudy.repository.board.studyBoard.StudyBoardRepository;
-import com.ssafy.interviewstudy.service.board.generalBoard.BoardFileService;
+import com.ssafy.interviewstudy.service.board.generalBoard.BoardFileManager;
 import com.ssafy.interviewstudy.service.notification.NotificationDtoManager;
 import com.ssafy.interviewstudy.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class StudyBoardServiceImpl implements StudyBoardService {
     private final StudyBoardDtoManager boardDtoManager;
     private final NotificationService notificationService;
     private final NotificationDtoManager notificationDtoManager;
-    private final BoardFileService boardFileService;
+    private final BoardFileManager boardFileService;
 
     //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
     //글 목록 조회

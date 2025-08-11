@@ -14,7 +14,6 @@ public interface ArticleLikeService {
     Integer saveArticleLike(Integer articleId, Integer memberId);
 
     // 좋아요 삭제
-    @Transactional
     int removeArticleLike(Integer articleId, Integer memberId);
 
     // 해당하는 글 번호에 좋아요를 누른 멤버들 저장
@@ -23,7 +22,6 @@ public interface ArticleLikeService {
     // 캐시에 없으면 DB에서 조회하고 업데이트
     void saveLikeArticleListFromDb();
 
-    @Scheduled(fixedDelay = 3600000 * 12)
-        // 매 12시간마다 삭제 작업
+    @Scheduled(fixedDelay = 3600000 * 12)// 매 12시간마다 삭제 작업
     void deleteAllMembersInSetScheduled();
 }

@@ -6,13 +6,14 @@ import com.ssafy.interviewstudy.domain.member.MemberStatus;
 import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.domain.study.StudyRequest;
 import com.ssafy.interviewstudy.dto.member.MemberProfileChangeDto;
+import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.*;
 import com.ssafy.interviewstudy.service.board.generalBoard.BoardService;
-import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyMember.StudyMemberService;
 import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,12 +40,11 @@ public class MemberServiceImpl implements MemberService {
 
     private final BoardService boardService;
 
-    private final StudyService studyService;
+    private final StudyMemberService studyMemberService;
 
     @Override
     public Member findByEmail(String email){
-        Member member = memberRepository.findUserByEmailAndStatusACTIVE(email);
-        return member;
+        return memberRepository.findUserByEmailAndStatusACTIVE(email).orElseThrow(MemberExceptionFactory::memberNotFound);
     }
 
     @Transactional
@@ -55,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member checkDuplicateNickname(String nickname){
-        Member member = memberRepository.findMemberByNicknameAndStatusACTIVE(nickname);
+        Member member = memberRepository.findMemberByNicknameAndStatusACTIVE(nickname).orElseThrow(MemberExceptionFactory::memberNotFound);
         if(member==null || member.getStatus()!=MemberStatus.ACTIVE) return null;
         return member;
     }
@@ -69,7 +69,7 @@ public class MemberServiceImpl implements MemberService {
     //디버깅용
     @Override
     public Member findMemberByMemberId(Integer memberId){
-        Member member = memberRepository.findMemberById(memberId);
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
         if(member.getStatus()!=MemberStatus.ACTIVE) return null;
         return member;
     }
@@ -77,7 +77,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public Boolean changeMemberNickname(Integer memberId, String nickname){
-        Member curMember = memberRepository.findMemberById(memberId);
+        Member curMember = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
         if(curMember==null) return false;
         curMember.changeNickname(nickname);
         return true;
@@ -86,7 +86,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public Member findByIdAndPlatform(String id, SocialLoginType socialLoginType){
-        Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginTypeAndStatusACTIVE(id,socialLoginType);
+        Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginTypeAndStatusACTIVE(id,socialLoginType).orElseThrow(MemberExceptionFactory::memberNotFound);
         if(member == null || member.getStatus()!= MemberStatus.ACTIVE) return null;
         return member;
     }
@@ -111,19 +111,11 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public boolean withdrawl(Integer memberId){
-        if(memberId == null){
-            throw new NotFoundException("멤버 정보가 없습니다");
-        }
-        Member member = memberRepository.findMemberById(memberId);
-        if(member == null){
-            throw new NotFoundException("멤버 정보가 없습니다.");
-        }
+        Member member = memberRepository.findMemberById(memberId).orElseThrow();
         List<Study> list = studyRepository.findStudyByLeader(member);
-
-        if(list.size() > 0){
+        if(!list.isEmpty()){
             return false;
         }
-
         member.withdrawl();
         articleCommentRepository.deleteArticleCommentByAuthor(member);
 
@@ -134,7 +126,7 @@ public class MemberServiceImpl implements MemberService {
 
         List<Integer> studyIdList = studyRepository.findStudyIdByMember(member);
         for (Integer id : studyIdList) {
-            studyService.leaveStudy(id, memberId);
+            studyMemberService.leaveStudy(id, memberId);
         }
 
         List<StudyRequest> requests = studyRequestRepository.findStudyRequestsByApplicant(member);

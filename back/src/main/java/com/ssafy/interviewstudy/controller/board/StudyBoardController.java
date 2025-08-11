@@ -8,7 +8,7 @@ import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
 import com.ssafy.interviewstudy.dto.board.StudyBoardResponse;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
-import com.ssafy.interviewstudy.service.board.generalBoard.BoardFileService;
+import com.ssafy.interviewstudy.service.board.generalBoard.BoardFileManager;
 import com.ssafy.interviewstudy.service.board.studyBoard.StudyBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +31,7 @@ import java.util.List;
 public class StudyBoardController {
 
     private final StudyBoardService boardService;
-    private final BoardFileService boardFileService;
+    private final BoardFileManager boardFileService;
 
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member_Study_Article)

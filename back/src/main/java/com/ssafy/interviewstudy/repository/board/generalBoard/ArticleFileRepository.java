@@ -6,9 +6,9 @@ import com.ssafy.interviewstudy.repository.CommonRepository;
 import java.util.List;
 
 public interface ArticleFileRepository extends CommonRepository<ArticleFile, Integer> {
-    List<ArticleFile> findByArticle_Id(Integer articleId);
+    List<ArticleFile> findByArticleId(Integer articleId);
 
-    List<ArticleFile> findByStudyArticle_Id(Integer articleId);
+    List<ArticleFile> findByStudyArticleId(Integer articleId);
 
     Integer removeByArticleId(Integer articleId);
 

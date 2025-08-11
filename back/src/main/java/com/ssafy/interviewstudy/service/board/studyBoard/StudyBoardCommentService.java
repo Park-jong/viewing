@@ -10,12 +10,9 @@ import java.util.List;
 
 public interface StudyBoardCommentService {
     // 게시글 댓글 저장
-    @Transactional
-    @JWTRequired
     Integer saveComment(Integer articleId, CommentRequest commentRequest);
 
     // 대댓글 저장
-    @Transactional
     Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest);
 
     // 게시글 댓글 조회
@@ -24,11 +21,9 @@ public interface StudyBoardCommentService {
     void findReplies(List<StudyBoardComment> parents);
 
     // (대)댓글 수정
-    @Transactional
     StudyBoardCommentResponse modifyComment(Integer commentId, CommentRequest commentRequest);
 
     // (대)댓글 삭제
-    @Transactional
     void removeComment(Integer commentId);
 
     // 댓글 작성자가 본인인지 체크

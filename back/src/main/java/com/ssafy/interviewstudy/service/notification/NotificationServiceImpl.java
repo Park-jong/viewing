@@ -11,6 +11,7 @@ import com.ssafy.interviewstudy.domain.study.StudyMember;
 import com.ssafy.interviewstudy.dto.notification.NotificationDto;
 import com.ssafy.interviewstudy.dto.notification.NotificationListDto;
 import com.ssafy.interviewstudy.dto.notification.NotificationStudyDto;
+import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.notification.EmitterRepository;
 import com.ssafy.interviewstudy.repository.notification.NotificationRepository;
@@ -156,7 +157,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     @Override
     public Notification dtoToEntity(@Valid NotificationDto notificationDto) {
-        Member author = memberRepository.findMemberById(notificationDto.getMemberId());
+        Member author = memberRepository.findMemberById(notificationDto.getMemberId()).orElseThrow(MemberExceptionFactory::memberNotFound);
         Notification notification =
                 Notification
                         .builder()

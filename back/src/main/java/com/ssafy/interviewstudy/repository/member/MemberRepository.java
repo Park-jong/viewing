@@ -5,19 +5,21 @@ import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface MemberRepository extends JpaRepository<Member,Integer> {
 
     @Query("select m from Member m Where m.socialLoginId = :socialLoginId and m.socialLoginType = :socialLoginType and m.status='ACTIVE'")
-    Member findMemberBySocialLoginIdAndSocialLoginTypeAndStatusACTIVE(String socialLoginId, SocialLoginType socialLoginType);
+    Optional<Member> findMemberBySocialLoginIdAndSocialLoginTypeAndStatusACTIVE(String socialLoginId, SocialLoginType socialLoginType);
 
     @Query("select m from Member m Where m.email = :email and m.status='ACTIVE'")
-    Member findUserByEmailAndStatusACTIVE(String email);
+    Optional<Member> findUserByEmailAndStatusACTIVE(String email);
 
     @Query("select m from Member m Where m.nickname = :nickname and m.status='ACTIVE'")
-    Member findMemberByNicknameAndStatusACTIVE(String nickname);
+    Optional<Member> findMemberByNicknameAndStatusACTIVE(String nickname);
 
     //디버깅용
     @Query("select m from Member m where m.id = :memberId and m.status='ACTIVE'")
-    Member findMemberById(Integer memberId);
+    Optional<Member> findMemberById(Integer memberId);
 
 }

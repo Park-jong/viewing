@@ -8,6 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface MemberCommentService {
-    @Transactional(readOnly = true)
     List<BoardResponse> getCommentedArticle(BoardRequest boardRequest, BoardType boardType);
 }

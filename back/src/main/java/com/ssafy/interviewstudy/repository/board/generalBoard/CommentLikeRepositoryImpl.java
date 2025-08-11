@@ -36,12 +36,12 @@ public class CommentLikeRepositoryImpl implements CommentLikeRepository {
     }
 
     @Override
-    public List<CommentLike> findByComment_Id(Integer commentId) {
+    public List<CommentLike> findByCommentId(Integer commentId) {
         return jpaCommentLikeRepository.findByComment_Id(commentId);
     }
 
     @Override
-    public Boolean existsByMember_IdAndComment_Id(Integer memberId, Integer commentId) {
+    public Boolean existsByMemberIdAndCommentId(Integer memberId, Integer commentId) {
         return jpaCommentLikeRepository.existsByMember_IdAndComment_Id(memberId, commentId);
     }
 

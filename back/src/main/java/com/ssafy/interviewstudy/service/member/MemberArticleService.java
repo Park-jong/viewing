@@ -9,9 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface MemberArticleService {
-    @Transactional(readOnly = true)
     List<BoardResponse> getLikedArticleByMemberId(BoardRequest boardRequest, BoardType boardType);
 
-    @Transactional(readOnly = true)
     List<BoardResponse> getArticleByMemberId(BoardRequest boardRequest, BoardType boardType, Pageable pageable);
 }

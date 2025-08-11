@@ -5,10 +5,9 @@ import com.ssafy.interviewstudy.annotation.AuthorityType;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.service.member.MemberService;
-import com.ssafy.interviewstudy.service.study.StudyService;
+import com.ssafy.interviewstudy.service.study.studyMember.StudyMemberService;
 import com.ssafy.interviewstudy.util.auth.PathVariableExtractor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
@@ -23,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberStudyRequestInterceptor implements HandlerInterceptor {
 
-    private final StudyService studyService;
+    private final StudyMemberService studyMemberService;
 
     private final MemberService memberService;
 
@@ -76,9 +75,9 @@ public class MemberStudyRequestInterceptor implements HandlerInterceptor {
         }
         
         //이 스터디 가입 요청을 보낸 멤버가 맞는지 확인
-        Boolean isRequestByMember = studyService.checkStudyRequest(requestId,studyId,memberId);
+        Boolean isRequestByMember = studyMemberService.checkStudyRequest(requestId,studyId,memberId);
 
-        Boolean isLeader = studyService.checkStudyLeader(studyId,memberId);
+        Boolean isLeader = studyMemberService.checkStudyLeader(studyId,memberId);
         if(!isRequestByMember && !isLeader){
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"해당 요청을 신청한 유저가 아닙니다.");
             return false;

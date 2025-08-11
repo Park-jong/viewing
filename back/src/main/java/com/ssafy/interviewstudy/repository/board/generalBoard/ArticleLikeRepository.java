@@ -10,9 +10,9 @@ import java.util.List;
 public interface ArticleLikeRepository extends CommonRepository<ArticleLike, Integer> {
     List<Board> findArticleLikeByAllArticle();
 
-    List<ArticleLike> findByArticle_Id(Integer articleId);
+    List<ArticleLike> findByArticleId(Integer articleId);
 
-    Boolean existsByMember_IdAndArticle_Id(Integer memberId, Integer articleId);
+    Boolean existsByMemberIdAndArticleId(Integer memberId, Integer articleId);
 
     Integer countByArticle(Board article);
 

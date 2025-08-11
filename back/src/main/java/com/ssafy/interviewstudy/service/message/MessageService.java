@@ -17,12 +17,10 @@ public interface MessageService {
     MessageListResponse getReceivedMessages(Integer receiverId);
 
     //쪽지 보내기
-    @Transactional
     MessageCreatedResponse sendMessage(MessageSendRequest messageSendRequest);
 
     Boolean checkMessageByMember(Integer messageId, Integer memberId);
 
     //쪽지 삭제
-    @Transactional
     Integer deleteMessage(Integer messageID);
 }

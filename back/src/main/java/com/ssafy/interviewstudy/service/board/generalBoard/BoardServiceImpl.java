@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -28,8 +31,6 @@ public class BoardServiceImpl implements BoardService {
     private final BoardDtoManager boardDtoManger;
     private final BoardFileManager boardFileService;
 
-    //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
-    // 글 검색
     @Override
     public Page<BoardResponse> findArticleByKeyword(String searchBy, String keyword, BoardType boardType, Pageable pageable) {
         Page<Board> articles = findArticles(searchBy, keyword, boardType, pageable);
@@ -77,7 +78,7 @@ public class BoardServiceImpl implements BoardService {
         Board article = boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound);
         List<ArticleFile> files = article.getFiles();
         List<FileResponse> fileResponses =  Optional.ofNullable(files).orElse(Collections.emptyList()).stream().map(FileResponse::new).collect(Collectors.toList());
-        incrementAndSaveViewCount(article);
+        article.updateViewCount();
         return makeDetailResponse(memberId, article, fileResponses);
     }
 
@@ -117,14 +118,6 @@ public class BoardServiceImpl implements BoardService {
         boardFileService.removeFiles(articleId);
         boardRepository.deleteById(articleId);
         return articleId;
-    }
-
-    // 조회수+1
-    @Transactional
-    @Override
-    public void incrementAndSaveViewCount(Board article) {
-        article.updateViewCount();
-        boardRepository.save(article);
     }
 
     @Override

@@ -36,8 +36,6 @@ public class StudyBoardServiceImpl implements StudyBoardService {
     private final NotificationDtoManager notificationDtoManager;
     private final BoardFileManager boardFileService;
 
-    //글 리스트 조회, crud, 검색, 댓글 crud, 글 좋아요, 댓글 좋아요, 글 신고
-    //글 목록 조회
     @Override
     public Page<StudyBoardResponse> findBoardList(Integer studyId, Pageable pageable) {
         Page<StudyBoard> content = boardRepository.findByStudyId(studyId, pageable);
@@ -63,7 +61,6 @@ public class StudyBoardServiceImpl implements StudyBoardService {
     public StudyBoardResponse modifyArticle(Integer articleId, BoardRequest boardRequest, List<MultipartFile> files) {
         StudyBoard originArticle = boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound);
         originArticle.modifyArticle(boardRequest);
-        boardRepository.save(originArticle);
         boardFileService.saveFiles(boardRequest, originArticle, files);
         return boardDtoManager.fromEntity(originArticle);
     }

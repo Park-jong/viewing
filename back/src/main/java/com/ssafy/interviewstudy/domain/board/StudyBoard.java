@@ -6,6 +6,7 @@ import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -46,6 +47,7 @@ public class StudyBoard {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<StudyBoardComment> comments = new ArrayList<>();
 

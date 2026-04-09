@@ -3,14 +3,15 @@ package com.ssafy.interviewstudy.service.board.generalBoard;
 import com.ssafy.interviewstudy.domain.board.ArticleComment;
 import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.BoardType;
+import com.ssafy.interviewstudy.domain.board.CommentLike;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.CommentResponse;
+import com.ssafy.interviewstudy.exception.board.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.CommentLikeRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
-import com.ssafy.interviewstudy.service.notification.NotificationDtoManager;
 import com.ssafy.interviewstudy.service.notification.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,16 +21,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {
+
     @Mock
     private BoardRepository boardRepository;
     @Mock
@@ -42,24 +45,20 @@ class CommentServiceTest {
     private CommentDtoManager commentDtoManager;
     @Mock
     private NotificationService notificationService;
-    @Mock
-    private NotificationDtoManager notificationDtoManager;
     @InjectMocks
     private CommentServiceImpl commentService;
 
+    Member mockMember;
+    Board mockArticle;
+    ArticleComment mockComment;
+    ArticleComment mockReply;
     CommentRequest mockCommentRequest;
     CommentRequest mockReplyRequest;
     CommentRequest mockUpdateRequest;
-    ArticleComment mockArticleComment;
-    ArticleComment mockReply;
-    ArticleComment mockUpdate;
     CommentResponse mockCommentResponse;
     CommentResponse mockReplyResponse;
     CommentResponse mockUpdateResponse;
-    Board mockArticle;
-    Member mockMember;
-    BoardType mockBoardType;
-    List<ArticleComment> mockCommentList = new ArrayList<>();
+
     final int articleId = 2;
     final int memberId = 3;
     final int commentId = 1;
@@ -67,35 +66,26 @@ class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
-        mockMember = createMockMember();
-        mockArticle = createMockBoard(mockMember);
-        mockBoardType = BoardType.general;
-        mockArticleComment = createMockComment();
-        mockCommentRequest = createMockCommentRequest();
+        mockMember = Member.builder().id(memberId).nickname("홍길동").build();
+        mockArticle = createMockBoard();
+        mockComment = createMockComment();
         mockReply = createMockReply();
-        mockReplyRequest = createMockReplyRequest();
-        mockCommentResponse = createMockCommentResponse();
-        mockReplyResponse = createMockReplyResponse();
-        mockUpdate = createUpdateMockComment();
-        mockUpdateRequest = createUpdateMockCommentRequest();
-        mockUpdateResponse = createUpdateMockCommentResponse();
-        mockCommentList.add(mockArticleComment);
-        mockCommentList.add(mockReply);
+
+        mockCommentRequest = createRequest(articleId, memberId, "댓글 내용");
+        mockReplyRequest = createRequest(articleId, memberId, "대댓글 내용");
+        mockUpdateRequest = createRequest(articleId, memberId, "댓글 수정");
+
+        mockCommentResponse = responseOf("댓글 내용");
+        mockReplyResponse = responseOf("대댓글 내용");
+        mockUpdateResponse = responseOf("댓글 수정");
     }
 
-    private Member createMockMember() {
-        return Member.builder()
-                .id(memberId)
-                .nickname("홍길동")
-                .build();
-    }
-
-    private Board createMockBoard(Member author) {
+    private Board createMockBoard() {
         Board board = new Board();
         board.setId(articleId);
-        board.setTitle("제목 관련");
-        board.setContent("내용 관련");
-        board.setAuthor(author);
+        board.setTitle("제목");
+        board.setContent("내용");
+        board.setAuthor(mockMember);
         board.setBoardType(BoardType.general);
         board.setViewCount(0);
         return board;
@@ -107,44 +97,8 @@ class CommentServiceTest {
         comment.setArticle(mockArticle);
         comment.setAuthor(mockMember);
         comment.setContent("댓글 내용");
+        comment.setIsDelete(false);
         return comment;
-    }
-
-    private CommentRequest createMockCommentRequest() {
-        CommentRequest commentRequest = new CommentRequest();
-        commentRequest.setArticleId(articleId);
-        commentRequest.setMemberId(memberId);
-        commentRequest.setContent("댓글 내용");
-        return commentRequest;
-    }
-
-    private CommentResponse createMockCommentResponse() {
-        CommentResponse commentResponse = new CommentResponse();
-        commentResponse.setContent("댓글 내용");
-        return commentResponse;
-    }
-
-    private ArticleComment createUpdateMockComment() {
-        ArticleComment comment = new ArticleComment();
-        comment.setId(commentId);
-        comment.setArticle(mockArticle);
-        comment.setAuthor(mockMember);
-        comment.setContent("댓글 수정");
-        return comment;
-    }
-
-    private CommentRequest createUpdateMockCommentRequest() {
-        CommentRequest commentRequest = new CommentRequest();
-        commentRequest.setArticleId(articleId);
-        commentRequest.setMemberId(memberId);
-        commentRequest.setContent("댓글 수정");
-        return commentRequest;
-    }
-
-    private CommentResponse createUpdateMockCommentResponse() {
-        CommentResponse commentResponse = new CommentResponse();
-        commentResponse.setContent("댓글 수정");
-        return commentResponse;
     }
 
     private ArticleComment createMockReply() {
@@ -153,81 +107,165 @@ class CommentServiceTest {
         reply.setArticle(mockArticle);
         reply.setAuthor(mockMember);
         reply.setContent("대댓글 내용");
-        reply.setComment(mockArticleComment);
+        reply.setComment(mockComment);
+        reply.setIsDelete(false);
         return reply;
     }
 
-    private CommentRequest createMockReplyRequest() {
-        CommentRequest commentRequest = new CommentRequest();
-        commentRequest.setArticleId(articleId);
-        commentRequest.setMemberId(memberId);
-        commentRequest.setContent("대댓글 내용");
-        return commentRequest;
+    private CommentRequest createRequest(int articleId, int memberId, String content) {
+        CommentRequest req = new CommentRequest();
+        req.setArticleId(articleId);
+        req.setMemberId(memberId);
+        req.setContent(content);
+        return req;
     }
 
-    private CommentResponse createMockReplyResponse() {
-        CommentResponse commentResponse = new CommentResponse();
-        commentResponse.setContent("대댓글 내용");
-        return commentResponse;
+    private CommentResponse responseOf(String content) {
+        CommentResponse res = new CommentResponse();
+        res.setContent(content);
+        return res;
     }
+
+    // ── 댓글 저장 ──────────────────────────────────────────
 
     @Test
     void saveComment() {
-        //given
-        Mockito.when(articleCommentRepository.save(any(ArticleComment.class))).thenReturn(mockArticleComment);
-        Mockito.when(commentDtoManager.fromRequestToEntity(mockCommentRequest)).thenReturn(mockArticleComment);
-        //when
+        Mockito.when(commentDtoManager.fromRequestToEntity(mockCommentRequest)).thenReturn(mockComment);
+        Mockito.when(articleCommentRepository.save(any(ArticleComment.class))).thenReturn(mockComment);
+
         int result = commentService.saveComment(articleId, mockCommentRequest);
-        //then
+
         assertThat(result).isEqualTo(commentId);
     }
 
+    // ── 대댓글 저장 ────────────────────────────────────────
+
     @Test
     void saveCommentReply() {
-        //given
-        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.ofNullable(mockArticleComment));
-        Mockito.when(articleCommentRepository.save(any(ArticleComment.class))).thenReturn(mockReply);
         Mockito.when(commentDtoManager.fromRequestToEntityWithParent(commentId, mockReplyRequest)).thenReturn(mockReply);
-        //when
+        Mockito.when(articleCommentRepository.save(any(ArticleComment.class))).thenReturn(mockReply);
+
         int result = commentService.saveCommentReply(articleId, commentId, mockReplyRequest);
-        //then
+
         assertThat(result).isEqualTo(replyId);
     }
 
     @Test
+    void saveCommentReply_commentNotFound_throwsException() {
+        Mockito.when(commentDtoManager.fromRequestToEntityWithParent(999, mockReplyRequest))
+                .thenThrow(new NotFoundException("해당하는 댓글이 존재하지 않습니다."));
+
+        assertThatThrownBy(() -> commentService.saveCommentReply(articleId, 999, mockReplyRequest))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    // ── 댓글 목록 조회 ─────────────────────────────────────
+
+    @Test
     void findComments() {
-        //given
-        Mockito.when(boardRepository.findById(articleId)).thenReturn(Optional.ofNullable(mockArticle));
-        Mockito.when(articleCommentRepository.findAllByArticle(mockArticle)).thenReturn(mockCommentList);
-        Mockito.when(commentDtoManager.fromEntityToResponse(memberId, mockArticleComment)).thenReturn(mockCommentResponse);
-        Mockito.when(commentDtoManager.fromEntityToResponse(memberId, mockReply)).thenReturn(mockReplyResponse);
-        //when
+        List<ArticleComment> commentList = List.of(mockComment, mockReply);
+        List<CommentResponse> responseList = List.of(mockCommentResponse, mockReplyResponse);
+
+        Mockito.when(boardRepository.findById(articleId)).thenReturn(Optional.of(mockArticle));
+        Mockito.when(articleCommentRepository.findAllByArticle(mockArticle)).thenReturn(commentList);
+        Mockito.when(commentDtoManager.fromEntitiesToResponses(memberId, commentList)).thenReturn(responseList);
+
         List<CommentResponse> result = commentService.findComments(memberId, articleId);
-        //then
+
         assertThat(result).hasSize(2);
     }
 
     @Test
+    void findComments_articleNotFound_throwsException() {
+        Mockito.when(boardRepository.findById(999)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> commentService.findComments(memberId, 999))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    // ── 댓글 수정 ──────────────────────────────────────────
+
+    @Test
     void modifyComment() {
-        //given
-        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.ofNullable(mockArticleComment));
-        Mockito.when(articleCommentRepository.save(any(ArticleComment.class))).thenReturn(mockArticleComment);
-        Mockito.when(commentDtoManager.fromEntityToResponse(eq(memberId), any(ArticleComment.class))).thenReturn(mockUpdateResponse);
-        //when
+        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.of(mockComment));
+        Mockito.when(commentDtoManager.fromEntityToResponse(memberId, mockComment)).thenReturn(mockUpdateResponse);
+
         CommentResponse result = commentService.modifyComment(commentId, mockUpdateRequest);
-        //then
-        assertThat(result).isEqualTo(mockUpdateResponse);
-        assertThat(result).isNotEqualTo(mockCommentResponse);
+
+        assertThat(result.getContent()).isEqualTo("댓글 수정");
     }
 
     @Test
+    void modifyComment_notFound_throwsException() {
+        Mockito.when(articleCommentRepository.findById(999)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> commentService.modifyComment(999, mockUpdateRequest))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    // ── 댓글 삭제 (소프트 삭제) ────────────────────────────
+
+    @Test
     void removeComment() {
-        //given
-        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.ofNullable(mockArticleComment));
-        //when
+        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.of(mockComment));
+
         commentService.removeComment(commentId);
-        //then
+
+        assertThat(mockComment.getIsDelete()).isTrue();
         verify(articleCommentRepository, times(1)).findById(commentId);
-        verify(articleCommentRepository, times(1)).save(mockArticleComment);
+    }
+
+    @Test
+    void removeComment_notFound_throwsException() {
+        Mockito.when(articleCommentRepository.findById(999)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> commentService.removeComment(999))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    // ── 댓글 좋아요 ────────────────────────────────────────
+
+    @Test
+    void saveCommentLike() {
+        Mockito.when(memberRepository.findMemberById(memberId)).thenReturn(Optional.of(mockMember));
+        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.of(mockComment));
+        Mockito.when(commentLikeRepository.existsByMemberIdAndCommentId(memberId, commentId)).thenReturn(false);
+        CommentLike mockLike = CommentLike.builder().member(mockMember).comment(mockComment).build();
+        Mockito.when(commentLikeRepository.save(any(CommentLike.class))).thenReturn(mockLike);
+
+        Integer result = commentService.saveCommentLike(memberId, commentId);
+
+        assertThat(result).isNotEqualTo(0);
+    }
+
+    @Test
+    void saveCommentLike_alreadyLiked_returnsZero() {
+        Mockito.when(memberRepository.findMemberById(memberId)).thenReturn(Optional.of(mockMember));
+        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.of(mockComment));
+        Mockito.when(commentLikeRepository.existsByMemberIdAndCommentId(memberId, commentId)).thenReturn(true);
+
+        Integer result = commentService.saveCommentLike(memberId, commentId);
+
+        assertThat(result).isEqualTo(0);
+    }
+
+    // ── 작성자 확인 ────────────────────────────────────────
+
+    @Test
+    void checkAuthor_isAuthor_returnsTrue() {
+        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.of(mockComment));
+
+        Boolean result = commentService.checkAuthor(commentId, memberId);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void checkAuthor_isNotAuthor_returnsFalse() {
+        Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.of(mockComment));
+
+        Boolean result = commentService.checkAuthor(commentId, 999);
+
+        assertThat(result).isFalse();
     }
 }

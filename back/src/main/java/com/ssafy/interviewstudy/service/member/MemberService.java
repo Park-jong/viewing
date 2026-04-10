@@ -23,5 +23,5 @@ public interface MemberService {
 
     void changeMemberProfile(MemberProfileChangeDto memberProfileChangeDto);
 
-    boolean withdrawl(Integer memberId);
+    boolean withdrawal(Integer memberId);
 }

@@ -208,8 +208,8 @@ public class MemberController {
     @JWTRequired(required = true)
     @Authority(authorityType = AuthorityType.Member)
     @DeleteMapping("/members/{memberId}")
-    public ResponseEntity withdrawl(@PathVariable Integer memberId){
-        boolean result = memberService.withdrawl(memberId);
+    public ResponseEntity withdrawal(@PathVariable Integer memberId){
+        boolean result = memberService.withdrawal(memberId);
         if(!result)
             return ResponseEntity.badRequest().body("스터디장인 스터디가 존재합니다.");
         return ResponseEntity.ok().build();

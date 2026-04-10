@@ -55,9 +55,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member checkDuplicateNickname(String nickname){
-        Member member = memberRepository.findMemberByNicknameAndStatusACTIVE(nickname).orElseThrow(MemberExceptionFactory::memberNotFound);
-        if(member==null || member.getStatus()!=MemberStatus.ACTIVE) return null;
-        return member;
+        return memberRepository.findMemberByNicknameAndStatusACTIVE(nickname).orElseThrow(MemberExceptionFactory::memberNotFound);
     }
 
     @Transactional
@@ -70,7 +68,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member findMemberByMemberId(Integer memberId){
         Member member = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
-        if(member.getStatus()!=MemberStatus.ACTIVE) return null;
+        if (member.getStatus() != MemberStatus.ACTIVE) return null;
         return member;
     }
 
@@ -78,7 +76,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Boolean changeMemberNickname(Integer memberId, String nickname){
         Member curMember = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
-        if(curMember==null) return false;
         curMember.changeNickname(nickname);
         return true;
     }
@@ -86,9 +83,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public Member findByIdAndPlatform(String id, SocialLoginType socialLoginType){
-        Member member = memberRepository.findMemberBySocialLoginIdAndSocialLoginTypeAndStatusACTIVE(id,socialLoginType).orElseThrow(MemberExceptionFactory::memberNotFound);
-        if(member == null || member.getStatus()!= MemberStatus.ACTIVE) return null;
-        return member;
+        return memberRepository.findMemberBySocialLoginIdAndSocialLoginTypeAndStatusACTIVE(id, socialLoginType).orElseThrow(MemberExceptionFactory::memberNotFound);
     }
 
     @Transactional
@@ -110,13 +105,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public boolean withdrawl(Integer memberId){
-        Member member = memberRepository.findMemberById(memberId).orElseThrow();
+    public boolean withdrawal(Integer memberId){
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
         List<Study> list = studyRepository.findStudyByLeader(member);
         if(!list.isEmpty()){
             return false;
         }
-        member.withdrawl();
+        member.withdrawal();
         articleCommentRepository.deleteArticleCommentByAuthor(member);
 
         List<Board> articles = boardRepository.findAllByMember(member);

@@ -148,7 +148,7 @@ public class Member {
         }
     }
 
-    public void withdrawl(){
+    public void withdrawal(){
         this.status=MemberStatus.INACTIVE;
         this.inactiveAt = LocalDateTime.now();
         this.nickname = null;

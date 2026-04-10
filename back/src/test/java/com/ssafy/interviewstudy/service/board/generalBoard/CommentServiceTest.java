@@ -230,7 +230,7 @@ class CommentServiceTest {
         Mockito.when(memberRepository.findMemberById(memberId)).thenReturn(Optional.of(mockMember));
         Mockito.when(articleCommentRepository.findById(commentId)).thenReturn(Optional.of(mockComment));
         Mockito.when(commentLikeRepository.existsByMemberIdAndCommentId(memberId, commentId)).thenReturn(false);
-        CommentLike mockLike = CommentLike.builder().member(mockMember).comment(mockComment).build();
+        CommentLike mockLike = CommentLike.builder().id(memberId).member(mockMember).comment(mockComment).build();
         Mockito.when(commentLikeRepository.save(any(CommentLike.class))).thenReturn(mockLike);
 
         Integer result = commentService.saveCommentLike(memberId, commentId);

@@ -24,7 +24,6 @@ public class CalendarServiceImpl implements CalendarService {
     private final CalendarRepository calendarRepository;
 
     //나의 일정 조회
-    @Transactional
     @Override
     public CalendarListResponse getCalendarList(Integer memberId) {
         List<Calendar> calendarList = calendarRepository.findCalendarsByAuthorId(memberId);
@@ -35,9 +34,7 @@ public class CalendarServiceImpl implements CalendarService {
     @Transactional
     @Override
     public CalendarCreatedResponse createCalendar(CalendarRetrieveRequest calendarDto) {
-        if (calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())) {
-            throw new CreationFailException("일정의 시작시간이 끝나는 시간보다 앞서야 합니다.");
-        }
+        validateTimeRange(calendarDto);
         Member author = memberRepository.findById(calendarDto.getMemberId()).orElseThrow(() -> new CreationFailException("캘린더"));
         Calendar calendar = CalendarRetrieveRequest.toEntity(calendarDto, author);
         calendarRepository.save(calendar);
@@ -50,7 +47,7 @@ public class CalendarServiceImpl implements CalendarService {
     public void deleteCalendar(Integer calendarId) {
         Integer result = calendarRepository.deleteCalendarById(calendarId);
         if (result == null) {
-            throw new NotFoundException("쪽지");
+            throw new NotFoundException("캘린더");
         }
     }
 
@@ -58,9 +55,7 @@ public class CalendarServiceImpl implements CalendarService {
     @Transactional
     @Override
     public void updateCalendar(CalendarRetrieveRequest calendarDto) {
-        if (calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())) {
-            throw new CreationFailException("일정의 시작시간이 끝나는 시간보다 앞서야 합니다.");
-        }
+        validateTimeRange(calendarDto);
         Member updatedMember = memberRepository.findById(calendarDto.getMemberId()).orElseThrow(() -> new CreationFailException("캘린더"));
         calendarRepository.save(CalendarRetrieveRequest.toEntity(calendarDto, updatedMember));
     }
@@ -70,6 +65,12 @@ public class CalendarServiceImpl implements CalendarService {
     public Boolean checkOwnCalendar(Integer memberId, Integer calendarId) {
         Calendar calendar = calendarRepository.findCalendarByAuthorIdAndId(memberId, calendarId);
         return calendar != null;
+    }
+
+    private void validateTimeRange(CalendarRetrieveRequest calendarDto) {
+        if (calendarDto.getStartedAt().isAfter(calendarDto.getEndedAt())) {
+            throw new CreationFailException("일정의 시작시간이 끝나는 시간보다 앞서야 합니다.");
+        }
     }
 
 }

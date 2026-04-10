@@ -12,6 +12,7 @@ import com.ssafy.interviewstudy.dto.member.ProfileResponseDto;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTToken;
 import com.ssafy.interviewstudy.service.member.MemberService;
+import com.ssafy.interviewstudy.service.member.MemberWithdrawalService;
 import com.ssafy.interviewstudy.support.member.*;
 import com.ssafy.interviewstudy.util.jwt.JWTProvider;
 import com.ssafy.interviewstudy.util.jwt.JWTProviderImpl;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberWithdrawalService memberWithdrawalService;
 
     private final OauthUriSupport oauthUriSupport;
 
@@ -209,7 +211,7 @@ public class MemberController {
     @Authority(authorityType = AuthorityType.Member)
     @DeleteMapping("/members/{memberId}")
     public ResponseEntity withdrawal(@PathVariable Integer memberId){
-        boolean result = memberService.withdrawal(memberId);
+        boolean result = memberWithdrawalService.withdraw(memberId);
         if(!result)
             return ResponseEntity.badRequest().body("스터디장인 스터디가 존재합니다.");
         return ResponseEntity.ok().build();

@@ -5,8 +5,6 @@ import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.study.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,9 +23,6 @@ public interface StudyService {
 
     //스터디 검색 결과 조회
     Page<StudyDtoResponse> findStudiesBySearch(JWTMemberInfo memberInfo, Boolean option, String appliedCompany, String appliedJob, CareerLevel careerLevel, Integer tag, Pageable pageable);
-
-    //스터디 생성
-    Integer addStudy(StudyDtoRequest studyDtoRequest);
 
     //스터디 삭제
     void removeStudy(Integer studyId);

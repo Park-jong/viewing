@@ -1,14 +1,11 @@
 package com.ssafy.interviewstudy.service.study;
 
 import com.querydsl.core.Tuple;
-import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.study.*;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.study.*;
-import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.exception.study.StudyExceptionFactory;
-import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,15 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StudyServiceImpl implements StudyService {
 
     private final StudyRepository studyRepository;
-    private final MemberRepository memberRepository;
     private final StudyMemberRepository studyMemberRepository;
-    private final CompanyRepository companyRepository;
     private final StudyTagRepository studyTagRepository;
     private final StudyTagTypeRepository studyTagTypeRepository;
     private final StudyBookmarkRepository studyBookmarkRepository;
@@ -37,11 +33,10 @@ public class StudyServiceImpl implements StudyService {
     //내 스터디 조회
     @Override
     public List<StudyDtoResponse> findMyStudies(Integer id) {
-        Member member = memberRepository.findById(id).orElseThrow(MemberExceptionFactory::memberNotFound);
         // 태그들 1차 캐시 로딩
-        studyRepository.findStudiesByMember(member);
+        studyRepository.findStudiesByMemberId(id);
         //멤버수 가져옴(스터디, 멤버수)
-        List<Tuple> counts = studyRepository.findMyStudyMemberCountByMember(member);
+        List<Tuple> counts = studyRepository.findMyStudyMemberCountByMemberId(id);
         List<StudyDtoResponse> result = new ArrayList<>();
         for (Tuple tuple : counts) {
             result.add(new StudyDtoResponse(tuple.get(0, Study.class), tuple.get(1, Boolean.class), tuple.get(2, Long.class)));
@@ -52,11 +47,10 @@ public class StudyServiceImpl implements StudyService {
     //내가 찜한 스터디 조회
     @Override
     public List<StudyDtoResponse> findBookmarkStudies(Integer id) {
-        Member member = memberRepository.findById(id).orElseThrow(MemberExceptionFactory::memberNotFound);
         // 태그들 1차 캐시 로딩
-        studyRepository.findBookmarksByMember(member);
+        studyRepository.findBookmarksByMemberId(id);
         //(Study, 멤버수)
-        List<Tuple> counts = studyRepository.findBookmarksMemberCountByMember(member);
+        List<Tuple> counts = studyRepository.findBookmarksMemberCountByMemberId(id);
         List<StudyDtoResponse> result = new ArrayList<>();
         for (Tuple tuple : counts) {
             result.add(new StudyDtoResponse(tuple.get(0, Study.class), true, tuple.get(1, Long.class)));
@@ -107,35 +101,6 @@ public class StudyServiceImpl implements StudyService {
             result.add(new StudyDtoResponse(content.get(i).get(1, Study.class), etc.get(i).get(0, Boolean.class), etc.get(i).get(1, Long.class)));
         }
         return new PageImpl<>(result, pageable, studies.getTotalElements());
-    }
-
-    @Transactional
-    @Override
-    public Integer addStudy(StudyDtoRequest studyDtoRequest) {
-        Study study = requestToStudy(studyDtoRequest);
-        Member leader = memberRepository.findById(studyDtoRequest.getLeaderId()).orElseThrow(MemberExceptionFactory::memberNotFound);
-        study.updateLeader(leader);
-        Company company = companyRepository.findCompanyByName(studyDtoRequest.getAppliedCompany())
-                .orElseThrow(() -> new NotFoundException("해당 정보를 찾을 수 없음"));
-        study.updateCompany(company);
-        studyRepository.save(study);
-        //태그들 추가
-        List<Integer> tags = studyDtoRequest.getTags();
-        for (Integer tag : tags) {
-            StudyTagType stt = studyTagTypeRepository.findById(tag).orElseThrow(StudyExceptionFactory::studyNotFound);
-            StudyTag st = new StudyTag(study, stt);
-            studyTagRepository.save(st);
-        }
-
-        StudyMember studyMember = new StudyMember(study, leader);
-        studyMember.updateLeader(true);
-        studyMemberRepository.save(studyMember);
-
-        return study.getId();
-    }
-
-    private Study requestToStudy(StudyDtoRequest studyDtoRequest) {
-        return new Study(studyDtoRequest);
     }
 
     //스터디 삭제

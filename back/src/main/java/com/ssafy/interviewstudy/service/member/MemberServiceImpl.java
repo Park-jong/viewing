@@ -1,25 +1,15 @@
 package com.ssafy.interviewstudy.service.member;
 
-import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.member.MemberStatus;
-import com.ssafy.interviewstudy.domain.study.Study;
-import com.ssafy.interviewstudy.domain.study.StudyRequest;
 import com.ssafy.interviewstudy.dto.member.MemberProfileChangeDto;
 import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.exception.message.NotFoundException;
-import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleCommentRepository;
-import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
-import com.ssafy.interviewstudy.repository.study.*;
-import com.ssafy.interviewstudy.service.board.generalBoard.BoardService;
-import com.ssafy.interviewstudy.service.study.studyMember.StudyMemberService;
 import com.ssafy.interviewstudy.support.member.SocialLoginType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,20 +17,6 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-
-    private final ArticleCommentRepository articleCommentRepository;
-
-    private final BoardRepository boardRepository;
-
-    private final StudyRepository studyRepository;
-
-    private final StudyRequestFileRepository studyRequestFileRepository;
-
-    private final StudyRequestRepository studyRequestRepository;
-
-    private final BoardService boardService;
-
-    private final StudyMemberService studyMemberService;
 
     @Override
     public Member findByEmail(String email){
@@ -103,32 +79,4 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Transactional
-    @Override
-    public boolean withdrawal(Integer memberId){
-        Member member = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
-        List<Study> list = studyRepository.findStudyByLeader(member);
-        if(!list.isEmpty()){
-            return false;
-        }
-        member.withdrawal();
-        articleCommentRepository.deleteArticleCommentByAuthor(member);
-
-        List<Board> articles = boardRepository.findAllByMember(member);
-        for (Board article : articles) {
-            boardService.removeArticle(article.getId());
-        }
-
-        List<Integer> studyIdList = studyRepository.findStudyIdByMember(member);
-        for (Integer id : studyIdList) {
-            studyMemberService.leaveStudy(id, memberId);
-        }
-
-        List<StudyRequest> requests = studyRequestRepository.findStudyRequestsByApplicant(member);
-        for (StudyRequest request : requests) {
-            studyRequestFileRepository.deleteByRequestId(request.getId());
-            studyRequestRepository.deleteStudyRequestById(request.getId());
-        }
-        return true;
-    }
 }

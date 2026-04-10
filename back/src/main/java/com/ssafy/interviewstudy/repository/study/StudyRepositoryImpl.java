@@ -9,8 +9,6 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.interviewstudy.domain.member.Member;
-import com.ssafy.interviewstudy.domain.member.QMember;
 import com.ssafy.interviewstudy.domain.study.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,6 @@ import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.ssafy.interviewstudy.domain.member.QMember.member;
 import static com.ssafy.interviewstudy.domain.study.QCompany.company;
 import static com.ssafy.interviewstudy.domain.study.QStudy.study;
 import static com.ssafy.interviewstudy.domain.study.QStudyBookmark.studyBookmark;
@@ -88,29 +85,28 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom{
     }
 
     @Override
-    public List<Tuple> findBookmarksMemberCountByMember(Member member){
+    public List<Tuple> findBookmarksMemberCountByMemberId(Integer memberId){
         List<Tuple> result = queryFactory.select(study,
                         JPAExpressions.select(studyMember.count()).from(studyMember).where(studyMember.study.id.eq(study.id))
                 )
                 .from(study)
                 .join(study.studyBookmarks, studyBookmark).fetchJoin()
-                .where(studyBookmark.member.eq(member),
+                .where(studyBookmark.member.id.eq(memberId),
                         study.isDelete.eq(false))
                 .fetch();
         return result;
     }
 
     @Override
-    public List<Tuple> findMyStudyMemberCountByMember(Member member){
+    public List<Tuple> findMyStudyMemberCountByMemberId(Integer memberId){
         List<Tuple> result = queryFactory.select(study,
                     new CaseBuilder().when(studyBookmark.member.id.isNotNull()).then(true).otherwise(false),
                     JPAExpressions.select(studyMember.count()).from(studyMember).where(studyMember.study.id.eq(study.id))
-
                 )
                 .from(study)
                 .join(study.studyMembers, studyMember).fetchJoin()
-                .leftJoin(studyBookmark).on(study.id.eq(studyBookmark.study.id), studyBookmark.member.eq(member))
-                .where(studyMember.member.eq(member),
+                .leftJoin(studyBookmark).on(study.id.eq(studyBookmark.study.id), studyBookmark.member.id.eq(memberId))
+                .where(studyMember.member.id.eq(memberId),
                         study.isDelete.eq(false))
                 .fetch();
         return result;

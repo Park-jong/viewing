@@ -57,17 +57,15 @@ public class StudyMemberServiceImpl implements StudyMemberService {
         studyRequestRepository.save(studyRequest);
         studyFileManager.saveFile(studyRequest, requestDto, files);
         //스터디 리더에게 스터디 신청 알림을 보내자!
-        if(studyRequest.getId()!=null){
-            notificationService.sendNotificationToMember(
-                    NotificationDto.builder()
-                            .notificationType(NotificationType.StudyRequest)
-                            .content(study.getTitle()+" 스터디에 가입신청이 왔습니다.")
-                            .memberId(study.getLeader().getId())
-                            .url(study.getId().toString())
-                            .isRead(false)
-                            .build()
-            );
-        }
+        notificationService.sendNotificationToMember(
+                NotificationDto.builder()
+                        .notificationType(NotificationType.StudyRequest)
+                        .content(study.getTitle()+" 스터디에 가입신청이 왔습니다.")
+                        .memberId(study.getLeader().getId())
+                        .url(study.getId().toString())
+                        .isRead(false)
+                        .build()
+        );
 
         return studyRequest.getId();
     }
@@ -75,7 +73,7 @@ public class StudyMemberServiceImpl implements StudyMemberService {
     //스터디 가입 신청 조회
     @Override
     public List<RequestDtoResponse> findRequestsByStudy(Integer studyId){
-        Study study = studyRepository.findById(studyId).orElseThrow(MemberExceptionFactory::memberNotFound);
+        Study study = studyRepository.findById(studyId).orElseThrow(StudyExceptionFactory::studyNotFound);
         List<StudyRequest> requests = studyRequestRepository.findStudyRequestsByStudy(study);
 
         List<RequestDtoResponse> result = new ArrayList<>();
@@ -96,7 +94,7 @@ public class StudyMemberServiceImpl implements StudyMemberService {
     //스터디 가입 신청 개별 조회
     @Override
     public RequestDtoResponse findRequestById(Integer id){
-        StudyRequest request = studyRequestRepository.findStudyRequestById(id).orElseThrow();
+        StudyRequest request = studyRequestRepository.findStudyRequestById(id).orElseThrow(StudyExceptionFactory::studyNotFound);
         List<StudyRequestFile> files = request.getStudyRequestFiles();
         List<RequestFile> reponseFiles = new ArrayList<>();
         for (StudyRequestFile file : files) {
@@ -116,31 +114,27 @@ public class StudyMemberServiceImpl implements StudyMemberService {
     @Override
     public boolean permitRequest(Integer requestId, Integer studyId, Integer memberId){
         StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
-        Optional<Study> byStudyId = studyRepository.findById(studyId);
-        if(byStudyId.isEmpty()) throw new NotFoundException("스터디를 찾을 수 없음");
-        Study study = byStudyId.get();
+        if (studyRequest == null) throw new NotFoundException("유효하지 않은 요청입니다.");
+        Study study = studyRequest.getStudy();
         long count = studyMemberRepository.countStudyMemberByStudy(study);
         if(count >= study.getCapacity()) return false;
 
         deleteRequest(requestId);
-        StudyMember sm = new StudyMember(studyRequest.getStudy(), studyRequest.getApplicant());
+        StudyMember sm = new StudyMember(study, studyRequest.getApplicant());
         sm.updateLeader(false);
         studyMemberRepository.save(sm);
 
-        //스터디가 승인되었을때
         //승인된 멤버에게 알림을 보내자
-        if(sm.getId()!=null){
-            notificationService.sendNotificationToMember(
-                    NotificationDto
-                            .builder()
-                            .memberId(memberId)
-                            .content(studyRequest.getStudy().getTitle()+" 스터디에 가입이 승인되었습니다! ")
-                            .notificationType(NotificationType.StudyRequest_Approve)
-                            .url(studyId.toString())
-                            .isRead(false)
-                            .build()
-            );
-        }
+        notificationService.sendNotificationToMember(
+                NotificationDto
+                        .builder()
+                        .memberId(memberId)
+                        .content(study.getTitle()+" 스터디에 가입이 승인되었습니다! ")
+                        .notificationType(NotificationType.StudyRequest_Approve)
+                        .url(studyId.toString())
+                        .isRead(false)
+                        .build()
+        );
         return true;
     }
 
@@ -153,7 +147,9 @@ public class StudyMemberServiceImpl implements StudyMemberService {
         }
 
         Optional<StudyRequest> studyRequestOp = studyRequestRepository.findStudyAndMemberById(requestId);
-        if(studyRequestOp.isEmpty() || studyRequestOp.get().getApplicant().getId() != memberId || studyRequestOp.get().getStudy().getId() != studyId){
+        if(studyRequestOp.isEmpty()
+                || !studyRequestOp.get().getApplicant().getId().equals(memberId)
+                || !studyRequestOp.get().getStudy().getId().equals(studyId)){
             return null;
         }
         return studyRequestOp.get();
@@ -169,7 +165,7 @@ public class StudyMemberServiceImpl implements StudyMemberService {
     @Override
     public void rejectRequest(Integer requestId, Integer studyId, Integer memberId){
         StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
-        //deleteRequest전에 study를 가져오자
+        if (studyRequest == null) throw new NotFoundException("유효하지 않은 요청입니다.");
         Study study = studyRequest.getStudy();
         deleteRequest(requestId);
 
@@ -191,7 +187,7 @@ public class StudyMemberServiceImpl implements StudyMemberService {
     @Transactional
     @Override
     public void cancelRequest(Integer requestId, Integer studyId, Integer memberId){
-        StudyRequest studyRequest = checkRequest(requestId, studyId, memberId);
+        if (checkRequest(requestId, studyId, memberId) == null) throw new NotFoundException("유효하지 않은 요청입니다.");
         deleteRequest(requestId);
     }
 
@@ -303,10 +299,9 @@ public class StudyMemberServiceImpl implements StudyMemberService {
     //스터디의 스터디장인지 체크
     @Override
     public boolean checkStudyLeader(Integer studyId, Integer memberId){
-        Optional<StudyMember> studyMemberOp = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId);
-        if(studyMemberOp.isEmpty())
-            return false;
-        return studyMemberOp.get().getIsLeader();
+        return studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
+                .map(StudyMember::getIsLeader)
+                .orElse(false);
     }
 
     @Override

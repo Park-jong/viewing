@@ -8,6 +8,7 @@ import com.ssafy.interviewstudy.domain.study.CareerLevel;
 import com.ssafy.interviewstudy.domain.study.StudyMember;
 import com.ssafy.interviewstudy.dto.member.jwt.JWTMemberInfo;
 import com.ssafy.interviewstudy.dto.study.*;
+import com.ssafy.interviewstudy.service.study.StudyCreationService;
 import com.ssafy.interviewstudy.service.study.StudyService;
 import com.ssafy.interviewstudy.service.study.studyCalendar.StudyCalendarService;
 import com.ssafy.interviewstudy.service.study.studyChat.StudyChatService;
@@ -37,13 +38,15 @@ import java.util.Map;
 @RequestMapping("/studies")
 public class StudyController {
     private final StudyService studyService;
+    private final StudyCreationService studyCreationService;
     private final StudyChatService studyChatService;
     private final StudyCalendarService studyCalendarService;
     private final StudyMemberService studyMemberService;
 
     @Autowired
-    public StudyController(StudyService studyService, StudyCalendarService studyCalendarService, StudyChatService studyChatService, StudyMemberService studyMemberService){
+    public StudyController(StudyService studyService, StudyCreationService studyCreationService, StudyCalendarService studyCalendarService, StudyChatService studyChatService, StudyMemberService studyMemberService){
         this.studyService = studyService;
+        this.studyCreationService = studyCreationService;
         this.studyCalendarService = studyCalendarService;
         this.studyChatService = studyChatService;
         this.studyMemberService = studyMemberService;
@@ -92,7 +95,7 @@ public class StudyController {
     public ResponseEntity<?> studySave(@Valid @RequestBody StudyDtoRequest study){
         Integer madeStudy = null;
         try{
-            madeStudy = studyService.addStudy(study);
+            madeStudy = studyCreationService.addStudy(study);
         }
         catch(ConstraintViolationException ce){
             return ResponseEntity.internalServerError().body("스터디 생성 실패");

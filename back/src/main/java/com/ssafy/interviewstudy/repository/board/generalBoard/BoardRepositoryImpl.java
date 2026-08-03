@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.repository.board.generalBoard;
 import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,8 @@ public class BoardRepositoryImpl implements BoardRepository {
 
     @Override
     public void deleteById(Integer id) {
-        jpaBoardRepository.findById(id);
+        Board board = jpaBoardRepository.findById(id).orElseThrow(MemberExceptionFactory::memberNotFound);
+        delete(board);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.StudyBoard;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.FileResponse;
+import com.ssafy.interviewstudy.exception.board.BoardExceptionFactory;
 import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleFileRepository;
 import com.ssafy.interviewstudy.support.file.FileManager;
 import lombok.RequiredArgsConstructor;
@@ -24,34 +25,34 @@ public class BoardFileManagerImpl implements BoardFileManager {
     private final ArticleFileRepository articleFileRepository;
 
 
+    @Transactional
     @Override
     public void saveFiles(BoardRequest boardRequest, Board article, List<MultipartFile> files) {
         if (files == null || files.isEmpty()) {
             return;
         }
+        String saveFileName = makeSaveFileName(boardRequest);
         for (MultipartFile file : files) {
             try {
-                String saveFileName = makeSaveFileName(boardRequest);
                 fm.upload(file.getInputStream(), saveFileName, file.getContentType(), file.getSize());
-                ArticleFile articleFile = new ArticleFile(article, file, saveFileName);
-                articleFileRepository.save(articleFile);
+                articleFileRepository.save(new ArticleFile(article, file, saveFileName));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
+    @Transactional
     @Override
     public void saveFiles(BoardRequest boardRequest, StudyBoard article, List<MultipartFile> files) {
         if (files == null || files.isEmpty()) {
             return;
         }
+        String saveFileName = makeSaveFileName(boardRequest);
         for (MultipartFile file : files) {
             try {
-                String saveFileName = makeSaveFileName(boardRequest);
                 fm.upload(file.getInputStream(), saveFileName, file.getContentType(), file.getSize());
-                ArticleFile articleFile = new ArticleFile(article, file, saveFileName);
-                articleFileRepository.save(articleFile);
+                articleFileRepository.save(new ArticleFile(article, file, saveFileName));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -64,7 +65,8 @@ public class BoardFileManagerImpl implements BoardFileManager {
 
     @Override
     public FileResponse fileDownload(Integer fileId) {
-        ArticleFile articleFile = articleFileRepository.findById(fileId).get();
+        ArticleFile articleFile = articleFileRepository.findById(fileId)
+                .orElseThrow(BoardExceptionFactory::articleNotFound);
         FileResponse result = new FileResponse(articleFile);
         try {
             byte[] file = fm.download(articleFile.getSaveFileName());
@@ -75,15 +77,18 @@ public class BoardFileManagerImpl implements BoardFileManager {
         return result;
     }
 
+    @Transactional
     @Override
     public void removeFileList(List<FileResponse> files) {
         for (FileResponse f : files) {
-            ArticleFile file = articleFileRepository.findById(f.getFileId()).get();
+            ArticleFile file = articleFileRepository.findById(f.getFileId())
+                    .orElseThrow(BoardExceptionFactory::articleNotFound);
             fm.delete(file.getSaveFileName());
             articleFileRepository.deleteById(file.getId());
         }
     }
 
+    @Transactional
     @Override
     public void removeFiles(Integer articleId) {
         List<ArticleFile> files = articleFileRepository.findByArticleId(articleId);

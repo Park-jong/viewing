@@ -1,6 +1,5 @@
 package com.ssafy.interviewstudy.service.member;
 
-import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
@@ -8,44 +7,36 @@ import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.member.MemberArticleLikeRepository;
 import com.ssafy.interviewstudy.service.board.generalBoard.BoardDtoManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class MemberArticleServiceImpl implements MemberArticleService {
 
     private final MemberArticleLikeRepository memberArticleLikeRepository;
     private final BoardRepository boardRepository;
     private final BoardDtoManager boardDtoManger;
 
-
-    @Transactional(readOnly = true)
     @Override
     public List<BoardResponse> getLikedArticleByMemberId(BoardRequest boardRequest, BoardType boardType) {
-        List<BoardResponse> boardResponses = new ArrayList<>();
-        List<Board> boardList = memberArticleLikeRepository.getArticleByMemberId(boardRequest.getMemberId(), boardType);
-        for (Board b : boardList) {
-            boardResponses.add(boardDtoManger.fromEntityWithoutContent(b));
-        }
-        return boardResponses;
+        return memberArticleLikeRepository.getArticleByMemberId(boardRequest.getMemberId(), boardType)
+                .stream()
+                .map(boardDtoManger::fromEntityWithoutContent)
+                .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<BoardResponse> getArticleByMemberId(BoardRequest boardRequest, BoardType boardType, Pageable pageable) {
-        List<BoardResponse> boardResponses = new ArrayList<>();
-        Page<Board> boardList = boardRepository.findByMemberIdAndBoardType(boardRequest.getMemberId(), boardType, pageable);
-        for (Board b : boardList) {
-            boardResponses.add(boardDtoManger.fromEntityWithoutContent(b));
-        }
-        return boardResponses;
+        return boardRepository.findByMemberIdAndBoardType(boardRequest.getMemberId(), boardType, pageable)
+                .stream()
+                .map(boardDtoManger::fromEntityWithoutContent)
+                .collect(Collectors.toList());
     }
 
 }

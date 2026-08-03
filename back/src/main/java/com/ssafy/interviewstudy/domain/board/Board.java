@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -50,6 +51,7 @@ public class Board {
     @Column(name = "view_count", insertable = false)
     private Integer viewCount;
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<ArticleComment> comments = new ArrayList<>();
 

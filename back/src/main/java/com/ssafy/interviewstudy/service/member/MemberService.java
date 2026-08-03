@@ -22,6 +22,4 @@ public interface MemberService {
     Member findByIdAndPlatform(String id, SocialLoginType socialLoginType);
 
     void changeMemberProfile(MemberProfileChangeDto memberProfileChangeDto);
-
-    boolean withdrawl(Integer memberId);
 }

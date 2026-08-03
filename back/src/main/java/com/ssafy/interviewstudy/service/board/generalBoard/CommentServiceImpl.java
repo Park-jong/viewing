@@ -14,13 +14,11 @@ import com.ssafy.interviewstudy.repository.board.generalBoard.CommentLikeReposit
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -48,31 +46,28 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest) {
-        ArticleComment parentComment = articleCommentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
         commentRequest.setArticleId(articleId);
         ArticleComment reply = commentDtoManager.fromRequestToEntityWithParent(commentId, commentRequest);
         articleCommentRepository.save(reply);
-        notificationService.sendNotificationAboutComment(reply, NotificationType.BoardComment);
+        notificationService.sendNotificationAboutComment(reply, NotificationType.BoardReply);
         return reply.getId();
     }
 
     // 게시글 댓글 조회
     @Override
     public List<CommentResponse> findComments(Integer memberId, Integer articleId) {
-        Sort sort = Sort.by(Sort.Order.asc("createdAt"), Sort.Order.asc("cr.createdAt"));
         Board board = boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound);
-        List<ArticleComment> comment = articleCommentRepository.findAllByArticle(board);
-        return comment.stream().map((c)->commentDtoManager.fromEntityToResponse(memberId, c)).collect(Collectors.toList());
+        List<ArticleComment> comments = articleCommentRepository.findAllByArticle(board);
+        return commentDtoManager.fromEntitiesToResponses(memberId, comments);
     }
 
     // (대)댓글 수정
     @Transactional
     @Override
     public CommentResponse modifyComment(Integer commentId, CommentRequest commentRequest) {
-        ArticleComment originComment = articleCommentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
-        originComment.modifyComment(commentRequest);
-        ArticleComment modifiedComment = articleCommentRepository.save(originComment);
-        return commentDtoManager.fromEntityToResponse(commentRequest.getMemberId(), modifiedComment);
+        ArticleComment comment = articleCommentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
+        comment.modifyComment(commentRequest);
+        return commentDtoManager.fromEntityToResponse(commentRequest.getMemberId(), comment);
     }
 
     // (대)댓글 삭제
@@ -81,7 +76,6 @@ public class CommentServiceImpl implements CommentService {
     public void removeComment(Integer commentId) {
         ArticleComment comment = articleCommentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
         comment.deleteComment();
-        articleCommentRepository.save(comment);
     }
 
     // 댓글 좋아요

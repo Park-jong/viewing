@@ -59,7 +59,7 @@ public class StudyCalendarServiceImpl implements StudyCalendarService {
     @Override
     public List<Object> findStudyCalendarsByMemberIdStudyId(Integer memberId, Integer studyId){
         Member member = memberRepository.findMemberById(memberId).orElseThrow(StudyExceptionFactory::studyMemberNotFound);
-        List<StudyCalendarDtoResponse> studyCalendar = studyCalendarRepository.findStudyCalendersByMemberIdAndStudyId(memberId,studyId);
+        List<StudyCalendarDtoResponse> studyCalendar = studyCalendarRepository.findStudyCalendersByMemberIdAndStudyId(member.getId(),studyId);
         List<Object> list = new ArrayList<>(studyCalendar);
         List<Calendar> memberCalendarEntity = calendarRepository.findCalendarsByAuthorId(memberId);
         List<CalendarRetrieveResponse> memberCalendar = CalendarListResponse.fromEntity(memberCalendarEntity).getData();
@@ -70,7 +70,6 @@ public class StudyCalendarServiceImpl implements StudyCalendarService {
     //일정 개별 조회
     @Override
     public StudyCalendarDtoResponse findStudyCalendarByStudy(Integer studyId, Integer calendarId){
-        Study study = studyRepository.findById(studyId).orElseThrow(StudyExceptionFactory::studyNotFound);
         return studyCalendarRepository.findStudyCalenderById(calendarId);
     }
 
@@ -87,24 +86,22 @@ public class StudyCalendarServiceImpl implements StudyCalendarService {
         studyCalendarRepository.save(studyCalendar);
 
         //스터디에 일정이 등록될 경우 스터디원들에게 알림을 보냄
-        if(studyCalendar.getId()!=null){
-            notificationService
-                    .sendNotificationToStudyMember(
-                            NotificationStudyDto
-                                    .builder()
-                                    .notificationDto(
-                                            NotificationDto
-                                                    .builder()
-                                                    .notificationType(NotificationType.StudyCalendar)
-                                                    .content(study.getTitle()+" 스터디에 일정이 등록되었습니다!")
-                                                    .memberId(member.getId())
-                                                    .url(studyId.toString())
-                                                    .build()
-                                    )
-                                    .studyId(studyId)
-                                    .build()
-                    );
-        }
+        notificationService
+                .sendNotificationToStudyMember(
+                        NotificationStudyDto
+                                .builder()
+                                .notificationDto(
+                                        NotificationDto
+                                                .builder()
+                                                .notificationType(NotificationType.StudyCalendar)
+                                                .content(study.getTitle()+" 스터디에 일정이 등록되었습니다!")
+                                                .memberId(member.getId())
+                                                .url(studyId.toString())
+                                                .build()
+                                )
+                                .studyId(studyId)
+                                .build()
+                );
         return studyCalendar.getId();
     }
 

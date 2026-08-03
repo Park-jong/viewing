@@ -1,6 +1,5 @@
 package com.ssafy.interviewstudy.service.member;
 
-import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.board.BoardType;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
@@ -10,26 +9,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberCommentServiceImpl implements MemberCommentService {
 
     private final MemberCommentRepository memberCommentRepository;
-
     private final BoardDtoManager boardDtoManger;
 
-    @Transactional(readOnly = true)
     @Override
     public List<BoardResponse> getCommentedArticle(BoardRequest boardRequest, BoardType boardType) {
-        List<BoardResponse> boardResponses = new ArrayList<>();
-        List<Board> boardList = memberCommentRepository.getCommentedBoardByMemberId(boardRequest.getMemberId(), boardType);
-        for (Board b : boardList) {
-            boardResponses.add(boardDtoManger.fromEntityWithoutContent(b));
-        }
-        return boardResponses;
+        return memberCommentRepository.getCommentedBoardByMemberId(boardRequest.getMemberId(), boardType)
+                .stream()
+                .map(boardDtoManger::fromEntityWithoutContent)
+                .collect(Collectors.toList());
     }
 }

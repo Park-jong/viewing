@@ -23,7 +23,7 @@ public class StudyBoardDtoManager {
 
     public StudyBoard toEntity(BoardRequest boardRequest) {
         Member author = memberRepository.findMemberById(boardRequest.getMemberId()).orElseThrow(BoardExceptionFactory::memberNotFound);
-        Study study = studyRepository.findById(boardRequest.getStudyId()).orElseThrow();
+        Study study = studyRepository.findById(boardRequest.getStudyId()).orElseThrow(BoardExceptionFactory::articleNotFound);
         return StudyBoard.builder()
                 .study(study)
                 .title(boardRequest.getTitle())

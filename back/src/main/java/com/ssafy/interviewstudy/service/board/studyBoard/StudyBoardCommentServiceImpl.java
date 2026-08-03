@@ -1,6 +1,5 @@
 package com.ssafy.interviewstudy.service.board.studyBoard;
 
-import com.ssafy.interviewstudy.annotation.JWTRequired;
 import com.ssafy.interviewstudy.domain.board.StudyBoard;
 import com.ssafy.interviewstudy.domain.board.StudyBoardComment;
 import com.ssafy.interviewstudy.domain.notification.NotificationType;
@@ -32,7 +31,6 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
 
     // 게시글 댓글 저장
     @Transactional
-    @JWTRequired
     @Override
     public Integer saveComment(Integer articleId, CommentRequest commentRequest) {
         commentRequest.setArticleId(articleId);
@@ -57,8 +55,7 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
     public Integer saveCommentReply(Integer articleId, Integer commentId, CommentRequest commentRequest) {
         commentRequest.setArticleId(articleId);
         StudyBoardComment comment = commentDtoManager.toEntityWithParent(commentId, commentRequest);
-        StudyBoardComment parentComment = commentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
-        sendNotificationAboutReply(articleId, parentComment);
+        sendNotificationAboutReply(articleId, comment.getComment());
         return commentRepository.save(comment).getId();
     }
 
@@ -78,25 +75,16 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
     public List<StudyBoardCommentResponse> findComments(Integer articleId) {
         StudyBoard article = boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound);
         List<StudyBoardComment> comment = commentRepository.findAllByArticle(article);
-        findReplies(comment);
         return comment.stream().map(commentDtoManager::fromEntity).collect(Collectors.toList());
-    }
-
-    @Override
-    public void findReplies(List<StudyBoardComment> parents) {
-        for (StudyBoardComment comment : parents) {
-            List<StudyBoardComment> replies = comment.getReplies();
-        }
     }
 
     // (대)댓글 수정
     @Transactional
     @Override
     public StudyBoardCommentResponse modifyComment(Integer commentId, CommentRequest commentRequest) {
-        StudyBoardComment originComment = commentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
-        originComment.modifyComment(commentRequest);
-        StudyBoardComment modifiedComment = commentRepository.save(originComment);
-        return commentDtoManager.fromEntity(modifiedComment);
+        StudyBoardComment comment = commentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
+        comment.modifyComment(commentRequest);
+        return commentDtoManager.fromEntity(comment);
     }
 
     // (대)댓글 삭제
@@ -105,7 +93,6 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
     public void removeComment(Integer commentId) {
         StudyBoardComment comment = commentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
         comment.deleteComment();
-        commentRepository.save(comment);
     }
 
 
@@ -113,9 +100,6 @@ public class StudyBoardCommentServiceImpl implements StudyBoardCommentService {
     @Override
     public Boolean checkAuthor(Integer commentId, Integer memberId) {
         StudyBoardComment comment = commentRepository.findById(commentId).orElseThrow(BoardExceptionFactory::commentNotFound);
-        if (comment.getAuthor().getId().equals(memberId)) {
-            return true;
-        }
-        else return false;
+        return comment.getAuthor().getId().equals(memberId);
     }
 }

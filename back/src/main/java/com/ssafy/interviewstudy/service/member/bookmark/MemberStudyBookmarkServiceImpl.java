@@ -11,7 +11,7 @@ import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.member.MemberStudyBookmarkRepository;
 import com.ssafy.interviewstudy.repository.study.StudyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -20,19 +20,12 @@ import javax.validation.Valid;
 
 @Validated
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Service
 public class MemberStudyBookmarkServiceImpl implements MemberStudyBookmarkService {
     private final MemberRepository memberRepository;
     private final MemberStudyBookmarkRepository memberStudyBookmarkRepository;
-    
     private final StudyRepository studyRepository;
-
-    @Autowired
-    public MemberStudyBookmarkServiceImpl(MemberRepository memberRepository, MemberStudyBookmarkRepository memberStudyBookmarkRepository, StudyRepository studyRepository) {
-        this.memberRepository = memberRepository;
-        this.memberStudyBookmarkRepository = memberStudyBookmarkRepository;
-        this.studyRepository = studyRepository;
-    }
 
     @Transactional
     @Override
@@ -54,13 +47,7 @@ public class MemberStudyBookmarkServiceImpl implements MemberStudyBookmarkServic
 
         //북마크 대상 스터디 조회
         Study study = studyRepository.findStudyById(studyBookmarkRequest.getStudyId());
-
-        System.out.println("스터디 : "+study);
-
-        //이 경우 bad request 로 처리하는게 좋아보임
-        // memberId가 잘못되었는지 studyId가 잘못되었는지 알려줘야함
-        // 향후 리팩토링
-        if(member==null || study==null){
+        if(study==null){
             throw new CreationFailException("스터디 북마크");
         }
 
@@ -88,9 +75,8 @@ public class MemberStudyBookmarkServiceImpl implements MemberStudyBookmarkServic
         }
     }
 
-    @Transactional
     @Override
     public Boolean checkStudyBookmarkByMemberId(Integer memberId, Integer studyId){
-        return memberStudyBookmarkRepository.findStudyBookmarkByStudyIdAndMemberId(studyId,memberId) != null;
+        return memberStudyBookmarkRepository.findStudyBookmarkByStudyIdAndMemberId(studyId, memberId) != null;
     }
 }

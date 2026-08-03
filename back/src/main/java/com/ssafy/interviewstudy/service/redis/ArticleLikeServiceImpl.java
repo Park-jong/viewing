@@ -3,6 +3,7 @@ package com.ssafy.interviewstudy.service.redis;
 import com.ssafy.interviewstudy.domain.board.ArticleLike;
 import com.ssafy.interviewstudy.domain.board.Board;
 import com.ssafy.interviewstudy.domain.member.Member;
+import com.ssafy.interviewstudy.exception.board.BoardExceptionFactory;
 import com.ssafy.interviewstudy.exception.member.MemberExceptionFactory;
 import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleLikeRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
@@ -62,7 +63,7 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
         redisTemplate.opsForSet().add(keySet, String.valueOf(articleId));
         redisTemplate.opsForSet().add(keyString + articleId, String.valueOf(memberId));
         ArticleLike articleLike = ArticleLike.builder()
-                .article(boardRepository.findById(articleId).get())
+                .article(boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound))
                 .member(memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound))
                 .build();
         articleLikeRepository.save(articleLike);
@@ -77,7 +78,7 @@ public class ArticleLikeServiceImpl implements ArticleLikeService {
 
         long removeCnt = redisTemplate.opsForSet().remove(keyString + articleId, String.valueOf(memberId));
         if (removeCnt > 0) {
-            Board board = boardRepository.findById(articleId).get();
+            Board board = boardRepository.findById(articleId).orElseThrow(BoardExceptionFactory::articleNotFound);
             Member member = memberRepository.findMemberById(memberId).orElseThrow(MemberExceptionFactory::memberNotFound);
             articleLikeRepository.removeByArticleAndMember(board, member);
         }

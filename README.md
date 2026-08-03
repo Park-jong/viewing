@@ -30,7 +30,7 @@
 
 ### API 명세서 링크(NOTION)
 
-[API 명세서](https://imported-blouse-29a.notion.site/api-76df542ba576406a9385ba7b7cf879d2?pvs=4)
+[API 명세서](https://chartreuse-wrench-b31.notion.site/Viewing-API-3b19fa9893fa802faf9acce55358820a)
 
 ### ERD 링크
 

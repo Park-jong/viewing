@@ -53,7 +53,7 @@ public class MemberStudyRequestInterceptor implements HandlerInterceptor {
             jwtMemberInfo = (JWTMemberInfo) jwtMemberInfoAttribute;
         }
         else{
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"잘못된 JWT 정보");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"잘못된 JWT 정보");
             return false;
         }
 
@@ -70,7 +70,7 @@ public class MemberStudyRequestInterceptor implements HandlerInterceptor {
         Member member = memberService.findMemberByMemberId(memberId);
 
         if(member==null){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"없는 유저 입니다.");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND,"없는 유저 입니다.");
             return false;
         }
         
@@ -79,7 +79,7 @@ public class MemberStudyRequestInterceptor implements HandlerInterceptor {
 
         Boolean isLeader = studyMemberService.checkStudyLeader(studyId,memberId);
         if(!isRequestByMember && !isLeader){
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"해당 요청을 신청한 유저가 아닙니다.");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,"해당 요청을 신청한 유저가 아닙니다.");
             return false;
         }
         return true;

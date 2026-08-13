@@ -57,7 +57,7 @@ public class MemberCommentInterceptor implements HandlerInterceptor {
             jwtMemberInfo = (JWTMemberInfo) jwtMemberInfoAttribute;
         }
         else{
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"잘못된 JWT 정보");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"잘못된 JWT 정보");
             return false;
         }
 
@@ -74,12 +74,12 @@ public class MemberCommentInterceptor implements HandlerInterceptor {
         Member member = memberService.findMemberByMemberId(jwtMemberInfo.getMemberId());
 
         if(member==null){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"없는 유저 입니다.");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND,"없는 유저 입니다.");
             return false;
         }
 
         if(!commentService.checkAuthor(commentId, member.getId())){
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"본인 댓글이 아닙니다");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,"본인 댓글이 아닙니다");
             return false;
         }
 

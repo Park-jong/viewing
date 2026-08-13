@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.exception.member;
 
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 
 public class MemberExceptionFactory {
     public static NotFoundException memberNotFound() {

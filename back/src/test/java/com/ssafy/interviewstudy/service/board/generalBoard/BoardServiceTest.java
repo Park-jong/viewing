@@ -6,7 +6,7 @@ import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.Author;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.BoardResponse;
-import com.ssafy.interviewstudy.exception.board.NotFoundException;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

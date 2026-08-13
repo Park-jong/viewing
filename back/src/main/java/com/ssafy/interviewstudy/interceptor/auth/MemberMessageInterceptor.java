@@ -51,7 +51,7 @@ public class MemberMessageInterceptor implements HandlerInterceptor {
             jwtMemberInfo = (JWTMemberInfo) jwtMemberInfoAttribute;
         }
         else{
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"잘못된 JWT 정보");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"잘못된 JWT 정보");
             return false;
         }
 
@@ -68,7 +68,7 @@ public class MemberMessageInterceptor implements HandlerInterceptor {
         Boolean isMessageByMember = messageService.checkMessageByMember(messageId,JWTMemberId);
 
         if(!isMessageByMember ){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"해당 메시지를 읽을 권한이 없습니다");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,"해당 메시지를 읽을 권한이 없습니다");
             return false;
         }
         return true;

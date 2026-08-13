@@ -206,7 +206,7 @@ class StudyServiceTest {
         Mockito.when(studyRepository.findById(999)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> studyService.removeStudy(999))
-                .isInstanceOf(com.ssafy.interviewstudy.exception.study.NotFoundException.class);
+                .isInstanceOf(com.ssafy.interviewstudy.exception.message.NotFoundException.class);
     }
 
     // ── 스터디 수정 ────────────────────────────────────────
@@ -239,7 +239,7 @@ class StudyServiceTest {
         Mockito.when(studyRepository.findById(999)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> studyService.modifyStudy(999, mockRequest))
-                .isInstanceOf(com.ssafy.interviewstudy.exception.study.NotFoundException.class);
+                .isInstanceOf(com.ssafy.interviewstudy.exception.message.NotFoundException.class);
     }
 
     // ── 스터디 유효성 체크 ─────────────────────────────────

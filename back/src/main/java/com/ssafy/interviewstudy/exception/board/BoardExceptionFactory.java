@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.exception.board;
 
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 
 public class BoardExceptionFactory {
     public static NotFoundException commentNotFound() {

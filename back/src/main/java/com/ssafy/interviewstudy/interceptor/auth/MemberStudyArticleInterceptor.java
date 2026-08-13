@@ -56,14 +56,14 @@ public class MemberStudyArticleInterceptor implements HandlerInterceptor {
             jwtMemberInfo = (JWTMemberInfo) jwtMemberInfoAttribute;
         }
         else{
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"잘못된 JWT 정보");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"잘못된 JWT 정보");
             return false;
         }
 
         Member member = memberService.findMemberByMemberId(jwtMemberInfo.getMemberId());
 
         if(member==null){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"없는 유저 입니다.");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND,"없는 유저 입니다.");
             return false;
         }
         Integer memberId,studyId,articleId;
@@ -78,7 +78,7 @@ public class MemberStudyArticleInterceptor implements HandlerInterceptor {
         }
 
         if(!studyMemberService.checkStudyMember(studyId,memberId)){
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"해당 스터디원이 아닙니다.");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,"해당 스터디원이 아닙니다.");
             return false;
         }
 
@@ -87,7 +87,7 @@ public class MemberStudyArticleInterceptor implements HandlerInterceptor {
         }
 
         if(!studyBoardService.checkAuthor(articleId,memberId)){
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"해당 게시글 작성자가 아닙니다");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,"해당 게시글 작성자가 아닙니다");
             return false;
         }
 

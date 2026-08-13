@@ -55,7 +55,7 @@ public class MemberNotificationInterceptor implements HandlerInterceptor {
             jwtMemberInfo = (JWTMemberInfo) jwtMemberInfoAttribute;
         }
         else{
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"잘못된 JWT 정보");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"잘못된 JWT 정보");
             return false;
         }
 
@@ -70,13 +70,13 @@ public class MemberNotificationInterceptor implements HandlerInterceptor {
         Integer jwtMemberId = jwtMemberInfo.getMemberId();
 
         if(pathMemberId!=jwtMemberId){
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Path Variable과 JWT 유저 정보가 일치하지 않습니다.");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,"Path Variable과 JWT 유저 정보가 일치하지 않습니다.");
             return false;
         }
 
         Boolean isNotificationByMember = notificationService.checkNotificationByMemberId(jwtMemberId,notificationId);
         if(!isNotificationByMember){
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"잘못된 JWT 정보");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,"본인 알림이 아닙니다");
             return false;
         }
         return true;

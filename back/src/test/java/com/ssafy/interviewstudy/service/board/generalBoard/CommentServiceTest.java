@@ -7,7 +7,7 @@ import com.ssafy.interviewstudy.domain.board.CommentLike;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.dto.board.CommentRequest;
 import com.ssafy.interviewstudy.dto.board.CommentResponse;
-import com.ssafy.interviewstudy.exception.board.NotFoundException;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.generalBoard.ArticleCommentRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.BoardRepository;
 import com.ssafy.interviewstudy.repository.board.generalBoard.CommentLikeRepository;

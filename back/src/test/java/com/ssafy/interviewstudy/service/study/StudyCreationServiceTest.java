@@ -3,7 +3,7 @@ package com.ssafy.interviewstudy.service.study;
 import com.ssafy.interviewstudy.domain.member.Member;
 import com.ssafy.interviewstudy.domain.study.*;
 import com.ssafy.interviewstudy.dto.study.StudyDtoRequest;
-import com.ssafy.interviewstudy.exception.member.NotFoundException;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.member.MemberRepository;
 import com.ssafy.interviewstudy.repository.study.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -139,7 +139,7 @@ class StudyCreationServiceTest {
         Mockito.when(studyTagTypeRepository.findById(tagId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> studyCreationService.addStudy(mockRequest))
-                .isInstanceOf(com.ssafy.interviewstudy.exception.study.NotFoundException.class);
+                .isInstanceOf(com.ssafy.interviewstudy.exception.message.NotFoundException.class);
 
         verify(studyMemberRepository, never()).save(any());
     }

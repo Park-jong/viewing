@@ -4,9 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class NotFoundException extends RuntimeException{
-    private String target;
+    private final String target;
 
     public NotFoundException(String target) {
+        super(target);
         this.target = target;
     }
 }

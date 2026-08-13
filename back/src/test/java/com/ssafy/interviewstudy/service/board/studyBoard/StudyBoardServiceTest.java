@@ -6,7 +6,7 @@ import com.ssafy.interviewstudy.domain.study.Study;
 import com.ssafy.interviewstudy.dto.board.Author;
 import com.ssafy.interviewstudy.dto.board.BoardRequest;
 import com.ssafy.interviewstudy.dto.board.StudyBoardResponse;
-import com.ssafy.interviewstudy.exception.board.NotFoundException;
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 import com.ssafy.interviewstudy.repository.board.studyBoard.StudyBoardRepository;
 import com.ssafy.interviewstudy.service.board.generalBoard.BoardFileManager;
 import com.ssafy.interviewstudy.service.notification.NotificationDtoManager;

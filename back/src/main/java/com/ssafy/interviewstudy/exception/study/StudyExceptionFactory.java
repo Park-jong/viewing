@@ -1,5 +1,6 @@
 package com.ssafy.interviewstudy.exception.study;
 
+import com.ssafy.interviewstudy.exception.message.NotFoundException;
 
 public class StudyExceptionFactory {
     public static NotFoundException studyNotFound() {

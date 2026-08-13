@@ -52,7 +52,7 @@ public class MemberInterceptor implements HandlerInterceptor {
             jwtMemberInfo = (JWTMemberInfo) jwtMemberInfoAttribute;
         }
         else{
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"잘못된 JWT 정보");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"잘못된 JWT 정보");
             return false;
         }
 
@@ -66,12 +66,12 @@ public class MemberInterceptor implements HandlerInterceptor {
         //PathVariable로 멤버 조회
         Member member = memberService.findMemberByMemberId(memberId);
         if(member==null){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"없는 유저 입니다.");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND,"없는 유저 입니다.");
             return false;
         }
         else{
             if(jwtMemberInfo.getMemberId()!=member.getId()){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Path Variable과 JWT 유저 정보가 일치하지 않습니다.");
+                response.sendError(HttpServletResponse.SC_FORBIDDEN,"Path Variable과 JWT 유저 정보가 일치하지 않습니다.");
                 return false;
             }
         }

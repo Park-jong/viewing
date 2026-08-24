@@ -236,12 +236,19 @@ export default function Chat() {
           setNewMsgState((prev) => true);
         }
       });
+
+      //채팅 전송 실패 등 본인에게만 전달되는 에러 알림
+      stompClient.subscribe("/user/queue/errors", (data) => {
+        const error = JSON.parse(data.body);
+        alert(error.message);
+      });
     });
     return () => {
       if (sockJS.readyState === 1) {
         sockJS.close();
       }
       stompClient.unsubscribe("/topic/" + studyId);
+      stompClient.unsubscribe("/user/queue/errors");
       stompClient.disconnect();
     };
   }, []);

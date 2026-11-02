@@ -1,13 +1,12 @@
 import styled from "styled-components";
 import React, { useRef, useState, useEffect } from "react";
-import stompjs from "stompjs";
-import * as SockJS from "sockjs-client";
 import UserProfile from "../Common/UserProfile";
 import { useLocation, useParams } from "react-router-dom";
 import { customAxios } from "../../modules/Other/Axios/customAxios";
 import { BiCaretUp, BiCaretDown } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const Container = styled.div`
   width: 1000px;
@@ -112,8 +111,6 @@ export default function Chat() {
   const member = useSelector((state) => state.UserReducer);
   const [msg, setMsg] = useState("");
   const [msgList, setMsgList] = useState([]);
-  const [sock, setSock] = useState(null);
-  const [stomp, setStomp] = useState(null);
   const studyId = useParams().studyPk;
   const [oldMsgState, setOldMsgState] = useState(true);
   const scrollRef = useRef();
@@ -123,23 +120,23 @@ export default function Chat() {
   const maxLength = 5000;
   const navigate = useNavigate();
 
-  //메시지 전송
+  //메시지 전송 (STOMP 연결 없이 화면의 대화 목록에 바로 추가)
   const sendMsg = () => {
-    try {
-      if (sock.readyState === 1) {
-        stomp.send(
-          "/app/chats/studies/" + studyId,
-          {},
-          JSON.stringify({ member_id: member.memberId, content: msg })
-        );
-        moveEnd();
-        setMsg("");
-      }
-    } catch (error) {
-      console.log("전송 실패");
-    }
+    const newMessage = {
+      chat_id: Date.now(),
+      member: {
+        member_id: member.memberId,
+        nickname: member.nickname,
+        background: member.backgroundColor,
+        character: member.backgroundImg,
+      },
+      content: msg,
+      created_at: moment().format("YYYY-MM-DD HH:mm"),
+    };
+    setMsgList((arr) => [...arr, newMessage]);
+    moveEnd();
+    setMsg("");
   };
-
   //이전 채팅 불러오기
   const getOldMsg = () => {
     customAxios()
@@ -199,11 +196,6 @@ export default function Chat() {
 
   //처음 접속 시
   useEffect(() => {
-    const sockJS = new SockJS(`${process.env.REACT_APP_SERVER_URL}studyChat`);
-    const stompClient = stompjs.over(sockJS);
-    stompClient.debug = null;
-    setSock(() => sockJS);
-    setStomp(() => stompClient);
     customAxios()
       .get(`studies/${studyId}/chats`)
       .then(({ data }) => {
@@ -211,46 +203,7 @@ export default function Chat() {
         const oldMessage = data;
         setMsgList((arr) => [...oldMessage, ...arr]);
       })
-      .catch((err) => {
-        stompClient.disconnect();
-      });
-    stompClient.connect({}, () => {
-      stompClient.subscribe("/topic/" + studyId, (data) => {
-        const newMessage = JSON.parse(data.body);
-        setMsgList((arr) => [...arr, newMessage]);
-
-        //현재 영역 크기
-        let chatAreaHeight = parseInt(
-          window
-            .getComputedStyle(scrollRef.current)
-            .getPropertyValue("height")
-            .replace(/[^0-9]/g, "")
-        );
-        if (
-          Math.abs(
-            scrollRef.current.scrollHeight -
-              chatAreaHeight -
-              scrollRef.current.scrollTop
-          ) >= 100
-        ) {
-          setNewMsgState((prev) => true);
-        }
-      });
-
-      //채팅 전송 실패 등 본인에게만 전달되는 에러 알림
-      stompClient.subscribe("/user/queue/errors", (data) => {
-        const error = JSON.parse(data.body);
-        alert(error.message);
-      });
-    });
-    return () => {
-      if (sockJS.readyState === 1) {
-        sockJS.close();
-      }
-      stompClient.unsubscribe("/topic/" + studyId);
-      stompClient.unsubscribe("/user/queue/errors");
-      stompClient.disconnect();
-    };
+      .catch(() => {});
   }, []);
 
   //새로운(,이전) 채팅을 불러왔을 때

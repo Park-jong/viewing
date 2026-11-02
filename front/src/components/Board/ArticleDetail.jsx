@@ -168,7 +168,7 @@ export default function ArticleDetail({ data, setData, count }) {
 
   const handleDelete = () => {
     customAxios()
-      .delete(`boards/${board_type}/${param}`)
+      .delete(`boards/${board_type()}/${param}`)
       .then((res) => {
         navigate(`/board/${type}`);
       })
@@ -249,10 +249,7 @@ export default function ArticleDetail({ data, setData, count }) {
                 <Icon></Icon>
                 <h1>첨부파일 :&nbsp;</h1>
                 <File
-                  href={
-                    process.env.REACT_APP_SERVER_URL +
-                    `studies/${param}/boards/${data.article_id}/files/${file.fileId}`
-                  }
+                  href="#"
                   key={idx}
                 >
                   {file.name}

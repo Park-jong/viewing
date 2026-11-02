@@ -12,17 +12,10 @@ const Container = styled.div`
   border-radius: 15px;
 `;
 
+// 프론트 단독 실행: 외부 OAuth 대신 목 로그인 처리 페이지로 이동한다.
 export function LoginGithub() {
-  const GITHUB_URL = "https://github.com/login/oauth/authorize";
-  const queries = {
-    client_id: "849f92ca3e7a5a3a76da",
-    redirect_uri: process.env.REACT_APP_CLIENT_URL + "login/loading",
-    scope: "user",
-  };
-
-  const params = new URLSearchParams(queries).toString();
   localStorage.setItem("web", "github");
-  window.location.href = `${GITHUB_URL}?${params}`;
+  window.location.href = "/login/loading?code=mock";
 }
 
 export default function GithubButton() {

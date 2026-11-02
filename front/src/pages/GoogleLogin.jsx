@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import { useDispatch, useSelector } from "react-redux";
 import { UserReducer } from "./../modules/UserReducer/UserReducer";
@@ -14,7 +13,7 @@ export default function GoogleLogin() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    customAxios
+    customAxios()
       .get(`oauth/google?code=${code}`)
       .then((res) => {
         const access_token = res.data.access_token;
@@ -22,8 +21,8 @@ export default function GoogleLogin() {
 
         const payload = JWTDecoder(access_token).payload; //복호화 email, 만료시간, userId
 
-        customAxios
-          .get(`users/${payload.memberId}/`)
+        customAxios()
+          .get(`members/${payload.memberId}/`)
           .then((res) => {
             dispatch(Login(res.data)); // 리덕스에 적용
           })

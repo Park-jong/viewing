@@ -12,18 +12,10 @@ const Container = styled.div`
   border-radius: 15px;
 `;
 
+// 프론트 단독 실행: 외부 OAuth 대신 목 로그인 처리 페이지로 이동한다.
 export function LoginKakao() {
-  const KAKAO_URL = "https://kauth.kakao.com/oauth/authorize";
-  const queries = {
-    response_type: "code",
-    client_id: "2869d34ce0755e095b7d39e5eb3aeafb",
-    redirect_uri: process.env.REACT_APP_CLIENT_URL + "login/loading",
-    prompt: "login",
-  };
-
-  const params = new URLSearchParams(queries).toString();
   localStorage.setItem("web", "kakao");
-  window.location.href = `${KAKAO_URL}?${params}`;
+  window.location.href = "/login/loading?code=mock";
 }
 
 export default function KakaoButton() {

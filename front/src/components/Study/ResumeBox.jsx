@@ -123,8 +123,6 @@ export default function ResumeBox({
       .catch();
   };
 
-  const SERVER = process.env.REACT_APP_SERVER_URL;
-
   return (
     <Container>
       <ProfileContainer>
@@ -145,7 +143,7 @@ export default function ResumeBox({
                 <Icon />
                 <h1>첨부파일 :&nbsp;</h1>
                 <File
-                  href={`${SERVER}studies/${study_id}/requests/${request_id}/files/${file.file_id}`}
+                  href="#"
                   key={idx}
                 >
                   {file.name}

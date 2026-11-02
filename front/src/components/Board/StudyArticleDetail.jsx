@@ -162,10 +162,7 @@ export default function StudyArticleDetail({ data, setData, count }) {
                 <Icon></Icon>
                 <h1>첨부파일 :&nbsp;</h1>
                 <File
-                  href={
-                    process.env.REACT_APP_SERVER_URL +
-                    `studies/${param}/boards/${data.article_id}/files/${file.fileId}`
-                  }
+                  href="#"
                   key={idx}
                 >
                   {file.name}

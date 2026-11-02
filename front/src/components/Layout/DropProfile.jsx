@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Logout } from "../../modules/UserReducer/Actions";
-import axios from "axios";
 
 const ProfileImgWrapper = styled.div`
   position: relative;
@@ -53,7 +52,6 @@ export default function DropProfile({ member }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const profileImgRef = useRef(null);
   const dispatch = useDispatch();
-  const socialLoginType = useSelector((state) => state.UserReducer.web);
 
   let navigate = useNavigate();
   const handleProfileImgClick = () => {
@@ -69,24 +67,9 @@ export default function DropProfile({ member }) {
     }
   };
 
+  // 프론트 단독 실행: 외부 로그아웃 호출 없이 목 사용자 상태를 초기화하고 홈으로 이동한다.
   const logout = () => {
-    if (socialLoginType == "kakao") {
-      const KAKAO_LOGOUT_URL = "https://kauth.kakao.com/oauth/logout";
-      const queries = {
-        client_id: "2869d34ce0755e095b7d39e5eb3aeafb",
-        logout_redirect_uri: process.env.REACT_APP_CLIENT_URL,
-      };
-      const KAKAO_LOGOUT_PARAMS = new URLSearchParams(queries).toString();
-      axios
-        .get(`${KAKAO_LOGOUT_URL}?${KAKAO_LOGOUT_PARAMS}`)
-        .then((res) => {})
-        .catch
-        //로그아웃 실패시?
-        ();
-    }
-    window.alert("로그아웃 되었습니다");
-    localStorage.removeItem("access_token");
-    dispatch(Logout());
+    window.alert("로그아웃 되었습니다");    dispatch(Logout());
     navigate("/");
   };
 

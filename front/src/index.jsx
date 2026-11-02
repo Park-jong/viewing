@@ -4,6 +4,7 @@ import ResetStyle from "./styles/reset";
 import GlobalVariableStyle from "./styles/global";
 import { RouterProvider } from "react-router-dom";
 import router from "./Router";
+import { ensureMockToken } from "./mock/mockUser";
 import "./fonts/font.css";
 import {createStore} from 'redux'
 import rootReducer from "./rootReducer";
@@ -18,6 +19,9 @@ import {PersistGate} from 'redux-persist/integration/react'
 
 // 리액트 쿼리 쓰게 될 때 사용한다.
 // const client = new QueryClient();
+
+// 프론트 단독 실행: 목 사용자의 가짜 JWT를 미리 심어 둔다.
+ensureMockToken();
 
 const store = createStore(rootReducer)
 const persistor = persistStore(store)

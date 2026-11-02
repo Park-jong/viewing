@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 import { styled } from "styled-components";
 
@@ -19,13 +18,15 @@ export default function GitHubLogin() {
   let navigate = useNavigate();
 
   useEffect(() => {
-    customAxios
+    customAxios()
       .get(`oauth/github?code=${code}`)
       .then((res) => {
         localStorage.setItem("access_token", res.data.access_token);
         if (localStorage.getItem("prevPage")) {
           navigate(localStorage.getItem("prevPage"));
           localStorage.removeItem("prevPage");
+        } else {
+          navigate("/");
         }
       })
       .catch((err) => {

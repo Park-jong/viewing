@@ -1,6 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import axios from "axios";
-import { LocalRecorderState, OpenVidu } from "openvidu-browser";
+import { customAxios } from "../../modules/Other/Axios/customAxios";
+import {
+  DEFAULT_DEVICE_INFO,
+  LocalRecorderState,
+  OpenVidu,
+} from "../../mock/openviduStub";
 import React, { useEffect, useState } from "react";
 import ChatList from "./Components/ChatList";
 import UserVideoComponent from "./Components/UserVideoComponent";
@@ -19,8 +23,6 @@ function ConferencePage() {
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함
   const studyId = "1";
 
-  // .env 파일에서 불러오는 Spring API 호출 주소
-  const APPLICATION_SERVER_URL = process.env.REACT_APP_SERVER_URL;
   // openvidu 객체 생성
   const OV = new OpenVidu();
 
@@ -29,26 +31,19 @@ function ConferencePage() {
   let currentVideoDevice = undefined;
   let currentAudioDevice = undefined;
   useEffect(() => {
-    deviceInfo = JSON.parse(localStorage.getItem("deviceInfo"));
+    deviceInfo =
+      JSON.parse(localStorage.getItem("deviceInfo")) || DEFAULT_DEVICE_INFO;
     currentVideoDevice = deviceInfo ? deviceInfo.video : undefined;
     currentAudioDevice = deviceInfo ? deviceInfo.audio : undefined;
   });
 
   // 백엔드 통신을 통한 세션/토큰 발급
   const createSession = async () => {
-    let mURL = `${APPLICATION_SERVER_URL}studies/${studyId}/conference`;
-    await axios({
-      url: mURL,
-      method: "POST",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      data: {
+    await customAxios()
+      .post(`studies/${studyId}/conference`, {
         user_id: userData.userId,
         customSessionId: studyId,
-      },
-    })
+      })
       .then((res) => {
         localStorage.setItem("sessionId", res.data);
       })
@@ -58,19 +53,11 @@ function ConferencePage() {
   };
 
   const createToken = async () => {
-    let mURL = `${APPLICATION_SERVER_URL}studies/${studyId}/conferences/members`;
-    await axios({
-      url: mURL,
-      method: "POST",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      data: {
+    await customAxios()
+      .post(`studies/${studyId}/conferences/members`, {
         user_id: userData.userId,
         customSessionId: studyId,
-      },
-    })
+      })
       .then((res) => {
         localStorage.setItem("openviduToken", res.data);
       })

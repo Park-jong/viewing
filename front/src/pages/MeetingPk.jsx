@@ -1,5 +1,9 @@
-import axios from "axios";
-import { LocalRecorderState, OpenVidu } from "openvidu-browser";
+import { customAxios } from "../modules/Other/Axios/customAxios";
+import {
+  DEFAULT_DEVICE_INFO,
+  LocalRecorderState,
+  OpenVidu,
+} from "../mock/openviduStub";
 import { styled } from "styled-components";
 import MeetingFooter from "../components/Meeting/Organisms/MeetingFooter";
 import MeetingMain from "../components/Meeting/Organisms/MeetingMain";
@@ -120,8 +124,6 @@ export default function MeetingPk() {
   //                  pathvariable로 가져올거면 설정 화면에서 url에 스터디 아이디를 넣어줘야 함
   const studyId = useLocation().pathname.split("/")[2];
 
-  // .env 파일에서 불러오는 Spring API 호출 주소
-  const APPLICATION_SERVER_URL = process.env.REACT_APP_SERVER_URL;
   // openvidu 객체 생성
   const OV = new OpenVidu();
 
@@ -131,8 +133,8 @@ export default function MeetingPk() {
   const [currentAudioDevice, setCurrentAudioDevice] = useState(undefined);
   useEffect(() => {
     if (!sessionStorage.getItem("deviceInfo")) {
-      alert("잘못된 접근입니다.");
-      window.location.replace(`/study/${studyId}/meeting`);
+      // 입장 준비 화면을 거치지 않은 경우 카메라/마이크 없이 입장한다.
+      sessionStorage.setItem("deviceInfo", JSON.stringify(DEFAULT_DEVICE_INFO));
     }
     setDeviceInfo(JSON.parse(sessionStorage.getItem("deviceInfo")));
     setCurrentVideoDevice(
@@ -156,19 +158,11 @@ export default function MeetingPk() {
 
   // 백엔드 통신을 통한 세션/토큰 발급
   const createSession = async () => {
-    let mURL = `${APPLICATION_SERVER_URL}studies/${studyId}/conference`;
-    await axios({
-      url: mURL,
-      method: "POST",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      data: {
+    await customAxios()
+      .post(`studies/${studyId}/conference`, {
         user_id: userData.memberId.toString(),
         customSessionId: studyId,
-      },
-    })
+      })
       .then((res) => {
         sessionStorage.setItem("sessionId", res.data);
       })
@@ -180,19 +174,11 @@ export default function MeetingPk() {
   };
 
   const createToken = async () => {
-    let mURL = `${APPLICATION_SERVER_URL}studies/${studyId}/conferences/members`;
-    await axios({
-      url: mURL,
-      method: "POST",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      data: {
+    await customAxios()
+      .post(`studies/${studyId}/conferences/members`, {
         user_id: userData.memberId.toString(),
         customSessionId: studyId,
-      },
-    })
+      })
       .then((res) => {
         sessionStorage.setItem("openviduToken", res.data);
       })

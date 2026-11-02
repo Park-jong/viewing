@@ -1,8 +1,8 @@
+import { MOCK_MEMBER } from "../../mock/mockUser";
+
+// 프론트 단독 실행: 항상 목 사용자로 로그인된 상태에서 시작한다.
 const INITIAL_DATA = {
-  memberId: "",
-  nickname: "",
-  backgroundColor: "",
-  backgroundImg: "",
+  ...MOCK_MEMBER,
   toggle: false,
   alarms: [],
 };

@@ -12,21 +12,10 @@ const Container = styled.div`
   border-radius: 15px;
 `;
 
+// 프론트 단독 실행: 외부 OAuth 대신 목 로그인 처리 페이지로 이동한다.
 export function LoginGoogle() {
-  const Google_URL = "https://accounts.google.com/o/oauth2/v2/auth";
-  const queries = {
-    response_type: "code",
-    client_id:
-      "249028033375-3q56vn82p2jku86es16u191kflqp6p1o.apps.googleusercontent.com",
-    redirect_uri: process.env.REACT_APP_CLIENT_URL + "login/loading",
-    prompt: "consent",
-    scope: "email",
-  };
-
-  const params = new URLSearchParams(queries).toString();
-
   localStorage.setItem("web", "google");
-  window.location.href = `${Google_URL}?${params}`;
+  window.location.href = "/login/loading?code=mock";
 }
 
 export default function GoogleButton() {

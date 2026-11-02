@@ -55,7 +55,7 @@ export default function Message() {
     "member_id"
   );
   const nickname = new URLSearchParams(window.location.search).get("nickname");
-  const SERVER = process.env.REACT_APP_SERVER_URL + "messages";
+  const SERVER = "messages";
 
   function handleContent(e) {
     setContent(e.target.value);

@@ -4,7 +4,7 @@ import storage from "redux-persist/lib/storage";
 import { UserReducer } from "./modules/UserReducer/UserReducer";
 
 const persistConfig = {
-  key: "root",
+  key: "root-front-only",
   storage,
   whitelist: ["UserReducer"],
 };

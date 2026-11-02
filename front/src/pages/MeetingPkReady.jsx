@@ -3,7 +3,7 @@ import HeaderBox from "./../components/Layout/HeaderBox";
 import Footer from "../components/Layout/Footer";
 import MainButton from "../components/Button/MainButton";
 import { useEffect, useRef, useState } from "react";
-import { OpenVidu } from "openvidu-browser";
+import { OpenVidu } from "../mock/openviduStub";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { UserReducer } from "./../modules/UserReducer/UserReducer";
@@ -178,18 +178,13 @@ export default function MeetingPkReady() {
 
   // 미디어 권한을 얻는 함수
   const getPermission = async () => {
-    await navigator.mediaDevices
-      .getUserMedia({ audio: true, video: true })
-      .then(() => {
-        setPermit(true);
-      })
-      .catch((error) => {
-        console.error("미디어 액세스 권한을 허용하지 않았습니다:", error);
-        alert(
-          "'크롬설정 > 개인 정보 보호 및 보안 > 사이트 설정' 에서 당사이트에 대한 카메라,마이크 권한을 허용해주세요"
-        );
-        window.location.replace(`/study/${studyId}/meeting`);
-      });
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    } catch (error) {
+      // 카메라/마이크가 없거나 권한이 없어도 입장 준비 화면은 그대로 보여 준다.
+      console.warn("미디어 액세스 권한을 얻지 못했습니다:", error);
+    }
+    setPermit(true);
     findDevice();
   };
 
@@ -261,9 +256,14 @@ export default function MeetingPkReady() {
       canvasContext.drawImage(img, 0, 0, img.width, img.height);
       stream = canvas.captureStream();
     } else {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: savedId },
-      });
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { deviceId: savedId },
+        });
+      } catch (e) {
+        console.warn("비디오 장치를 사용할 수 없습니다.", e);
+        return;
+      }
     }
     element.srcObject = stream;
   };
@@ -272,9 +272,16 @@ export default function MeetingPkReady() {
     const savedId = currAudio.current.value
       ? JSON.parse(currAudio.current.value).deviceId
       : devices.audio[0];
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: { deviceId: savedId },
-    });
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: savedId },
+      });
+    } catch (e) {
+      console.warn("오디오 장치를 사용할 수 없습니다.", e);
+      setVolume("");
+      return;
+    }
     const source = audioCtx.createMediaStreamSource(stream);
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 256;

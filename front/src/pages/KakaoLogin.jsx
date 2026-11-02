@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { customAxios } from "../modules/Other/Axios/customAxios";
 
 export default function KaKaoLogin() {
@@ -10,7 +9,7 @@ export default function KaKaoLogin() {
   let navigate = useNavigate();
 
   useEffect(() => {
-    customAxios
+    customAxios()
       .get(`oauth/kakao?code=${code}`)
       .then((res) => {
         localStorage.setItem("access_token", res.data.access_token);

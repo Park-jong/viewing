@@ -1,4 +1,4 @@
-import { OpenVidu } from "openvidu-browser";
+import { OpenVidu } from "../../mock/openviduStub";
 import { React, useEffect, useRef, useState } from "react";
 
 function ReadyPage() {
@@ -97,9 +97,14 @@ function ReadyPage() {
       canvasContext.drawImage(img, 0, 0, img.width, img.height);
       stream = canvas.captureStream();
     } else {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: JSON.parse(currVideo.current.value).deviceId },
-      });
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { deviceId: JSON.parse(currVideo.current.value).deviceId },
+        });
+      } catch (e) {
+        console.warn("비디오 장치를 사용할 수 없습니다.", e);
+        return;
+      }
     }
     element.srcObject = stream;
   };
@@ -112,9 +117,16 @@ function ReadyPage() {
 
   const testAudio = async () => {
     const savedId = JSON.parse(currAudio.current.value).deviceId;
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: { deviceId: savedId },
-    });
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: savedId },
+      });
+    } catch (e) {
+      console.warn("오디오 장치를 사용할 수 없습니다.", e);
+      setVolume("");
+      return;
+    }
     const source = audioCtx.createMediaStreamSource(stream);
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 256;

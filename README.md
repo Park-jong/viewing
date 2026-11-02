@@ -24,6 +24,14 @@
 
 2023.07.10 ~ 2023.08.17
 
+### 🌐 데모 사이트
+
+[https://park-jong.github.io/viewing/](https://park-jong.github.io/viewing/)
+
+백엔드 없이 프론트엔드만으로 동작하는 데모입니다. ([`front-only`](https://github.com/Park-jong/viewing/tree/front-only) 브랜치)<br>
+로그인 없이 모든 페이지를 볼 수 있으며, 화면의 데이터는 모두 목(mock) 데이터입니다.<br>
+작성한 내용은 사용 중인 브라우저에만 저장되고, 알림·채팅·화상회의는 서버 연결 없이 화면 동작만 확인할 수 있습니다.
+
 <br>
 
 ## 📁 분석 설계
